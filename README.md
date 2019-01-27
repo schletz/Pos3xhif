@@ -3,19 +3,18 @@ C# Beispiele für den 3. Jahrgang in POS.
 
 ## Anlegen eines Ordners und Vorbereiten des Repositories:
 1. Lege dir auf [GitHub] einen Zugang an.
+
 2. Lege einen Ordner auf der Festplatte an, wo du deine lokalen Repositories speichern möchtest 
     (z. B. *C:\Schule\POS*). Erstelle danach 2 Unterordner: *Examples* und *Work*
+
 3. Setze in der Konsole deinen Namen und deine Mailadresse in den globalen Einstellungen deiner
    git Installation:
 ```
 git config --global user.name "FIRST_NAME LAST_NAME"
 git config --global user.email "MY_NAME@example.com"
 ```
-4. Lege auf GitHub unter *Repositories* die unten stehenden Repositories an. Wichtig: Initialisiere
-    es NICHT mit einer Readme Datei, denn diese würde einen Konflikt beim Synchronisieren mit dem 
-    Mustercode Repository verurachen. 
-    - Examples
-    - Work
+
+4. Lege auf GitHub unter *Repositories* ein Repository *Work* an. 
     
 5.  Nach dem Anlegen erscheint ein Textfeld mit der URL des Repositories 
     (z. B. *https://github.com/username/Work*).
@@ -26,6 +25,7 @@ git config --global user.email "MY_NAME@example.com"
 **Code für das Example Repository**
 ```
 git init
+git remote add origin https://github.com/schletz/Pos3xhif.git
 ```
 
 **Code für das Work Repository**
@@ -42,7 +42,9 @@ denn die vordefinierte *.gitignore* Datei schließt diese Datei von der Synchron
 
 **Code für das Example Repository**
 ```
-git pull https://github.com/schletz/Pos3xhif.git master
+git fetch --all
+git reset --hard origin/master
+
 ```
 
 **Code für das Work Repository**
