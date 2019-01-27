@@ -29,16 +29,15 @@ git remote add origin https://github.com/schletz/Pos3xhif.git
 ```
 
 **Code für das Work Repository**
+```
 git init
-git commit -m "first commit"
 git remote add origin (URL)
-git pull origin master
-git push origin master
+```
+
 
 ## Aktualisieren des Repositories
 Erstelle für jedes Repository eine Datei *syncGit.cmd* im Texteditor und füge folgende die 
-jeweiligen Befehle ein. Die Datei muss so heißen und im Hauptverzeichnis des Repositories liegen, 
-denn die vordefinierte *.gitignore* Datei schließt diese Datei von der Synchronisation aus.
+jeweiligen Befehle ein.
 
 **Code für das Example Repository**
 ```
@@ -58,11 +57,10 @@ git push origin master
 Speichere die Datei im root deines git Ordners und synchroisiere durch Doppelklick auf die Datei im
 Explorer dein lokales Repository mit dem Github Server.
 
-## Arbeiten mit dem Repository
-Durch den Befehl 
-`git pull https://github.com/schletz/Pos3xhif.git master --allow-unrelated-histories`
-wird immer der neue Inhalt des Mustercode Repositories integriert. **Arbeite daher immer in einem
-eigenen Verzeichnis innerhalb dieses Repositories (z. B. Work)**. Werden Dateien vom Mustercode Repository gelöscht, so wird das
-Löschen auch als bewusste Änderung angenommen und die Datei wird nicht mehr geladen.
+## Erstellen von .gitignore
+Damit nicht Builds und temporäre Dateien von Visual Studio hochgeladen werden, gibt es im Example
+Repository eine Datei *.gitignore*. Kopiere diese Datei im Explorer aus deinem *Examples* Verzeichnis
+in das *Work* Verzeichnis. Bei der Synchronisation wird nun die Datei übertragen. Ab jetzt werden die
+temporären Dateien von Visual Studio zwar lokal gespeichert, aber nicht übertragen.
 
 [GitHub]: https://github.com
