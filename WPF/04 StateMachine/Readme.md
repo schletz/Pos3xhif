@@ -1,4 +1,4 @@
-# Mustercode: Benutzeroberflächen als State Machine auffassen
+# Benutzeroberflächen als State Machine auffassen
 ![Cash App Ui](CashAppUi.png)
 
 Mit Hilfe einer State Machine können die verschiedenen Zustände einer Benutzeroberfläche (ein- und ausgeblendete Inhalte, 
