@@ -8,13 +8,13 @@ C# Beispiele für den 3. Jahrgang in POS.
     Hier werden keine Commits gemacht und alle lokalen Änderungen dort werden bei der 
     nächsten Synchronisation überschrieben.
 2. Initialisiere den Ordner mit folgenden Befehlen:
-```shell {.line-numbers}
+```bash {.line-numbers}
 git init
 git remote add origin https://github.com/schletz/Pos3xhif.git
 ```
 3. Lege dir in diesem Ordner mit dem Texteditor eine Datei *syncGit.cmd* mit folgenden Befehlen an. 
     Durch Doppelklick auf diese Datei im Explorer wird immer der neueste Stand geladen.
-```shell {.line-numbers}
+```bash {.line-numbers}
 git fetch --all
 git reset --hard origin/master
 
@@ -30,21 +30,21 @@ git reset --hard origin/master
 
 3. Setze in der Konsole deinen Namen und deine Mailadresse in den globalen Einstellungen deiner
    git Installation:
-```shell {.line-numbers}
+```bash {.line-numbers}
 git config --global user.name "FIRST_NAME LAST_NAME"
 git config --global user.email "MY_NAME@example.com"
 ```
 
 4. Initialisiere dein Work Repository mit folgenden Befehlen. Statt *(URL)* schreibe die URL deines
     auf Github angelegten Repositories hinein (z. B. *https://github.com/username/POS.git*)
-```shell {.line-numbers}
+```bash {.line-numbers}
 git init
 git remote add origin (URL)
 ```
 5. Lege dir in diesem Ordner eine Datei *syncGit.cmd* mit folgenden Befehlen an. Durch Doppelklick
     auf diese Datei im Explorer werden alle Änderungen bestätigt ("Commit") und der Inhalt mit dem
     Online Repository auf Github synchronisiert.
-```shell {.line-numbers}
+```bash {.line-numbers}
 git add -A
 git commit -a -m "Commit"
 git pull origin master
