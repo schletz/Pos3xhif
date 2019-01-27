@@ -1,5 +1,6 @@
 # Mustercode: Benutzeroberflächen als State Machine auffassen
 ![Cash App Ui](CashAppUi.png)
+
 Mit Hilfe einer State Machine können die verschiedenen Zustände einer Benutzeroberfläche (ein- und ausgeblendete Inhalte, 
 aktivierte und deaktivierte Steuerelemente, ...) elegant programmiert werden. Das nuget Paket [stateless] stellt hierfür die Klasse 
 StateMachine bereit, die verschiedene States und Trigger, die den Übergang zwischen den States hervorrufen, verwalten kann. 
