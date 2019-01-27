@@ -16,4 +16,4 @@ Das Zusammenspiel der Komponenten wird bei folgender Grafik deutlich:
 
 Grafik erstellt mit [draw.io].
 
-[draw.io]: https://www.draw.io/
+[draw.io]: https://www.draw.io

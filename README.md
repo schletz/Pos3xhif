@@ -39,11 +39,7 @@ git push origin master
 Speichere die Datei im root deines git Ordners und synchroisiere durch Doppelklick auf die Datei im
 Explorer dein lokales Repository mit dem Github Server.
 
-
-
-echo "# TestRepo" >> README.md
-git init
-git add README.md
-git commit -m "first commit"
-git remote add origin https://github.com/schletz/TestRepo.git
-git push -u origin master
+## Arbeiten mit dem Repository
+Durch den Befehl 
+`git pull https://github.com/schletz/Pos3xhif.git master --allow-unrelated-histories`
+wird immer der neue Inhalt des Mustercode Repositories integriert.
