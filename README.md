@@ -42,4 +42,7 @@ Explorer dein lokales Repository mit dem Github Server.
 ## Arbeiten mit dem Repository
 Durch den Befehl 
 `git pull https://github.com/schletz/Pos3xhif.git master --allow-unrelated-histories`
-wird immer der neue Inhalt des Mustercode Repositories integriert.
+wird immer der neue Inhalt des Mustercode Repositories integriert. **Arbeite daher immer in einem
+eigenen Verzeichnis (z. B. Work)**. Werden Dateien vom Mustercode Repository gelöscht, so wird das
+Löschen auch als bewusste Änderung angenommen und die Datei wird nicht mehr geladen.
+
