@@ -21,7 +21,7 @@ git config --global user.email "MY_NAME@example.com"
     
 5.  Nach dem Anlegen erscheint ein Textfeld mit der URL des Repositories 
     (z. B. *https://github.com/username/POS.git*).
-    Ersetze (URL) in den nachfolgenden Befehlen durch diese Adresse und führe sie
+    Ersetze *(URL)* in den nachfolgenden Befehlen durch diese Adresse und führe sie
     in der Konsole in deinem lokalen git Verzeichnis aus. Hinweis: Kopiere alle Befehle. Mit 
     Rechtsklick kannst du sie in der Konsole aus der Zwischenablage einfügen.
 
