@@ -5,7 +5,10 @@ C# Beispiele für den 3. Jahrgang in POS.
 1. Lege dir auf [GitHub] einen Zugang an.
 
 2. Lege einen Ordner auf der Festplatte an, wo du deine lokalen Repositories speichern möchtest 
-    (z. B. *C:\Schule\POS*). Erstelle danach 2 Unterordner: *Examples* und *Work*
+    (z. B. *C:\Schule\POS*). Erstelle danach 2 Unterordner: *Examples* und *Work*. Das *Examples*
+    Repository ist nur die lokale Version des Repositories auf https://github.com/schletz/Pos3xhif.git.
+    Hier werden keine Commits gemacht und alle lokalen Änderungen dort werden bei der 
+    nächsten Synchronisation überschrieben.
 
 3. Setze in der Konsole deinen Namen und deine Mailadresse in den globalen Einstellungen deiner
    git Installation:
@@ -14,10 +17,10 @@ git config --global user.name "FIRST_NAME LAST_NAME"
 git config --global user.email "MY_NAME@example.com"
 ```
 
-4. Lege auf GitHub unter *Repositories* ein Repository *Work* an. 
+4. Lege auf GitHub unter *Repositories* ein Repository *POS* an. 
     
 5.  Nach dem Anlegen erscheint ein Textfeld mit der URL des Repositories 
-    (z. B. *https://github.com/username/Work*).
+    (z. B. *https://github.com/username/POS.git*).
     Ersetze (URL) in den nachfolgenden Befehlen durch diese Adresse und führe sie
     in der Konsole in deinem lokalen git Verzeichnis aus. Hinweis: Kopiere alle Befehle. Mit 
     Rechtsklick kannst du sie in der Konsole aus der Zwischenablage einfügen.
