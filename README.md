@@ -58,7 +58,12 @@ temporären Dateien von Visual Studio zwar lokal gespeichert, aber nicht übertr
 
 7. Zur Dokumentation wird im Programmierbereich die sogenannte Markdown Syntax verwendet. Sie definiert
     Formatierungsanweisungen in Textdateien. Eine Übersicht ist unter
-    https://shd101wyy.github.io/markdown-preview-enhanced/#/markdown-basics abrufbar.
+    https://guides.github.com/features/mastering-markdown/ abrufbar. 
+
+    Mit der Extension *Markdown Editor* kannst du in Visual Studio unter *Tools* - *Extensions and Updates* solche Dateien
+    mit einer Voransicht entwerfen. In Chrome gibt es die Extension *Markdown Reader* für die Anzeige
+    von lokalen md Dateien, wenn der Extension der Zugriff auf das *file://* Protokoll gestattet wurde.
+    
 
 [GitHub]: https://github.com
 
