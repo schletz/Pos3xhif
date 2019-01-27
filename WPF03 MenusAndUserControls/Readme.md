@@ -1,13 +1,13 @@
-# User Controls und Menüs
-Dieses Beispiel demonstriert, wie ein UserControl und ein Menü eingesetzt werden kann. Das UserControl ist in eine eigene Datei 
+# User Controls und MenÃ¼s
+Dieses Beispiel demonstriert, wie ein UserControl und ein MenÃ¼ eingesetzt werden kann. Das UserControl ist in eine eigene Datei 
 ausgelagerter XAML Code. Es kann ein eigenes ViewModel besitzen und ist wie ein getrenntes Fenster zu betrachten. 
-Beim Verwenden von Menüpunkten wird häufig zwischen verschiedenen User Controls umgeschulten. Durch den Einsatz eines 
-Converters kann dies deklarativ in XAML erfolgen.
+Beim Verwenden von MenÃ¼punkten wird hÃ¤ufig zwischen verschiedenen User Controls umgeschulten. Durch den Einsatz eines 
+Converters kann dies deklerativ in XAML erfolgen.
 
 ## Funktionsprinzip
-In XAML wird mit *MenuItem* ein Menü definiert. Beim Klicken wird der Command ausgeführt, welcher in *MainViewModel*
-den aktiven Menüpunkt setzt. Mit *CommandParameter* wird als zusätzlicher Parameter der (eindeutige) Namen
-des Menüpunktes mitgegeben, den wir angeklickt haben:
+In XAML wird mit *MenuItem* ein MenÃ¼ definiert. Beim Klicken wird der Command ausgefÃ¼hrt, welcher in *MainViewModel*
+den aktiven MenÃ¼punkt setzt. Mit *CommandParameter* wird als zusÃ¤tzlicher Parameter der (eindeutige) Namen
+des MenÃ¼punktes mitgegeben, den wir angeklickt haben:
 
 ```xml
 <MenuItem Header="_File">
@@ -18,10 +18,10 @@ des Menüpunktes mitgegeben, den wir angeklickt haben:
 </MenuItem>
 ```
 
-Weiter unten im Content Bereich von *MainWindow* werden die einzelnen Controls, die hinter den Menüpunkten
-stehen, geladen. Da sie natürlich nicht alle gleichzeitig sichtbar sein sollen, wird die Visibility mit
+Weiter unten im Content Bereich von *MainWindow* werden die einzelnen Controls, die hinter den MenÃ¼punkten
+stehen, geladen. Da sie natÃ¼rlich nicht alle gleichzeitig sichtbar sein sollen, wird die Visibility mit
 einem Converter festgelegt. Der Converter bekommt einerseits als Value den in *MainViewModel* gesetzten aktiven
-Menüpunkt (*ActiveMenuitem:string*) und als *ConverterParameter* den Wert, bei dem es sichtbar sein soll:
+MenÃ¼punkt (*ActiveMenuitem:string*) und als *ConverterParameter* den Wert, bei dem es sichtbar sein soll:
 
 ```xml
 <ContentControl Visibility="{Binding ActiveMenuitem, ConverterParameter=Add, Converter={StaticResource MenuVisibilityConverter}}">
@@ -36,20 +36,20 @@ Menüpunkt (*ActiveMenuitem:string*) und als *ConverterParameter* den Wert, bei d
 </ContentControl>  
 ```
 
-Der Converter selbst prüft dann nur, ob die Werte übereinstimmen. Wenn ja, wird Visible geliefert:
+Der Converter selbst prÃ¼ft dann nur, ob die Werte Ã¼bereinstimmen. Wenn ja, wird Visible geliefert:
 
 ```c#
 /// <summary>
-/// Converter für die Sichtbarkeit der Controls.
+/// Converter fÃ¼r die Sichtbarkeit der Controls.
 /// </summary>
 public class MenuVisibilityConverter : IValueConverter
 {
     /// <summary>
     /// Wandelt den value in eine Visibility Eigenschaft um.
     /// </summary>
-    /// <param name="value">Über das Binding aus XAML übergebener Wert (das aktuelle Menüiten).</param>
+    /// <param name="value">Ãœber das Binding aus XAML Ã¼bergebener Wert (das aktuelle MenÃ¼iten).</param>
     /// <param name="targetType"></param>
-    /// <param name="parameter">Über ConverterParameter aus XAML übergebener wert, wann Visible geliefert werden soll.</param>
+    /// <param name="parameter">Ãœber ConverterParameter aus XAML Ã¼bergebener wert, wann Visible geliefert werden soll.</param>
     /// <param name="culture"></param>
     /// <returns>true, wenn value = parameter. Sonst false.</returns>
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
