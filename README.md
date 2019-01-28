@@ -18,7 +18,7 @@ git remote add origin https://github.com/schletz/Pos3xhif.git
 4. Lege dir in diesem Ordner mit dem Texteditor eine Datei *syncGit.cmd* mit folgenden Befehlen an. 
     Durch Doppelklick auf diese Datei im Explorer wird immer der neueste Stand geladen.
 ```bash {.line-numbers}
-git reset --hard origin/master
+git reset --hard
 git pull origin master
 ```
 
