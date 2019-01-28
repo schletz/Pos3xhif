@@ -16,9 +16,11 @@ C# Beispiele für den 3. Jahrgang in POS.
 git init
 git remote add origin https://github.com/schletz/Pos3xhif.git
 ```
-4. Lege dir in diesem Ordner mit dem Texteditor eine Datei *syncGit.cmd* mit folgenden Befehlen an. 
-    Durch Doppelklick auf diese Datei im Explorer wird immer der neueste Stand geladen.
+4. Lege dir auf dem Desktop mit dem Texteditor eine Datei *syncGit.cmd* mit folgenden Befehlen an. 
+    Durch Doppelklick auf diese Datei wird immer der neueste Stand geladen. Statt 
+    *C:\Schule\POS\Examples* ist natürlich der angelegte Ordner anzugeben.
 ```bash {.line-numbers}
+cd /D C:\Schule\POS\Examples
 git reset --hard
 git pull origin master
 ```
