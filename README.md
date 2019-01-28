@@ -18,7 +18,9 @@ git remote add origin https://github.com/schletz/Pos3xhif.git
 ```
 
 4. Lege dir in diesem Ordner eine Datei *syncGit.cmd* mit folgenden Befehlen an. 
-    Durch Doppelklick auf diese Datei wird immer der neueste Stand geladen.
+    Durch Doppelklick auf diese Datei wird immer der neueste Stand geladen. Neu erstellte Dateien
+    in diesem Ordner bleiben auf der Festplatte, geänderte Dateien werden allerdings durch 
+    *git reset* auf den Originalstand zurückgesetzt.
 ```bash {.line-numbers}
 git reset --hard
 git pull origin master
