@@ -10,7 +10,8 @@ C# Beispiele für den 3. Jahrgang in POS.
     Repository ist nur die lokale Version des Repositories auf https://github.com/schletz/Pos3xhif.git.
     Hier werden keine Commits gemacht und alle lokalen Änderungen dort werden bei der 
     nächsten Synchronisation überschrieben.
-3. Initialisiere den Ordner mit folgenden Befehlen:
+3. Initialisiere den Ordner mit folgenden Befehlen, die du in der Konsole in diesem Verzeichnis
+    (z. B. *C:\Schule\POS\Examples*) ausführst:
 ```bash {.line-numbers}
 git init
 git remote add origin https://github.com/schletz/Pos3xhif.git
