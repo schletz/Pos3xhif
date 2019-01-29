@@ -1,5 +1,5 @@
 # Listen und ObservableCollection
-![View Model Demo App Ui](ViewModelDemoAppUi.png)
+![View Model Demo App Ui](ViewModelDemoApp2Ui.png)
 
 In diesem Beispiel sollen alle Personen in einer Liste dargestellt werden. Beim Klicken auf einen
 Eintrag der Liste werden die Daten geladen. Diese Features werden durch eine *ListBox* bereitgestellt.
