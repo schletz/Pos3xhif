@@ -27,7 +27,7 @@ daher ein public set Property sein.
 
 Für die Darstellung von Listen gibt es in WPF mehrere Controls:
 ![List Types](ListTypes.png)
-*^Quelle: http://www.sws.bfh.ch/~amrhein/Skripten/Info2/, Kapitel 8: WPF Listen und Tabellen^*
+*<sup>Quelle: http://www.sws.bfh.ch/~amrhein/Skripten/Info2/, Kapitel 8: WPF Listen und Tabellen</sup>*
 
 ## Listen und das dazugehörige Property - zwei Ansätze
 Listen binden sich an eine Collection im ViewModel. Diese Collection muss natürlich bereitgestellt
