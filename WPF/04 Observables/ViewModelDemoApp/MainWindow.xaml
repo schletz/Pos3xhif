@@ -1,6 +1,5 @@
 ﻿<!--
 XAML CODE FÜR DIE VIEWMODEL DEMO
-    
 -) xmlns:vm="clr-namespace:ViewModelDemoApp.ViewModels" 
    wird für den Zugriff auf das ViewModel benötigt, da dieses in einem Ordner 
    und daher in einem eigenen Namespace ist 
