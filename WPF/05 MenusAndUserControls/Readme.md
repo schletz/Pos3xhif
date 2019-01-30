@@ -19,7 +19,7 @@ des Menüpunktes mitgegeben, den wir angeklickt haben:
 ```
 
 Der Command *ActivateMenuitem* setzt einfach den in *CommandParameter* übergebenen String im ViewModel:
-``´c#
+```c#
 ActivateMenuitem = new RelayCommand((param) => ActiveMenuitem = param?.ToString());
 ```
             
