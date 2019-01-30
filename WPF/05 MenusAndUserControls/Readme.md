@@ -18,6 +18,11 @@ des Menüpunktes mitgegeben, den wir angeklickt haben:
 </MenuItem>
 ```
 
+Der Command *ActivateMenuitem* setzt einfach den in *CommandParameter* übergebenen String im ViewModel:
+``´c#
+ActivateMenuitem = new RelayCommand((param) => ActiveMenuitem = param?.ToString());
+```
+            
 Weiter unten im Content Bereich von *MainWindow* werden die einzelnen Controls, die hinter den Menüpunkten
 stehen, geladen. Da sie natürlich nicht alle gleichzeitig sichtbar sein sollen, wird die Visibility mit
 einem Converter festgelegt. Der Converter bekommt einerseits als Value den in *MainViewModel* gesetzten aktiven
