@@ -1,61 +1,22 @@
-# Listen und ObservableCollection
+# Observable Collections
 ![View Model Demo App Ui](ViewModelDemoApp2Ui.png)
 
-In diesem Beispiel sollen alle Personen in einer Liste dargestellt werden. Beim Klicken auf einen
-Eintrag der Liste werden die Daten geladen. Diese Features werden durch eine *ListBox* bereitgestellt.
-Da Person ein komplexer Typ ist, muss über ein *DataTemplate* die Anzeige in der ListBox gesteuert werden.
-Folgendes Beispiel zeigt *Firstname* und *Lastname* untereinander an:
+Dieses Beispiel ist eine Ergänzung zum Beispiel 3 (Listen). In diesem Ansatz wird im ViewModel eine 
+**eigene unabhäbngige Liste** definiert, die die Personenobjekte speichert. Im vorigen Beispiel mussten 
+wir beim Hinzufügen oder Löschen folgende Schritte ausführen:
+- Hinzufügen bzw. Löschen des Personenobjektes im Model.
+- Aufruf von *PropertyChanged()*, welches die gesamte Liste neu lädt.
 
-```xml
-<ListBox DockPanel.Dock="Left" ItemsSource="{Binding Persons}" SelectedItem="{Binding CurrentPerson}">
-    <ListBox.ItemTemplate>
-        <DataTemplate>
-            <DockPanel Margin="5 5 5 5">
-                <StackPanel>
-                    <TextBlock Text="{Binding Firstname}" />
-                    <TextBlock FontWeight="Bold" Text="{Binding Lastname}" />
-                </StackPanel>
-            </DockPanel>
-        </DataTemplate>
-    </ListBox.ItemTemplate>
-</ListBox>
-```
+Der letzte Punkt - das erneute Laden der Liste - kann bei Webservices sehr zeitintensiv sein. Schließlich werden
+dann die Daten über das Internet neu geladen. Da wir jetzt im ViewModel eine eigene Liste führen, können wir
+unseren Ablauf beim Hinzufügen oder Löschen von Personenobjekten ändern:
+- Hinzufügen bzw. Löschen des Personenobjektes im ViewModel.
+- Synchronisation mit dem Model im Hintergrund.
 
-Dabei ist *Persons* die Collection von Personen in *MainViewModel*, *CurrentPerson* ist das Property in
-*MainViewModel*, in welches die Liste die aktuell ausgewählte Person hineinschreibt. Es muss natürlich
-daher ein public set Property sein.
-
-Für die Darstellung von Listen gibt es in WPF mehrere Controls:
-![List Types](ListTypes.png)
-*<sup>Quelle: http://www.sws.bfh.ch/~amrhein/Skripten/Info2/, Kapitel 8: WPF Listen und Tabellen</sup>*
-
-## Listen und das dazugehörige Property - zwei Ansätze
-Listen binden sich an eine Collection im ViewModel. Diese Collection muss natürlich bereitgestellt
-werden. Das kann auf mehrere Arten passieren:
-
-### Ansatz 1: Erstellen der Collection mittels LINQ Abfrage aus dem Model
-Hier wird in *get* des Properties eine LINQ Abfrage geschrieben, die die Daten aus dem Model holt. Gegebenenfalls
-muss mit *ToList()* die Ausführung erzwungen werden, damit z. B. die Daten aus der Datenbank gelesen werden.
-
-Werden nun die zugrundeliegenden Daten über die GUI geändert (hinzufügen oder löschen von Elementen), 
-muss über *PropertyChanged()* die Liste neu eingelesen werden. Bei einer Änderung der Objekte selbst wird 
-die Änderung sofort dargestellt, da es sich bei der Liste nur um Referenzen auf die Originalobjekte 
-handelt. Dennoch muss folgendes beachtet werden:
-- Der Aufruf von *PropertyChanged()* muss immer beim Hinzufügen oder Löschen erfolgen, um eine konsistente 
-  Darstellung zu gewährleisten.
-- *PropertyChanged()* liest die Liste zur Gänze neu ein. Bei einer langsamen Quelle (z. B. einem Webservice)
-  kann hier eine Latenz für den Anwender entstehen, vor allem wenn sehr häufig Objekte manipuliert werden.
-
-### Ansatz 2: Arbeiten über eine *ObservableCollection*
-In diesem Ansatz wird im ViewModel eine eigene Liste definiert, die die Personenobjekte in unserem Beispiel
-speichert. Bei einer normalen Liste müssten wir beim Hinzufügen oder Löschen folgende Schritte ausführen:
-- Hinzufügen des Objektes in der Liste im Viewmodel
-- Hinzufügen des Objektes im Model
-- Aufruf von *PropertyChanged()* 
-
-Mit einer *ObservableCollection* wird automatisch beim Hinzufügen oder Löschen von Elementen ein Event
-(*CollectionChanged*) geworfen, auf das wir zentral reagieren können. Der Aufruf von *PropertyChanged()* 
-entfällt, da die ObservableCollection das Interface *INotifyPropertyChanged* implementiert.
+Für die Liste im ViewModel verwenden wir eine *ObservableCollection*. Sie feuert beim Hinzufügen oder 
+Löschen von Elementen das Event *CollectionChanged*, auf das wir zentral reagieren können. Der Aufruf 
+von *PropertyChanged()* entfällt, da die ObservableCollection das Interface *INotifyPropertyChanged* 
+implementiert.
 
 Fügen wir nun eine Person durch die Logik in *GeneratePersonCommand* zur ObservableCollection im ViewModel
 hinzu, wird zwar die GUI ohne unser Zutun aktualisiert, die Person wird aber nicht im Model gespeichert. 
@@ -108,5 +69,9 @@ public class SynchronizedObservable<T> : ObservableCollection<T>
 }
 ```
 
-
+**Was ist besser? Der vorige Ansatz mit der "normalen" Liste oder die ObservableCollection?**
+Diese Frage kann nicht pauschal beantwortet werden. Wenn das Model die Daten schnell bereitstellen kann,
+wie es z. B. bei einem OR Mapper mit Proxy der Fall ist, bietet der Zugang aus Beispiel 3 sicher eine
+einfachere Möglichkeit der Anzeige. Wenn eine Synchronisation mit dem Model ausprogrammiert werden muss,
+dann ist unsere Klasse *SynchronizedObservable<T>* ein geeigneter Ort, diesen Code unterzubringen.
 

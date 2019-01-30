@@ -34,7 +34,7 @@ namespace ViewModelDemoApp.Model
         {
             // NewItems ist eine nicht generische IList und kann null sein. Deswegen wird sie
             // mit Cast in einen typisierten Enumerator geändert. Ist sie null, wird foreach
-            // durch den leeren Enumerator als Standartwert nicht durchlaufen.
+            // durch den leeren Enumerator als Standardwert nicht durchlaufen.
             // if (e.NewItems != null) geht natürlich auch.
             foreach (T p in e.NewItems?.Cast<T>() ?? Enumerable.Empty<T>())
             {
