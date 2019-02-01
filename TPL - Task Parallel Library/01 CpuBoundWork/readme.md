@@ -56,7 +56,7 @@ Fehler funktionieren. Bei speziellen Eingabewerten kommt es aber zu Fehlern. Die
 und daher besonders schwer zu identifizieren!**
 
 Die Anweisung *Interlocked.Add(ref runningTasks, 1);* ist für die Bestimmung der Anzahl der gleichzeitig
-laufenden Tasks. Wir können auch *lock(){}* verwenden, da das Threadsichere inkrementieren von Variablen
+laufenden Tasks. Wir können auch *lock(){}* verwenden, da das threadsichere inkrementieren von Variablen
 aber häufig vorkommt, gibt es mit der statischen Klasse *Interlocked* die Möglichkeit, dies als atomare
 Operation (kann nicht unterbrochen werden) auszuführen.
 
@@ -85,7 +85,7 @@ Maximalwert ist allerdings 13, denn es gibt nur 12 logische CPU Kerne und der 13
 1. Setze *const int START_NUMBER* auf 0 statt auf 500000000. Die Berechnung geht dann natürlich bei kleinen
    Zahlen viel schneller. Die Statistik wandelt sich auf einmal: 
    *Synchron: 0.00s, Parallel: 0.15s (Faktor 146.02)*. Wir sehen, dass das Erstellen von Tasks und der 
-   darunterliegenden Threads einen overhead darstellt, der sich erst rechnen muss. Ist ein Task also nur
+   darunterliegenden Threads einen overhead darstellt, der sich erst rechnen muss. Dauern die Tasks also nur
    sehr kurz, kann die synchrone Lösung schneller sein.
 2. Ändere den Aufruf von *Parallel.For* so ab, indem du *new ParallelOptions { MaxDegreeOfParallelism = 100 }*
    als drittes Argument einfügst:
