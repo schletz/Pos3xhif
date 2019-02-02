@@ -60,4 +60,8 @@ weit häufiger als der bekannte "Deadlock":
 - **Überparallelisierung.** Es wird jede kleine Anweisung in *Task.Run()* gepackt. Dabei ist dann der overhead
   größer und das Programm sogar langsamer als die synchrone Variante.
 
+## Weiterführende Links:
+- [Async in depth](https://docs.microsoft.com/de-de/dotnet/standard/async-in-depth)
+- [Async/Await - Best Practices in Asynchronous Programming](https://msdn.microsoft.com/en-us/magazine/jj991977.aspx)
+
 [draw.io]: https://draw.io
