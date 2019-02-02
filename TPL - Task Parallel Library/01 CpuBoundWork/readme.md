@@ -56,7 +56,7 @@ Fehler funktionieren. Bei speziellen Eingabewerten kommt es aber zu Fehlern. Die
 und daher besonders schwer zu identifizieren!**
 
 Die Anweisung *Interlocked.Add(ref runningTasks, 1);* ist für die Bestimmung der Anzahl der gleichzeitig
-laufenden Tasks. Wir können auch *lock(){}* verwenden, da das threadsichere inkrementieren von Variablen
+laufenden Tasks. Wir können auch *lock(){}* verwenden, da das threadsichere Inkrementieren von Variablen
 aber häufig vorkommt, gibt es mit der statischen Klasse *Interlocked* die Möglichkeit, dies als atomare
 Operation (kann nicht unterbrochen werden) auszuführen.
 
@@ -81,21 +81,9 @@ laufen. Am Anfang steigt diese Zahl langsam an, da gerade Zahlen sehr schnell ve
 also die Zahlen mit hohen Teilern oder die Primzahlen lange in der Prüfschleife von *IsPrime()*. Der
 Maximalwert ist allerdings 13, denn es gibt nur 12 logische CPU Kerne und der 13. wird sozusagen "nachgeladen".
 
-## Experimente
-1. Setze *const int START_NUMBER* auf 0 statt auf 500000000. Die Berechnung geht dann natürlich bei kleinen
-   Zahlen viel schneller. Die Statistik wandelt sich auf einmal: 
-   *Synchron: 0.00s, Parallel: 0.15s (Faktor 146.02)*. Wir sehen, dass das Erstellen von Tasks und der 
-   darunterliegenden Threads einen overhead darstellt, der sich erst rechnen muss. Dauern die Tasks also nur
-   sehr kurz, kann die synchrone Lösung schneller sein.
-2. Ändere den Aufruf von *Parallel.For* so ab, indem du *new ParallelOptions { MaxDegreeOfParallelism = 100 }*
-   als drittes Argument einfügst:
-   ```c#
-   Parallel.For(START_NUMBER, START_NUMBER + NUMBER_COUNT,
-       new ParallelOptions { MaxDegreeOfParallelism = 100 },
-       (number) => ...
-   ```
-   Die Anzahl der laufenden Tasks wird allerdings auch nicht über 13 (bei 12 Kernen) steigen, denn die
-   CPU ist so ausgelastet, dass gar keine neuen Tasks erstellt werden können. Es ist also gewissermaßen
-   selbstkorrigierend. Das ist aber nur bei CPU intensiven (CPU bound) Tasks so. Bei I/O intensiven Tasks
-   mit wenig CPU Auslastung funktioniert das nicht mehr. **Deswegen verwendet man Parallel ohne weitere 
-   Vorkehrungen nur bei CPU Intensiven Tasks und nicht für I/O Tasks!**
+## Experiment
+Setze *const int START_NUMBER* auf 0 statt auf 500000000. Die Berechnung geht dann natürlich bei kleinen
+Zahlen viel schneller. Die Statistik wandelt sich auf einmal: 
+*Synchron: 0.00s, Parallel: 0.15s (Faktor 146.02)*. Wir sehen, dass das Erstellen von Tasks und der 
+darunterliegenden Threads einen overhead darstellt, der sich erst rechnen muss. Dauern die Tasks also nur
+sehr kurz, kann die synchrone Lösung schneller sein.
