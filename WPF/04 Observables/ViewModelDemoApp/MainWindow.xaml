@@ -1,0 +1,142 @@
+﻿<!--
+XAML CODE FÜR DIE VIEWMODEL DEMO
+-) xmlns:vm="clr-namespace:ViewModelDemoApp.ViewModels" 
+   wird für den Zugriff auf das ViewModel benötigt, da dieses in einem Ordner 
+   und daher in einem eigenen Namespace ist 
+-) Alle Icons sind von https://www.flaticon.com/
+    
+-->
+<Window x:Class="ViewModelDemoApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ViewModelDemoApp"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:vm="clr-namespace:ViewModelDemoApp.ViewModels"
+        mc:Ignorable="d"
+        Title="Personenverwaltung mit Viewmodel" Height="450" Width="600"
+        Icon="Icons/person.png">
+    <!-- Instanziert das ViewModel und legt den DataContext fest. Bindings ohne ElementName greifen
+         daher auf das MainViewModel zu. -->
+    <Window.DataContext>
+        <vm:MainViewModel />
+    </Window.DataContext>
+    <!-- Definition der Converter als statische Resource. -->
+    <Window.Resources>
+        <local:AgeConverter x:Key="AgeConverterKey"/>
+        <local:VisibilityConverter x:Key="VisiblityConverterKey"/>
+        <sys:String x:Key="BoyIcon">Icons/boy.png</sys:String>
+        <sys:String x:Key="GirlIcon">Icons/girl.png</sys:String>
+    </Window.Resources>
+    <!-- Margin arbeitet in der Reihenfolge left, top, right, bottom. Nicht mit top beginnend wie in CSS. -->
+    <DockPanel Margin="5 5 5 5">
+        <!-- Eine ListBox kann eine Liste von Elementen anzeigen. ItemSource muss natürluch auf eine
+        Liste von Personen verweisen. In SelectedItem wird die aktuell ausgewählte Person geschrieben, daher ist
+        das Property vom Typ Person (keine Liste!) -->
+        <ListBox DockPanel.Dock="Left" MinWidth="140" ItemsSource="{Binding Persons}" SelectedItem="{Binding CurrentPerson}">
+            <!-- Da Person ein komplexer Typ ist, wird ohne ein DataTemplate nur die ToString() Repräsentation
+            angezeigt. Damit wir die einzelnen Properties von Person anzeigen können, wird hier die
+            Darstellung einer Zelle gestaltet. -->
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <DockPanel Margin="5 5 5 5">
+                        <!-- Da ItemSource eine Personenliste ist, verweisen alle Bindings auf die gewählte
+                        Person. Daher muss nicht CurrentPerson.Lastname geschrieben werden. -->
+                        <!-- Das Male Bild nur anzeigen, wenn Sex = Male ist. -->
+                        <Image DockPanel.Dock="Left" Width="32" Source="Icons/boy.png" Visibility="{Binding Sex, Converter={StaticResource VisiblityConverterKey}, ConverterParameter=Male}" />
+                        <!-- Das Female Bild nur anzeigen, wenn Sex = Female ist. -->
+                        <Image DockPanel.Dock="Left" Width="32" Source="Icons/girl.png" Visibility="{Binding Sex, Converter={StaticResource VisiblityConverterKey},ConverterParameter=Female}" />
+                        <StackPanel>
+                            <TextBlock Text="{Binding Firstname}" />
+                            <TextBlock FontWeight="Bold" Text="{Binding Lastname}" />
+                        </StackPanel>
+                    </DockPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+            </Grid.RowDefinitions>
+            <!-- 1. Zeile mit Vorname in einer Textbox mit Binding an das MainViewModel.
+                 Mode=OneWay kann entfernt werden, wenn der User die Daten verändern soll. Dann
+                 wird nämlich in CurrentPerson geschrieben!
+                 UpdateSourceTrigger=PropertyChanged 
+                 ist bei OneWay unnötig, ist aber schon für TwoWay Binding enthalten. Hier wird das
+                 ViewModel sofort aktualisiert, nicht erst beim Verlassen des Textfeldes.
+            -->
+            <Label Content="Vorname:" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center"/>
+            <TextBox Margin="0 0 0 0" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center"
+                     Text="{Binding CurrentPerson.Firstname,  UpdateSourceTrigger=PropertyChanged}" />
+
+            <!-- 2. Zeile mit Nachname in einer Textbox mit Binding an das MainViewModel. -->
+            <Label Content="Nachname:" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center"/>
+            <TextBox Margin="0 5 0 5" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center"
+                     Text="{Binding CurrentPerson.Lastname, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+
+            <!-- 3. Zeile mit Geburtsdatum in einem TextBlock (ist read only) mit Binding an das MainViewModel. 
+                 Zusätzlich wird über ein StringFormat das deutsche Datumsformat ausgegeben. 
+                 StringFormat hat den Aufbau {}{0:Format des 1. Parameters}... Anstelle von {} wird der
+                 Text aus dem Binding ersetzt. 
+                 Vgl. https://docs.microsoft.com/en-us/dotnet/standard/base-types/composite-formatting
+            
+                 Wenn wir übrigends mit TwoWay Binding ein Datum schreiben wollen, müssen wir hier einen Converter
+                 und die ConvertBack Methode statt dessen implementieren.   -->
+            <Label Content="Geburtsdatum:" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center"/>
+            <TextBox Margin="0 5 0 5" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center"
+                     Text="{Binding CurrentPerson.DateOfBirth, Mode=OneWay, StringFormat={}{0:dd.MM.yyyy}}" />
+
+            <!-- 4. Zeile mit Langnamen (Vorname Zuname) in einem einem TextBlock (ist read only) mit Binding an das MainViewModel. 
+                 Wir erzeugen die Ausgabe mit MultiBinding, da der String sich aus 2 Feldern des ViewModels
+                 zusammensetzt. Es muss immer ein StringFormat (oder Converter) angegben werden,
+                 der angibt, wie die beiden Werte zusammengesetzt werden sollen. Schließlich kann der
+                 TextBlock ja nur 1 String darstellen. Man könnte natürlich auch im
+                 ViewModel ein Property definieren, was dies aus CurrentPerson zurückgibt. Allerdings
+                 muss dann auch mittels PropertyChanged das Binding aktualisiert werden, wenn CurrentPerson
+                 geändert wird. Deswegen arbeiten die Profis hier mit Multiminding und StringFormat. -->
+            <Label Content="Langname:" Grid.Column="0" Grid.Row="3" VerticalAlignment="Center"/>
+            <TextBlock Margin="0 5 0 5" Grid.Column="1" Grid.Row="3" VerticalAlignment="Center">
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="{} {0} {1}">
+                        <Binding Path="CurrentPerson.Firstname"/>
+                        <Binding Path="CurrentPerson.Lastname"/>
+                    </MultiBinding >
+                </TextBlock.Text>
+            </TextBlock>
+
+            <!-- 5. Zeile mit Alter und einem TextBlock (ist read only) mit Binding an das MainViewModel. 
+                 Das Alter wird mit einem Converter (AgeConverter) berechnet. Man könnte natürlich auch im
+                 ViewModel ein Property definieren, was dies aus CurrentPerson zurückgibt. Allerdings
+                 muss dann auch mittels PropertyChanged das Binding aktualisiert werden, wenn CurrentPerson
+                 geändert wird. Deswegen arbeiten die Profis hier mit Convertern. -->
+            <Label Content="Alter:" Grid.Column="0" Grid.Row="4" VerticalAlignment="Center"/>
+            <TextBlock Margin="0 5 5 5" Grid.Column="1" Grid.Row="4" VerticalAlignment="Center"
+                   Text="{Binding CurrentPerson.DateOfBirth, Converter={StaticResource AgeConverterKey}, StringFormat={}{0:0.00} Jahre}" />
+
+            <!-- Panel mit den Buttons für die Navigation in der Liste. -->
+            <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="5">
+                <!-- Binding an das Property PrevCommand in MainViewModel.-->
+                <Button Width="32" Margin="0 0 30 0" Command="{Binding PrevCommand}">
+                    <Image Source="Icons/left-arrow.png"></Image>
+                </Button>
+                <Button Width="32" Margin="0 0 30 0" Command="{Binding NextCommand}">
+                    <Image Source="Icons/right-arrow.png" ></Image>
+                </Button>
+                <Button  Margin="0 0 30 0" Content="Generate Person" Command="{Binding GeneratePersonCommand}"/>
+                <Button Content="Delete Person" Command="{Binding DeletePersonCommand}"/>
+            </StackPanel>
+        </Grid>
+
+    </DockPanel>
+</Window>
