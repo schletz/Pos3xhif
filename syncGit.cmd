@@ -3,5 +3,5 @@ REM mit Adaptierungen für das deutsche Datumsformat (geht nur bei deutschem Wind
 For /f "tokens=1-3 delims=. " %%a in ('date /t') do (set mydate=%%c%%b%%a)
 git add -A
 git commit -a -m "Commit %mydate%"
-git pull origin master
+git pull origin master --allow-unrelated-histories
 git push origin master

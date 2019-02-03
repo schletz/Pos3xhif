@@ -53,7 +53,7 @@ git remote add origin (URL)
 ```bash {.line-numbers}
 git add -A
 git commit -a -m "Commit"
-git pull origin master
+git pull origin master --allow-unrelated-histories
 git push origin master
 ```
 
