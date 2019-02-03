@@ -23,7 +23,7 @@ git remote add origin https://github.com/schletz/Pos3xhif.git
     *git reset* auf den Originalstand zurückgesetzt.
 ```bash {.line-numbers}
 git reset --hard
-git pull origin master
+git pull origin master --allow-unrelated-histories
 ```
 
 ## Optional: anlegen eines eigenen Repositories
