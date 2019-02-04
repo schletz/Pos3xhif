@@ -27,7 +27,6 @@ manchmal sehr kreativ sind, wähle hier Englisch als Sprache.
 Folgende Extensions können auch installiert werden. Lade dafür unter den angegebenen Links die vsix Datei
 herunter und installiere sie durch Doppelklick. Visual Studio muss dafür geschlossen sein.
 
-1. [CodeMaid](https://marketplace.visualstudio.com/items?itemName=SteveCadwallader.CodeMaid)
 1. [Editor Guidelines](https://marketplace.visualstudio.com/items?itemName=PaulHarrington.EditorGuidelines)
 1. [Markdown Editor](https://marketplace.visualstudio.com/items?itemName=MadsKristensen.MarkdownEditor)
 
