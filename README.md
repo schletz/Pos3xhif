@@ -37,7 +37,7 @@ verwendet, da sie durch das .NET Framework wesentlich einfacher zugänglich sind
             Umsetzung des MVVM Patterns in WPF Teil 2 (Aktualisierung, Listviews, Menüs, User Controls, States)
         </td>
         <td>
-            Graphische Benutzerschnittstellen mit Validierung der Benutzereingaben und Fehlerbehandlung.
+            <em>Graphische Benutzerschnittstellen mit Validierung der Benutzereingaben und Fehlerbehandlung.</em>
         </td>
     <tr>
         <td>

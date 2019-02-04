@@ -1,0 +1,149 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OSM geolocation Demo</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.4.0/leaflet.css" integrity="sha256-YR4HrDE479EpYZgeTkQfgVJq08+277UXxMLbi/YP69o="
+        crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js" integrity="sha256-owX7sroiO/O1a7h3a4X29A1g3QgqdNvijRQ7V5TH45M="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.4.0/leaflet.js" integrity="sha256-6BZRSENq3kxI4YYBDqJ23xg0r1GwTHEpvp3okdaIqBw="
+        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+    <style type="text/css">
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        td {
+            vertical-align: top;
+        }
+
+        p {
+            margin-top: 1em;
+            margin-bottom: 0px;
+        }
+
+        #map {
+            margin-top: 1em;
+            height: 300px;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-1 col-xl-2"></div>
+            <div class="col-12 col-md-10 col-xl-8">
+                <h1>Geocoding mit OSM</h1>
+                <p>
+                    Da seit 11. Juni 2018 der Google Geocoder ohne API Key und Rechnungskonto nicht mehr
+                    nutzbar ist<sup><a href="https://cloud.google.com/maps-platform/user-guide/account-changes/">[1]</a></sup>,
+                    gibt es mit <a href="https://nominatim.openstreetmap.org/search">nominatim.openstreetmap.org</a>
+                    eine auf OSM basierende Alternative.
+                </p>
+            </div>
+            <div class="col-md-1 col-xl-2"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-1 col-xl-2"></div>
+            <div class="col-12 col-md-10 col-xl-8">
+                <p>Gib eine Adresse ein:</p>
+                <input type="text" data-bind="value: address" style="width:100%">
+                <div id="map"></div>
+                <select class="float-right" data-bind="options: availableMaps, value: selectedMap"></select>
+                <p data-bind="text: state"></p>
+                <table data-bind="visible: locations().length > 0" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Lat.</th>
+                            <th>Lon.</th>
+                            <th>RAW Data</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: locations">
+                        <tr>
+                            <td data-bind="text: lat"></td>
+                            <td data-bind="text: lon"></td>
+                            <td><code data-bind="text: raw"></code></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <sup>&copy; Michael Schletz 2019</sup>
+            </div>
+            <div class="col-md-1 col-xl-2"></div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        class AppViewModel {
+            constructor() {
+                this.address = ko.observable("");          // Eingabefeld für die Adresse.
+                this.locations = ko.observableArray();     // Die gefundenen Orte.
+                this.state = ko.observable("");            // Lade- und Fehlermeldungen.
+
+                // Verschiedene Leaflet Layer von Kartenanbietern. Basemap ist die offizielle Verwaltungskarte
+                // Österreichs. 
+                this.layers = {
+                    "Basemap": L.tileLayer('https://maps1.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpeg', { maxZoom: 19 }),
+                    "Openstreetmap": L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }),
+                    "Mapy Streetmap": L.tileLayer('https://mapserver.mapy.cz/turist-m/{z}-{x}-{y}', { maxZoom: 18 }),
+                    "Satellite": L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+                        maxZoom: 20,
+                        subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+                    })
+                };
+
+                // Für das Dropdownfeld der Kartenauswahl.
+                this.availableMaps = ko.observableArray(Object.keys(this.layers));
+                // Der key der aktuell ausgewählte Karte, wird über das Dropdownfeld gesetzt.
+                this.selectedMap = ko.observable();
+
+                // Die Karte auf Ostösterreich zoomen.
+                this.map = new L.Map("map", { zoomControl: true }).setView([48, 16], 9);
+
+                // Code, der ausgeführt wird, wenn sich die Adresse und die Grundkarte ändert.
+                this.address.subscribe(() => { this.state("Loading..."); this.getLocation(); });
+                this.selectedMap.subscribe((item) => this.switchMap(item));
+
+                // Basemap (die 1. Karte) als Standard Kartenoverlay verwenden.
+                this.selectedMap(this.availableMaps()[0]);
+            }
+
+            switchMap(mapKey) {
+                if (this.activeLayer) { this.activeLayer.remove(); }
+                this.activeLayer = this.layers[mapKey];
+                this.activeLayer.addTo(this.map);
+            }
+            getLocation() {
+                if (this.markers) { this.markers.remove(); }
+                this.markers = L.featureGroup().addTo(this.map);
+                $.getJSON("https://nominatim.openstreetmap.org/search", { q: this.address, format: "json" })
+                    .done((data) => {
+                        this.state(data.length + " features found.");
+                        this.locations(data.map(val => ({ lat: val.lat, lon: val.lon, raw: JSON.stringify(val) })));
+                        data.forEach(val => {
+                            const marker = L.marker([val.lat, val.lon]).addTo(this.markers);
+                            marker.rawData = val;
+                            marker.on('click', (e) => console.log(e.target.rawData, this));
+                        });
+                        this.map.fitBounds(this.markers.getBounds());
+                    })
+                    .fail((e) => this.state("Request failed. " + JSON.stringify(e)));
+            };
+        };
+
+        ko.applyBindings(new AppViewModel());
+    </script>
+</body>
+
+</html>

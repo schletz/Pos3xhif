@@ -1,13 +1,13 @@
 # Await und Async: Task-Based Asynchronous Pattern 
 
-Manchmal müssen in einem Programm zeitintensive Vorgänge einmalig gestartet werden. Meist sind dies I/O
-Vorgänge wie
+Manchmal müssen in einem Programm zeitintensive Vorgänge gestartet und auf das Ergebnis gewartet werden. 
+Meist sind dies I/O Vorgänge wie
 - das Laden von einer URL
 - das Lesen einer (großen) Datei
 - das Abfragen einer Datenbank
 - das Lesen von einer Schnittstelle.
 
-Allen Vorgängen gemein ist, dass sie im Vergleich zum Zugriff auf den Hauptspeicher sehr lange Zeit benötigen.
+Allen Vorgängen gemein ist, dass sie im Vergleich zum Zugriff auf den Hauptspeicher sehr viel Zeit benötigen.
 Damit das Ergebnis der Operation weiterverarbeitet werden kann, muss gewartet werden. Solange der Thread
 aber in einer Warteschleife hängt, kann er keine anderen Vorgänge ausführen. Bei Benutzeroberflächen macht sich dies durch das
 "einfrieren" bemerkbar.
