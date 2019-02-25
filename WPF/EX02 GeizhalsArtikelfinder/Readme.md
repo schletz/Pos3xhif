@@ -50,7 +50,7 @@ dem Property *ArticleSearchCommand* im Konstruktor eine Instanz von *RelayComman
 In der Solution ist auch ein Testprojekt inkludiert. Es instanziert das ViewModel und prüft, ob die Suche
 funktioniert. Öffne dafür in Visual Studio mit dem Menü *Test* - *Fenster* - *Test Explorer* die Testpalette.
 Du kannst alle Tests ausführen, sie müssen alle mit einem grünen Symbol durchlaufen. Falls ein Test nicht
-funktioniert, kannst du mit Rechtsklick im Text Explorer und dem Menü *Ausgefählte Tests debuggen* den
+funktioniert, kannst du mit Rechtsklick im Text Explorer und dem Menü *Ausgewählte Tests debuggen* den
 Fehler eingrenzen.
 
 ### Implementierung der Bindings in XAML
