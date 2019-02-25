@@ -30,7 +30,7 @@ select new
 
 Das vollständige Klassenmodell ist hier abgebildet:
 
-![Class Model](Model/ClassModel.PNG)
+![Class Model](GeizhalsArtikelfinder/Model/ClassModel.PNG)
 
 ### Implementierung des ViewModels
 
