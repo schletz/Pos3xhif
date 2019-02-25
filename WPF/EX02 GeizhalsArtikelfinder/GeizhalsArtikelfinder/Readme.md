@@ -45,6 +45,14 @@ Die Klasse *RelayCommand* für die Erstellung von ICommand Properties ist ebenfa
 dem Property *ArticleSearchCommand* im Konstruktor eine Instanz von *RelayCommand* zu, sodass die Methode
 *SearchArticle()* beim Klick auf den Button aufgerufen wird.
 
+### Testen des ViewModels
+
+In der Solution ist auch ein Testprojekt inkludiert. Es instanziert das ViewModel und prüft, ob die Suche
+funktioniert. Öffne dafür in Visual Studio mit dem Menü *Test* - *Fenster* - *Test Explorer* die Testpalette.
+Du kannst alle Tests ausführen, sie müssen alle mit einem grünen Symbol durchlaufen. Falls ein Test nicht
+funktioniert, kannst du mit Rechtsklick im Text Explorer und dem Menü *Ausgefählte Tests debuggen* den
+Fehler eingrenzen.
+
 ### Implementierung der Bindings in XAML
 
 Das Layout in XAML ist schon fertig vorgegeben, allerdings sind noch Platzhaltertexte verwendet worden.

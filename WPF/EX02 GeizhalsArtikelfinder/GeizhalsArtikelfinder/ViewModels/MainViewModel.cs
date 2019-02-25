@@ -6,7 +6,7 @@ using System.Windows.Input;
 
 namespace GeizhalsArtikelfinder.ViewModels
 {
-    internal class MainViewModel : INotifyPropertyChanged
+    public class MainViewModel : INotifyPropertyChanged
     {
         // Todo: Erstellen der DB Instanz.
         private readonly GeizhalsDb db;
@@ -17,7 +17,7 @@ namespace GeizhalsArtikelfinder.ViewModels
         public ICommand ArticleSearchCommand { get; }
         /// <summary>
         /// Aufrufbeispiel, für Propertyname ist der Name des Public Properties zu verwenden: 
-        ///     PropertyChanged(this, new PropertyChangedEventArgs(nameof(Propertyname)));
+        ///     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Propertyname)));
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
         /// <summary>

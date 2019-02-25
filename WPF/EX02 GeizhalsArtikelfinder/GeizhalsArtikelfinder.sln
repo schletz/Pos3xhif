@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28307.329
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeizhalsArtikelfinder", "GeizhalsArtikelfinder\GeizhalsArtikelfinder.csproj", "{60076C14-27AB-47E0-BDD6-3D1707C1DCD3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeizhalsArtikelfinder.Test", "GeizhalsArtikelfinder.Test\GeizhalsArtikelfinder.Test.csproj", "{A8795FFB-1ABA-4AD4-A775-087CFB7D5CD6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{60076C14-27AB-47E0-BDD6-3D1707C1DCD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60076C14-27AB-47E0-BDD6-3D1707C1DCD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60076C14-27AB-47E0-BDD6-3D1707C1DCD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8795FFB-1ABA-4AD4-A775-087CFB7D5CD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8795FFB-1ABA-4AD4-A775-087CFB7D5CD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8795FFB-1ABA-4AD4-A775-087CFB7D5CD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8795FFB-1ABA-4AD4-A775-087CFB7D5CD6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
