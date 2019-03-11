@@ -1,5 +1,12 @@
 # Datenbankzugriff mit ADO.NET
 
+## Erstellen der Datenbank
+- Öffne das SQL Server Management Studio. Gib dafür im Startmenü *SSMS* ein.
+- Erstelle eine neue Datenbank mit dem Namen *WeatherDb*. Klicke dafür mit der rechten Maustaste auf *Datenbanken*
+  und wähle *Neue Datenbank...*.
+- Kopiere den Inhalt von *WeatherDbDump.sql* in ein neues Abfragefenster. Achte darauf, dass als Datenbank
+  *WeatherDb* ausgewählt ist. Führe mit dem Play Button nun alle Befehle aus.
+
 ## Erstellen der Modelklassen
 Jede Tabelle wird in einer Modelklasse umgesetzt. Wichtig ist dabei die richtige Umsetzung der Datentypen.
 So können - wenn nicht anders eingestellt - Datenbankwerte NULL annehmen. Wertetypen in C# allerdings 

@@ -33,7 +33,6 @@ namespace FirstDbApp
                 Console.Error.WriteLine(e.Message);
             }
             Console.ReadKey();
-
         }
     }
 }
