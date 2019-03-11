@@ -37,8 +37,8 @@ Der folgende Code illustriert den Zugriff mit den Klasse aus dem Namespace *Syst
 ```c#
 public IEnumerable<Station> GetStations()
 {
-	string connection = "Server=(local);Database=WeatherDb;Trusted_Connection=True;";
-	using (connection = new SqlConnection(connectionString))
+	string connectionString = "Server=(local);Database=WeatherDb;Trusted_Connection=True;";
+	using (SqlConnection connection = new SqlConnection(connectionString))
 	{
 		connection.Open();
 		// SELECT * FROM Station
