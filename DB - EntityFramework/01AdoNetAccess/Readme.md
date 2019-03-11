@@ -32,24 +32,28 @@ public class Station
 ```
 
 ## Zugriff mit "rohen" ADO.NET Funktionen
-
+Der folgende Code illustriert den Zugriff mit den Klasse aus dem Namespace *System.Data.SqlClient*.
+*yield return* liefert einen Enumerator zurück, daher wird keine lokale Liste zum Zwischenspeichern benötigt.
 ```c#
-string connection = "Server=(local);Database=WeatherDb;Trusted_Connection=True;";
-// SELECT * FROM Station
-SqlCommand command = new SqlCommand("SELECT * FROM Station", connection);
-using (connection = new SqlConnection(connectionString))
+public IEnumerable<Station> GetStations()
 {
-	connection.Open();
-	using (SqlDataReader reader = command.ExecuteReader())
+	string connection = "Server=(local);Database=WeatherDb;Trusted_Connection=True;";
+	using (connection = new SqlConnection(connectionString))
 	{
-		while (reader.Read())
+		connection.Open();
+		// SELECT * FROM Station
+		SqlCommand command = new SqlCommand("SELECT * FROM Station", connection);		
+		using (SqlDataReader reader = command.ExecuteReader())
 		{
-			yield return new Station
+			while (reader.Read())
 			{
-				S_ID = (int)reader["S_ID"],
-				S_Location = (string)reader["S_Location"],
-				S_Height = reader["S_Height"] == System.DBNull.Value ? null : (int?)reader["S_Height"]
-			};
+				yield return new Station
+				{
+					S_ID = (int)reader["S_ID"],
+					S_Location = (string)reader["S_Location"],
+					S_Height = reader["S_Height"] == System.DBNull.Value ? null : (int?)reader["S_Height"]
+				};
+			}
 		}
 	}
 }
