@@ -27,7 +27,10 @@ abrufbar.
 
 ## Zugriff auf die Datenbank
 Für den Zugriff wird die Bibliothek FirebaseDatabase.net verwendet. Der Quelltext und die Dokumentation
-ist auf der [GitHub Seite des Projektes](https://github.com/step-up-labs/firebase-database-dotnet) zu finden.
+sind auf der [GitHub Seite des Projektes](https://github.com/step-up-labs/firebase-database-dotnet) zu finden.
+
+In der Firebase Console kann unter dem Punkt *Database* bei *Echtzeitdatenbank* der Inhalt der Datenbank
+eingesehen werden. Schreibzugriffe können live verfolgt werden.
 
 Ein Mustercode für den Zugriff ist unten abgebildet, es müssen die Variablen *secret* und *database* durch
 die eigenen Daten ersetzt werden.
