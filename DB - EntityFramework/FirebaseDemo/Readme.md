@@ -10,7 +10,7 @@
 2. Lege mit *Projekt hinzufügen* ein neues Projekt an. In unserem Beispiel ist dies *Schuelerverwaltung*.
    Die Freigabe für Google Analytics kann abgehakt werden.
 3. Bei der Datenfreigabe kann alles abgehakt bleiben. Gehe nun auf *Projekt erstellen*.
-4. Das Projekt ist nun auch auf der (Google Cloud Platform)[https://console.cloud.google.com] angelegt.
+4. Das Projekt ist nun auch auf der [Google Cloud Platform](https://console.cloud.google.com) angelegt.
 5. Wähle nun im linken Menü der Firebase Console den Punkt *Database* und lege mit *Datenbank erstellen*
    eine neue Cloud Firestore Datenbank an.
 6. Bei den Sicherheitsregeln wähle den *gesperrten Modus*, somit kann ohne Authentifizierung nicht gelesen
@@ -26,7 +26,7 @@ Informationen über die Einschränkungen der Gratisversion sind unter [Pricing](
 abrufbar.
 
 ## Zugriff auf die Datenbank
-Für den Zugriff wird die Bibliothek FirebaseDatabase.net verwendet. Der Quelltext und die Dokumentation
+Für den Zugriff wird die Bibliothek *FirebaseDatabase.net* verwendet. Der Quelltext und die Dokumentation
 sind auf der [GitHub Seite des Projektes](https://github.com/step-up-labs/firebase-database-dotnet) zu finden.
 
 In der Firebase Console kann unter dem Punkt *Database* bei *Echtzeitdatenbank* der Inhalt der Datenbank
