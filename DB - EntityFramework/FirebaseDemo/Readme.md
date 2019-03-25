@@ -1,7 +1,18 @@
 # Google Firebase Demo App
 
-## Erstellen einer Firebase Datenbank
+## Firebase vs. Firestore
+Google bietet derzeit (März 2019) zwei Möglichkeiten an, semistrukturierte Daten in seiner Cloud zu speichern:
+**Firebase** und **Firestore**. 
+> - Realtime Database is Firebase's original database. It's an efficient, low-latency solution for mobile 
+>   apps that require synced states across clients in realtime.
+> - Cloud Firestore is Firebase's new flagship database for mobile app development. It improves on the 
+>   successes of the Realtime Database with a new, more intuitive data model. Cloud Firestore also features richer, faster queries and scales better than the Realtime Database.
+> -- <cite>[firebase.google.com](https://firebase.google.com/docs/database/rtdb-vs-firestore)</cite>
 
+In dieser Demo beschäftigen wir uns mit **Firebase**, da hier Events in Echtzeit ausgetauscht werden können.
+So bekommt unsere Applikation ein Event, wenn jemand z. B. in Amerika über eine App einen Datensatz hinzufügt.
+
+## Erstellen einer Firebase Datenbank
 ![Firebase Console](FirebaseConsole.png)
 <sup>*Screenshot von console.firebase.google.com*</sup>
 
@@ -34,6 +45,137 @@ eingesehen werden. Schreibzugriffe können live verfolgt werden.
 
 Ein Mustercode für den Zugriff ist unten abgebildet, es müssen die Variablen *secret* und *database* durch
 die eigenen Daten ersetzt werden.
+
+## Modellierung für Firebase
+Firebase speichert JSON Daten als **Key - Value Speicher**. Das bedeutet, dass jedes Unterobjekt einen
+Key besitzt, mit dem ein Ansprechen möglich ist. Im nachfolgenden Beispiel wurde der Klassenname sowie
+der Accountname als eindeutiger Key verwendet. Sehen wir uns ein typisches JSON Dokument an, **wie es 
+allerdings nicht sein sollte**:
+```js
+{
+	"Klassen": {
+		"3AHIF": {
+			"KV": "SZ",
+			"Raum": "C3.09",
+			"Schueler": {
+				"ABC122": {
+					"Name": "Nach1",
+					"Vorname": "Vor1",
+					"Email": "abc122@spengergasse.at"
+				},
+				"ABC123": {
+					"Name": "Nach2",
+					"Vorname": "Vor2",
+					"Email": "abc123@spengergasse.at"
+				}
+			}
+		},
+		"3BHIF": {
+			"KV": "SIL",
+			"Raum": "C3.10",
+			"Schueler": {
+				"ABC222": {
+					"Name": "Nach1",
+					"Vorname": "Vor1",
+					"Email": "abc222@spengergasse.at"
+				},
+				"ABC223": {
+					"Name": "Nach2",
+					"Vorname": "Vor2",
+					"Email": "abc223@spengergasse.at"
+				}
+			}
+		},
+		"3CHIF": {
+			"KV": "TT",
+			"Raum": "C3.11",
+			"Schueler": {
+				"ABC322": {
+					"Name": "Nach1",
+					"Vorname": "Vor1",
+					"Email": "abc322@spengergasse.at"
+				},
+				"ABC323": {
+					"Name": "Nach2",
+					"Vorname": "Vor2",
+					"Email": "abc323@spengergasse.at"
+				}
+			}
+		}
+	}
+}
+```
+
+Der Grund, dass wir die Daten nicht so speichern sollten, ist folgender: Angenommen wir möchten eine Übersicht
+der Klassen als Liste anzeigen. Dafür brauchen wir nur die Klassenbezeichnung und den KV. Firebase kann
+allerdings nur ganze Knoten laden. **Das bedeutet, dass wir für diese Übersichtsliste auch alle Schülerdaten
+laden müssen!**
+
+Besser ist folgender Ansatz:
+```js
+{
+	"Klassen": {
+		"3AHIF": {
+			"KV": "SZ",
+			"Raum": "C3.09"
+		},
+		"3BHIF": {
+			"KV": "SIL",
+			"Raum": "C3.10"
+		},
+		"3CHIF": {
+			"KV": "TT",
+			"Raum": "C3.11"
+		}
+	},
+
+	"Schueler": {
+		"3AHIF": {
+			"ABC122": {
+				"Name": "Nach1",
+				"Vorname": "Vor1",
+				"Email": "abc122@spengergasse.at"
+			},
+			"ABC123": {
+				"Name": "Nach2",
+				"Vorname": "Vor2",
+				"Email": "abc123@spengergasse.at"
+			}
+		},
+		"3BHIF": {
+			"ABC222": {
+				"Name": "Nach1",
+				"Vorname": "Vor1",
+				"Email": "abc222@spengergasse.at"
+			},
+			"ABC223": {
+				"Name": "Nach2",
+				"Vorname": "Vor2",
+				"Email": "abc223@spengergasse.at"
+			}
+		},
+		"3CHIF": {
+			"ABC322": {
+				"Name": "Nach1",
+				"Vorname": "Vor1",
+				"Email": "abc322@spengergasse.at"
+			},
+			"ABC323": {
+				"Name": "Nach2",
+				"Vorname": "Vor2",
+				"Email": "abc323@spengergasse.at"
+			}
+		}
+	}
+}
+``` 
+Bei diesem Ansatz speichern wir die Grundinformationen der Klassen in einem eigenen Dokument *Klassen*.
+Die Schüler organisieren wir ebenfalls in Klassen, da unsere Applikation die Schüler klassenweise anzeigen
+wird. Wir sehen bereits, **dass wir für eine sinnvolle Modellierung bereits wissen müssen, wie die Applikation
+die Daten abfragen wird.**
+
+Weitere Infos gibt es auf [howtofirebase.com](https://howtofirebase.com/firebase-data-modeling-939585ade7f4) 
+und auf [firebase.google.com/](https://firebase.google.com/docs/database/web/structure-data) nachzulesen.
 
 
 ## Mustercode
