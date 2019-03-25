@@ -37,8 +37,9 @@ Informationen über die Einschränkungen der Gratisversion sind unter [Pricing](
 abrufbar.
 
 ## Zugriff auf die Datenbank
-Für den Zugriff wird die Bibliothek *FirebaseDatabase.net* verwendet. Der Quelltext und die Dokumentation
-sind auf der [GitHub Seite des Projektes](https://github.com/step-up-labs/firebase-database-dotnet) zu finden.
+Für Firebase gibt es von Google Bibliotheken für iOS, Android, Javascript, Unity und C++. Es gibt aber
+auch eine REST Schnittstelle, die von Drittanbietern verwendet wird. Eine Bibliothek für C# ist *FirebaseDatabase.net*. 
+Der Quelltext und die Dokumentation sind auf der [GitHub Seite des Projektes](https://github.com/step-up-labs/firebase-database-dotnet) zu finden.
 
 In der Firebase Console kann unter dem Punkt *Database* bei *Echtzeitdatenbank* der Inhalt der Datenbank
 eingesehen werden. Schreibzugriffe können live verfolgt werden.
