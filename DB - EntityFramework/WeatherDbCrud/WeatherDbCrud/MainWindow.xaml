@@ -11,8 +11,9 @@
         <vm:MainViewModel/>
     </Window.DataContext>
     <DockPanel>
-        <StackPanel DockPanel.Dock="Left">
+        <DockPanel DockPanel.Dock="Left">
             <ComboBox x:Name="StationList" 
+                      DockPanel.Dock="Top"
                       ItemsSource="{Binding Stations}"
                       SelectedItem="{Binding CurrentStation}">
                 <ComboBox.ItemTemplate>
@@ -25,7 +26,7 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
             <ListBox x:Name="MeasurementList" MinWidth="160" 
-                     ItemsSource="{Binding CurrentStation.Measurements}"
+                     ItemsSource="{Binding Measurements}"
                      SelectedItem="{Binding CurrentMeasurement}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
@@ -36,7 +37,7 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-        </StackPanel>
+        </DockPanel>
         <StackPanel>
             <GroupBox Header="Details des Messwertes" Padding="3 5 0 5">
                 <StackPanel>

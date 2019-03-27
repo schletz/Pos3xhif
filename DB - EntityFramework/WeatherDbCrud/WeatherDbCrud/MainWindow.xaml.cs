@@ -29,23 +29,19 @@ namespace WeatherDbCrud
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             MainViewModel vm = DataContext as MainViewModel ?? throw new Exception("ViewModel is null.");
-            vm.SaveData();
-            MeasurementList.Items.Refresh();
+            vm.UpdateMeasurement();
         }
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
             MainViewModel vm = DataContext as MainViewModel ?? throw new Exception("ViewModel is null.");
             vm.DeleteCurrentMeasurement();
-            MeasurementList.Items.Refresh();
         }
 
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {
             MainViewModel vm = DataContext as MainViewModel ?? throw new Exception("ViewModel is null.");
             vm.AddNewMeasurement();
-            MeasurementList.Items.Refresh();
-
         }
     }
 }

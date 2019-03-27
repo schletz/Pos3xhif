@@ -8,39 +8,77 @@ namespace WeatherDbCrud.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        private readonly WeatherDb db = new WeatherDb();
-
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public IEnumerable<Station> Stations => db.Stations.ToList();
+        public IEnumerable<Station> Stations
+        {
+            get
+            {
+                using (WeatherDb db = new WeatherDb())
+                {
+                    return db.Stations.ToList();
+                }
+            }
+        }
+
         private Station currentStation;
         public Station CurrentStation
         {
             get => currentStation;
-            set { currentStation = value; PropertyChanged(this, new PropertyChangedEventArgs(nameof(CurrentStation))); }
+            set { currentStation = value; PropertyChanged(this, new PropertyChangedEventArgs(nameof(Measurements))); }
+        }
+
+        public IEnumerable<Measurement> Measurements
+        {
+            get
+            {
+                if (CurrentStation == null) { return Enumerable.Empty<Measurement>(); }
+                using (WeatherDb db = new WeatherDb())
+                {
+                    db.Stations.Attach(CurrentStation);
+                    return CurrentStation.Measurements.ToList();
+                }
+            }
         }
         public Measurement CurrentMeasurement { get; set; }
         public Measurement NewMeasurement { get; set; } = new Measurement { M_Date = DateTime.Now };
 
-        public void SaveData()
+        public void UpdateMeasurement()
         {
-            try { db.SaveChanges(); } catch { }
-
+            using (WeatherDb db = new WeatherDb())
+            {
+                db.Measurements.Attach(CurrentMeasurement);
+                db.Entry(CurrentMeasurement).State = System.Data.Entity.EntityState.Modified;
+                db.SaveChanges();
+            }
+            PropertyChanged(this, new PropertyChangedEventArgs(nameof(Measurements)));
         }
 
         public void DeleteCurrentMeasurement()
         {
-            if (CurrentMeasurement == null) { return; }
-            db.Measurements.Remove(CurrentMeasurement);
-            try { db.SaveChanges(); } catch { }
+            using (WeatherDb db = new WeatherDb())
+            {
+                db.Measurements.Attach(CurrentMeasurement);
+                db.Entry(CurrentMeasurement).State = System.Data.Entity.EntityState.Deleted;
+                db.SaveChanges();
+            }
+            PropertyChanged(this, new PropertyChangedEventArgs(nameof(Measurements)));
+
         }
 
         public void AddNewMeasurement()
         {
-            CurrentStation?.Measurements.Add(NewMeasurement);
-            try { db.SaveChanges(); } catch { }
+            using (WeatherDb db = new WeatherDb())
+            {
+                // Ohne das Anhängen würde der Fremdschlüssel in NewMeasurement nicht korrekt gesetzt
+                // werden (M_Station ist dann 0)
+                db.Stations.Attach(CurrentStation);
+                CurrentStation.Measurements.Add(NewMeasurement);
+                db.SaveChanges();
+            }
             NewMeasurement = new Measurement { M_Date = DateTime.Now };
             PropertyChanged(this, new PropertyChangedEventArgs(nameof(NewMeasurement)));
+            PropertyChanged(this, new PropertyChangedEventArgs(nameof(Measurements)));
         }
     }
 }
