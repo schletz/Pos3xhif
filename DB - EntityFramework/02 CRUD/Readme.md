@@ -19,98 +19,96 @@
 // *************************************************************************************************
 
 using System;
-using System.Linq;
-using CrudDemo.Model;   // Für die DB Klassen
+using System.Data.SqlClient;  // Für SqlCommand
+using WeatherDbCrud.Model;
 
-namespace CrudDemo
+namespace WeatherDbCrud
 {
     class Program
     {
+        // Wir verwenden immer kurzlebige Verbindungen, damit die DB Verbindung nicht während
+        // der ganzen Laufzeit des Programmes aktiv bleibt.
         static void Main(string[] args)
         {
-            // Zufällig generierter Key für die Station, damit beim zweimaligen Ausführen keine PK
-            // Verletzung entsteht.
-            Random rnd = new Random();
-            int stationKey = rnd.Next();           
-
+            // *************************************************************************************
             // CREATE
-            // Erstelle eine Station mit der Location Spannberg.
-            // Mit new wird ein neues Objekt erstellt, welches allerdings
-            // untracked ist.
+            // Erstelle eine neue Station und füge ein paar Measurements hinzu.
+            // *************************************************************************************
+            Random rnd = new Random();
+            int stationId = rnd.Next();  // Immer anderer Key, wenn wir mehrmals starten.
+            Station myStation = new Station
+            {
+                S_ID = stationId,
+                S_Location = "Spengergasse",
+                S_Height = 170
+            };
+
+            // Wir nutzen die Navigation von Station, um Werte einzufügen.
+            myStation.Measurements.Add(new Measurement
+            {
+                // M_Station wird NICHT angegeben, der Fremdschlüssel wird dann vom
+                // Entity Framework gesetzt, da ich in die Collection von myStation
+                // schreibe.
+                M_Date = DateTime.Now,
+                M_Temperature = 12
+            });
+
             using (WeatherDb db = new WeatherDb())
             {
-                Station newStation = new Station
-                {
-                    S_ID = stationKey,
-                    S_Location = $"Location{stationKey}",
-                    S_Height = rnd.Next(170, 1000)
-                };
-                // Füge die neue Station zur Collection hinzu.
-                db.Stations.Add(newStation);
-                // Wir verwenden gleich die Collection der Measurements von newStation.
-                // Das bedeutet, wir müssen nicht den Fremdschlüssel "händisch" mitgeben.
-                newStation.Measurements.Add(new Measurement
-                {
-                    M_Date = DateTime.Now,
-                    M_Temperature = rnd.Next(0, 380) / 10.0M
-                });
+                // Mit Add fügen wir neue Objekte hinzu. Die Measurements werden auch
+                // geschrieben.
+                db.Stations.Add(myStation);
+                // Hier wird auch der Fremdschlüsselwert im Measurement von 
+                // myStation (M_Station) auf den PK von myStation (S_ID) gesetzt.
                 db.SaveChanges();
             }
 
+            // Nachgrägliches Einfügen von Measurements
+            Measurement newMeasurement = new Measurement
+            {
+                // Auch hier kein M_Station, es wird dann vom OR Mapper gesetzt.
+                M_Date = DateTime.Now,
+                M_Temperature = 12
+            };
+
+            using (WeatherDb db = new WeatherDb())
+            {
+                // Sonst gibt es einen Fehler, dass myStation nicht bekannt ist.
+                db.Stations.Attach(myStation);
+                myStation.Measurements.Add(newMeasurement);
+                db.SaveChanges();
+            }
+
+            // *************************************************************************************
             // UPDATE
-            // Ändere S_Location der Station 1003 auf Spengergasse 20.
-            // Schritt 1: Suche die Station in der DB. Da 1003 der PK ist, können
-            //            wir Find verwenden.
+            // Aktualisiere die Location von myStation von Spengergasse
+            // auf Spengergasse 20.
+            // *************************************************************************************
+            myStation.S_Location = "Spengergasse 20";
             using (WeatherDb db = new WeatherDb())
             {
-                Station station = db.Stations.Find(stationKey);
-                // Vorsicht, wenn der Wert nicht gefunden wird ist station NULL!
-                if (station != null)
-                {
-                    station.S_Location = "Spengergasse 20";
-                    db.SaveChanges();   // NICHT VERGESSEN!
-                }
+                // myStation wird wieder dem OR Mapper bekannt gemacht. myStation muss
+                // aber in der DB existieren (sonst wäre es ja Add).
+                db.Stations.Attach(myStation);
+                // Wir haben das Objekt ja geändert, auch das müssen wir dem OR Mapper
+                // mitteilen.
+                db.Entry(myStation).State = System.Data.Entity.EntityState.Modified;
+                db.SaveChanges();
             }
 
-            // READ
-            // Zeige die Durschschnittstemperaturen aller
-            // Stationen über 1000m an. Hier wird SQL erzeugt, die die Berechnung
-            // schon serverseitig durchführt.
-            using (WeatherDb db = new WeatherDb())
-            {
-                var avgTemp = from s in db.Stations
-                              where s.S_Height > 100
-                              select new
-                              {
-                                  StationNr = s.S_ID,
-                                  Location = s.S_Location,
-                                  AvgTemp = s.Measurements.Average(m => m.M_Temperature)
-                              };
-                foreach (var a in avgTemp)
-                {
-                    Console.WriteLine($"{a.StationNr} {a.Location}: {a.AvgTemp}");
-                }
-            }
-
+            // *************************************************************************************
             // DELETE
-            // Lösche die Station mit der Location Spengergasse 20.
+            // Würde mit dem OR Mapper mit db.Stations.Remove(myStation) gehen, aber
+            // hier gibt es eine ConcurrencyException. Deswegen "rohe" Lösung mit
+            // SQL. Bessere Lösungen werden gerne angenommen!
+            // *************************************************************************************
             using (WeatherDb db = new WeatherDb())
             {
-                // Schritt 1: Suche die Station, die gelöscht werden
-                ///           soll.
-                Station toDelete =
-                    db
-                    .Stations
-                    .FirstOrDefault(s => s.S_Location == "Spengergasse 20");
-                if (toDelete != null)
-                {
-                    // Schritt 2: Lösche alle Messerte, sonst gibt es eine Exception
-                    //            (außer on DELETE SET NULL ist gesetzt, frage deinen DBI Lehrer)
-                    toDelete.Measurements.Clear();
-                    db.Stations.Remove(toDelete);
-                    db.SaveChanges();
-                }
-            }   // Schließt die DB, indem Dispose() aufgerufen wird.
+                db.Database.ExecuteSqlCommand("DELETE FROM Measurement WHERE M_Station = @StationId",
+                    new SqlParameter("@StationId", myStation.S_ID));
+                db.Database.ExecuteSqlCommand("DELETE FROM Station WHERE S_ID = @StationId",
+                    new SqlParameter("@StationId", myStation.S_ID));
+            }
         }
     }
 }
