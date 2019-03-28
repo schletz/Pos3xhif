@@ -41,7 +41,7 @@ namespace WeatherDbCrud.ViewModels
             }
         }
         public Measurement CurrentMeasurement { get; set; }
-        public Measurement NewMeasurement { get; set; } = new Measurement { M_Date = DateTime.Now };
+        public Measurement NewMeasurement { get; set; } = new Measurement { M_Date = GetCurrentTime() };
 
         public void UpdateMeasurement()
         {
@@ -58,12 +58,11 @@ namespace WeatherDbCrud.ViewModels
         {
             using (WeatherDb db = new WeatherDb())
             {
-                db.Measurements.Attach(CurrentMeasurement);
-                db.Entry(CurrentMeasurement).State = System.Data.Entity.EntityState.Deleted;
+                db.Stations.Attach(CurrentStation);
+                CurrentStation.Measurements.Remove(CurrentMeasurement);
                 db.SaveChanges();
             }
             PropertyChanged(this, new PropertyChangedEventArgs(nameof(Measurements)));
-
         }
 
         public void AddNewMeasurement()
@@ -76,9 +75,15 @@ namespace WeatherDbCrud.ViewModels
                 CurrentStation.Measurements.Add(NewMeasurement);
                 db.SaveChanges();
             }
-            NewMeasurement = new Measurement { M_Date = DateTime.Now };
+            NewMeasurement = new Measurement { M_Date = GetCurrentTime() };
             PropertyChanged(this, new PropertyChangedEventArgs(nameof(NewMeasurement)));
             PropertyChanged(this, new PropertyChangedEventArgs(nameof(Measurements)));
+        }
+
+        private static DateTime GetCurrentTime()
+        {
+            DateTime time = new DateTime(DateTime.Now.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond);
+            return time;
         }
     }
 }
