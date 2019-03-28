@@ -20,9 +20,9 @@
 
 using System;
 using System.Data.SqlClient;  // Für SqlCommand
-using WeatherDbCrud.Model;
+using CrudTest.Model;
 
-namespace WeatherDbCrud
+namespace CrudTest
 {
     class Program
     {
@@ -30,6 +30,10 @@ namespace WeatherDbCrud
         // der ganzen Laufzeit des Programmes aktiv bleibt.
         static void Main(string[] args)
         {
+            // Da die Datenbank die Kommastellen bei den Millisekunden abschneidet, generieren
+            // wir einen Zeitwert, der einfach auf ganze Sekunden genau ist.
+            DateTime now = new DateTime(DateTime.Now.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond);
+
             // *************************************************************************************
             // CREATE
             // Erstelle eine neue Station und füge ein paar Measurements hinzu.
@@ -49,7 +53,7 @@ namespace WeatherDbCrud
                 // M_Station wird NICHT angegeben, der Fremdschlüssel wird dann vom
                 // Entity Framework gesetzt, da ich in die Collection von myStation
                 // schreibe.
-                M_Date = DateTime.Now,
+                M_Date = now,
                 M_Temperature = 12
             });
 
@@ -67,7 +71,7 @@ namespace WeatherDbCrud
             Measurement newMeasurement = new Measurement
             {
                 // Auch hier kein M_Station, es wird dann vom OR Mapper gesetzt.
-                M_Date = DateTime.Now,
+                M_Date = now.AddHours(1),
                 M_Temperature = 12
             };
 
@@ -100,14 +104,21 @@ namespace WeatherDbCrud
             // DELETE
             // Würde mit dem OR Mapper mit db.Stations.Remove(myStation) gehen, aber
             // hier gibt es eine ConcurrencyException. Deswegen "rohe" Lösung mit
-            // SQL. Bessere Lösungen werden gerne angenommen!
+            // SQL.
             // *************************************************************************************
             using (WeatherDb db = new WeatherDb())
             {
-                db.Database.ExecuteSqlCommand("DELETE FROM Measurement WHERE M_Station = @StationId",
-                    new SqlParameter("@StationId", myStation.S_ID));
-                db.Database.ExecuteSqlCommand("DELETE FROM Station WHERE S_ID = @StationId",
-                    new SqlParameter("@StationId", myStation.S_ID));
+                db.Stations.Attach(myStation);
+                // Bei einer 1:n Beziehung müssen alle n Datensätze gelöscht werden.
+                myStation.Measurements.Clear();
+                db.Stations.Remove(myStation);
+                db.SaveChanges();
+
+                // Wir können auch SQL hinschicken.
+                // db.Database.ExecuteSqlCommand("DELETE FROM Measurement WHERE M_Station = @StationId",
+                //    new SqlParameter("@StationId", myStation.S_ID));
+                // db.Database.ExecuteSqlCommand("DELETE FROM Station WHERE S_ID = @StationId",
+                //    new SqlParameter("@StationId", myStation.S_ID));
             }
         }
     }
