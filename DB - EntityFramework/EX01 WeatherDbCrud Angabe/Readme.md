@@ -31,5 +31,5 @@ gebunden. Das Datum soll mit der aktuellen Systemzeit initialisiert werden. Daf�
 | ---- | --------- |
 | Genügend     | Beim Starten der Applikation wird das Dropdownfeld mit allen Stationen gefüllt. Beim Wählen einer Station erscheinen in der Liste die Messwerte.
 | Befriedigend | Beim Klicken auf einen Messwert werden die Textfelder im Bereich "Details des Messwertes" mit den angeklickten Werten befüllt.
-| Gut          | Ein Anlegen, Speichern und Löschen des Messwertes ist möglich.
-| Sehr gut     | Die Listen werden immer aktualisiert, und nicht erst beim neuen Laden der Station.
+| Gut          | Speichern und Löschen des Messwertes funktionieren. Die Listen werden auch nach dem Einfügen und Löschen aktualisiert.
+| Sehr gut     | Das Neuanlegen funktioniert. Nach dem Anlegen werden die Listen aktualisiert und die Textfelder werden wieder mit dem neuen Systemdatum initialisiert.
