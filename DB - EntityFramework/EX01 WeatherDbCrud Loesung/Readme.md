@@ -26,6 +26,8 @@ Die Textfelder im Bereich "Neuer Messwert" sind an eine eigene Instanz von Stati
 gebunden. Das Datum soll mit der aktuellen Systemzeit initialisiert werden. Dafür verwende die Methode
 *GetCurrentTime()*, die die aktuelle Systemzeit auf Sekunden genau liefert.
 
+## Bewertung (fiktiv)
+Wenn diese Aufgabe eine Prüfung wäre, würden folgende Erwartungen für die einzelnen Noten gelten:
 
 | Note | Erwartung |
 | ---- | --------- |
