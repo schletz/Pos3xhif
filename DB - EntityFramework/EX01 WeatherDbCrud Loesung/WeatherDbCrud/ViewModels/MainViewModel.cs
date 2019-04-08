@@ -45,6 +45,7 @@ namespace WeatherDbCrud.ViewModels
 
         public void UpdateMeasurement()
         {
+            if (CurrentMeasurement == null) { return; }
             using (WeatherDb db = new WeatherDb())
             {
                 db.Measurements.Attach(CurrentMeasurement);
