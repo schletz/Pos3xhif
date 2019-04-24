@@ -87,3 +87,19 @@ Zahlen viel schneller. Die Statistik wandelt sich auf einmal:
 *Synchron: 0.00s, Parallel: 0.15s (Faktor 146.02)*. Wir sehen, dass das Erstellen von Tasks und der 
 darunterliegenden Threads einen overhead darstellt, der sich erst rechnen muss. Dauern die Tasks also nur
 sehr kurz, kann die synchrone Lösung schneller sein.
+
+## Ergänzungen
+Schreibe eine Methode *WriteFile(string filename)*, welche einen String mit 10 MB Größe in die übergebene
+Datei schreibt. Mit *string data = new String('x', 10000000);* kann ein solcher String generiert werden.
+Nun rufe mit *Parallel.For* die Methode parallel auf. Betrachte dabei die Festplattenauslastung im Task
+Manager. Nun experimentiere mit dem Parameter *MaxDegreeOfParallelism*, wo die gleichzeitige Ausführung
+gesteuert werden kann. Folgendes Snippet kann dafür verwendet werden:
+```c#
+Parallel.For(0, 1000,
+	new ParallelOptions {MaxDegreeOfParallelism = 2},
+	(i) =>
+	{
+			WriteFile($"C:/Temp/file{i}.txt");
+	});
+```
+Was passiert, wenn der Parameter zu hoch gestellt wird?
