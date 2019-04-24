@@ -1,8 +1,8 @@
 # Parallelisierung von CPU intensiven Aufgaben
-In diesem Beispiel wird eine sehr alte mathematische Frage, nämlich die Bestimmung der Primzahlen in
-einem bestimmten Zahlenbereich, gelöst.
+In diesem Beispiel wird eine sehr alte mathematische Frage, nÃ¤mlich die Bestimmung der Primzahlen in
+einem bestimmten Zahlenbereich, gelÃ¶st.
 
-Die Methode, die prüft ob eine übergebene Zahl eine Primzahl ist, wurde - um CPU Arbeit zu generieren -
+Die Methode, die prÃ¼ft ob eine Ã¼bergebene Zahl eine Primzahl ist, wurde - um CPU Arbeit zu generieren -
 nicht optimiert:
 ```c#
 static bool IsPrime(int number)
@@ -15,7 +15,7 @@ static bool IsPrime(int number)
 }
 ```
 
-Nach dem bisherigen Wissenstand in Programmieren würde das Programm so gelöst werden:
+Nach dem bisherigen Wissenstand in Programmieren wÃ¼rde das Programm so gelÃ¶st werden:
 ```c#
 const int START_NUMBER = 500000000;
 const int NUMBER_COUNT = 100;
@@ -26,12 +26,12 @@ for (int number = START_NUMBER; number < START_NUMBER + NUMBER_COUNT; number++)
 }
 ```
 
-In Zeiten von mehreren CPU Kernen ist dieser Ansatz allerdings nicht mehr zeitgemäß. Sehen wir uns die
+In Zeiten von mehreren CPU Kernen ist dieser Ansatz allerdings nicht mehr zeitgemÃ¤ÃŸ. Sehen wir uns die
 CPU Auslasung an:
 ![Cpu Load Single](cpuLoadSingle.png)
 
-Nur der rot eingerahmte Kern ist ausgelastet. Die anderen Kerne zeigen keine Auslastung. Um das zu ändern,
-gibt es verschiedene Ansätze in der TPL. Hier haben wir folgende Situation: Eingabedaten werden unabhängig
+Nur der rot eingerahmte Kern ist ausgelastet. Die anderen Kerne zeigen keine Auslastung. Um das zu Ã¤ndern,
+gibt es verschiedene AnsÃ¤tze in der TPL. Hier haben wir folgende Situation: Eingabedaten werden unabhÃ¤ngig
 voneinander verarbeitet. In dieser Situation gibt es die statische Klasse *Parallel*, die eine *For* 
 Methode bereitstellt:
 ```c#
@@ -46,21 +46,21 @@ Parallel.For(START_NUMBER, START_NUMBER + NUMBER_COUNT, (number) =>
 });
 ```
 
-Der Code zeigt schon die einfache Anwendung: die ersten beiden Parameter sind die Zählerwerte (Start und
-exklusives Ende), das 3. Argument ist vom Typ *Action<int>*, wobei der Parameter der aktuelle Zählerstand
-ist. Da dieser Block parallel ausgeführt wird, müssen wir aber beim Zugriff auf eine gemeinsame Variable
+Der Code zeigt schon die einfache Anwendung: die ersten beiden Parameter sind die ZÃ¤hlerwerte (Start und
+exklusives Ende), das 3. Argument ist vom Typ *Action<int>*, wobei der Parameter der aktuelle ZÃ¤hlerstand
+ist. Da dieser Block parallel ausgefÃ¼hrt wird, mÃ¼ssen wir aber beim Zugriff auf eine gemeinsame Variable
 (in diesem Fall die Liste *primes*) darauf achten, dass nicht gleichzeitig in diese Liste geschrieben wird.
-Durch *lock(referenceVariable)* wird dieser Block nur einmal ausgeführt. Die anderen Threads müssen warten,
+Durch *lock(referenceVariable)* wird dieser Block nur einmal ausgefÃ¼hrt. Die anderen Threads mÃ¼ssen warten,
 bis diese Anweisung verlassen wurde. **Wird das nicht gemacht, wird vermutlich das Programm auch ohne
 Fehler funktionieren. Bei speziellen Eingabewerten kommt es aber zu Fehlern. Diese sind nicht vorhersagbar
 und daher besonders schwer zu identifizieren!**
 
-Die Anweisung *Interlocked.Add(ref runningTasks, 1);* ist für die Bestimmung der Anzahl der gleichzeitig
-laufenden Tasks. Wir können auch *lock(){}* verwenden, da das threadsichere Inkrementieren von Variablen
-aber häufig vorkommt, gibt es mit der statischen Klasse *Interlocked* die Möglichkeit, dies als atomare
-Operation (kann nicht unterbrochen werden) auszuführen.
+Die Anweisung *Interlocked.Add(ref runningTasks, 1);* ist fÃ¼r die Bestimmung der Anzahl der gleichzeitig
+laufenden Tasks. Wir kÃ¶nnen auch *lock(){}* verwenden, da das threadsichere Inkrementieren von Variablen
+aber hÃ¤ufig vorkommt, gibt es mit der statischen Klasse *Interlocked* die MÃ¶glichkeit, dies als atomare
+Operation (kann nicht unterbrochen werden) auszufÃ¼hren.
 
-Der Taskmanager zeigt bei der Ausführung nun eine wesentlich bessere Auslastung (100%):
+Der Taskmanager zeigt bei der AusfÃ¼hrung nun eine wesentlich bessere Auslastung (100%):
 ![Cpu Load Parallel](cpuLoadParallel.png)
 
 Dementsprechend ist die Laufzeit des Programmes auch viel besser, in unserem Fall ca. 5x schneller:
@@ -78,22 +78,22 @@ Synchron: 70.95s, Parallel: 13.63s (Faktor 0.19)
 ## Was bedeuten die laufenden Tasks in der Ausgabe?
 In der Zeile *Laufende Tasks* wird bei jedem Durchlaufen der Funktion ausgegeben, wie viele Tasks gerade
 laufen. Am Anfang steigt diese Zahl langsam an, da gerade Zahlen sehr schnell verarbeitet werden. Es bleiben
-also die Zahlen mit hohen Teilern oder die Primzahlen lange in der Prüfschleife von *IsPrime()*. Der
+also die Zahlen mit hohen Teilern oder die Primzahlen lange in der PrÃ¼fschleife von *IsPrime()*. Der
 Maximalwert ist allerdings 13, denn es gibt nur 12 logische CPU Kerne und der 13. wird sozusagen "nachgeladen".
 
 ## Experiment
-Setze *const int START_NUMBER* auf 0 statt auf 500000000. Die Berechnung geht dann natürlich bei kleinen
+Setze *const int START_NUMBER* auf 0 statt auf 500000000. Die Berechnung geht dann natÃ¼rlich bei kleinen
 Zahlen viel schneller. Die Statistik wandelt sich auf einmal: 
 *Synchron: 0.00s, Parallel: 0.15s (Faktor 146.02)*. Wir sehen, dass das Erstellen von Tasks und der 
 darunterliegenden Threads einen overhead darstellt, der sich erst rechnen muss. Dauern die Tasks also nur
-sehr kurz, kann die synchrone Lösung schneller sein.
+sehr kurz, kann die synchrone LÃ¶sung schneller sein.
 
-## Ergänzungen
-Schreibe eine Methode *WriteFile(string filename)*, welche einen String mit 10 MB Größe in die übergebene
+## ErgÃ¤nzungen
+Schreibe eine Methode *WriteFile(string filename)*, welche einen String mit 10 MB GrÃ¶ÃŸe in die Ã¼bergebene
 Datei schreibt. Mit *string data = new String('x', 10000000);* kann ein solcher String generiert werden.
 Nun rufe mit *Parallel.For* die Methode parallel auf. Betrachte dabei die Festplattenauslastung im Task
-Manager. Nun experimentiere mit dem Parameter *MaxDegreeOfParallelism*, wo die gleichzeitige Ausführung
-gesteuert werden kann. Folgendes Snippet kann dafür verwendet werden:
+Manager. Nun experimentiere mit dem Parameter *MaxDegreeOfParallelism*, wo die gleichzeitige AusfÃ¼hrung
+gesteuert werden kann. Folgendes Snippet kann dafÃ¼r verwendet werden:
 ```c#
 Parallel.For(0, 1000,
 	new ParallelOptions {MaxDegreeOfParallelism = 2},
