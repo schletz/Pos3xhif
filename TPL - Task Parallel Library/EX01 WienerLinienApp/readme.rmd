@@ -1,11 +1,12 @@
 ---
 title: "Anzeigeprogramm für Daten der Wiener Linien"
 output:
-  github_document: default
+  slidy_presentation: default
   html_document:
     df_print: paged
   pdf_document: default
   word_document: default
+  github_document: default
 ---
 ```{r setup, include=FALSE}
 if (!require("knitr", quietly = TRUE)) { install.packages("knitr"); library("knitr"); }
@@ -16,8 +17,6 @@ rm(list = ls())
 # --------------------------------------------------------------------------------------------------
 # LADEN DER EXPORTDATEI AUS DEM ONLINEBANKING
 # --------------------------------------------------------------------------------------------------
-setwd("C:/Users/Michael/source/repos/WienerLinienApp")
-
 locale <- locale(date_names = "de", date_format = "%d.%m.%Y", encoding = "UTF-8", decimal_mark=".");
 linien <- read_delim("wienerlinien-ogd-linien.csv",";", skip = 0, locale = locale, guess_max = 5000)
 steige <- read_delim("wienerlinien-ogd-steige.csv",";", skip = 0, locale = locale, guess_max = 5000)
