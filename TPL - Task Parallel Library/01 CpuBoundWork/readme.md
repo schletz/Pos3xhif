@@ -103,3 +103,6 @@ Parallel.For(0, 1000,
 	});
 ```
 Was passiert, wenn der Parameter zu hoch gestellt wird?
+
+## Weitere Infos
+- [Potential Pitfalls in Data and Task Parallelism](https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/potential-pitfalls-in-data-and-task-parallelism)
