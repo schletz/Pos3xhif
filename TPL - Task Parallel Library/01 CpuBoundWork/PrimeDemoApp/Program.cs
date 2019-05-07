@@ -14,7 +14,7 @@ namespace PrimeDemoApp
     {
         // Startwert, ab dem wir prüfen sollen, ob eine Zahl prim ist. Diese Größe kann an die
         // CPU Geschwindigkeit angepasst werden.
-        const int START_NUMBER = 500;      // Testwerte: 0 und 500000000
+        const int START_NUMBER = 500000000;      // Testwerte: 0 und 500000000
         // Ab dem Startwert werden so viele Zahlen auf ihre Primzahleigenschaft geprüft.
         const int NUMBER_COUNT = 100;
         static void Main(string[] args)
