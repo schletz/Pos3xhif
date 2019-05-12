@@ -1,8 +1,9 @@
 ---
 output:
-  pdf_document: default
+  ioslides_presentation: default
   html_document: default
   word_document: default
+  pdf_document: default
 ---
 # TPL - Die Task Parallel Library in C#
 Mit dem .NET Framework 4.0 wurde die nebenläufige Programmierung durch die Einführung von Tasks wesentlich
