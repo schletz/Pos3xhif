@@ -1,6 +1,8 @@
 # Google Firebase Demo App
 
-![](https://www.kdnuggets.com/wp-content/uploads/sql-nosql-dbs.jpg)
+![zerone-consulting.com - All in the NoSQL Family](https://www.zerone-consulting.com/images/nosqlfamily.jpg)
+![www.zerone-consulting.com - NoSQL Storage Architecture](https://www.zerone-consulting.com/images/nosqldatabase.jpg
+
 ## 8 Reasons why NoSQL came in 
 1. **Schema-Less:** The Biggest reason for NoSQL's sole existence is because of the flexibility provided by NoSQL to model the data as per the application requirements. The RDBMS way of doing is to force our data to fit in a structured way in the form of tables and columns.Most of the NoSQL databases are offering richer form of data storage semantically in which we can store data objects as documents or as key-value pairs or even as graph structures as per the requirements.
 1. **Power:** In a NoSQL database, we can add massive volumes of data at a significantly low cost.
@@ -48,7 +50,8 @@ Informationen über die Einschränkungen der Gratisversion sind unter [Pricing](
 abrufbar.
 
 ## Zugriff auf die Datenbank
-Für Firebase gibt es von Google Bibliotheken für iOS, Android, Javascript, Unity und C++. Es gibt aber
+Für Firebase gibt es von Google Bibliotheken für iOS, Android, Javascript, Unity und C++. Die API für diese Plattformen 
+ist auf [firebase.google.com](https://firebase.google.com/docs/database) dokumentiert. Es gibt aber
 auch eine REST Schnittstelle, die von Drittanbietern verwendet wird. Eine Bibliothek für C# ist *FirebaseDatabase.net*. 
 Der Quelltext und die Dokumentation sind auf der [GitHub Seite des Projektes](https://github.com/step-up-labs/firebase-database-dotnet) zu finden.
 
