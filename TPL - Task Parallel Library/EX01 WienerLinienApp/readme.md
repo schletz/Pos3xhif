@@ -41,11 +41,11 @@ Zeilen der Liniendatei, nicht benötigte Spalten werden nicht angezeigt:
 
 | LINIEN\_ID | BEZEICHNUNG | VERKEHRSMITTEL |
 | ---------: | :---------- | :------------- |
-|  214433939 | 86A         | ptBusCity      |
-|  214433891 | 52A         | ptBusCity      |
-|  214433829 | 17A         | ptBusCity      |
-|  214579027 | 11          | ptBusCity      |
-|  214433695 | U6          | ptMetro        |
+|  214433831 | 19A         | ptBusCity      |
+|  230831064 | 76B         | ptBusCity      |
+|  214433869 | 40A         | ptBusCity      |
+|  214433731 | 26          | ptTram         |
+|  214434095 | 92A         | ptBusCity      |
 
 ### Die CSV Datei der Steige
 
@@ -223,6 +223,6 @@ unter *Build* konfiguriert werden.
 Die einzelnen Schritte können durch feinere Unterteilung noch optimiert
 werden, indem mehrere Aufgaben parallel ausgeführt werden können:
 
-![](optimierung.png)
+![](optimierung2.png)
 
 Implementiere den obigen Netzplan mit *Task.Run()* und hot Tasks.

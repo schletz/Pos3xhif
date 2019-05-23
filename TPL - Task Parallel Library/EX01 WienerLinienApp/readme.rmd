@@ -186,6 +186,6 @@ direkt ins Projektverzeichnis geschrieben, nicht unter *bin*. Dies kann in den P
 Die einzelnen Schritte können durch feinere Unterteilung noch optimiert werden, indem mehrere Aufgaben
 parallel ausgeführt werden können:
 
-![](optimierung.png)
+![](optimierung2.png)
 
 Implementiere den obigen Netzplan mit *Task.Run()* und hot Tasks.
