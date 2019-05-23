@@ -1,12 +1,12 @@
 ---
 title: "Anzeigeprogramm für Daten der Wiener Linien"
 output:
-  github_document: default
+  pdf_document: default
   html_document:
     df_print: paged
   slidy_presentation: default
   word_document: default
-  pdf_document: default
+  github_document: default
 ---
 ```{r setup, include=FALSE}
 if (!require("knitr", quietly = TRUE)) { install.packages("knitr"); library("knitr"); }
@@ -183,7 +183,8 @@ direkt ins Projektverzeichnis geschrieben, nicht unter *bin*. Dies kann in den P
 *Build* konfiguriert werden.
 
 ## Optimierung
-Die einzelnen Schritte können durch Unterteilung noch optimiert werden:
+Die einzelnen Schritte können durch feinere Unterteilung noch optimiert werden, indem mehrere Aufgaben
+parallel ausgeführt werden können:
 
 ![](optimierung.png)
 

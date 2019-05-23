@@ -41,11 +41,11 @@ Zeilen der Liniendatei, nicht benötigte Spalten werden nicht angezeigt:
 
 | LINIEN\_ID | BEZEICHNUNG | VERKEHRSMITTEL |
 | ---------: | :---------- | :------------- |
-|  214433835 | 24A         | ptBusCity      |
-|  214433761 | 44          | ptTram         |
-|  214432207 | S60         | ptTrainS       |
-|  214433923 | 70A         | ptBusCity      |
-|  214433743 | 38          | ptTram         |
+|  214433939 | 86A         | ptBusCity      |
+|  214433891 | 52A         | ptBusCity      |
+|  214433829 | 17A         | ptBusCity      |
+|  214579027 | 11          | ptBusCity      |
+|  214433695 | U6          | ptMetro        |
 
 ### Die CSV Datei der Steige
 
@@ -220,7 +220,8 @@ unter *Build* konfiguriert werden.
 
 ## Optimierung
 
-Die einzelnen Schritte können durch Unterteilung noch optimiert werden:
+Die einzelnen Schritte können durch feinere Unterteilung noch optimiert
+werden, indem mehrere Aufgaben parallel ausgeführt werden können:
 
 ![](optimierung.png)
 
