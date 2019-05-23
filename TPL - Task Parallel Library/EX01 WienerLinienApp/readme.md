@@ -41,11 +41,11 @@ Zeilen der Liniendatei, nicht benötigte Spalten werden nicht angezeigt:
 
 | LINIEN\_ID | BEZEICHNUNG | VERKEHRSMITTEL |
 | ---------: | :---------- | :------------- |
-|  214433727 | 18          | ptTram         |
-|  214433863 | 37A         | ptBusCity      |
-|  214579075 | 9A          | ptBusCity      |
-|  214433801 | 7B          | ptBusCity      |
-|  214433731 | 26          | ptTram         |
+|  214433835 | 24A         | ptBusCity      |
+|  214433761 | 44          | ptTram         |
+|  214432207 | S60         | ptTrainS       |
+|  214433923 | 70A         | ptBusCity      |
+|  214433743 | 38          | ptTram         |
 
 ### Die CSV Datei der Steige
 
@@ -217,3 +217,11 @@ Teste die Applikation auch im Release Build. Die Ausgabeordner *Debug*
 und *Release* werden zur Vereinfachung direkt ins Projektverzeichnis
 geschrieben, nicht unter *bin*. Dies kann in den Projekteinstellungen
 unter *Build* konfiguriert werden.
+
+## Optimierung
+
+Die einzelnen Schritte können durch Unterteilung noch optimiert werden:
+
+![](optimierung.png)
+
+Implementiere den obigen Netzplan mit *Task.Run()* und hot Tasks.

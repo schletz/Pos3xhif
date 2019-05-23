@@ -1,12 +1,12 @@
 ---
 title: "Anzeigeprogramm für Daten der Wiener Linien"
 output:
-  slidy_presentation: default
+  github_document: default
   html_document:
     df_print: paged
-  pdf_document: default
+  slidy_presentation: default
   word_document: default
-  github_document: default
+  pdf_document: default
 ---
 ```{r setup, include=FALSE}
 if (!require("knitr", quietly = TRUE)) { install.packages("knitr"); library("knitr"); }
@@ -182,3 +182,9 @@ Teste die Applikation auch im Release Build. Die Ausgabeordner *Debug* und *Rele
 direkt ins Projektverzeichnis geschrieben, nicht unter *bin*. Dies kann in den Projekteinstellungen unter
 *Build* konfiguriert werden.
 
+## Optimierung
+Die einzelnen Schritte können durch Unterteilung noch optimiert werden:
+
+![](optimierung.png)
+
+Implementiere den obigen Netzplan mit *Task.Run()* und hot Tasks.
