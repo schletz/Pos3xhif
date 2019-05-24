@@ -266,7 +266,12 @@ namespace FirebaseDemo.Generator
                         Lastname = $"Lastname{rnd.Next(100, 1000)}",
                         DateOfBirth = DateTime.Now.AddDays(-14 * 365 - rnd.Next(0, 4 * 365))
                     };
-                    await client.Child("Schueler").Child(s.Id.ToString()).PutAsync(s);
+                    // Der Key für den Schüler wird generiert und zurückgelesen.
+                    var savedSchueler = await client.Child("Schueler").PostAsync(s);
+                    // Demo für ein UPDATE
+                    savedSchueler.Object.Lastname = "Updated!";
+                    // Der Key wird in Child verwendet, damit nicht Schueler überschrieben wird.
+                    await client.Child("Schueler").Child(savedSchueler.Key).PutAsync(s);
                 }
             }
             catch (FirebaseException e)
