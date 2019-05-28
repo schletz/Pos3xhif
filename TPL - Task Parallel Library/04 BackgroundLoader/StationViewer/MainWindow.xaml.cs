@@ -19,16 +19,6 @@ namespace StationViewer
             InitializeComponent();
         }
 
-        /// <summary>
-        /// Eventhandler für den Fetch Button. Dieser soll
-        /// 1. Vor dem Laden den Text des Controls Statustext auf "Lade Werte..." setzen.
-        /// 2. Den FetchButton deaktivieren (IsEnabled Property).
-        /// 3. Die Methode FetchValues im ViewModel mit await aufrufen.
-        /// 4. Den Fetch Button nach dem Laden wieder aktivieren.
-        /// 5. Den Statustext wieder auf leer setzen.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private async void StopFetchButton_Click(object sender, RoutedEventArgs e)
         {
             MainViewModel vm = DataContext as MainViewModel;
@@ -59,15 +49,6 @@ namespace StationViewer
         {
             MainViewModel vm = DataContext as MainViewModel;
             vm.StartLoading();
-            //loader.DataLoaded += Data_Loaded;
-            //loader.StartLoading(1000);
-        }
-
-        private void Data_Loaded(object sender, EventArgs e)
-        {
-
-            //MainViewModel vm = DataContext as MainViewModel;
-            //vm.RefreshList();
         }
     }
 }
