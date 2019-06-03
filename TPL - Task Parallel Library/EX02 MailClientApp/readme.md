@@ -20,3 +20,6 @@ Bei jedem Aufruf von *getMails* ändert sich der Inhalt, sodass ein Aktualisiere
 
 - Der Button Stop loading beendet das Laden. Über die Statusbar soll sichtbar gemacht werden, wann
   der Hintergrundtask wirklich beendet wurde.
+
+Im Projekt [TPL - Task Parallel Library/04 BackgroundLoader](https://github.com/schletz/Pos3xhif/tree/master/TPL%20-%20Task%20Parallel%20Library/04%20BackgroundLoader)
+gibt es eine Vorlage für einen BackgroundLoader.
