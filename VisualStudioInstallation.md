@@ -13,7 +13,7 @@ Starten des Installers können die Komponenten ausgewählt werden.
 
 **Workloads:** (1) .NET Entwicklung, (2) ASP.NET Entwicklung, (3) Mobile Entwicklung (für die 4. Klasse), 
 (4) Plattformübergreifende .NET Core Entwicklung, (5) Universal WIndows Platform development
-![Vs Components](VsComponents.png)
+![Vs Components](VsComponents2019.png)
 
 **Einzelne Komponenten:** Zusätzlich wird Klassen-Designer angewählt, um die Klassenmodelle öffnen zu
 können. Sonst wird nur eine XML Datei angezeigt.
