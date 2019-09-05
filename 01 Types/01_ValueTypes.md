@@ -7,7 +7,7 @@ Neben den bekannten Datentypen aus Java gibt es in C# noch unsigned Datentypen
 wie *uint*, *ulong*, ... Sie werden allerdings selten verwendet, da die Frameworkmethoden mit "normalen" 
 signed Typen wie int, ... arbeiten.
 
-Die Dekleration erfolgt wie gewohnt in Java:
+Die Dekleration erfolgt wie aus Java gewohnt:
 ```c#
 int myInt = 1;
 bool myBool = true;
