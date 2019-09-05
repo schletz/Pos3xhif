@@ -61,7 +61,7 @@ verwendet, da sie durch das .NET Framework wesentlich einfacher zugänglich sind
 ## Wichtiges zum Start:
 1. [Anleitung zum Verbinden mit dem VPN und den Laufwerken](VpnSpengergasse.md)
 1. Optional: [Installation von SQL Server 2017](SqlServerInstallation.md)
-1. [Installation von Visual Studio 2017](VisualStudioInstallation.md)
+1. [Installation von Visual Studio 2017/2019](VisualStudioInstallation.md)
 
 ## Synchronisieren des Repositories in einen Ordner
 1. Lade von https://git-scm.com/downloads die Git Tools (Button *Download 2.20.1 for WIindows*)

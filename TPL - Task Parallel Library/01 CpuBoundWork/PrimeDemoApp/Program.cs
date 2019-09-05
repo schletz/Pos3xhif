@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,13 +15,16 @@ namespace PrimeDemoApp
     {
         // Startwert, ab dem wir prüfen sollen, ob eine Zahl prim ist. Diese Größe kann an die
         // CPU Geschwindigkeit angepasst werden.
-        const int START_NUMBER = 500000000;      // Testwerte: 0 und 500000000
+        const int START_NUMBER = 10000000;      // Testwerte: 0 und 500000000
         // Ab dem Startwert werden so viele Zahlen auf ihre Primzahleigenschaft geprüft.
         const int NUMBER_COUNT = 100;
         static void Main(string[] args)
         {
             int runningTasks = 0;
             List<int> primes;
+            //ConcurrentBag<int> primes2;
+
+            object primeLock = new object();
 
             Console.WriteLine($"SUCHE DIE PRIMZAHLEN ZWISCHEN {START_NUMBER} und {START_NUMBER + NUMBER_COUNT}...");
             primes = new List<int>();
@@ -59,10 +63,11 @@ namespace PrimeDemoApp
                         // Beim Zugriff auf eine Liste muss ebenfalls Sorge getragen werden, dass nicht 
                         // 2 Threads gleichzeitig hineinschreiben. Auch hier gilt wieder: es kann ohne lock
                         // gut gehen, aber je nach Eingabedaten gibt es dann Probleme.
-                        lock (primes) { primes.Add(number); }
+                        lock (primeLock) { primes.Add(number); }
                     Interlocked.Add(ref runningTasks, -1);
 
                 });
+
             Console.WriteLine($"{Environment.NewLine}{primes.Count} Zahlen gefunden: {String.Join(",", primes)}");
             DateTime parallelEnd = DateTime.UtcNow;
 

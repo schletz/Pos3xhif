@@ -1,4 +1,4 @@
-# Installation von Visual Studio 2017
+# Installation von Visual Studio 2017/2019
 
 ## Download der Installationsdateien
 Der Installer kann von der [Visual Studio Installationsseite](https://visualstudio.microsoft.com/de/downloads/)
@@ -22,13 +22,6 @@ können. Sonst wird nur eine XML Datei angezeigt.
 **Sprachpakete:** Da es zu deutschen Fehlermeldungen auf Google wenig geben wird, und die Übersetzungen
 manchmal sehr kreativ sind, wähle hier Englisch als Sprache.
 ![Vs Components3](VsComponents3.png)
-
-## Zusätzliche Extensions
-Folgende Extensions können auch installiert werden. Lade dafür unter den angegebenen Links die vsix Datei
-herunter und installiere sie durch Doppelklick. Visual Studio muss dafür geschlossen sein.
-
-1. [Editor Guidelines](https://marketplace.visualstudio.com/items?itemName=PaulHarrington.EditorGuidelines)
-1. [Markdown Editor](https://marketplace.visualstudio.com/items?itemName=MadsKristensen.MarkdownEditor)
 
 ## Freischaltung
 Unter *Help* - *Register Product* kann der Produktkey der Schule eingegeben werden.
