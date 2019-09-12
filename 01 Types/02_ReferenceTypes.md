@@ -78,7 +78,7 @@ Person p3;
 In Zusammenhang mit der Vererbung ergeben sich folgende Besonderheiten:
 ```c#
 p3 = (Person)pu;        // "Hinaufcasten" ist möglich, da die Vererbung ja eine "is-a" beziehung ist. 
-p3.klasse = "3BHIF";    // Geht natürlich nich tmehr.
+p3.klasse = "3BHIF";    // Geht natürlich nicht mehr.
 object obj1 = pu;       // Alles ist von object abgeleitet.
 obj1.age = 12;          // Natürlich nicht mehr möglich.
 ((Pupil)obj1).age = 12; // Das würde gehen, aber nur wenn obj1 ein Pupil war.
