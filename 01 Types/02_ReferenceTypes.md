@@ -25,7 +25,8 @@ if (myStr == null)
     Console.WriteLine("myStr kann NULL sein, da es ein Referenztyp ist.");
 }
 
-// Ermittelt die Länge des Strings. Dieser Code liefert eine NullReferenceException
+// Ermittelt die Länge des Strings. Dieser Code 
+// liefert eine NullReferenceException
 int len = 0;
 try
 {
@@ -51,7 +52,7 @@ else
 
 In C# gibt es eine elegantere Möglichkeit. *?.* ist der "ternary conditional operator".
 Er liefert NULL, wenn myStr NULL ist und keine Exception. *??* ist der NULL coalescing Operator. Er 
-liefert 0, wenn der 1. Operand NULL ist.
+liefert in diesem Beispiel 0, da der 1. Operand NULL ist.
 ```c#
 len = myStr?.Length ?? 0;    // In len steht 0, wenn myStr null ist.
 ```
@@ -77,18 +78,21 @@ Person p3;
 
 In Zusammenhang mit der Vererbung ergeben sich folgende Besonderheiten:
 ```c#
-p3 = (Person)pu;        // "Hinaufcasten" ist möglich, da die Vererbung ja eine "is-a" beziehung ist. 
+p3 = (Person)pu;        // "Hinaufcasten" ist möglich, da die 
+                        // Vererbung ja eine "is-a" beziehung ist. 
 p3.klasse = "3BHIF";    // Geht natürlich nicht mehr.
 object obj1 = pu;       // Alles ist von object abgeleitet.
 obj1.age = 12;          // Natürlich nicht mehr möglich.
-((Pupil)obj1).age = 12; // Das würde gehen, aber nur wenn obj1 ein Pupil war.
+((Pupil)obj1).age = 12; // Das würde gehen, aber nur wenn obj1 
+                        // ein Pupil war.
 ```
 
 ## is und as
 In C# erleichtern die Schlüsselwörter *is* und *as* den Umgang mit Typencasts.
 ```c#
-// Wenn pu nicht in Pupil umgewandelt werden kann, wird NULL geliefert. In diesem Fall
-// wird eine neue Instanz von Pupil erstellt.
+// Wenn pu nicht in Pupil umgewandelt werden kann, wird NULL 
+// geliefert. In diesem Fall wird eine neue Instanz von 
+// Pupil erstellt.
 p3 = pu as Pupil ?? new Pupil();
 // true, da is angibt, ob ein Typencast durchgeführt werden kann.
 if (pu is Person)
