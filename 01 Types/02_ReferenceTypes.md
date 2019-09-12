@@ -53,7 +53,7 @@ In C# gibt es eine elegantere Möglichkeit. *?.* ist der "ternary conditional op
 Er liefert NULL, wenn myStr NULL ist und keine Exception. *??* ist der NULL coalescing Operator. Er 
 liefert 0, wenn der 1. Operand NULL ist.
 ```c#
-len = myStr?.Length ?? 0;
+len = myStr?.Length ?? 0;    // In len steht 0, wenn myStr null ist.
 ```
 Bei der Prüfung von String ist die Methode *IsNullOrEmpty()* auch nützlich. Hier in Verbindung mit 
 einer bedingten Zuweisung:
@@ -62,7 +62,7 @@ len = string.IsNullOrEmpty(myStr) ? 0 : myStr.Length;
 ```
 
 ## Eigene Typen
-p zeigt noch auf keinen Speicherbereich und ist daher null.
+Viele Eigenschaften aus Java lassen sich 1:1 übertragen.
 ```c#
 Person p;            // p ist null.
 p = new Person();    // Eine Person wird am Heap erstellt und
