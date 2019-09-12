@@ -14,7 +14,7 @@ class Pupil : Person
 ```
 
 ### Umgang mit NULL
-Oftmals führt ein null Wert zu einer NullReferenceException. In C# gibt es 2 Operatoren, die den Umgang
+Oftmals führt ein null Wert zu einer *NullReferenceException*. In C# gibt es 2 Operatoren, die den Umgang
 mit null erleichtern: ?. und ??. Folgendes Beispiel zeigt den Einsatz
 
 ```c#
@@ -25,7 +25,7 @@ if (myStr == null)
     Console.WriteLine("myStr kann NULL sein, da es ein Referenztyp ist.");
 }
 
-// Ermittelt die Länge des Strings. Diese Zeile liefert eine NullReferenceException
+// Ermittelt die Länge des Strings. Dieser Code liefert eine NullReferenceException
 int len = 0;
 try
 {
@@ -37,7 +37,7 @@ catch (NullReferenceException)
 }
 ```
 
-In Java müssen wir umständlich mit if prüfen, ob der Wert null ist:
+In Java müssen wir umständlich mit *if* prüfen, ob der Wert *null* ist:
 ```c#
 if (myStr == null)
 {
@@ -49,8 +49,8 @@ else
 }
 ```
 
-In C# gibt es eine elegantere Möglichkeit. myStr?.Length ist der "ternary conditional operator".
-Er liefert NULL, wenn myStr NULL ist und keine Exception. ?? ist der NULL coalescing Operator. Er 
+In C# gibt es eine elegantere Möglichkeit. *?.* ist der "ternary conditional operator".
+Er liefert NULL, wenn myStr NULL ist und keine Exception. *??* ist der NULL coalescing Operator. Er 
 liefert 0, wenn der 1. Operand NULL ist.
 ```c#
 len = myStr?.Length ?? 0;
@@ -62,7 +62,7 @@ len = string.IsNullOrEmpty(myStr) ? 0 : myStr.Length;
 ```
 
 ## Eigene Typen
-p zeigt noch auf keinen speicherbereich und ist daher null.
+p zeigt noch auf keinen Speicherbereich und ist daher null.
 ```c#
 Person p;            // p ist null.
 p = new Person();    // Eine Person wird am Heap erstellt und
