@@ -63,6 +63,10 @@ verwendet, da sie durch das .NET Framework wesentlich einfacher zugänglich sind
 1. Optional: [Installation von SQL Server 2017](SqlServerInstallation.md)
 1. [Installation von Visual Studio 2017/2019](VisualStudioInstallation.md)
 
+## Weiterführende Unterlagen:
+- Moissenböck: C# (JKU Linz) http://dotnet.jku.at/courses/csharp/download/Agree.aspx?ReturnUrl=%2fcourses%2fcsharp%2fdownload%2fSlides.aspx
+- C# 7 in a Nutshell: http://2.238.16.249:8880/get/pdf/106
+
 ## Synchronisieren des Repositories in einen Ordner
 1. Lade von https://git-scm.com/downloads die Git Tools (Button *Download 2.20.1 for WIindows*)
     herunter. Es können alle Standardeinstellungen belassen werden, bei *Adjusting your PATH environment*
