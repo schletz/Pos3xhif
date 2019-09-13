@@ -1,138 +1,145 @@
-## Pupil.cs
+# Properties und Initializer in C# #
+Betrachen wir eine Klasse *PupilJava*, mit den get und set Methoden, wie sie aus Java kennen:
 ```c#
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ClassDemo
+class PupilJava
 {
-    class Pupil
+    string vorname;
+    string zuname;
+    int alter;
+
+    public PupilJava(string vorname, string zuname)
     {
-        // Oftmals wird 1:1 zugewiesen, was so aussehen w�rde:
-        private string vorname2;
-        public string Vorname2
+        this.vorname = vorname;
+        this.zuname = zuname;
+        setAlter(0);
+    }
+
+    public PupilJava(string vorname, string zuname, int alter)
+    {
+        this.vorname = vorname;
+        this.zuname = zuname;
+        setAlter(alter);
+    }
+
+    public void setAlter(int alter)
+    {
+        if (alter >= 0)
         {
-            get { return vorname2; }
-            set { vorname2 = value; }
+            this.alter = alter;
         }
-        // Default Properties.
-        // Erstellt eine Variable + einen "Default Setter und Getter"
-        public string Vorname { get; set; }
-        // Hinweis: Eine Initialisierung ist bei Referenztypen von Vorteil.
-        // Mit = wird das Property initialisiert.
-        public string Zuname { get; set; } = "";
-
-        // Dieses Property wird berechnet. Es macht also wenig Sinn,
-        // hier einen Wert zuzuweisen. Deswegen machen wir nur ein
-        // get{}, d. h. ich kann dem Property nichts zuweisen.
-        public string Longname
+        else
         {
-            get { return $"{Vorname} {Zuname}"; }
-        }
-
-        // Alternative, werden wir noch kennen lernen.
-        public string Longname2 => $"{Vorname} {Zuname}";
-
-        private int alter;
-        // In get {} steht der Inhalt des Getters und wird 1:1 ausgef�hrt.
-        // Nat�rlich muss er etwas zur�ckliefern.
-        // In set {} steht der Inhalt des Setters mit der Besonderheit, dass
-        // der �bergebene Wert in value steht.
-        public int Alter
-        {
-            get { return alter; }
-            // VORSICHT: Liefert eine endlose Rekursion:
-            // get { return Alter; }
-            set { alter = value >= 0 ? value : throw new ArgumentException("Ung�ltiges Alter!"); }
+            throw new ArgumentException("Ungültiges Alter");
         }
     }
 
-    class PupilJava
+    public int getAlter()
     {
-        string vorname;
-        string zuname;
-        int alter;
-
-        public PupilJava(string vorname, string zuname)
-        {
-            this.vorname = vorname;
-            this.zuname = zuname;
-            setAlter(0);
-        }
-
-        public PupilJava(string vorname, string zuname, int alter)
-        {
-            this.vorname = vorname;
-            this.zuname = zuname;
-            setAlter(alter);
-        }
-
-        public void setAlter(int alter)
-        {
-            if (alter >= 0)
-            {
-                this.alter = alter;
-            }
-            else
-            {
-                throw new ArgumentException("Ung�ltiges Alter");
-            }
-        }
-
-        public int getAlter()
-        {
-            return alter;
-        }
+        return alter;
     }
 }
 ```
 
-## Program.cs
+Es fallen 2 Dinge auf:
+- Die get und set Methoden, die für Datenprüfungen zuständig sind, haben oft den gleichen Aufbau.
+- Es sind mehrere Konstruktoren vorhanden, je nach dem welche Variablen initialisiert werden sollen.
+
+## Properties ersetzen get und set Methoden
+Wir schreiben nun für die Felder *alter*, *vorname* und *zuname* sogenannte Properties. Properties erscheinen
+nach außen wie Variablen, es wird aber bei der Zuweisung ein Stück Code - nämlich der in set - ausgeführt.
+Das Schema ist folgendes:
+- Anlegen der private Variable. Sie beginnen in C# mit einem Kleinbuchstaben.
+- Anlegen der Properties. Sie beginnen in C# mit einem Großbuchstaben.
+- Die get Methode kann beliebige Anweisungen enthalten. Sie muss allerdings einen Wert zurückgeben.
+- Die set Methode kann auch beliebig aufgebaut sein. Der zugewiesene Wert ist in value enthalten.
 ```c#
-using System;
-
-namespace ClassDemo
+class Pupil
 {
+    private string vorname, zuname;
+    private int alter;
 
-    class Program
+    public string Vorname
     {
-        static void Main(string[] args)
-        {
-            // Geht nicht, da kein Standardkonstruktor
-            // mehr generiert wird.
-            // PupilJava pj = new PupilJava();
-            PupilJava pj = new PupilJava("VN1", "ZN1");
-            int age = pj.getAlter();   // Liefert 0
-            pj.setAlter(18);
-
-            // Der Initializer kann Properties beim Instanzieren mit einem
-            // Wert belegen.
-            Pupil p = new Pupil() { Vorname = "VN1", Zuname = "ZN1" };
-
-            // Hier wird wie erwartet eine ArgumentException geworfen, da die
-            // set Methode des Properties Alter verwendet wird.
-            try
-            {
-                Pupil p2 = new Pupil() { Vorname = "VN1", Zuname = "ZN1", Alter = -1 };
-            }
-            catch { }
-            // Auf p2 kann nicht zugegriffen werden, da der Scope auf den try
-            // Block beschr�nkt ist.
-            // p2.Alter = 1;
-
-            Pupil p3 = new Pupil() { Vorname = "VN1", Zuname = "ZN1" };
-            p3.Alter = 18;
-            Console.WriteLine($"Age ist {p3.Alter}!");
-
-            // Folgendes liefert einen Syntaxfehler.
-            // p3.Longname = "Testname";
-
-            // p4.Zuname ist "", da wir keinen Wert zuweisen und
-            // bei der Definition mit "" initialisiert wird.
-            // Sonst w�re dieser Wert null.
-            Pupil p4 = new Pupil() { Vorname = "VN1" };
-        }
+        get { return vorname; }
+        set { vorname = value; }
+    }
+    public string Zuname
+    {
+        get { return zuname; }
+        set { zuname = value; }
+    }
+    public int Alter
+    {
+        get { return alter; }
+        set { alter = value >= 0 ? value : throw new ArgumentException("Ungültiges Alter!"); }
     }
 }
-
 ```
+Oft ist folgender Fehler zu beobachten. Alter ist in der get Methode großgeschrieben, daher wird
+eine endlose Rekursion erzeugt:
+```c#
+public int Alter
+{
+    get { return Alter; }
+}
+```
+
+### Default Properties
+Die Properties für Vorname und Zuname weisen nur 1:1 zu bzw. geben den Wert 1:1 zurück. In C# gibt
+es mit den *Default Properties* einen eleganteren Weg, das zu bewerkstelligen. Der Compiler erledigt
+folgende Dinge:
+- Es wird automatisch eine private Variable im Hintergrund angelegt.
+- Die get und set Methode liefert diese 1:1 zurück bzw. schreibt in diese hinein.
+```c#
+class Pupil
+{
+    public string Vorname { get; set; }
+    public string Zuname { get; set; } 
+}
+```
+
+Möchte man die Default Properties gleich initialisieren, ist dies seit C# 6 auch möglich:
+```c#
+class Pupil
+{
+    public string Vorname { get; set; } = "";
+    public string Zuname { get; set; } = "";
+}
+```
+
+### Read-only Properties
+Wird nur eine get Methode definiert, so kann diesem Property nichts zugewiesen werden:
+```c#
+class Pupil
+{
+    public string Longname
+    {
+        get { return $"{Vorname} {Zuname}"; }
+    }
+}
+```
+
+## Verwendung der Properties, Initializer
+Der große Vorteil von Properties liegt in ihrer eleganten Verwendung. Folgende Anweisungen sind
+dadurch möglich:
+```c#
+Pupil p = new Pupil() { Vorname = "VN1", Zuname = "ZN1" };
+p.Alter = 18;
+```
+Was passiert hier? Zuerst wird ein Objekt vom Typ Pupil mit *new Pupil()* erzeugt. In C# ist es durch
+den *initializer* möglich, Properties gleich bei der Instanzierung zu initialisieren. Wir brauchen daher
+keine Konstruktoren mehr, die einfach nur die Variablen initialisieren. Das Property kann nun wie eine 
+public Variable gelesen oder geschrieben werden.
+
+Da die set Methoden durchlaufen werden, wird die Datenprüfung natürlich auch im Initializer ausgeführt:
+```c#
+try
+{
+    Pupil p = new Pupil() { Vorname = "VN1", Zuname = "ZN1", Alter = -1 };
+}
+catch (ArgumentException)
+{ 
+    Console.Error.WriteLine("Argument Exception!");
+}
+```
+
