@@ -1,5 +1,5 @@
 # Properties und Initializer in C# #
-Betrachen wir eine Klasse *PupilJava*, mit den get und set Methoden, wie sie aus Java kennen:
+Betrachen wir eine Klasse *PupilJava*, mit den get und set Methoden, wie wir sie aus Java kennen:
 ```c#
 class PupilJava
 {
@@ -51,7 +51,7 @@ Das Schema ist folgendes:
 - Anlegen der private Variable. Sie beginnen in C# mit einem Kleinbuchstaben.
 - Anlegen der Properties. Sie beginnen in C# mit einem Großbuchstaben.
 - Die get Methode kann beliebige Anweisungen enthalten. Sie muss allerdings einen Wert zurückgeben.
-- Die set Methode kann auch beliebig aufgebaut sein. Der zugewiesene Wert ist in value enthalten.
+- Die set Methode kann auch beliebig aufgebaut sein. Der zugewiesene Wert ist in *value* enthalten.
 ```c#
 class Pupil
 {
@@ -75,7 +75,7 @@ class Pupil
     }
 }
 ```
-Oft ist folgender Fehler zu beobachten. Alter ist in der get Methode großgeschrieben, daher wird
+Oft ist folgender Fehler zu beobachten. *Alter* ist in der get Methode großgeschrieben, daher wird
 eine endlose Rekursion erzeugt:
 ```c#
 public int Alter
