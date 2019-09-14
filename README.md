@@ -1,5 +1,11 @@
 # POS im III. Jahrgang der HTL Spengergasse
 
+## Wichtiges zum Start:
+1. [Anleitung zum Verbinden mit dem VPN und den Laufwerken](VpnSpengergasse.md)
+1. [Installation von Visual Studio 2019](VisualStudioInstallation.md)
+1. [Markdown Editing mit VS Code](markdown.md)
+1. Optional: [Installation von SQL Server 2017](SqlServerInstallation.md)
+
 ## Lehrinhalte auf Basis von Microsoft .NET und C#
 Gem. [Lehrplan BGBl. II Nr. 262/2015](https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20009288)
 für den 3. Jahrgang. Die *kursiv* gedruckten Teile in der Spalte Lehrplan kennzeichnen die wesentlichen
@@ -57,12 +63,6 @@ verwendet, da sie durch das .NET Framework wesentlich einfacher zugänglich sind
     </tr>    
 </table>
 
-
-## Wichtiges zum Start:
-1. [Anleitung zum Verbinden mit dem VPN und den Laufwerken](VpnSpengergasse.md)
-1. [Installation von Visual Studio 2019](VisualStudioInstallation.md)
-1. [Markdown Editing mit VS Code](markdown.md)
-1. Optional: [Installation von SQL Server 2017](SqlServerInstallation.md)
 
 ## Weiterführende Unterlagen:
 - Moissenböck: C# (JKU Linz) http://dotnet.jku.at/courses/csharp/download/Agree.aspx?ReturnUrl=%2fcourses%2fcsharp%2fdownload%2fSlides.aspx
