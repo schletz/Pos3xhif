@@ -60,8 +60,9 @@ verwendet, da sie durch das .NET Framework wesentlich einfacher zugänglich sind
 
 ## Wichtiges zum Start:
 1. [Anleitung zum Verbinden mit dem VPN und den Laufwerken](VpnSpengergasse.md)
+1. [Installation von Visual Studio 2019](VisualStudioInstallation.md)
+1. [Markdown Editing mit VS Code](markdown.md)
 1. Optional: [Installation von SQL Server 2017](SqlServerInstallation.md)
-1. [Installation von Visual Studio 2017/2019](VisualStudioInstallation.md)
 
 ## Weiterführende Unterlagen:
 - Moissenböck: C# (JKU Linz) http://dotnet.jku.at/courses/csharp/download/Agree.aspx?ReturnUrl=%2fcourses%2fcsharp%2fdownload%2fSlides.aspx
