@@ -111,7 +111,9 @@ foreach(string lehrer in lehrerHashSet)
 Erstelle eine Soluition ExCollections mit dem Projekt ExCollection.App. Installiere danach das Paket
 *Newtonsoft.Json*, indem du in Visual Studio mittels *Tools* - *NuGet Package Manager* - *Package Manager Console*
 die Konsole öffnest. Das Paket kann durch die Eingabe von *Install-Package Newtonsoft.Json* in der Konsole
-installiert werden.
+installiert werden. Bei Problemen (Newtonsoft wird nicht erkannt) kann die Installatio auch über die GUI
+erfolgen: Rechte Maustaste auf das Projekt im Solution Explorer - *Manage NuGet Packages*. Unter *Browse*
+kann das Paket *Newtonsoft.Json* gesucht und installiert werden.
 
 Ersetze danach den Inhalt von Program.cs durch die untenstehende Version. Vervollständige die 2 Klassen 
 *Schueler* und *Klasse* so, dass die Ausgaben des Programmes korrekt sind.
