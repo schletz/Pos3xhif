@@ -121,7 +121,7 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace CollectionDemo.App
+namespace ExCollection.App
 {
     class Klasse
     {
