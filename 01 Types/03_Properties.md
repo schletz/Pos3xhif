@@ -150,6 +150,7 @@ Regeln:
 - Wird diesen Properties ein Wert kleiner als 0 zugewiesen, wird mittels 
   *throw new ArgumentException("Ungültige Länge")*
   eine Exception geworfen.
+- Das Property *Flaeche* ist read-only und wird mit Länge x Breite ermittelt.
 
 Für die Klasse *Lehrer* gelten folgende Regeln:
 - Die string Properties *Zuname* und *Vorname* sind Default Properties.
