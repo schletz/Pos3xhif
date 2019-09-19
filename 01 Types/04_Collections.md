@@ -177,6 +177,7 @@ namespace ExCollection.App
             klassen["3BHIF"].AddSchueler(new Schueler() { Id = 1013, Vorname = "VN6", Zuname = "ZN6" });
 
             Schueler s = klassen["3AHIF"].Schuelers[0];
+            Console.WriteLine($"s sitzt in der Klasse {s.KlasseNavigation.Name} mit dem KV {s.KlasseNavigation.KV}.");            
             Console.WriteLine("3AHIF vor ChangeKlasse:");
             Console.WriteLine(JsonConvert.SerializeObject(klassen["3AHIF"].Schuelers));
             s.ChangeKlasse(klassen["3BHIF"]);
@@ -193,6 +194,7 @@ namespace ExCollection.App
 
 ### Korrekte Ausgabe:
 ```
+s sitzt in der Klasse 3AHIF mit dem KV KV1.
 3AHIF vor ChangeKlasse:
 [{"Id":1001,"Zuname":"ZN1","Vorname":"VN1"},{"Id":1002,"Zuname":"ZN2","Vorname":"VN2"},{"Id":1003,"Zuname":"ZN3","Vorname":"VN3"}]
 3AHIF nach ChangeKlasse:
