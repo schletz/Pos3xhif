@@ -170,3 +170,13 @@ class Program
 	}
 }
 ```
+
+## Ausgabe
+```
+Ist s1AlsPerson volljährig?          False.
+Accountname von s1 ist               eif0001.
+Accountname von l1 ist               fleißig.
+Accountname von l1AlsPerson ist      fleißig.
+ToString() von l1 ist                base.ToString() von Person 1 ist VererbungDemo.Lehrer.
+HiddenMethod von s1AlsPerson ist     HiddenMethod in Person.
+```
