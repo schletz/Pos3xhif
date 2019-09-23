@@ -1,4 +1,4 @@
-# Vererbung 1: Interfaces überschreiben: IEquatable und IComparable
+# Vererbung 2: Interfaces überschreiben: IEquatable und IComparable
 Vererbung wird hauptsächlich dazu verwendet, um ein bestehendes Framework (in unserem Fall das .NET
 Framework) zu erweitern. Oft werden Interfaces, die bereitgestellt werden, in eigenen Klassen implementiert.
 
@@ -70,7 +70,7 @@ class Position : IEquatable<Position>, IComparable, IComparable<Position>
     public static bool operator <(Position p1, Position p2) => p1.CompareTo(p2) < 0;
     public static bool operator <=(Position p1, Position p2) => p1.CompareTo(p2) <= 0;
     public static bool operator >(Position p1, Position p2) => p1.CompareTo(p2) > 0;
-    public static bool operator >=(Position p1, Position p2) => p1.CompareTo(p2) > 0;
+    public static bool operator >=(Position p1, Position p2) => p1.CompareTo(p2) >= 0;
 
     public Position(double lat, double lng)
     {
