@@ -201,6 +201,7 @@ danach eine neue Klasse *Klasse*, die folgende Eigenschaften aufweist:
 - Die Methode *Add()* soll neu implementiert werden und versteckt die *Add()* Methode der Liste. Hier dürfen nur Schüler eingefügt werden, dessen Nummer
   nicht schon vorhanden ist. Achte dabei auf den Aufruf der ursprünglichen *Add()* Methode der List Klasse. Ist
   ein Schüler schon vorhanden, wird eine *InvalidOperationException* geworfen.
+- Überschreibe *ToString()* so, dass der String Klasse (Name), KV: (Zuname des KV), Schüleranzahl: (Count der Schülerliste)
 
 Das folgende Programm testet deine Implementierung von Klasse. Wenn das Programm funktioniert erstelle
 eine neue Klasse mit dem Namen *Klasse2*. Diese erbt nicht von *List&lt;Schueler&gt;*, sondern speichert die Schüler
