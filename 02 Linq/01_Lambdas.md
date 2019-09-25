@@ -44,7 +44,7 @@ param1 => statement
 
 
 ## Datentypen für Lambdas
-In den schreibweisen davor wurde auf eine Information verzichtet: Der Datentyp. Da C# *static typing* umsetzt,
+In den Schreibweisen davor wurde auf eine Information verzichtet: Der Datentyp. Da C# *static typing* umsetzt,
 müssen Lambda Ausdrücke natürlich auch einen Datentyp haben. Hier gibt es 2 Verianten:
 
 ## Lambdas, die keinen Wert zurückgeben
@@ -55,6 +55,12 @@ Action action0 = () => { };
 Action<int> action1 = x => Console.WriteLine(x);
 Action<int> action2 = x => { Console.WriteLine(x); Console.WriteLine("END"); };
 Action<int, int> action3 = (x, y) => Console.WriteLine(x + y);
+```
+
+Natürlich können diese Variablen, die jetzt eine Lambda Expression - also eine Funktion - beinhalten,
+auch wie eine Funktion aufgerufen werden:
+```c#
+action2(2); // Gibt 2 und END aus.
 ```
 
 ## Lambdas, die Werte zurückgeben
