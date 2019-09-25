@@ -142,7 +142,7 @@ Hashset:
 ## Punkt ist ein *Immutable Type*
 Es scheint vielleicht seltsam, dass wir Länge und Breite im Konstruktor setzen und diese Werte im Nachhinein
 nicht mehr geändert werden können. Dies wird durch ein read-only Property erzielt. Diese Properties können
-jedoch im Konstruktur initialisiert werden. Nach dem Durcharbeiten dieses Kapitels ist der Sinn klar.
+jedoch im Konstruktor initialisiert werden. Nach dem Durcharbeiten dieses Kapitels ist der Sinn klar.
 
 ## *IEquatable&lt;T&gt;* und *object.Equals()*
 Bei Referenztypen wird zwischen Referenzgleichheit (Referenzvariable zeigt auf die gleiche Instanz) und
