@@ -132,7 +132,7 @@ namespace ExCollection.App
         public string Name { get; set; }
         public string KV { get; set; }
         /// <summary>
-        /// Fügt den Schüler in die Liste hinzu und setzt das Property KlasseNavigation
+        /// Fügt den Schüler zur Liste hinzu und setzt das Property KlasseNavigation
         /// des Schülers korrekt auf die aktuelle Instanz.
         /// </summary>
         /// <param name="s"></param>
