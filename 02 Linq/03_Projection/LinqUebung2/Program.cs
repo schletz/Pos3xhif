@@ -115,7 +115,7 @@ namespace LinqUebung2
             result4.ToList().ForEach(s => { Console.WriteLine($"   {s.Klasse}: {s.Name} {s.Vorname} hat {String.Join(",", s.Faecher)}"); });
 
             // 5. Liefere eine Liste aller Schüler der 3AHIF (Name, Vorname) mit ihren negativen 
-            //    Prüfungen. Dabei soll unter dem Property "Negativedb.Pruefungen"
+            //    Prüfungen. Dabei soll unter dem Property "NegativePruefungen"
             //    ein neues Objekt mit Datum und Fach aller negativen Prüfungen (Note = 5) 
             //    erzeugt werden. Es sind natürlich 2 new Anweisungen nötig.
             //    Außerdem sollen nur Schüler der 3AHIF berücksichtigt werden.
@@ -124,7 +124,7 @@ namespace LinqUebung2
             foreach (var schueler in result5)
             {
                 Console.WriteLine($"   Negative Prüfungen von {schueler.Name} {schueler.Vorname}:");
-                foreach (var pruef in schueler.Negativedb.Pruefungen)
+                foreach (var pruef in schueler.NegativePruefungen)
                 {
                     Console.WriteLine($"      {pruef.Fach} am {pruef.Datum.ToString("dd.MM.yyyy")}");
                 }
