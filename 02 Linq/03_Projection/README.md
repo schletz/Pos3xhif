@@ -21,7 +21,7 @@ class A {
 ```
 
 Da dieser Typ keinen Namen hat, wird das Schlüsselwort *var* verwendet. Der Compiler weist der Variable
-beim kompilieren (nicht zur Laufzeit!) den Typ zu. Der Typ der Variable kann danach nicht mehr geändert
+beim Kompilieren (nicht zur Laufzeit!) den Typ zu. Der Typ der Variable kann danach nicht mehr geändert
 werden.
 ```c#
 var uebung3 = db.Schuelers.Select(s => new
