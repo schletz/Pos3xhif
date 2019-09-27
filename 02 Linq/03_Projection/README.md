@@ -10,8 +10,9 @@ IEnumerable<string> uebung1 = db.Pruefungen.Select(p => p.Fach);
 IEnumerable<string> uebung2 = db.Pruefungen.Select(p => p.Fach).Distinct();
 ```
 
-Liefere eine Liste aller Schüler mit der Anzahl der Prüfungen als Objekt Name, Vorname, Anzahl
-Der Compiler legt eine anonyme Klasse an:
+Liefere eine Liste aller Schüler mit einem neu erstellten Objekt. Es soll die Anzahl der Prüfungen,
+Name und Vorname als Property speichern. Mit Hilfe von *new {}* im nachfolgenden Beispiel legt der 
+Compiler legt eine anonyme Klasse an:
 ```
 class A {
   string Name {get;set;}
@@ -22,13 +23,13 @@ class A {
 
 Da dieser Typ keinen Namen hat, wird das Schlüsselwort *var* verwendet. Der Compiler weist der Variable
 beim Kompilieren (nicht zur Laufzeit!) den Typ zu. Der Typ der Variable kann danach nicht mehr geändert
-werden.
+werden, da wir nach wie vor static typing haben.
 ```c#
 var uebung3 = db.Schuelers.Select(s => new
 {
       s.Name,
-      s.Vorname,
-      Anzahl = s.Pruefungen.Count   Propertynamen festlegen
+      s.Vorname,                    // Propertyname wird übernommen.
+      Anzahl = s.Pruefungen.Count   // Propertynamen mit = festlegen
 }).OrderBy(x => x.Anzahl).ThenBy(x => x.Name);
 // Funktioniert nicht:
 // uebung3 = "Ein String".
