@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="LinqUebung1.App.Model.Pruefung">
+    <Position X="4.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAgAAAAAACAAAAAAAAAAEAgAA=</HashCode>
+      <FileName>Model\Pruefung.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Schueler" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="LinqUebung1.App.Model.Schueler">
+    <Position X="9" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAACAAAAAAAAAAAAAgAAAAQAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Schueler.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Pruefungen" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="LinqUebung1.App.Model.PruefDb">
+    <Position X="7" Y="0.5" Width="1.5" />
+    <AssociationLine Name="Schuelers" Type="LinqUebung1.App.Model.Schueler" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="8.5" Y="1.125" />
+        <Point X="9.812" Y="1.125" />
+        <Point X="9.812" Y="2.5" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAAAAAAAAEQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\PruefDb.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Pruefungen" />
+      <Property Name="Schuelers" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
