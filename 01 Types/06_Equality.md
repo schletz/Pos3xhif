@@ -158,7 +158,7 @@ Methode einfach *false* liefern. Der *?.* Operator hilft uns hierbei.
 ```c#
 public bool Equals(Position other)
 {
-    return Lat.Equals(other?.Lat) && Lat.Equals(other?.Lat);
+    return Lat.Equals(other?.Lat) && Lng.Equals(other?.Lng);
 }
 public override bool Equals(object obj)
 {
