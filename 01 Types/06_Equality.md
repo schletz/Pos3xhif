@@ -36,7 +36,7 @@ class Position : IEquatable<Position>, IComparable, IComparable<Position>
     /// <returns></returns>
     public bool Equals(Position other)
     {
-        return Lat.Equals(other?.Lat) && Lat.Equals(other?.Lat);
+        return Lat.Equals(other?.Lat) && Lng.Equals(other?.Lng);
     }
     public override bool Equals(object obj)
     {

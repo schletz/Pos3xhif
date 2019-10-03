@@ -135,6 +135,10 @@ namespace FileReader
             }
         }
 
+        public virtual override string ToString()
+        {
+            return base.ToString();
+        }
         public TypedReader(Stream stream) : base(stream) { }
         public TypedReader(Stream stream, bool detectEncodingFromByteOrderMarks) : base(stream, detectEncodingFromByteOrderMarks) { }
         public TypedReader(Stream stream, Encoding encoding) : base(stream, encoding) { }
