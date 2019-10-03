@@ -328,11 +328,11 @@ class Program
         Console.WriteLine($"nr1 ist ident mit nr4?:           {nr1.Equals(nr4)}");
         Console.WriteLine($"nr1 ist ident mit (object) nr4?:  {nr1.Equals((object) nr4)}");
         Console.WriteLine($"nr3 ist ident mit null?:          {nr3.Equals(null)}");
-        Console.WriteLine($"nr3 ist größer als n1?:           {nr3.CompareTo(nr4) > 0}");
-        Console.WriteLine($"nr3 ist größer als n1?:           {nr3 > nr4}");
+        Console.WriteLine($"nr3 ist größer als n4?:           {nr3.CompareTo(nr4) > 0}");
+        Console.WriteLine($"nr3 ist größer als n4?:           {nr3 > nr4}");
 
         Console.WriteLine($"Hash von nr1:           {nr1.GetHashCode()}");
-        Console.WriteLine($"Hash von nr4:           {nr1.GetHashCode()}");
+        Console.WriteLine($"Hash von nr4:           {nr4.GetHashCode()}");
 
         List<PhoneNr> numbers = new List<PhoneNr>() { nr1, nr2, nr3, nr4 };
         numbers.Sort();
@@ -353,7 +353,7 @@ nr3 ist ident mit null?:          False
 nr3 ist größer als n1?:           True
 nr3 ist größer als n1?:           True
 Hash von nr1:           (nr1 muss ident mit nr4 sein)
-Hash von nr4:           (nr1 muss ident mit nr4 sein)
+Hash von nr4:           (nr4 muss ident mit nr4 sein)
 01/53120
 01/54615
 01/54615
