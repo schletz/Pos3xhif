@@ -90,7 +90,7 @@ class MyTracker
     public void DoTracking(int seconds)
     {
         DateTime start = DateTime.Now;
-        while ((DateTime.Now - start).TotalSeconds < 10)
+        while ((DateTime.Now - start).TotalSeconds < seconds)
         {
             Point position = locator.GetLocation();
             Console.WriteLine($"Lat: {position.Lat:0.00}°, Lng: {position.Lng:0.00}°");
