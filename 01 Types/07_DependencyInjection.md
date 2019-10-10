@@ -175,7 +175,7 @@ class MyTracker
     public void DoTracking(int seconds)
     {
         DateTime start = DateTime.Now;
-        while ((DateTime.Now - start).TotalSeconds < 10)
+        while ((DateTime.Now - start).TotalSeconds < seconds)
         {
             Point position = locator.GetLocation();
             Logger?.Log($"Lat: {position.Lat:0.00}°, Lng: {position.Lat:0.00}°");
