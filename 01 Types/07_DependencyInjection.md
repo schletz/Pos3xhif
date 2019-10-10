@@ -93,7 +93,7 @@ class MyTracker
         while ((DateTime.Now - start).TotalSeconds < 10)
         {
             Point position = locator.GetLocation();
-            Console.WriteLine($"Lat: {position.Lat:0.00}°, Lng: {position.Lat:0.00}°");
+            Console.WriteLine($"Lat: {position.Lat:0.00}°, Lng: {position.Lng:0.00}°");
             System.Threading.Thread.Sleep(1000);
         }
     }
@@ -121,27 +121,27 @@ class Program
 In der Ausgabe erkennen wir die unterschiedlichen Intervalle bei der Aktualisierung der Werte.
 ```
 Tracking mit ANDROID:
-Lat: -12.95°, Lng: -12.95°
-Lat: -12.95°, Lng: -12.95°
-Lat: 45.51°, Lng: 45.51°
-Lat: 45.51°, Lng: 45.51°
-Lat: -8.77°, Lng: -8.77°
-Lat: -8.77°, Lng: -8.77°
-Lat: -56.19°, Lng: -56.19°
-Lat: -56.19°, Lng: -56.19°
-Lat: -27.74°, Lng: -27.74°
-Lat: -27.74°, Lng: -27.74°
+Lat: -12.95°, Lng: 3.2°
+Lat: -12.95°, Lng: 3.2°
+Lat: 45.51°, Lng: 26.2°
+Lat: 45.51°, Lng: 26.2°
+Lat: -8.77°, Lng: 3.5°
+Lat: -8.77°, Lng: 3.5°
+Lat: -56.19°, Lng: 232.6°
+Lat: -56.19°, Lng: 232.6°
+Lat: -27.74°, Lng: 185.7°
+Lat: -27.74°, Lng: 185.7°
 Tracking mit APPLE:
-Lat: -7.93°, Lng: -7.93°
-Lat: -7.93°, Lng: -7.93°
-Lat: -7.93°, Lng: -7.93°
-Lat: -7.93°, Lng: -7.93°
-Lat: -7.93°, Lng: -7.93°
-Lat: -13.71°, Lng: -13.71°
-Lat: -13.71°, Lng: -13.71°
-Lat: -13.71°, Lng: -13.71°
-Lat: -13.71°, Lng: -13.71°
-Lat: -13.71°, Lng: -13.71°
+Lat: -7.93°, Lng: 202.5°
+Lat: -7.93°, Lng: 202.5°
+Lat: -7.93°, Lng: 202.5°
+Lat: -7.93°, Lng: 202.5°
+Lat: -7.93°, Lng: 202.5°
+Lat: -13.71°, Lng: 86.0°
+Lat: -13.71°, Lng: 86.0°
+Lat: -13.71°, Lng: 86.0°
+Lat: -13.71°, Lng: 86.0°
+Lat: -13.71°, Lng: 86.0°
 ```
 
 ## Was bringt das?
