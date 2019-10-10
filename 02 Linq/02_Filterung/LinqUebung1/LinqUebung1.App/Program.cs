@@ -59,6 +59,7 @@ namespace LinqUebung1.App
 
             // 9. Gibt es Schüler, die nur in POS eine Prüfung haben? Gib eine Liste von Schülern zurück und gib sie aus.
             //    Hinweis: kombiniere Where und All, indem All in der Where Funktion verwendet wird.
+            //    All gibt auch Schüler aus, die keine Prüfung haben. Dies kann so belassen werden.
             Console.WriteLine("Beispiel 9: Schüler, die nur in POS eine Prüfung haben.");
             // Schreibe das Ergebnis mit dem richtigen Datentyp in die Variable result9 (kein var verwenden!).
             result9.ToList().ForEach(s => { Console.WriteLine($"   {s.Name} {s.Vorname} hat nur in POS eine Prüfung."); });
