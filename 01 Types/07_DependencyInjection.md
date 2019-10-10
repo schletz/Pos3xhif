@@ -202,4 +202,5 @@ class Program
 ```
 
 ## Weitere Informationen
+- https://www.codementor.io/mrfojo/c-with-dependency-injection-k2qfxbb8q
 - https://blogs.msdn.microsoft.com/dmx/2014/10/14/was-ist-eigentlich-dependency-injection-di/
