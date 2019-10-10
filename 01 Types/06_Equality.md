@@ -350,8 +350,8 @@ nr1 ist ident mit nr2?:           False
 nr1 ist ident mit nr4?:           True
 nr1 ist ident mit (object) nr4?:  True
 nr3 ist ident mit null?:          False
-nr3 ist größer als n1?:           True
-nr3 ist größer als n1?:           True
+nr3 ist größer als n4?:           True
+nr3 ist größer als n4?:           True
 Hash von nr1:           (nr1 muss ident mit nr4 sein)
 Hash von nr4:           (nr4 muss ident mit nr4 sein)
 01/53120
