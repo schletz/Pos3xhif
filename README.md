@@ -89,8 +89,8 @@ git remote add origin https://github.com/schletz/Pos3xhif.git
     in diesem Ordner bleiben auf der Festplatte, geänderte Dateien werden allerdings durch 
     *git reset* auf den Originalstand zurückgesetzt.
 ```bash {.line-numbers}
-git reset --hard
-git pull origin master --allow-unrelated-histories
+git fetch --all
+git reset --hard origin/master
 ```
 
 ## Optional: anlegen eines eigenen Repositories
