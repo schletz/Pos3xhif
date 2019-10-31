@@ -273,7 +273,7 @@ Eine ähnliche Idee verfolgt auch die im .NET Framework enthaltene *[Lazy](https
 sie ein einmal erstelltes Objekt nicht mehr erneut an.
 
 ## Haupteinsatzgebiete von Generics
-Bei generischen Klassen oder Methoden wird nicht der Typ "verwendet", sondern "verwaltet". Da wir keine
+Bei generischen Klassen oder Methoden wird der Typ nicht "verwendet", sondern "verwaltet". Da wir keine
 konkreten Methoden des Typs aufrufen können, schränkt das die Verwendungsöglichkeit natürlich sehr
 ein. Wir können den parametrisierten Typ aber
 - in Speicherstrukturen speichern (Listen, Graphen, Blockchains, unser Cache, ...).
