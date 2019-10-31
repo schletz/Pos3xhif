@@ -1,14 +1,14 @@
 # Extension Methods in C#
 ## Intro: Liegt ein Tag am Wochenende?
 Wir wollen eine Methode schreiben, die bestimmt, ob ein Tag auf ein Wochenende (Samstag oder Sonntag) fällt.
-In .NET ist der Typ DateTime der Standardtyp für Datums- und Zeitangeben. Wir können wir unsere Methode
+In .NET ist der Typ *DateTime* der Standardtyp für Datums- und Zeitangeben. Wir können wir unsere Methode
 *IsWeekend()* nun implementieren?
 
 ### Variante 1: Ableiten von DateTime
 Der erste Ansatz wenn wir zu einem Typ Features hinzufügen wollen führt einmal über die Vererbung. 
 Wir könnten einen Typ *MyDateTime* definieren, der von *DateTime* erbt. Jedoch ist dies nicht von Vorteil
 bzw. in C# gar nicht möglich:
-- Bestehende Methoden im .NET Framework liefern DateTime und nicht MyDateTime.
+- Bestehende Methoden im .NET Framework liefern *DateTime* und nicht *MyDateTime*.
 - DateTime ist eine [struct](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/structs),
   daher kann nicht von ihr geerbt werden.
 
@@ -36,7 +36,7 @@ Console.WriteLine($"{myDate} ist am Wochenende? {DateTimeHelpers.IsWeekend(myDat
 ```
 
 Problem gelöst, jedoch mit "unschönen" Effekten:
-- Helferklassen mit einzelnen nicht zusammenhängenden Methoden widersprechen dem OOP Ansatz.
+- Helferklassen mit einzelnen, nicht zusammenhängenden Methoden widersprechen dem OOP Ansatz.
 - Da die Methode statisch ist, kann - bei *DateTime* als *struct* zwar nicht, bei Klassen aber schon - null
   übergeben werden. Eine Prüfung in der Helpermethode ist daher notwendig.
 
@@ -48,9 +48,9 @@ DateTime myDate = new DateTime(2019, 11, 2);
 Console.WriteLine($"{myDate} ist am Wochenende? {myDate.IsWeekend()}");
 ```
 
-Das ist mit *Extension Methods* möglich. Sie erweitern bestehende Objekte aus dem Framework um eigene
-Methoden. Konkret wird die Extension Method in der Klasse *DateTimeExtensions* (der Name ist natürlich
-frei wählbar) definiert:
+Das ist mit *Extension Methods* möglich. Sie erweitern bestehende Objekte aus dem Framework, auf die
+wir keinen Einfluss haben, um eigene Methoden. Konkret wird die Extension Method in der Klasse 
+*DateTimeExtensions* (der Name ist natürlich frei wählbar) definiert:
 ```c#
 static class DateTimeExtensions
 {
@@ -67,7 +67,7 @@ Wir sehen folgende syntaktische Besonderheiten:
 - Die Extension Methode befindet sich in einer statischen Klasse. Das bedeutet, dass sie keine 
   Membervariablen und keine nicht statischen Methoden haben kann.
 - Die Extension Methode ist statisch.
-- Die Extension Methode bekommt als erstes Argument mit dem Schlüsselwort this die Instanz übergeben,
+- Die Extension Methode bekommt als erstes Argument mit dem Schlüsselwort *this* die Instanz übergeben,
   von der sie aufgerufen wird.
 
 ### Extension Methods und Interfaces
@@ -134,12 +134,12 @@ myLogger.LogUppercase("Hello!");                 // Gibt HELLO! aus.
 
 Auf [social.msdn.microsoft.com](https://social.msdn.microsoft.com/Forums/vstudio/en-US/d5603465-04fe-4941-915d-4d940e73fc37/when-to-use-abstract-classes-instead-of-interfaces-with-extension-methods-in-c?forum=csharpgeneral)
 gibt es eine interessante Diskussion, wann welcher Ansatz besser ist. Die Meinung bildet das oben 
-genannte ab.
+Genannte ab.
 
 ## Bekannte Vertreter im .NET Framework
 Der bekannteste Vertreter ist zweifellos LINQ. Es bietet eine Sammlung von Methoden, die das Interface
-für Aufzählungen (*IEnumerable*) erweitert. Dadurch können die Methoden wie Where(), Select(), ...
-bei jeder Collection verwendet werden.
+für Aufzählungen (*IEnumerable*) erweitert. Dadurch können die Methoden wie *Where()*, *Select()*, ...
+bei jeder Anweisung, die *IEnumerable* liefert, verwendet werden.
 
 Wir erkennen die Extension Methode an der Signatur der Methode *Where()*. Der erste Parameter beginnt
 mit *this*, das bedeutet dass die Methode das Interface *IEnumerable* erweitert:
@@ -154,5 +154,5 @@ public static IEnumerable<TSource> Where<TSource>(this IEnumerable<TSource> sour
 | Bei Klassen, die wir verfasst haben. | Bei bestehenden Klassen aus dem Framework. |
 | Zugriff auf protected Members möglich. | Zugriff nur auf public Members. |
 | Erweitern die Klasse meist noch um private Members und Properties.      | Keine Extension Properties möglich. Haben den Charakter von "Helper Functions". |
-| Statische Methoden können implementiert werden (z. B. Factorymethoden). | Nicht möglich, alle Extension Methoden sind Instanzgebunden. Deswegen kann Console nicht erweitert werden. |
+| Statische Methoden können implementiert werden (z. B. Factorymethoden). | Nicht möglich, alle Extension Methoden sind Instanzgebunden. Deswegen kann *Console* als statische Klasse nicht erweitert werden. |
 | In der OOP Modellierung vorgesehen.                                     | Sollten sparsam verwendet werden.
