@@ -261,10 +261,10 @@ static void Main(string[] args)
     PupilList filtered = pupils.Filter(classFilter);                       // (3)
 }
 ```
-In (1) wird die Funktion **deklariert**. Sie kann auf classToFilter zugreifen, da sie davor in der *Main()*
+In (1) wird die Funktion **deklariert**. Sie kann auf *classToFilter* zugreifen, da die Variable davor in der *Main()*
 Methode deklariert wurde. Sie wird jedoch noch nicht ausgeführt, deswegen führt die Neuzuweisung
-der Variable classToFilter in (2) dazu, dass die Filterfunktion in (3) nach der 3AHIF sucht. **Wir
-müssen daher immer zwischen der deklaration und dem tatsächlichen Ausführen von Funktionen unterscheiden!**
+der Variable *classToFilter* in (2) dazu, dass die Filterfunktion in (3) nach der 3AHIF sucht. **Wir
+müssen daher immer zwischen der Deklaration und dem tatsächlichen Ausführen von Funktionen unterscheiden!**
 
 ## Übung
 Erstelle eine neue Solution mit dem Namen *LambdaUebung*. Erstelle danach eine leere Klasse mit dem Namen
