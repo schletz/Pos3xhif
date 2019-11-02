@@ -1,7 +1,182 @@
 # Lambdas in C#
+## Intro in LINQ und Lambdas
+Als Einstieg definieren wir eine Klasse *Pupil*, die Daten von Schülern erfasst. Eine Klasse *PupilList*
+verwaltet diese in einer Liste. Wir möchten in dieser *PupilList* auch filtern können. Ein Filter, der
+alle Schüler einer Klasse heraussucht, kann so aussehen:
+```c#
+class Pupil
+{
+    public int Id { get; set; }
+    public string Firstname { get; set; }
+    public string Lastname { get; set; }
+    public string SchoolClass { get; set; }
+}
+class PupilList : List<Pupil>
+{
+    public PupilList Filter(string schoolClass)
+    {
+        PupilList result = new PupilList();
+        foreach(Pupil pupil in this)
+        {
+            if (pupil.SchoolClass == schoolClass)
+            {
+                result.Add(pupil);
+            }
+        }
+        return result;
+    }
+}
+```
 
-Betrachten wir eine allgemeine Funktion, die in C# deklariert wird. Sie erwartet 2 Parameter und liefert
-ein Ergebnis zurück.
+Der Aufruf der Filtermethode ist wie erwartet:
+```c#
+static void Main(string[] args)
+{
+    PupilList pupils = new PupilList
+    {
+        new Pupil{Id = 1, Firstname = "FN1", Lastname = "LN1", SchoolClass = "3AHIF"},
+        new Pupil{Id = 2, Firstname = "FN2", Lastname = "LN2", SchoolClass = "3BHIF"},
+        new Pupil{Id = 3, Firstname = "FN3", Lastname = "LN3", SchoolClass = "3BHIF"},
+        new Pupil{Id = 4, Firstname = "FN4", Lastname = "LN4", SchoolClass = "3BHIF"}
+    };
+
+    PupilList pupils3bhif = pupils.Filter("3BHIF");
+}
+```
+Nun wollen wir auch nach dem Zunamen filtern. Unsere *Filter()* Funktion filtert fix nach der Klasse,
+daher haben wir mehrere Möglichkeiten:
+- Wir schreiben eine Funktion FilterLastname(). Der Code ist allerdings meist ident zur *Filter()* Methode,
+  und Code kopieren ist bekanntlich das Schlechteste Design.
+- Wir könnten den Propertynamen, den wir filtern möchten, auch übergeben. Über Reflection wäre das zwar
+  möglich, aber sehr fehleranfällig falls einmal so ein Property nicht existiert.
+- **Wir übergeben keinen String, nach den wir filtern sollen, sondern eine Funktion, die für
+  jedes Element entscheidet, ob es ausgewählt wird.**
+
+Wir betrachten den letzten Punkt. Eine Funktion zu übergeben ist in C# möglich. Allerdings setzt C#
+static Typing um, das bedeutet, wir müssen dem Compiler einmal sagen, wie unsere Funktion aufgebaut
+ist.
+
+### Eine Reise durch die Geschichte: delegates
+Die nachfolgende Technik wird heute nicht mehr verwendet, falls jedoch einmal älterer Code bearbeitet
+werden soll, kann dieser mit dem Wissen verstanden werden.
+
+Wir ergänzen unsere Klasse *PupilList* um ein public Member *FilterDelegate*:
+```c#
+class PupilList : List<Pupil>
+{
+    public delegate bool FilterDelegate(Pupil item);
+    public PupilList Filter(string schoolClass)
+    {
+        // ...
+    }
+}
+```
+
+Ein *delegate* ist eine "Schablone" für eine Funktion. Er steht für alle Funktionen, die in diesem Fall
+*bool* zurückliefern und ein Argument vom Typ *Pupil* bekommen. Es ist ähnlich den Interfaces, die auch
+nur eine "Schablone" für Klassen, die es implementieren, darstellen.
+
+Wir können wir diese Funktion nun in unserem Filter verwenden? Da die konkrete Filterfunktion als 
+Argument für die Filtermethode übergeben wird, können wir diese dort nutzen. Den Delegate selbst
+können wir nicht aufrufen, da er ja nur eine Schablone und keine konkrete Funktion ist.
+```c#
+class PupilList : List<Pupil>
+{
+    public delegate bool FilterDelegate(Pupil item);
+    public PupilList Filter(FilterDelegate filterFunction)
+    {
+        PupilList result = new PupilList();
+        foreach(Pupil pupil in this)
+        {
+            if (filterFunction(pupil))
+            {
+                result.Add(pupil);
+            }
+        }
+        return result;
+    }
+}
+```
+
+Der konkrete Filter wird übergeben, das bedeutet er wird in der Program Klasse definiert:
+```c#
+class Program
+{
+    static bool ClassFilter3bhif(Pupil item)
+    {
+        return item.SchoolClass == "3BHIF";
+    }
+    static void Main(string[] args)
+    {
+        // ...
+        PupilList pupils3bhif = pupils.Filter(ClassFilter3bhif);
+    }
+}
+```
+
+Das Ergebnis sind wieder alle Schüler der 3BHIF. Wir können jedoch jetzt mehrere Filter definieren.
+Im folgenden Beispiel wollen wir alle Schüler, dessen Id kleiner als 10 ist, bekommen:
+```c#
+class Program
+{
+    static bool IdUnder10Filter(Pupil item)
+    {
+        return item.Id < 10;
+    }
+    static void Main(string[] args)
+    {
+        // ...
+        PupilList pupilsUnder10 = pupils.Filter(IdUnder10Filter);
+    }
+}
+```
+
+### Generische Delegates und Lambdas helfen
+Der obere Ansatz ist für den Programmierer natürlich sehr mühsam:
+- Der delegate muss definiert werden.
+- Die Filtermethode muss mit Namen angelegt werden, auch wenn sie nur 1x verwendet wird.
+
+Deswegen wurden mit C# 3 im Jahr 2007 einer der größen Schritte in der Entwicklung der Sprache
+gemacht: Die Einführung von *Lambdas* und *Linq*.
+
+Unser Code kann mit C# 3 so aussehen:
+```c#
+class PupilList : List<Pupil>
+{
+    public PupilList Filter(Func<Pupil, bool> filterFunction)   // (1)
+    {
+        PupilList result = new PupilList();
+        foreach(Pupil pupil in this)
+        {
+            if (filterFunction(pupil))
+            {
+                result.Add(pupil);
+            }
+        }
+        return result;
+    }
+}
+
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // ...
+        PupilList pupils3bhif = pupils.Filter(p => p.SchoolClass == "3BHIF");   // (2)
+    }
+}
+```
+1. Mit den Generics in C# 2.0 konnten auch delegates, also unsere "Funktionsschablonen" generisch
+   definiert werden. `Func<Pupil, bool>` steht für alle Funktionen, die Pupil als Argument bekommen
+   und bool zurückgeben.
+2. Der Lambdaausdruck definiert eine anonyme Funktion. Details zum Aufbau dieser Lambda Expressions
+   folgen in diesem Dokument.
+   
+      
+## Lambdas im Detail      
+Betrachten wir eine Funktion, die in C# mit einem Namen deklariert wird. Sie erwartet 2 Parameter 
+und liefert ein Ergebnis zurück.
 ```c#
 T myFunction(T1 param1, T2 param2, ...)
 {
@@ -21,7 +196,7 @@ param1 => { /* Function Body mit return */ }
 ```
 
 Besteht die Funktion nur aus einem Statement, und soll dieses mit return zurückgegeben werden, so kann
-{ } ebenfalls weggelassen werden. Der Compiler "denkt" sich automatisch ein return vor dem Statement:
+{ } ebenfalls weggelassen werden. Der Compiler "denkt" sich automatisch ein *return* vor dem Statement:
 ```c#
 param1 => statement
 ```
@@ -47,7 +222,7 @@ param1 => statement
 In den Schreibweisen davor wurde auf eine Information verzichtet: Der Datentyp. Da C# *static typing* umsetzt,
 müssen Lambda Ausdrücke natürlich auch einen Datentyp haben. Hier gibt es 2 Verianten:
 
-## Lambdas, die keinen Wert zurückgeben
+### Lambdas, die keinen Wert zurückgeben
 Diese Ausdrücke sind Instanzen des sogenannten *Action* Delegates. Er ist generisch, in den spitzen Klammern
 werden die Datentypen der Parameter geschrieben:
 ```c#
@@ -63,7 +238,7 @@ auch wie eine Funktion aufgerufen werden:
 action2(2); // Gibt 2 und END aus.
 ```
 
-## Lambdas, die Werte zurückgeben
+### Lambdas, die Werte zurückgeben
 Diese Ausdrücke sind Instanzen des sogenannten *Func* Delegates. Er ist generisch, in den spitzen Klammern
 werden die Datentypen der Parameter und zum Schluss der Typ des Rückgabewertes geschrieben:
 ```c#
@@ -72,16 +247,34 @@ Func<int, int> func2 = x => x + 1;
 Func<int, int, bool> func3 = (x, y) => x == y;
 ```
 
+### Lambdas und der Zugriff auf äußere Variablen
+Lambdas können auf die äußeren Variablen zugreifen. Das ist besonders hilfreich, wenn private
+Variablen in Lambdas gelesen oder gesetzt werden sollen. Wir betrachten noch einmal die *Main()* 
+Methode aus dem Einführungsbeispiel:
+```c#
+static void Main(string[] args)
+{
+    // ...
+    string classToFilter = "3BHIF";
+    Func<Pupil, bool> classFilter = p => p.SchoolClass == classToFilter;   // (1)
+    classToFilter = "3AHIF";                                               // (2)
+    PupilList filtered = pupils.Filter(classFilter);                       // (3)
+}
+```
+In (1) wird die Funktion **deklariert**. Sie kann auf classToFilter zugreifen, da sie davor in der *Main()*
+Methode deklariert wurde. Sie wird jedoch noch nicht ausgeführt, deswegen führt die Neuzuweisung
+der Variable classToFilter in (2) dazu, dass die Filterfunktion in (3) nach der 3AHIF sucht. **Wir
+müssen daher immer zwischen der deklaration und dem tatsächlichen Ausführen von Funktionen unterscheiden!**
+
 ## Übung
-Erstelle eine neue Solution mit dem Namen LambdaUebung. Erstelle danach eine leere Klasse mit dem Namen
-LambdaTest.cs und kopiere den Code von unten in die Datei. Danach ersetze die Program Klasse durch den 
-Code von unten. Die Mainmethode ruft die Methoden der Klasse LambdaTest auf und übergibt die Funktion.
+Erstelle eine neue Solution mit dem Namen *LambdaUebung*. Erstelle danach eine leere Klasse mit dem Namen
+*LambdaTest.cs* und kopiere den Code von unten in die Datei. Danach ersetze die Program Klasse durch den 
+Code von unten.
 
-Die Klasse LambdaTest besitzt verschiedene Methoden, die eines gemeinsam haben: sie bekommen eine Methode 
+1. Die Klasse *LambdaTest* besitzt verschiedene Methoden, die eines gemeinsam haben: sie bekommen eine Methode 
 als Parameter übergeben. Der Typ des Parameters ist mit ??? gekennzeichnet, er muss von dir korrekt 
-gesetzt werden. Das Programm muss danach mit *F6* fehlerfrei kompiliert werden können.
-
-Wenn das Programm korrekt kompiliert ersetze die "langwierig" auscodierten Methoden der Programmklasse
+gesetzt werden. Das Programm muss danach fehlerfrei kompiliert werden können.
+2. Wenn das Programm korrekt kompiliert ersetze die "langwierig" auscodierten Methoden der Programmklasse
 durch Lambdas, die du direkt als Parameter statt den ursprünglichen Methoden übergibst.
 
 
