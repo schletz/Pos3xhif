@@ -47,3 +47,8 @@ Es ist erlaubt, einen Test auszukommentieren, falls dieser einen Laufzeitfehler 
 dürfen die Tests natürlich nicht verändert werden.
 
 Die Beurteilung wird im Programm am Ende der Tests ausgegeben.
+
+## Abgabe
+Die Solution ist ohne die Ordner *bin* und *obj* auf
+\\enterprise\ausbildung\unterricht\abgaben\3BHIF\POS_SZ\PLF20191114
+in den entsprechenden persönlichen Ordner ungepackt zu kopieren.
