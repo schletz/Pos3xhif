@@ -74,7 +74,7 @@ beide Formen, denn diese haben unterschiedliche Stärken.
 - Kompliziertere Abfragen mit Gruppierungen, Sortierungen oder Joins sind in der Query Syntax
   leichter zu schreiben und zu lesen.
 - Beim Kompilieren der Query Syntax erstellt der Compiler manchmal zusätzliche Aufrufe wie
-  Include() bei Datenbanken, die in der Method Syntax händisch geschrieben werden müssen.
+  *Include()* bei Datenbanken, die in der Method Syntax händisch geschrieben werden müssen.
 
 Da die Query Syntax immer Ergebnisse vom Typ *IEnumerable* liefert, können diese Ergebnisse mit
 der Method Syntax weiterverarbeitet werden.
