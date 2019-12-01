@@ -3,7 +3,7 @@
 ## Datenbankmodell vs. Objektmodell
 Bereits zu Beginn der objektorientierten Programmierung wird jeder mit der Beziehung zwischen 2 
 Klassen konfrontiert. Es handelt sich meist um eine *Assotiation* und gibt an, dass eine Klasse
-eine andere als Member verwendet.
+eine Andere als Member verwendet.
 
 In Datenbanken gibt es auch Beziehungen zwischen Tabellen. Hier ist es ein Primärschlüssel, der
 in anderen Tabellen als Fremdschlüssel verwendet wird, um auf einen Datensatz zu verweisen.
@@ -16,11 +16,10 @@ Beispiel zeigt eine klassische 1:n Beziehung zwischen zwei Tabellen und eine Ass
 
 ![](er_vs_class.png)
 
-Die Klassen Schoolckass und Pupil sehen in C# wie folgt aus. Sie haben nur datenhaltende Properties
-und werden als *POCO Klassen* (Plain old CLR objects) bezeichnet. Analog gibt es in der Java Welt
-auch den Begriff *POJO*.
+Die Klassen *Schoolckass* und *Pupil* haben nur datenhaltende Properties und werden als *POCO Klassen* 
+(Plain old CLR objects) bezeichnet. Analog gibt es in der Java Welt auch den Begriff *POJO*.
 
-Beide Klassen haben ein *navigation Property*. In der Klasse *Schoolclass* gibt es eine Collection von
+Beide Klassen haben ein *Navigation Property*. In der Klasse *Schoolclass* gibt es eine Collection von
 Schülern mit dem Namen *Pupils* (da eine Klasse n Schüler haben kann). Umgekehrt gibt es in der Klasse
 *Pupil* einen Verweis auf die Klasse mit dem Namen *P_ClassNavigation*. Da dies die andere Seite der
 Beziehung ist, ist das natürlich ein einzelnes Feld und keine Liste.
@@ -32,7 +31,7 @@ Beziehung ist, ist das natürlich ein einzelnes Feld und keine Liste.
 Da die Abbildung eines Datenbankmodells in Klassen mechanische Tipparbeit ist, gibt es fertige
 Bibliotheken, die diese Klassen anhand einer gegebenen Datenbank generieren: Object-relational Mapper
 oder OR Mapper erlauben einen objektorientierten Zugriff auf eine Datenbank. In .NET heißt
-dieser *Entity Framework*.
+der verwendete OR Mapper *Entity Framework*.
 
 ## Modell der Tests Datenbank
 Die folgenden Beispiele basieren auf einer kleinen Datenbank, in der Lehrer ihre Tests, die sie in
@@ -54,20 +53,21 @@ Abbildung zeigt den Vergleich der *Method Syntax* und der *Query Syntax*:
 ![](method_vs_query.png)
 
 - Die *from* Klausel entspricht einer *foreach* Schleife und definiert eine Variable, in der das
-  aktuelle Element der Collection (hier *p*) geschrieben wird.
+  aktuelle Element der Collection (hier *p*) geschrieben wird. Sie ist - im Gegensatz zu SQL - die erste Anweisung.
 - Die *where* Klausel filtert - wie in SQL - Inhalte. Sie muss allerdings in C# Syntax geschrieben
-  werden, SQL Operatoren wie *AND*, *OR* sowie der Vergleich mit *=* sind nicht möglich.
-- Am Ende muss immer ein *select* stehen. Im einfachsten Fall liefert das Select das Element (also *p*)
+  werden, SQL Operatoren wie *AND*, *OR* sowie der Vergleich mit einfachem *=* sind nicht möglich.
+- Am Ende muss immer ein *select* stehen und darf - auch wenn nichts verändert wird - nicht 
+  weggelassen werden. Im einfachsten Fall liefert das Select das Element (also *p*)
   wieder zurück. In diesem Beispiel wird *Pupil* auf einen neuen Typ projiziert.
 
 ### Kombination von Query und Method Syntax
 Es stellt sich natürlich bei vielen die Frage, was nun "besser" ist. Der gute .NET Programmiert
 beide Formen, denn diese haben unterschiedliche Stärken.
 
-- Der Compiler kennt nur Methodenaufrufe, daher wird die Query Syntax schlussendlich in die
+- Die CLR kennt nur Methodenaufrufe, daher wird die Query Syntax vom Compiler in die
   Extension Methoden übersetzt.
 - Die Method Syntax ist "näher am Compiler", der Programmablauf ist klar nachvollziehbar.
-- Die Method Syntax erfordert kein select und ist für reine Filterungen oft die kürzeste Form.
+- Die Method Syntax erfordert kein *from* und *select* und ist für reine Filterungen oft die kürzeste Form.
 - Mit der Method Syntax können alle LINQ Funktionen genutzt werden.
 - Die Query Syntax ist bei längeren Abfragen leichter zu lesen. Es müssen keine Lambdas verwendet
   werden.
