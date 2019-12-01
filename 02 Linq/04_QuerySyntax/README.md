@@ -140,7 +140,7 @@ var demo3 = from c in data.Schoolclass
 ```
 
 ## Übung
-Öffne die Datei *QuerySyntax.sln* und löse die Aufgaben in der Datei *Program.cs* mit Hilfe der 
+Öffne die Datei *[QuerySyntax.sln](QuerySyntax.sln)* und löse die Aufgaben in der Datei *[Program.cs](Program.cs)* mit Hilfe der 
 Query Syntax von LINQ. Verwende zum 
 Speichern deiner Abfragen die Variablen *result1* - *result10*. Die korrekte Ausgabe ist bei jedem
 Übungsbeispiel als Kommentar enthalten.
