@@ -16,7 +16,7 @@ Beispiel zeigt eine klassische 1:n Beziehung zwischen zwei Tabellen und eine Ass
 
 ![](er_vs_class.png)
 
-Die Klassen *Schoolckass* und *Pupil* haben nur datenhaltende Properties und werden als *POCO Klassen* 
+Die Klassen *Schoolclass* und *Pupil* haben nur datenhaltende Properties und werden als *POCO Klassen* 
 (Plain old CLR objects) bezeichnet. Analog gibt es in der Java Welt auch den Begriff *POJO*.
 
 Beide Klassen haben ein *Navigation Property*. In der Klasse *Schoolclass* gibt es eine Collection von
