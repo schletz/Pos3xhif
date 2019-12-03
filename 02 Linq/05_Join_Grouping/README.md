@@ -161,7 +161,7 @@ die Werte in der Gruppe zugreifen, wird einfach *g* verwendet. Dadurch funktioni
 
 ![](igrouping.png)
 
-Natürlich kann auch hier nicht auf einzelne Werte zugegriffen werden, Da *g* eine Collection ist,
+Natürlich kann auch hier nicht auf einzelne Werte zugegriffen werden. Da *g* eine Collection ist,
 funktioniert der Zugriff auf *g.L_Teacher* so wie auf *data.Lessons.L_Teacher* syntaktisch nicht
 (eine Collection hat kein Property *L_Teacher*).
 
