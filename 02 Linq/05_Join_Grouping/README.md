@@ -115,7 +115,7 @@ Der Zweck von Gruppierungen ist meist das Aggregieren von Daten. In SQL stehen u
 Aggregatfunktionen *COUNT()*, *MAX()*, *MIN()*, ... zur Verfügung. Diese werden dann pro Gruppe von der
 Datenbank ausgewertet:
 
-![](grouping02.png)
+![](grouping02b.png)
 
 > **Hinweis:** Natürlich kann nach einer Gruppierung nicht mehr auf die einzelnen Werte zugegriffen
 > werden, die nicht Teil der Gruppierung sind. Viele versuchen verzweifelt, bei einer Gruppierung
