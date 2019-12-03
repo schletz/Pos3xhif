@@ -127,6 +127,22 @@ Datenbank ausgewertet:
 
 Nach diesem Ausflug in SQL sehen wir uns die Implementierung in LINQ an.
 
+#### Technische Umsetzung mit IGrouping
+
+Im Namespace *System.Linq* ist ein Interface *IGrouping* definiert, welches folgende Eigenschaften
+hat:
+
+```c#
+public interface IGrouping<out TKey, out TElement> : IEnumerable<TElement>, IEnumerable
+{
+    TKey Key { get; }
+}
+```
+
+Dieses Interface erweitert offensichtlich eine normale Collection (IEnumerable) um ein Property Key.
+In diesem Property ist der Wert, nach dem gruppiert wird gespeichert. Ein konkretes Beispiel erklärt
+den Einsatz am Besten:
+
 ```c#
 from l in data.Lesson
 group l by l.L_Class into g
@@ -137,6 +153,18 @@ select new
     MaxHour = g.Max(x => x.L_Hour)
 };
 ```
+
+Verwirrend ist hier der Einsatz der Gruppierungsvariable *g*. Sie ist eine Instanz von IGrouping und
+somit kann über das Property *Key* auf den Gruppierungsschlüssel zugegriffen werden. Möchte man auf
+die Werte in der Gruppe zugreifen, wird einfach g verwendet. Dadurch funktioniert der Ausdruck
+*g.Max(x => x.L_Hour)* und liefert die letzte Stunde pro Klasse.
+
+![](igrouping.png)
+
+Natürlich kann hier auch nicht auf einzelne Werte zugegriffen werden, denn *g.L_Teacher* wird nicht
+funktionieren, da *g* ja eine Collection ist.
+
+Möchte man nach mehreren Spalten gruppieren, wird mit *new* ein neuer Typ erzeugt:
 
 ```c#
 from l in data.Lesson
