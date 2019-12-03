@@ -38,7 +38,7 @@ Die folgenden Beispiele basieren auf einer kleinen Datenbank, in der Lehrer ihre
 den Klassen haben, erfassen können. Die Schüler können dann darauf zugreifen. Das Modell sieht so
 aus:
 
-![](er_diagram.png)
+![](er_diagram2.png)
 
 Aus diesem Datenbankdiagramm wurde folgender Objektgraph erzeugt, der mittels Navigation Properties
 verbunden ist:
