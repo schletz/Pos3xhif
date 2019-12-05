@@ -95,7 +95,9 @@ namespace QuerySyntax
             Console.WriteLine(JsonSerializer.Serialize(result6));
 
             // *************************************************************************************
-            // ÜBUNG 7: Zeige alle Tests an, die der Klassenvorstand der 3AHIF hatte.
+            // ÜBUNG 7: Zeige alle Tests an, die der Klassenvorstand der 3AHIF hatte. Hinweis:
+            //          finde vorher den KV der 3AHIF heraus und speichere ihn in eine string
+            //          Variable.
             // *************************************************************************************
             // [{"TE_ID":238,"TE_Class":"3AHIF","TE_Teacher":"GC","TE_Subject":"BWM1","TE_Date":"2020-04-08T00:00:00","TE_Lesson":3,"TE_Grade":1,"TE_Grade_Inserted":"2020-04-14T00:00:00"},
             //  {"TE_ID":362,"TE_Class":"4BHIF","TE_Teacher":"GC","TE_Subject":"BWM3","TE_Date":"2019-12-07T00:00:00","TE_Lesson":8,"TE_Grade":1,"TE_Grade_Inserted":"2019-12-09T00:00:00"}]
