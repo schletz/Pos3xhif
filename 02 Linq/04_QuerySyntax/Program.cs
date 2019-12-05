@@ -95,13 +95,18 @@ namespace QuerySyntax
             Console.WriteLine(JsonSerializer.Serialize(result6));
 
             // *************************************************************************************
-            // ÜBUNG 7: Zeige alle Tests an, die der Klassenvorstand der 3AHIF hatte. Hinweis:
-            //          finde vorher den KV der 3AHIF heraus und speichere ihn in eine string
+            // ÜBUNG 7: Zeige alle Tests an, die der Klassenvorstand der 3AHIF in der 5CHIF hatte. 
+            // Hinweis:
+            //          Finde vorher den KV der 3AHIF heraus und speichere ihn in eine string
             //          Variable.
             // *************************************************************************************
-            // [{"TE_ID":238,"TE_Class":"3AHIF","TE_Teacher":"GC","TE_Subject":"BWM1","TE_Date":"2020-04-08T00:00:00","TE_Lesson":3,"TE_Grade":1,"TE_Grade_Inserted":"2020-04-14T00:00:00"},
-            //  {"TE_ID":362,"TE_Class":"4BHIF","TE_Teacher":"GC","TE_Subject":"BWM3","TE_Date":"2019-12-07T00:00:00","TE_Lesson":8,"TE_Grade":1,"TE_Grade_Inserted":"2019-12-09T00:00:00"}]
-            IEnumerable<Test> result7 = null;
+            // [{"TE_ID":510,"TE_Class":"5CHIF","TE_Teacher":"GC","TE_Subject":"BWM1","TE_Date":"2020-05-09T00:00:00","TE_Lesson":5},
+            //  {"TE_ID":511,"TE_Class":"5CHIF","TE_Teacher":"GC","TE_Subject":"BWM2","TE_Date":"2020-06-12T00:00:00","TE_Lesson":9},
+            //  {"TE_ID":512,"TE_Class":"5CHIF","TE_Teacher":"GC","TE_Subject":"BWM3","TE_Date":"2019-11-01T00:00:00","TE_Lesson":5}]
+            var kv = data.Schoolclass.Where(s => s.C_ID == "3AHIF").FirstOrDefault().C_ClassTeacher;
+            var result7 = from t in data.Test
+                          where t.TE_Teacher == kv && t.TE_Class == "5CHIF"
+                          select t;
             Console.WriteLine(Environment.NewLine + "RESULT7");
             Console.WriteLine(JsonSerializer.Serialize(result7));
 
