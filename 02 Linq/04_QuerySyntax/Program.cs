@@ -103,10 +103,7 @@ namespace QuerySyntax
             // [{"TE_ID":510,"TE_Class":"5CHIF","TE_Teacher":"GC","TE_Subject":"BWM1","TE_Date":"2020-05-09T00:00:00","TE_Lesson":5},
             //  {"TE_ID":511,"TE_Class":"5CHIF","TE_Teacher":"GC","TE_Subject":"BWM2","TE_Date":"2020-06-12T00:00:00","TE_Lesson":9},
             //  {"TE_ID":512,"TE_Class":"5CHIF","TE_Teacher":"GC","TE_Subject":"BWM3","TE_Date":"2019-11-01T00:00:00","TE_Lesson":5}]
-            var kv = data.Schoolclass.Where(s => s.C_ID == "3AHIF").FirstOrDefault().C_ClassTeacher;
-            var result7 = from t in data.Test
-                          where t.TE_Teacher == kv && t.TE_Class == "5CHIF"
-                          select t;
+            Enumerable<Test> result7 = null;
             Console.WriteLine(Environment.NewLine + "RESULT7");
             Console.WriteLine(JsonSerializer.Serialize(result7));
 
