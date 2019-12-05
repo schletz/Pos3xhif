@@ -24,7 +24,7 @@ namespace QuerySyntax
 
 
             // *************************************************************************************
-            // ÜBUNG 1: Gib alle POS1 Tests des Lehrers ZUM in der 4EHIF aus.
+            // ÜBUNG 1: Gib alle Tests des Lehrers ZUM in der 4EHIF aus.
             // *************************************************************************************
             // [{"TE_ID":450,"TE_Class":"4EHIF","TE_Teacher":"ZUM","TE_Subject":"BWM3","TE_Date":"2020-05-20T00:00:00","TE_Lesson":8},
             //  {"TE_ID":451,"TE_Class":"4EHIF","TE_Teacher":"ZUM","TE_Subject":"PRE","TE_Date":"2020-02-17T00:00:00","TE_Lesson":1}]
