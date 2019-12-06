@@ -181,7 +181,7 @@ select new
 
 ## Übungen
 
-Löse die Aufgaben in der Datei ![Program.cs](Program.cs) und schreibe deine Abfragen statt `(object)null;`
+Löse die Aufgaben in der Datei [Program.cs](Program.cs) und schreibe deine Abfragen statt `(object)null;`
 in die Variablen. Die korrekten Ausgaben sind unter dem Klassendiagramm aufgelistet.
 
 ![](classdiagram.png)
