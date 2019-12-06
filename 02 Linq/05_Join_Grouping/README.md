@@ -247,4 +247,15 @@ RESULT4
 {"Room":"C2.11","Day":1,"Hour":16,"Teacher":"HAU","Class":"7CBIF"},
 {"Room":"C2.08","Day":1,"Hour":8,"Teacher":"KUM","Class":"1BHBGM"},
 {"Room":"C2.14","Day":1,"Hour":16,"Teacher":"SB","Class":"1EVIF"}]
+
+RESULT5
+[{"Room":"C2.09","Day":1,"Hour":16,"Teacher":"PUC","Class":"5BBIF"},
+{"Room":"C2.09","Day":1,"Hour":16,"Teacher":"MAY","Class":"5BBIF"},
+{"Room":"C2.10","Day":1,"Hour":16,"Teacher":"BIG","Class":"5ACIF"},
+{"Room":"C2.06","Day":1,"Hour":10,"Teacher":"SO","Class":"4CHIF"},
+{"Room":"C2.07","Day":1,"Hour":16,"Teacher":"HIK","Class":"7ACIF"},
+{"Room":"C2.07","Day":1,"Hour":16,"Teacher":"BAM","Class":"7ACIF"},
+{"Room":"C2.11","Day":1,"Hour":16,"Teacher":"HAU","Class":"7CBIF"},
+{"Room":"C2.08","Day":1,"Hour":8,"Teacher":"KUM","Class":"1BHBGM"},
+{"Room":"C2.14","Day":1,"Hour":16,"Teacher":"SB","Class":"1EVIF"}]
 ```
