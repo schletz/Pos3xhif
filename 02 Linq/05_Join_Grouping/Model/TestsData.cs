@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
-namespace QuerySyntax.Model
+namespace Grouping.Model
 {
     public class TestsData
     {

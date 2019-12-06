@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace QuerySyntax.Model
+namespace Grouping.Model
 {
     [JsonObject(MemberSerialization.OptIn)]
     public partial class TestsContext : DbContext
