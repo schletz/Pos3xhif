@@ -1,6 +1,9 @@
 # POS im III. Jahrgang der HTL Spengergasse
 
-## Wichtiges zum Start:
+![](dotnet-bot.png)
+
+## Wichtiges zum Start
+
 1. [Anleitung zum Verbinden mit dem VPN und den Laufwerken](VpnSpengergasse.md)
 1. [Installation von Visual Studio 2019](VisualStudioInstallation.md)
 1. [Markdown Editing mit VS Code](markdown.md)
