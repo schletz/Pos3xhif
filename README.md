@@ -1,7 +1,5 @@
 # POS im III. Jahrgang der HTL Spengergasse
 
-![](dotnet-bot.png)
-
 ## Wichtiges zum Start
 
 1. [Anleitung zum Verbinden mit dem VPN und den Laufwerken](VpnSpengergasse.md)
@@ -10,6 +8,9 @@
 1. Optional: [Installation von SQL Server 2017](SqlServerInstallation.md)
 
 ## Lehrinhalte auf Basis von Microsoft .NET und C#
+
+![](dotnet-bot.png)
+
 Gem. [Lehrplan BGBl. II Nr. 262/2015](https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20009288)
 für den 3. Jahrgang. Die *kursiv* gedruckten Teile in der Spalte Lehrplan kennzeichnen die wesentlichen
 Punkte im Sinne der LBVO.
