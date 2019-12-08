@@ -1,5 +1,5 @@
 # Verbindung mit dem VPN der Spengergasse
-1. Von [gate.spengergasse.at](https://gate.spengergasse.at) nach dem Login *Cisco AnyConnect VPN* herunterladen.
+1. Von [gate.spengergasse.at](https://gate.spengergasse.at/+CSCOE+/logon.html#form_title_text) nach dem Login *Cisco AnyConnect VPN* herunterladen.
 1. Das Programm mit den Standardeinstellungen installieren.
 1. Cisco AnyConnect aufrufen. Nun kann man sich mit dem Server *gate.spengergasse.at* verbinden. Beim
    Benutzernamen muss keine Domäne eingefügt werden, es wird einfach der Accountname (z. B. ABC1234)
