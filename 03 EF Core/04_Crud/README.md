@@ -17,7 +17,7 @@ try
     // Da pupil sonst leer ist, müssen wir nachladen.
     // Wenn wir danach alle Schüler ausgeben wollen, ist es sinnvoll, Pupil auch zu laden:
     // var myClass = context.Schoolclass.Include(c => c.Pupil).Single(c => c.C_ID == "3BHIF");
-    Schoolclass myClass = context.Schoolclass.Single(c => c.C_ID == "3BHIF");
+    Schoolclass myClass = context.Schoolclass.Find("3BHIF");
 
     // Hier passiert noch nichts in der Datenbank
     myClass.Pupil.Add(newPupil);
@@ -115,7 +115,7 @@ verweisen.
 
 ### Remove
 
-Soll ein Element gelöscht werden, so wird es gesucht und mti *context.Table.Remove()* entfernt.
+Soll ein Element gelöscht werden, so wird es gesucht und mit *context.Table.Remove()* entfernt.
 
 ```c#
 try
