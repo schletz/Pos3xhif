@@ -1,7 +1,7 @@
 # Abfragen in Entity Framework Core
 
 Die wohl größte Stärke der Microsoft .NET Entwicklungsumgebung ist die Kombination von LINQ mit dem
-OR Mapper. Er ermöglicht es, mit Hilfe der gewohnten LINQ Syntax (oder den Extension Methoden) 
+OR Mapper. Er ermöglicht es, mit Hilfe der gewohnten LINQ Syntax (oder den Extension Methoden)
 SQL Code zu generieren.
 
 ![](linq_to_sql.png)
@@ -229,12 +229,12 @@ nicht befüllt sein, denn diese Daten wurden gar nicht abgefragt. Das ist auch s
 würden immer mehrere JOIN Operationen ausgeführt werden, obwohl man die Navigations gar
 nicht brauchen würde. Dieses Verhalten nennen wir "Lazy Loading".
 
-> **Merke:** Navigations können inner halb der Abfragen ganz normal verwendet werden. Wird die
+> **Merke:** Navigations können innerhalb der Abfragen ganz normal verwendet werden. Wird die
 > Abfrage jedoch mittels *First(), Find(), ToList(), ...* ausgeführt, sind die Navigations im Ergebnis
 > null bzw. leere Listen.
 
 Möchten wir befüllte Navigations im Ergebnis zurückgeben, so können wir mit *Include()* einen JOIN
-veranlassen.
+veranlassen. Dies bezeichnet man als "Explicit Loading".
 
 ```c#
 var result12 = context.Schoolclass
