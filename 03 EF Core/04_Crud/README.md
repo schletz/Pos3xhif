@@ -110,7 +110,7 @@ catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
 ## Löschen vorhandener Daten
 
 Natürlich müssen vor dem Löschen alle Einträge, wo das Element als Fremdschlüssel vorkommt, ebenfalls
-entfernt werden. Es kann keine Klasse gelöscht werden, wo noch Schüler in der Tabelle Pupil darauf
+entfernt werden. Es kann keine Klasse gelöscht werden, wo noch Schüler in der Tabelle *Pupil* darauf
 verweisen.
 
 ### Remove
