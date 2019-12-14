@@ -301,6 +301,18 @@ if (result11.C_ClassTeacherNavigation == null)
 }
 ```
 
+**Vorsicht vor folgendem Fehler:** Durch das Ausführen der Abfrage in der Methode *Find()* sind
+die Navigationen leer. Die erste der folgenden 2 Abfragen funktioniert wie erwartet und liefert 31 
+Schüler. Die 2. Abfrage liefert allerdings 0.
+
+```c#
+var pupils = (from c in context.Schoolclass
+                where c.C_ID == "3BHIF"
+                select c.Pupil.Count).SingleOrDefault();    // Liefert 31
+
+pupils = context.Schoolclass.Find("3BHIF").Pupil.Count();   // Liefert 0
+```
+
 ## Lazy Loading
 
 Es gibt eine Möglichkeit, die Navigation Properties bei Bedarf automatisch nachzuladen. Dafür
