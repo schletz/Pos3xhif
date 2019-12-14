@@ -30,9 +30,10 @@ namespace Queries.Model
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder
+                optionsBuilder 
+                 // .UseLazyLoadingProxies()
                     .UseLoggerFactory(MyLoggerFactory) // Warning: Do not create a new ILoggerFactory instance each time                    
-                    .UseSqlite("DataSource=../Tests.db");
+                    .UseSqlite("DataSource=Tests.db");
             }
         }
 

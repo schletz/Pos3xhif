@@ -194,7 +194,7 @@ namespace Queries
                     .SingleOrDefault(c => c.C_ID == "3BHIF");
 
                 Console.WriteLine($"Die 3BHIF hat {result13.Pupil.Count()} Schüler.");
-                Console.WriteLine($"Der KV ist {result13.C_ClassTeacherNavigation.T_Lastname} und sie hat " +
+                Console.WriteLine($"Der KV ist {result13.C_ClassTeacherNavigation.T_Lastname} und sie unterrichtet " +
                     $"{result13.C_ClassTeacherNavigation.Lesson.Count()} Stunden.");
 
                 // So ist das viel besser.

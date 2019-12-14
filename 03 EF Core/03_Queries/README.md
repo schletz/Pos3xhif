@@ -19,7 +19,7 @@ Install-Package Microsoft.Extensions.Logging.Console
 ```
 
 Danach wird in der Klasse *TestsContext* eine statische Membervariable (kein Property!)
-*MyLoggerFactory* angelegt. Static ist wichtig, da sonst bei jeder Abfrage eine neue Instanz erzeugt 
+*MyLoggerFactory* angelegt. Static ist wichtig, da sonst bei jeder Abfrage eine neue Instanz erzeugt
 wird.
 
 ```c#
@@ -127,8 +127,7 @@ WHERE("s"."C_Department" = 'HIF') AND((
 
 ### Beispiel 4: Rückgabe von Navigations
 
-Geben wir Navigations explizit zurück, so werden durch einen JOIN die
-entsprechenden Daten geladen.
+Geben wir Navigations explizit zurück, so werden durch einen JOIN die entsprechenden Daten geladen.
 
 ```c#
 from c in context.Schoolclass
@@ -197,7 +196,7 @@ WHERE "s"."C_ClassTeacher" = 'SZ'
 GROUP BY "t"."TE_Class"
 ```
 
-## Lazy Loading
+## Navigation Properties und Abfragen
 
 Betrachten wir folgenden Code:
 
@@ -215,8 +214,8 @@ if (result10.C_ClassTeacherNavigation == null)
 }
 ```
 
-Der Unterschied zu den vorigen Abfragen, bei denen wir uns um das Thema "Lazy Loading" nicht kümmern
-mussten, ist Folgender: Durch *FirstOrDefault()* wird die AUsführung der Abfrage erzwungen und das
+Der Unterschied zu den vorigen Abfragen, bei denen wir die Abfragen nur zur Serialisierung ausgeführt
+haben, ist Folgender: Durch *FirstOrDefault()* wird die Ausführung der Abfrage erzwungen und das
 Ergebnis in *result10* geschrieben. Sehen wir uns das SQL Statement dazu an:
 
 ```sql
@@ -227,7 +226,7 @@ WHERE "s"."C_Department" = 'HIF'
 
 Wir sehen, dass nur die Tabelle *Schoolclass* selektiert wurde. Daher können die Navigation Properties
 nicht befüllt sein, denn diese Daten wurden gar nicht abgefragt. Das ist auch sinnvoll, denn sonst
-würden immer mehrere JOIN Operationen ausgeführt werden, obwohl man die Navigationen gar
+würden immer mehrere JOIN Operationen ausgeführt werden, obwohl man die Navigations gar
 nicht brauchen würde. Dieses Verhalten nennen wir "Lazy Loading".
 
 > **Merke:** Navigations können inner halb der Abfragen ganz normal verwendet werden. Wird die
@@ -271,7 +270,7 @@ var result13 = context.Schoolclass
     .SingleOrDefault(c => c.C_ID == "3BHIF");
 
 Console.WriteLine($"Die 3BHIF hat {result13.Pupil.Count()} Schüler.");
-Console.WriteLine($"Der KV ist {result13.C_ClassTeacherNavigation.T_Lastname} und sie hat " +
+Console.WriteLine($"Der KV ist {result13.C_ClassTeacherNavigation.T_Lastname} und sie unterrichtet " +
     $"{result13.C_ClassTeacherNavigation.Lesson.Count()} Stunden.");
 ```
 
@@ -301,3 +300,33 @@ if (result11.C_ClassTeacherNavigation == null)
     Console.WriteLine("Oops, C_ClassTeacherNavigation is null.");
 }
 ```
+
+## Lazy Loading
+
+Es gibt eine Möglichkeit, die Navigation Properties bei Bedarf automatisch nachzuladen. Dafür
+wird das Paket *Microsoft.EntityFrameworkCore.Proxies* mit Install-Package installiert. In der
+Methode *OnConfiguring()* wird dann *UseLazyLoadingProxies()* eingefügt:
+
+```c#
+protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+{
+    if (!optionsBuilder.IsConfigured)
+    {
+        optionsBuilder
+            .UseLazyLoadingProxies()
+            .UseLoggerFactory(MyLoggerFactory)
+            .UseSqlite("DataSource=Tests.db");
+    }
+}
+```
+
+Nach dieser Einstellung ist folgender Code möglich:
+
+```c#
+var result11 = context.Schoolclass.Find("3BHIF");
+Console.WriteLine(result11.C_ClassTeacherNavigation.T_Lastname);
+```
+
+Wir werden diese Option allerdings nicht aktivieren, da dieses Paket sehr viele Abhängigkeiten
+zu anderen .NET Versionen hat und diese dann ebenfalls ins Projekt geladen werden. Außerdem haben
+wir ohne diesen Automatismus die volle Kontrolle darüber, wann Abfragen ausgeführt werden.
