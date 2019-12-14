@@ -216,8 +216,8 @@ if (result10.C_ClassTeacherNavigation == null)
 ```
 
 Der Unterschied zu den vorigen Abfragen, bei denen wir uns um das Thema "Lazy Loading" nicht kümmern
-mussten, ist folgender: Durch *FirstOrDefault()* wird die AUsführung der Abfrage erzwungen und das
-Ergebnis in result10 geschrieben. Sehen wir uns das SQL Statement dazu an:
+mussten, ist Folgender: Durch *FirstOrDefault()* wird die AUsführung der Abfrage erzwungen und das
+Ergebnis in *result10* geschrieben. Sehen wir uns das SQL Statement dazu an:
 
 ```sql
 SELECT "s"."C_ID", "s"."C_ClassTeacher", "s"."C_Department"
@@ -230,7 +230,7 @@ nicht befüllt sein, denn diese Daten wurden gar nicht abgefragt. Das ist auch s
 würden immer mehrere JOIN Operationen ausgeführt werden, obwohl man die Navigationen gar
 nicht brauchen würde. Dieses Verhalten nennen wir "Lazy Loading".
 
-> **Merke:*** Navigations können inner halb der Abfragen ganz normal verwendet werden. Wird die
+> **Merke:** Navigations können inner halb der Abfragen ganz normal verwendet werden. Wird die
 > Abfrage jedoch mittels *First(), Find(), ToList(), ...* ausgeführt, sind die Navigations im Ergebnis
 > null bzw. leere Listen.
 
