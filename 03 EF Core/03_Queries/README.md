@@ -344,6 +344,38 @@ Wir werden diese Option allerdings nicht aktivieren, da dieses Paket sehr viele 
 zu anderen .NET Versionen hat und diese dann ebenfalls ins Projekt geladen werden. Außerdem haben
 wir ohne diesen Automatismus die volle Kontrolle darüber, wann Abfragen ausgeführt werden.
 
+## Views und EF Core
+
+Wir haben gesehen, dass wir (fast) keinen Einfluss auf die Umsetzung der LINQ Abfragen in SQL Code haben.
+Möchte man datenbankspezifische Funktionen (Partitions, ...) oder einfach nur eine bessere Steuerung
+der SQL Abfragen haben, so können auch Views erstellt werden.
+
+Wir können z. B. die Klassen über 30 Schüler als View in der Datenbank anlegen:
+
+```sql
+CREATE VIEW BigClasses AS
+    SELECT s.C_ID AS ClassId, s.C_Department AS Department, COUNT(*) AS PupilCount
+    FROM Schoolclass s INNER JOIN Pupil p ON (s.C_ID = p.P_Class)
+    GROUP BY s.C_ID
+    HAVING COUNT(*) > 30;
+```
+
+Erstellen wir nun mit *Scaffold-DbContext* unsere Modelklassen, so wird auch diese View berücksichtigt
+und eine normale Modelklasse dafür angelegt:
+
+```c#
+public partial class BigClasses
+{
+    [Column(TypeName = "VARCHAR(8)")]
+    public string ClassId { get; set; }
+    [Column(TypeName = "VARCHAR(8)")]
+    public string Department { get; set; }
+    public int PupilCount { get; set; }
+}
+```
+
+Gerade beim nächsten Punkt (Grenzen von EF Core) kann das ein hilfreicher Workaround sein.
+
 ## Grenzen von EF Core
 
 Wir wollen alle Tests gruppiert nach dem Fach zurückgeben. Das ist ein häufiger Anwendungsfall, wenn
