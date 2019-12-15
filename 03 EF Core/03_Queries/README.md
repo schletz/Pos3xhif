@@ -375,7 +375,7 @@ limitation in EF Core. See https://go.microsoft.com/fwlink/?linkid=2101433 for m
 ```
 
 Gut, das zurückgeben der reinen Gruppierungsvariable ist nie eine gute Idee. Also wählen wir mit
-Select() die Properties aus, die wir pro Fach als JSON Array ausgeben wollen.
+*Select()* die Properties aus, die wir pro Fach als JSON Array ausgeben wollen.
 
 ```c#
 var tests = from t in context.Test
@@ -404,14 +404,17 @@ ElementSelector:(EntityShaperExpression:
         TE_Date = te.TE_Date,
         TE_Lesson = te.TE_Lesson,
         TE_Teacher = te.TE_Teacher
-     })' could not be translated. Either rewrite the query in a form that can be translated, or switch to client evaluation explicitly by inserting a call to either AsEnumerable(), AsAsyncEnumerable(), ToList(), or ToListAsync(). See https://go.microsoft.com/fwlink/?linkid=2101038 for more information.
+     })' could not be translated. Either rewrite the query in a form that can be translated, or
+     switch to client evaluation explicitly by inserting a call to either AsEnumerable(),
+     AsAsyncEnumerable(), ToList(), or ToListAsync(). See
+     https://go.microsoft.com/fwlink/?linkid=2101038 for more information.
 
 ```
 
-Folgende Abfrage bringt die Lösung. Mit *AsEnumerable()* wird die Abfrage schon beim Auslesen der
-Tests ausgeführt. Der Rest geschieht am Client im Speicher. Im Gegensatz zu *ToList()* wird nur ein
-IEnumerable Typ zur Verfügung gestellt, welcher schon abgearbeitet werden kann, bevor noch alle Daten
-da sind.
+Der Hinweis auf *client evaluation* bringt die Lösung. Mit *AsEnumerable()* wird die Abfrage schon
+beim Auslesen der Tests ausgeführt. Der Rest geschieht am Client im Speicher. Im Gegensatz zu
+*ToList()* wird nur ein IEnumerable Typ zur Verfügung gestellt, welcher schon abgearbeitet werden
+kann, bevor noch alle Daten da sind (wenn das möglich ist).
 
 ```c#
 var tests = from t in context.Test.AsEnumerable()          // Hier wird SELECT * FROM Test gesendet.
@@ -441,7 +444,7 @@ Console.WriteLine(JsonSerializer.Serialize(tests));
 
 Diese Abfrage liefert jedoch eine Exception (*"Object reference not set to an instance of an object."*),
 da durch *AsEnumerable()* die Abfrage ausgeführt wird und somit keine Navigations zurückgegeben werden.
-Diesen Fehler können wir mit Include() beheben:
+Diesen Fehler können wir mit *Include()* beheben:
 
 ```c#
 from t in context.Test.Include(t=>t.TE_ClassNavigation).AsEnumerable()
