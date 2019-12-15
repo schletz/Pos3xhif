@@ -1,6 +1,9 @@
 # Warum ein OR Mapper (Object-relational mapping)
 
-## Das rohe ADO.NET: Der Unterbau
+## Der Namespace System.Data als Unterbau
+
+Natürlich kann auch in .NET Core - so wie in anderen Frameworks auch - ein "roher" Datenbankzugriff
+erfolgen. Folgendes Programm zeigt diese Möglichkeit für eine SQLite Datenbank:
 
 ```c#
 // *************************************************************************************************
@@ -36,3 +39,21 @@ namespace DbDemo
     }
 }
 ```
+
+Allerdings hat diese Technik einige (gravierende) Nachteile:
+
+- Es wird *System.Data.SQLite* eingebunden. Möchten wir ein anderes DBMS verwenden (z. B. SQL Server),
+  so müssen alle Funktionsaufrufe geändert werden.
+- Das Resultset liefert die Spalten als object. Wir müssen "auf gut Glück" casten, wir haben keine
+  Information über den Datentyp in der Tabelle.
+- SQL Statements werden durch Stringverknüpfung natürlich ohne Syntaxprüfung mit allen Gefahren
+  erzeugt.  
+- Der Zugriff auf die Spalten erfolgt mittels der Spaltenbezeichnung als String. Wird diese Spalte
+  nicht gefunden, entsteht ein Laufzeitfehler.
+- Das Schließen der Verbindungen und Resultsets muss durch den Programmierer händisch gemacht werden.
+
+Der Datenbankzugriff in heute gängigen Frameworks im Enterprise Architecture Bereich erfolgt daher
+nie nach dieser Methode, sondern durch eine zusätzliche Zwischenschicht: den OR Mapper. Er erzeugt
+generisch aus den Tabellendefinitionen Klassen und ermöglicht einen typisierten Zugriff auf eine
+Relationale Datenbank. In .NET ist das *Entity Framework* dieser OR Mapper und ermöglicht auch
+den Zugriff über LINQ.

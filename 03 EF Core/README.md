@@ -5,9 +5,28 @@
 - DBeaver: [Information zur Installation und Konfiguration](Dbeaver.md)
 - JetBrains DataGrip: [Information zur Installation und Konfiguration](DataGrip.md)
 
-## (Täglich) verwendete Befehle in der Packetmanager Console
+## (Täglich) verwendete Befehle
 
 ### SQLite
+
+#### CLI Tools (Windows, Linux, macOS)
+
+Einmalige Installation der dotnet ef Tools:
+
+```powershell
+dotnet tool update --global dotnet-ef
+```
+
+Installation der NuGet Pakete und Generieren der Modelklassen. Der Datenbankname ist natürlich 
+anzupassen:
+
+```powershell
+dotnet add package Microsoft.EntityFrameworkCore.Tools
+dotnet add package Microsoft.EntityFrameworkCore.Sqlite
+dotnet ef dbcontext scaffold "DataSource=MyDb.db" Microsoft.EntityFrameworkCore.Sqlite --output-dir Model --use-database-names --force --data-annotations
+```
+
+#### Packet Manager Console (Visual Studio)
 
 ```powershell
 Install-Package Microsoft.EntityFrameworkCore.Tools   # EF Tools installieren
@@ -19,7 +38,8 @@ Scaffold-DbContext "DataSource=MyDb.db" Microsoft.EntityFrameworkCore.Sqlite -Ou
 
 ### MySQL
 
-Die Strings in Klammer sind durch die echten Werte ohne Klammer zu ersetzen.
+Die Strings in Klammer sind durch die echten Werte ohne Klammer zu ersetzen. Die CLI Anweisungen
+werden analog dazu geändert.
 
 ```powershell
 Install-Package Microsoft.EntityFrameworkCore.Tools   # EF Tools installieren
