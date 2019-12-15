@@ -144,7 +144,8 @@ select new
 SELECT "s"."C_ID", (
     SELECT COUNT(*)
     FROM "Pupil" AS "p"
-    WHERE "s"."C_ID" = "p"."P_Class"), "p0"."P_ID", "p0"."P_Account", "p0"."P_Class", "p0"."P_Firstname", "p0"."P_Lastname"
+    WHERE "s"."C_ID" = "p"."P_Class"), 
+    "p0"."P_ID", "p0"."P_Account", "p0"."P_Class", "p0"."P_Firstname", "p0"."P_Lastname"
 FROM "Schoolclass" AS "s"
 LEFT JOIN "Pupil" AS "p0" ON "s"."C_ID" = "p0"."P_Class"
 WHERE ("s"."C_Department" = 'HIF') AND ((
@@ -482,7 +483,8 @@ select new
 ```
 
 ```sql
-SELECT "t"."TE_ID", "t"."TE_Class", "t"."TE_Date", "t"."TE_Lesson", "t"."TE_Subject", "t"."TE_Teacher", "s"."C_ID", "s"."C_ClassTeacher", "s"."C_Department"
+SELECT "t"."TE_ID", "t"."TE_Class", "t"."TE_Date", "t"."TE_Lesson", "t"."TE_Subject", 
+       "t"."TE_Teacher", "s"."C_ID", "s"."C_ClassTeacher", "s"."C_Department"
 FROM "Test" AS "t"
 INNER JOIN "Schoolclass" AS "s" ON "t"."TE_Class" = "s"."C_ID"
 WHERE "s"."C_Department" = 'HIF'
