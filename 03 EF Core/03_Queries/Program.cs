@@ -22,6 +22,7 @@ namespace Queries
                 //     WHERE "s"."C_ID" = "p"."P_Class") AS "Pupils"
                 // FROM "Schoolclass" AS "s"
                 // WHERE "s"."C_Department" = 'HIF'
+                
                 var result1 = from c in context.Schoolclass
                               where c.C_Department == "HIF"
                               select new

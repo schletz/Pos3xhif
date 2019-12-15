@@ -342,3 +342,145 @@ Console.WriteLine(result11.C_ClassTeacherNavigation.T_Lastname);
 Wir werden diese Option allerdings nicht aktivieren, da dieses Paket sehr viele Abhängigkeiten
 zu anderen .NET Versionen hat und diese dann ebenfalls ins Projekt geladen werden. Außerdem haben
 wir ohne diesen Automatismus die volle Kontrolle darüber, wann Abfragen ausgeführt werden.
+
+## Grenzen von EF Core
+
+Wir wollen alle Tests gruppiert nach dem Fach zurückgeben. Das ist ein häufiger Anwendungsfall, wenn
+aus flachen Tabellen hierarchische JSON Objekte erzeugt werden sollen.
+
+```c#
+var tests = from t in context.Test
+            group t by t.TE_Subject into g
+            select new
+            {
+                Subject = g.Key,
+                Tests = g
+            };
+Console.WriteLine(JsonSerializer.Serialize(tests));
+```
+
+Die Abfrage liefert jedoch einen Laufzeitfehler:
+
+```text
+Processing of the LINQ expression '(GroupByShaperExpression:
+KeySelector: (t.TE_Subject),
+ElementSelector:(EntityShaperExpression:
+    EntityType: Test
+    ValueBufferExpression:
+        (ProjectionBindingExpression: EmptyProjectionMember)
+    IsNullable: False
+)
+)' by 'RelationalProjectionBindingExpressionVisitor' failed. This may indicate either a bug or a
+limitation in EF Core. See https://go.microsoft.com/fwlink/?linkid=2101433 for more detailed information.
+```
+
+Gut, das zurückgeben der reinen Gruppierungsvariable ist nie eine gute Idee. Also wählen wir mit
+Select() die Properties aus, die wir pro Fach als JSON Array ausgeben wollen.
+
+```c#
+var tests = from t in context.Test
+            group t by t.TE_Subject into g
+            select new
+            {
+                Subject = g.Key,
+                Tests = g.Select(te => new { te.TE_Date, te.TE_Lesson, te.TE_Teacher})
+            };
+Console.WriteLine(JsonSerializer.Serialize(tests));
+```
+
+Doch auch das hilft uns nicht weiter. Es entsteht folgender Laufzeitfehler:
+
+```text
+The LINQ expression '(GroupByShaperExpression:
+KeySelector: (t.TE_Subject),
+ElementSelector:(EntityShaperExpression:
+    EntityType: Test
+    ValueBufferExpression:
+        (ProjectionBindingExpression: EmptyProjectionMember)
+    IsNullable: False
+)
+)
+    .Select(te => new {
+        TE_Date = te.TE_Date,
+        TE_Lesson = te.TE_Lesson,
+        TE_Teacher = te.TE_Teacher
+     })' could not be translated. Either rewrite the query in a form that can be translated, or switch to client evaluation explicitly by inserting a call to either AsEnumerable(), AsAsyncEnumerable(), ToList(), or ToListAsync(). See https://go.microsoft.com/fwlink/?linkid=2101038 for more information.
+
+```
+
+Folgende Abfrage bringt die Lösung. Mit *AsEnumerable()* wird die Abfrage schon beim Auslesen der
+Tests ausgeführt. Der Rest geschieht am Client im Speicher. Im Gegensatz zu *ToList()* wird nur ein
+IEnumerable Typ zur Verfügung gestellt, welcher schon abgearbeitet werden kann, bevor noch alle Daten
+da sind.
+
+```c#
+var tests = from t in context.Test.AsEnumerable()          // Hier wird SELECT * FROM Test gesendet.
+            group t by t.TE_Subject into g                 // Alles Weitere im Speicher am Client.
+            select new
+            {
+                Subject = g.Key,
+                Tests = g.Select(te => new { te.TE_Date, te.TE_Lesson, te.TE_Teacher })
+            };
+Console.WriteLine(JsonSerializer.Serialize(tests));
+```
+
+Doch jetzt  möchten wir nur die HIF Abteilung ausgeben. Mit *where* kann das leicht durchgeführt
+werden:
+
+```c#
+var tests = from t in context.Test.AsEnumerable()
+            where t.TE_ClassNavigation.C_Department == "HIF"
+            group t by t.TE_Subject into g
+            select new
+            {
+                Subject = g.Key,
+                Tests = g.Select(te => new { te.TE_Date, te.TE_Lesson, te.TE_Teacher })
+            };
+Console.WriteLine(JsonSerializer.Serialize(tests));
+```
+
+Diese Abfrage liefert jedoch eine Exception (*"Object reference not set to an instance of an object."*),
+da durch *AsEnumerable()* die Abfrage ausgeführt wird und somit keine Navigations zurückgegeben werden.
+Diesen Fehler können wir mit Include() beheben:
+
+```c#
+from t in context.Test.Include(t=>t.TE_ClassNavigation).AsEnumerable()
+where t.TE_ClassNavigation.C_Department == "HIF"
+group t by t.TE_Subject into g
+select new
+{
+    Subject = g.Key,
+    Tests = g.Select(te => new { te.TE_Date, te.TE_Lesson, te.TE_Teacher })
+};
+```
+
+Der Preis ist allerdings sehr hoch: es werden alle Tests samt Klassen geladen:
+
+```sql
+SELECT "t"."TE_ID", "t"."TE_Class", "t"."TE_Date", "t"."TE_Lesson", "t"."TE_Subject",
+       "t"."TE_Teacher", "s"."C_ID", "s"."C_ClassTeacher", "s"."C_Department"
+FROM "Test" AS "t"
+INNER JOIN "Schoolclass" AS "s" ON "t"."TE_Class" = "s"."C_ID"
+```
+
+Erst das Filtern vor *AsEnumerable()* verhindert das Auslesen ohne WHERE Bedingung:
+
+```c#
+from t in context.Test
+    .Include(t=>t.TE_ClassNavigation)
+    .Where(t=>t.TE_ClassNavigation.C_Department == "HIF")
+    .AsEnumerable()
+group t by t.TE_Subject into g
+select new
+{
+    Subject = g.Key,
+    Tests = g.Select(te => new { te.TE_Date, te.TE_Lesson, te.TE_Teacher })
+};
+```
+
+```sql
+SELECT "t"."TE_ID", "t"."TE_Class", "t"."TE_Date", "t"."TE_Lesson", "t"."TE_Subject", "t"."TE_Teacher", "s"."C_ID", "s"."C_ClassTeacher", "s"."C_Department"
+FROM "Test" AS "t"
+INNER JOIN "Schoolclass" AS "s" ON "t"."TE_Class" = "s"."C_ID"
+WHERE "s"."C_Department" = 'HIF'
+```
