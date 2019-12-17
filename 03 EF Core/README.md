@@ -84,7 +84,7 @@ Beim Verbindungsstring von scaffold sind folgende Dinge anzupassen:
 
 ```powershell
 dotnet add package Microsoft.EntityFrameworkCore.Tools
-dotnet add package Pomelo.EntityFrameworkCore.MySql 
+dotnet add package Pomelo.EntityFrameworkCore.MySql
 dotnet ef dbcontext scaffold ^
     "Server=aaaa;Database=bbbbb;User id=ccccc;Password=ddddd" Microsoft.EntityFrameworkCore.SqlServer ^
     --output-dir Model --use-database-names --force --data-annotations
@@ -95,8 +95,8 @@ dotnet ef dbcontext scaffold ^
 ```powershell
 Install-Package Microsoft.EntityFrameworkCore.Tools      # EF Tools installieren
 Install-Package Microsoft.EntityFrameworkCore.SqlServer  # SQL Server Treiber installieren
-Scaffold-DbContext "Server=aaaa;Database=bbbbb;User id=ccccc;Password=ddddd" 
-Microsoft.EntityFrameworkCore.SqlServer -OutputDir Model -UseDatabaseNames -Force -DataAnnotations
+Scaffold-DbContext "Server=aaaa;Database=bbbbb;User id=ccccc;Password=ddddd"
+    Microsoft.EntityFrameworkCore.SqlServer -OutputDir Model -UseDatabaseNames -Force -DataAnnotations
 ```
 
 ## Modell unserer Musterdatenbank
