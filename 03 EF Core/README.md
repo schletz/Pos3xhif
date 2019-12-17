@@ -102,6 +102,8 @@ Scaffold-DbContext "Server=aaaa;Database=bbbbb;User id=ccccc;Password=ddddd"
 ## Modell unserer Musterdatenbank
 
 [Download der Tests Datenbank](Tests.db)
+[SQL Dump der Tests Datenbank für SQL Server](testsdb_sqlserver.sql)
+[Access Datei der Tests Datenbank](Tests.mdb)
 
 ![](images/er_diagram.png)
 
