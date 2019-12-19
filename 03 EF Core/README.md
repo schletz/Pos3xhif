@@ -84,7 +84,7 @@ Beim Verbindungsstring von scaffold sind folgende Dinge anzupassen:
 
 ```powershell
 dotnet add package Microsoft.EntityFrameworkCore.Tools
-dotnet add package Pomelo.EntityFrameworkCore.MySql
+dotnet add package Microsoft.EntityFrameworkCore.SqlServer
 dotnet ef dbcontext scaffold ^
     "Server=tcp:aaaa,1433;Initial Catalog=bbbb;Persist Security Info=False;User ID=cccc;Password=dddd;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" ^
     Microsoft.EntityFrameworkCore.SqlServer ^
