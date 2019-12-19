@@ -1,24 +1,5 @@
 # Abfragen in Entity Framework Core
 
-Die wohl größte Stärke der Microsoft .NET Entwicklungsumgebung ist die Kombination von LINQ mit dem
-OR Mapper. Er ermöglicht es, mit Hilfe der gewohnten LINQ Syntax (oder den Extension Methoden)
-SQL Code zu generieren.
-
-![](linq_to_sql.png)
-
-<sup>Quelle: https://www.youtube.com/watch?v=bsncc8dYIgY</sup>
-
-Es gibt 2 Ansätze, ein Projekt mit EF Core anzulegen: *Database First* oder *Code First*. Bei
-Database First wird die Datenbank klassisch über CREATE TABLE Statements erstellt. Danach werden mit
-einem Skript die Modelklassen erstellt. Bei Code First werden zuerst die Modelklassen in C# erstellt. Diese
-werden dann über sogenannte Migrations in Tabellen umgesetzt. Wir diskutieren in diesem Kapitel den
-Database First Ansatz anhand unserer Testdatenbank.
-
-![](https://www.entityframeworktutorial.net/Images/efcore/ef-core-dev-approaces.png)
-
-<sup>Quelle: https://www.entityframeworktutorial.net/efcore/entity-framework-core.aspx</sup>
-
-
 ## Ausgeben der SQL Statements
 
 In dieser Solution wurde die Ausgabe der SQL Statements aktiviert. Möchte man in anderen Projekten
