@@ -48,7 +48,7 @@ Scaffold-DbContext "DataSource=xxxx" Microsoft.EntityFrameworkCore.Sqlite
 Beim Verbindungsstring von scaffold sind folgende Dinge anzupassen:
 
 - *Server=aaaaa*: Durch den Servernamen (DNS oder IP) des MySQL Servers zu ersetzen.
-- *Database=bbbbb*: Durch den Datenbanknamen zu ersetzen
+- *Database=bbbbb*: Durch den Datenbanknamen zu ersetzen.
 - *User=ccccc*:  Benutzername des Users für den Datenbankzugriff.
 - *Password=ddddd*: Passwort des Benutzers.
 
@@ -75,10 +75,10 @@ Scaffold-DbContext "Server=aaaaa;Database=bbbbb;User=ccccc;Password=ddddd;TreatT
 
 Beim Verbindungsstring von scaffold sind folgende Dinge anzupassen:
 
-- *Server=aaaaa*: Durch den Servernamen (DNS oder IP) des SQL Servers zu ersetzen
-- *Database=bbbbb*: Durch den Datenbanknamen zu ersetzen
-- *User id=ccccc*:  Benutzername des Users für den Datenbankzugriff.
-- *Password=ddddd*: Passwort des Benutzers.
+- *Server=tcp:aaaa,1433*: Durch den Servernamen (DNS oder IP) des SQL Servers zu ersetzen. 1433 ist der Standardport.
+- *Initial Catalog=bbbb*: Durch den Datenbanknamen zu ersetzen.
+- *User ID=cccc*: Benutzername des Datenbankusers.
+- *Password=dddd*: Passwort des Datenbankusers.
 
 #### CLI
 
@@ -86,7 +86,8 @@ Beim Verbindungsstring von scaffold sind folgende Dinge anzupassen:
 dotnet add package Microsoft.EntityFrameworkCore.Tools
 dotnet add package Pomelo.EntityFrameworkCore.MySql
 dotnet ef dbcontext scaffold ^
-    "Server=aaaa;Database=bbbbb;User id=ccccc;Password=ddddd" Microsoft.EntityFrameworkCore.SqlServer ^
+    "Server=tcp:aaaa,1433;Initial Catalog=bbbb;Persist Security Info=False;User ID=cccc;Password=dddd;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" ^
+    Microsoft.EntityFrameworkCore.SqlServer ^
     --output-dir Model --use-database-names --force --data-annotations
 ```
 
@@ -95,7 +96,7 @@ dotnet ef dbcontext scaffold ^
 ```powershell
 Install-Package Microsoft.EntityFrameworkCore.Tools      # EF Tools installieren
 Install-Package Microsoft.EntityFrameworkCore.SqlServer  # SQL Server Treiber installieren
-Scaffold-DbContext "Server=aaaa;Database=bbbbb;User id=ccccc;Password=ddddd"
+Scaffold-DbContext "Server=tcp:aaaa,1433;Initial Catalog=bbbb;Persist Security Info=False;User ID=cccc;Password=dddd;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
     Microsoft.EntityFrameworkCore.SqlServer -OutputDir Model -UseDatabaseNames -Force -DataAnnotations
 ```
 
