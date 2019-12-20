@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="TankstellenVw.TankstellenVerwaltung">
+    <Position X="0.5" Y="0.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAEIAAAAEQgogAAIAAAAAAAAAEEgAAAgAAAAAAAAAAE=</HashCode>
+      <FileName>TankstellenVerwaltung.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Tagespreise" />
+      <Property Name="Tankstellen" />
+      <Property Name="Verkaeufe" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="TankstellenVw.Tankstelle">
+    <Position X="5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACQAAAAAAAAAIAAAAAAAAAAAAAAAAAAACAAAAAAAE=</HashCode>
+      <FileName>Tankstelle.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Tagespreise" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="TankstellenVw.Tagespreis">
+    <Position X="5" Y="3" Width="1.5" />
+    <AssociationLine Name="_Tankstelle" Type="TankstellenVw.Tankstelle">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.984" Y="0.081" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="Verkaeufe" Type="TankstellenVw.Verkauf">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.963" Y="0.091" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABQAgAAAAAIAAAAAAAIAAAAAAAAAAABAAAAA=</HashCode>
+      <FileName>Tagespreis.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="_Tankstelle" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Verkaeufe" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="TankstellenVw.Verkauf">
+    <Position X="5" Y="5.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAgAAAgEAAEAAAAQAAAAIAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Verkauf.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="_Tagespreis" />
+    </ShowAsAssociation>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
