@@ -43,6 +43,21 @@ Scaffold-DbContext "DataSource=xxxx" Microsoft.EntityFrameworkCore.Sqlite
     -OutputDir Model -UseDatabaseNames -Force -DataAnnotations
 ```
 
+#### Problem mit Autoincrement
+Wird eine Spalte als *AUTOINCREMENT* Wert deklariert, wird dies unter Umständen nicht korrekt erkannt.
+Um das zu beheben, ist in der Conextklasse die Methode *OnModelCreating()* anzupassen. Dafür wird beim
+entsprechenden Entity statt der Methode *ValueGeneratedNever()* die Methode *ValueGeneratedOnAdd()* 
+verwendet:
+
+```c#
+entity.Property(e => e.U_ID)
+    .IsRequired()
+    .ValueGeneratedOnAdd();
+```
+
+Außerdem werden Datumswerte in den einzelnen Modelklassen als Bytearray generiert. Hier muss *byte[]* 
+durch *DateTime* ersetzt werden.
+
 ### MySQL
 
 Beim Verbindungsstring von scaffold sind folgende Dinge anzupassen:
