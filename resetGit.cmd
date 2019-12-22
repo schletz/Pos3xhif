@@ -1,4 +1,6 @@
-echo Achtung: Alle lokalen Änderungen werden zurückgesetzt. Druecke CTRL+C zum Abbrechen.
+@echo off
+chcp 65001
+echo Achtung: Alle lokalen Å½nderungen werden zurÂckgesetzt. DrÂcke CTRL+C zum Abbrechen.
 pause
 git fetch --all
 git reset --hard origin/master

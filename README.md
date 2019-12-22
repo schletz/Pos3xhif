@@ -18,6 +18,7 @@ Punkte im Sinne der LBVO.
 Beachte bei der Umsetzung des Lehrplanes: Die Inhalte kommen noch aus der pre .NET Zeit (ausgehendes 20. Jhd.).
 Daher werden auch Konzepte, die eigentlich im IV. Jahrgang vorkommen (OR Mapper, Parallele Programmierung, Reflection)
 verwendet, da sie durch das .NET Framework wesentlich einfacher zugänglich sind.
+
 <table>
     <tr><th>Inhalt</th><th>Lehrplan</th></tr>
     <tr><td colspan="2"><strong>Wintersemester</strong></td></tr>
@@ -88,10 +89,9 @@ git init
 git remote add origin https://github.com/schletz/Pos3xhif.git
 ```
 
-4. Lege dir in diesem Ordner eine Datei *syncGit.cmd* mit folgenden Befehlen an. 
-    Durch Doppelklick auf diese Datei wird immer der neueste Stand geladen. Neu erstellte Dateien
-    in diesem Ordner bleiben auf der Festplatte, geänderte Dateien werden allerdings durch 
-    *git reset* auf den Originalstand zurückgesetzt.
+4. Um neue Inhalte zu laden, starte die Datei *resetGit.cmd*. Achtung: Es werden dabei alle lokalen
+Änderungen zurückgesetzt. Diese Datei führt nämlich die folgenden Kommandos aus:
+
 ```bash {.line-numbers}
 git fetch --all
 git reset --hard origin/master
