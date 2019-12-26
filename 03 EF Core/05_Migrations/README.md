@@ -126,7 +126,7 @@ der Migration schon angelegt werden sollen. Details dazu gibt es auf
 [Microsoft Docs - Data Seeding](https://docs.microsoft.com/en-us/ef/core/modeling/data-seeding)
 nachzulesen.
 
-### Übertragung in eine andere Datenbank
+## Übertragung in eine andere Datenbank
 
 Möchte man sein generiertes Modell z. B. auf Azure oder in ein anderes Datenbanksystem übertragen,
 muss man zuerst die Methode *OnConfiguring()* in der Contextklasse anpassen. Im Fall von SQLite
