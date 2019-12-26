@@ -9,11 +9,21 @@
 | dotnet ef database update              | Update-Database             | Schreiben der Änderung in die DB.
 | dotnet ef migrations script            | Script-Migration            | Gibt die SQL Anweisungen aus, die durchgeführt werden würden.
 
-Durchführung zur Laufzeit:
+### Einfaches Erzeugen der Datenbank von den Modelklassen aus
+
+Möchte man ganz ohne Migrations einfach nur die Datenbank von den bestehenden Modelklassen aus
+erzeugen, so geht dies sehr einfach. Dieser Code kann z. B. in der *Configure()* Methode in
+ASP.NET oder zu Beginn in der *Main()* Methode platziert werden:
 
 ```c#
-myDbContext.Database.Migrate();
+using (var context = new MyDbContext())
+{
+    context.Database.EnsureCreated();
+}
 ```
+
+Dieser Ansatz funktioniert natürlich nur, wenn keine Datenbank vorhanden ist. Ist eine solche
+schon vorhanden, müssen wir uns mit dem Thema Migrations beschäftigen.
 
 Im nachfolgenden Text werden die CLI Befehle verwendet. Statt dessen kann natürlich der
 entsprechende Befehl in der Packet Manager Console von Visual Studio abgesetzt werden.
