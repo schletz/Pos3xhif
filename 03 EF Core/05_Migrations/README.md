@@ -2,17 +2,12 @@
 
 ## Übersicht: Befehle
 
-| CLI                                    | Visual Studio PM Console    |
-| -------------------------------------- | --------------------------- |
-| dotnet ef migrations add InitialCreate | Add-Migration InitialCreate |
-| dotnet ef migrations add *(Name)*      | Add-Migration *(Name)*      |
-| dotnet ef database update              | Update-Database             |
-
-Ausgabe des SQL Dumps
-
-| CLI                         | Visual Studio PM Console |
-| --------------------------- | ------------------------ |
-| dotnet ef migrations script | Script-Migration         |
+| CLI                                    | Visual Studio PM Console    | Beschreibung
+| -------------------------------------- | --------------------------- | ------------ |
+| dotnet ef migrations add InitialCreate | Add-Migration InitialCreate | Erstes Erstellen der Migration.
+| dotnet ef migrations add *(Name)*      | Add-Migration *(Name)*      | Laufendes Erstellen von neuen Migrationen.
+| dotnet ef database update              | Update-Database             | Schreiben der Änderung in die DB.
+| dotnet ef migrations script            | Script-Migration            | Gibt die SQL Anweisungen aus, die durchgeführt werden würden.
 
 Durchführung zur Laufzeit:
 
