@@ -12,7 +12,7 @@
 ### Einfaches Erzeugen der Datenbank von den Modelklassen aus
 
 Möchte man ganz ohne Migrations einfach nur die Datenbank von den bestehenden Modelklassen aus
-erzeugen, so geht dies sehr einfach. Dieser Code kann z. B. in der *Configure()* Methode in
+erzeugen, so geht dies sehr einfach. Dieser Code kann z. B. in der *ConfigureServices()* Methode in
 ASP.NET oder zu Beginn in der *Main()* Methode platziert werden:
 
 ```c#
