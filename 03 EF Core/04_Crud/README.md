@@ -38,6 +38,10 @@ catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
 }
 ```
 
+Weitere Beispiele (vor allem das Einfügen ganzer Strukturen) sind auf
+[Microsoft Docs - Saving Related Data](https://docs.microsoft.com/en-us/ef/core/saving/related-data)
+zu finden.
+
 ### Durch Setzen des EntityState
 
 ```c#
