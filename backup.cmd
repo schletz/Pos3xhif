@@ -8,8 +8,8 @@ REM mit Adaptierungen für das deutsche Datumsformat (geht nur bei deutschem Wind
 For /f "tokens=1-3 delims=/. " %%a in ('date /t') do (set mydate=%%c%%b%%a)
 SET OUTPATH=..
 REM Dateiname GfsDownloader20190107.7z z. B. generieren
-SET FILENAME=%CurrDirName%%mydate%.zip
+SET FILENAME=%CurrDirName%%mydate%.7z
 
-del /F /Q "%OUTPATH%\%CurrDirName%*.zip"
-%ZIP% a -tzip -mx=9 "%OUTPATH%\%FILENAME%" "..\%CurrDirName%" -xr!packages -xr!netcoreapp3.1 -xr!.vscode -xr!TestResults -xr!.vs -xr!Release -xr!Debug -xr!bin -xr!obj
+del /F /Q "%OUTPATH%\%CurrDirName%*.7z"
+%ZIP% a -mx=9 "%OUTPATH%\%FILENAME%" "..\%CurrDirName%" -xr!packages -xr!netcoreapp3.1 -xr!.vscode -xr!TestResults -xr!.vs -xr!Release -xr!Debug -xr!bin -xr!obj
 pause
