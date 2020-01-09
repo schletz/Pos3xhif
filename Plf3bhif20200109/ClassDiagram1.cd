@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="FlightMonitor.FlightContext">
+    <Position X="4.75" Y="2" Width="11.25" />
+    <AssociationLine Name="Aircrafts" Type="FlightMonitor.Domain.Aircraft" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="15.438" Y="3.296" />
+        <Point X="15.438" Y="8.148" />
+        <Point X="9.5" Y="8.148" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>ECAAAAAAAABAAAAAAAAAAQAAAAAAAAAEIAAAAAAAAAA=</HashCode>
+      <FileName>FlightContext.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Departures" />
+      <Property Name="Destinations" />
+      <Property Name="Cities" />
+      <Property Name="Countries" />
+      <Property Name="Aircrafts" />
+      <Property Name="Airlines" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="FlightMonitor.Domain.Departure">
+    <Position X="4.75" Y="5" Width="1.75" />
+    <AssociationLine Name="Aircraft" Type="FlightMonitor.Domain.Aircraft" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="6.5" Y="6.229" />
+        <Point X="6.958" Y="6.229" />
+        <Point X="6.958" Y="8.148" />
+        <Point X="8" Y="8.148" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Airline" Type="FlightMonitor.Domain.Airline" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="6.5" Y="6.446" />
+        <Point X="6.681" Y="6.446" />
+        <Point X="6.681" Y="9.734" />
+        <Point X="15" Y="9.734" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Destinations" Type="FlightMonitor.Domain.Destination" FixedFromPoint="true">
+      <Path>
+        <Point X="6.5" Y="6.012" />
+        <Point X="8" Y="6.012" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>QCACAAAEAAAAAAABAAIAAAAAQEgAAAEEABACAAAAAAA=</HashCode>
+      <FileName>Domain\Departure.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Aircraft" />
+      <Property Name="Airline" />
+      <Property Name="Checkin" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Destinations" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="FlightMonitor.Domain.Aircraft">
+    <Position X="8" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Domain\Aircraft.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FlightMonitor.Domain.Airline">
+    <Position X="15" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAIAAAAAAAAAAAAAIAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Domain\Airline.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FlightMonitor.Domain.City">
+    <Position X="10.75" Y="5" Width="1.5" />
+    <AssociationLine Name="Country" Type="FlightMonitor.Domain.Country" FixedFromPoint="true">
+      <Path>
+        <Point X="12.25" Y="5.375" />
+        <Point X="13.75" Y="5.375" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAACAAAAAAAAIAAAAAAAAEAAAAAAA=</HashCode>
+      <FileName>Domain\City.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Country" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="FlightMonitor.Domain.Country">
+    <Position X="13.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAEAAAAAAA=</HashCode>
+      <FileName>Domain\Country.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FlightMonitor.Domain.Destination">
+    <Position X="8" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAAAAAIAKAAAAQAEAAAAAAAAIAEAAAAAAA=</HashCode>
+      <FileName>Domain\Destination.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="City" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="FlightMonitor.Domain.Checkin">
+    <Position X="2.75" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Domain\Checkin.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
