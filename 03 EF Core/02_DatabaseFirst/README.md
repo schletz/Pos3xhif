@@ -14,6 +14,9 @@ werden:
 dotnet tool update --global dotnet-ef
 ```
 
+> **Hinweis:** Nach der Installation der ef Tools muss die Konsole neu geöffnet werden, da die PATH
+> Variable geändert wurde.
+
 Bei zukünftigen Projekten muss dies nicht mehr durchgeführt werden, bei einem Upgrade der .NET Version
 ist das Update allerdings wichtig, um die neuesten Pakete zu laden.
 
