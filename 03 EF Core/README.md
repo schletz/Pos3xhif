@@ -14,6 +14,9 @@ Update der .NET Core Version installiert werden:
 dotnet tool update --global dotnet-ef
 ```
 
+> **Hinweis:** Nach der Installation der ef Tools muss die Konsole neu geöffnet werden, da die PATH
+> Variable geändert wurde.
+
 ## Generieren der Modelklassen für Applikationen
 
 Die CLI Befehle sind im Verzeichnis der *csproj* Datei auszuführen. Die Applikation muss kompilierbar
