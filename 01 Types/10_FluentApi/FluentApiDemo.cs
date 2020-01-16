@@ -8,7 +8,7 @@ namespace FluentDemo
     }
 
     /// <summary>
-    /// Methoden, die nach Parse oder DownloadUrl aufgerufen werden dürfen.
+    /// Methoden, die nach Parse aufgerufen werden dürfen.
     /// </summary>
     interface IAfterParse : IGeneral
     {
