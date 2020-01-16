@@ -85,7 +85,7 @@ namespace FluentDemo
                 .Parse()                      // Darf nur nach DownloadUrl aufgerufen werden.
                     .CleanupData()            // Darf nur nach Parse aufgerufen werden.
                     .Log()
-                .WriteToFile("xxx.json");     // Darf nur nach Parse oder DownloadUrl aufgerufen werden.
+                .WriteToFile("xxx.json");     // Darf nur nach Parse aufgerufen werden.
         }
     }
 }
