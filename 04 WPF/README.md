@@ -18,6 +18,8 @@ geachtet werden, dass eine .NET Core WPF Anwendung erzeugt wird. Der weitere Cod
 1:1 übernommen werden, in den Toturials werden sehr selten .NET Framework spezifische Funktionen
 verwendet.
 
+Alle Beispiele in diesem Repository basieren auf .NET Core 3.1.
+
 ## Erstellen einer neuen WPF Anwendung für .NET Core
 
 Entweder wird mit Visual Studio ein neues Projekt vom Typ *WPF App (.NET Core)* erzeugt, oder es
