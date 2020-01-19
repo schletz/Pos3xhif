@@ -2,6 +2,8 @@
 
 ![](wpf_net_core.png)
 
+<sup>Quelle: https://www.dev-insider.de/wpf-und-windows-forms-in-net-core-30-nutzbar-a-717831/</sup>
+
 Windows Presentation Foundation (WPF) ist ein UI-Framework, mit dem Desktop-Client-Anwendungen für
 Microsoft Windows erstellt werden können. Mit der Version 3 von .NET Core steht es auch unter dieser
 Plattform zur Verfügung. Die erstellen Programme sind allerdings nur unter Windows ausführbar.
