@@ -1,4 +1,4 @@
-# Listen und ObservableCollection
+# Listen in XAML
 ![View Model Demo App Ui](ViewModelDemoApp2Ui.png)
 
 In diesem Beispiel sollen alle Personen in einer Liste dargestellt werden. Beim Klicken auf einen
