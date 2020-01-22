@@ -217,6 +217,8 @@ using (SempruefContext db = new SempruefContext())
      die Instanz der *Random* Klasse ist.
    - Das Datum soll ab 10. Feb 2020 generiert werden. Zähle am Besten zu diesem Datum eine zufällige
      Anzahl an Tagen zwischen 0 und 100 dazu. Auch hier sollen 20 % der Datumswerte NULL sein.
+   - Damit die Funktion deterministisch arbeitet (also immer die selben Daten liefert), initialisiere
+     den Zufallszahlengenerator mit einem fixen Wert im Konstruktor.  
 
 **(3)** Um die Datenbank zu prüfen, gib am Ende alle Tabellen mit den folgenden Statements als JSON aus.
         Öffne hierfür auch einen neuen Context:
