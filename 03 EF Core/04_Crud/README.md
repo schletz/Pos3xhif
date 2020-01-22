@@ -192,8 +192,8 @@ using (SempruefContext db = new SempruefContext())
    ohne Note aber mit den selben Daten (Fach, Prüfer, Schüler) erneut an.
 4. Aktualisiere alle Schüler ohne Geschlecht auf den Wert *m*. Hinweis: Am Besten löse dies mit
    einer klassischen *foreach* Schleife, die Filterung soll allerdings vorher geschehen.
-5. Lösche die Klasse 3CHIF aus dem System. Was ist zu Beachten, wenn bereits Semesterprüfungen
-   eingetragen wurden?
+5. Lösche die Klasse 3CHIF samt aller Daten aus dem System. Was ist zu Beachten, wenn bereits
+   Semesterprüfungen eingetragen wurden?
 6. Lege die Klasse 4AHIF mit dem Klassenvorstand SZ und folgenden Schülern an. Verwende dabei
    gleich eine Klasse mit einer fertig definierten Liste von Schülern, damit nur ein *Add* Befehl
    nötig ist. Details sind auf
@@ -210,15 +210,15 @@ using (SempruefContext db = new SempruefContext())
 7. Zum Testen einer Applikation sollen zufällige Semesterprüfungen für das Sommersemester eingetragen
    werden. Erstelle dafür 20 Datensätze. Gehe dabei so vor:
 
-  - Für jeden Eintrag wähle zufällig einen Lehrer, ein Fach und einen Schüler aus den entsprechenden
-    Tabellen aus.
-  - Weise als Note eine Zufallszahl zwischen 1 und 5 zu, wobei in 20 % der Fälle die Note leer sein
-    muss. Das kann mit `rnd.Next(0, 100) < 20 ? /* NULL */ : /* Note */` gelöst werden, wobei rnd
-    die Instanz der *Random* Klasse ist.
-  - Das Datum soll ab 10. Feb 2020 generiert werden. Zähle am Besten zu diesem Datum eine zufällige
-    Anzahl an Tagen zwischen 0 und 100 dazu. Auch hier sollen 20 % der Datumswerte NULL sein. 
+   - Für jeden Eintrag wähle zufällig einen Lehrer, ein Fach und einen Schüler aus den entsprechenden
+     Tabellen aus.
+   - Weise als Note eine Zufallszahl zwischen 1 und 5 zu, wobei in 20 % der Fälle die Note leer sein
+     muss. Das kann mit `rnd.Next(0, 100) < 20 ? /* NULL */ : /* Note */` gelöst werden, wobei rnd
+     die Instanz der *Random* Klasse ist.
+   - Das Datum soll ab 10. Feb 2020 generiert werden. Zähle am Besten zu diesem Datum eine zufällige
+     Anzahl an Tagen zwischen 0 und 100 dazu. Auch hier sollen 20 % der Datumswerte NULL sein. 
 
-**(3)** Um die Datenbank zu prüfen, gib alle Tabellen mit den folgenden Statements als JSON aus.
+**(3)** Um die Datenbank zu prüfen, gib am Ende alle Tabellen mit den folgenden Statements als JSON aus.
         Öffne hierfür auch einen neuen Context:
 
 ```c#
