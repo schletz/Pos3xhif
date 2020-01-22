@@ -158,7 +158,7 @@ Modell:
 
 Alle auf *Id* endenden Spalten sind AUTOINCREMENT Werte.
 
-**(1)** Erstelle eine neue Appliktation SempruefCrud und generiere die Modelklassen in den Ordner
+**(1)** Erstelle eine neue Appliktation *SempruefCrud* und generiere die Modelklassen in den Ordner
         Model:
 
 ```text
@@ -170,7 +170,7 @@ dotnet add package Microsoft.EntityFrameworkCore.Sqlite
 dotnet ef dbcontext scaffold "DataSource=Sempruef.db" Microsoft.EntityFrameworkCore.Sqlite --output-dir Model --use-database-names --force --data-annotations
 ```
 
-Achte darauf, dass der Autoincrement Wert SP_Id auch in den Modelklassen als serverseitig generierter
+Achte darauf, dass der Autoincrement Wert *SP_Id* auch in den Modelklassen als serverseitig generierter
 Wert definiert ist. Außerdem ist der korrekte Datentyp für den DATETIME Wert bei *SP_Datum*
 (darf NULL sein) richtig einzugragen.
 
@@ -186,9 +186,9 @@ using (SempruefContext db = new SempruefContext())
 }
 ```
 
-a. Lege in der Tabelle *Fach* ein neues Fach *DBI* mit dem Fachnamen *Datenbanken* an.
-b. Lege in der Tabelle Lehrer einen neuen Lehrer *SZ* (Michael Schletz) an.
-c. Lege alle Semesterprüfungen, die noch nicht oder mit 5 beurteilt sind, mit Datum 24. Feb 2020
+a Lege in der Tabelle *Fach* ein neues Fach *DBI* mit dem Fachnamen *Datenbanken* an.
+b Lege in der Tabelle Lehrer einen neuen Lehrer *SZ* (Michael Schletz) an.
+c Lege alle Semesterprüfungen, die noch nicht oder mit 5 beurteilt sind, mit Datum 24. Feb 2020
    ohne Note aber mit den selben Daten (Fach, Prüfer, Schüler) erneut an.
 d. Aktualisiere alle Schüler ohne Geschlecht auf den Wert *m*. Hinweis: Am Besten löse dies mit
    einer klassischen *foreach* Schleife, die Filterung soll allerdings vorher geschehen.
