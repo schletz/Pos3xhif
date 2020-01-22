@@ -186,15 +186,15 @@ using (SempruefContext db = new SempruefContext())
 }
 ```
 
-a Lege in der Tabelle *Fach* ein neues Fach *DBI* mit dem Fachnamen *Datenbanken* an.
-b Lege in der Tabelle Lehrer einen neuen Lehrer *SZ* (Michael Schletz) an.
-c Lege alle Semesterprüfungen, die noch nicht oder mit 5 beurteilt sind, mit Datum 24. Feb 2020
+1. Lege in der Tabelle *Fach* ein neues Fach *DBI* mit dem Fachnamen *Datenbanken* an.
+2. Lege in der Tabelle Lehrer einen neuen Lehrer *SZ* (Michael Schletz) an.
+3. Lege alle Semesterprüfungen, die noch nicht oder mit 5 beurteilt sind, mit Datum 24. Feb 2020
    ohne Note aber mit den selben Daten (Fach, Prüfer, Schüler) erneut an.
-d. Aktualisiere alle Schüler ohne Geschlecht auf den Wert *m*. Hinweis: Am Besten löse dies mit
+4. Aktualisiere alle Schüler ohne Geschlecht auf den Wert *m*. Hinweis: Am Besten löse dies mit
    einer klassischen *foreach* Schleife, die Filterung soll allerdings vorher geschehen.
-e. Lösche die Klasse 3CHIF aus dem System. Was ist zu Beachten, wenn bereits Semesterprüfungen
+5. Lösche die Klasse 3CHIF aus dem System. Was ist zu Beachten, wenn bereits Semesterprüfungen
    eingetragen wurden?
-f. Lege die Klasse 4AHIF mit dem Klassenvorstand SZ und folgenden Schülern an. Verwende dabei
+6. Lege die Klasse 4AHIF mit dem Klassenvorstand SZ und folgenden Schülern an. Verwende dabei
    gleich eine Klasse mit einer fertig definierten Liste von Schülern, damit nur ein *Add* Befehl
    nötig ist. Details sind auf
    [Microsoft Docs - Saving Related Data](https://docs.microsoft.com/en-us/ef/core/saving/related-data)
@@ -207,7 +207,7 @@ f. Lege die Klasse 4AHIF mit dem Klassenvorstand SZ und folgenden Schülern an. 
 | Ethelin  | Ferrini      | w        |
 | Andrej   | Osgardby     | m        |
 
-g. Zum Testen einer Applikation sollen zufällige Semesterprüfungen für das Sommersemester eingetragen
+7. Zum Testen einer Applikation sollen zufällige Semesterprüfungen für das Sommersemester eingetragen
    werden. Erstelle dafür 20 Datensätze. Gehe dabei so vor:
 
   - Für jeden Eintrag wähle zufällig einen Lehrer, ein Fach und einen Schüler aus den entsprechenden
