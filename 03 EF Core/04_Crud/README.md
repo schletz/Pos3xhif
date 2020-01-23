@@ -199,7 +199,7 @@ using (SempruefContext db = new SempruefContext())
    gleich eine Klasse mit einer fertig definierten Liste von Schülern, damit nur ein *Add* Befehl
    nötig ist. Details sind auf
    [Microsoft Docs - Saving Related Data](https://docs.microsoft.com/en-us/ef/core/saving/related-data)
-   zu finden.
+   zu finden. Beachte, dass die Schülernummer kein Autowert ist. Überlege dir daher selbst eine Nummer.
 
 | S_Zuname | S_Vorname    | S_Geschl |
 | -------- | ------------ | -------- |
