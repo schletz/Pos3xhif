@@ -164,7 +164,8 @@ Alle auf *Id* endenden Spalten sind AUTOINCREMENT Werte.
 ```text
 md SempruefCrud
 cd SempruefCrud
-dotnet new SempruefCrud
+REM Die DB in diesen Ordner kopieren.
+dotnet new console
 dotnet add package Microsoft.EntityFrameworkCore.Tools
 dotnet add package Microsoft.EntityFrameworkCore.Sqlite
 dotnet ef dbcontext scaffold "DataSource=Sempruef.db" Microsoft.EntityFrameworkCore.Sqlite --output-dir Model --use-database-names --force --data-annotations
