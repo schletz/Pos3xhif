@@ -201,12 +201,12 @@ using (SempruefContext db = new SempruefContext())
    [Microsoft Docs - Saving Related Data](https://docs.microsoft.com/en-us/ef/core/saving/related-data)
    zu finden. Beachte, dass die Schülernummer kein Autowert ist. Überlege dir daher selbst eine Nummer.
 
-| S_Zuname | S_Vorname    | S_Geschl |
-| -------- | ------------ | -------- |
-| Quint    | Leggen       | m        |
-| Bobine   | O'Brallaghan | w        |
-| Ethelin  | Ferrini      | w        |
-| Andrej   | Osgardby     | m        |
+| S_Nr | S_Zuname | S_Vorname    | S_Geschl |
+| ---- | -------- | ------------ | -------- |
+| 2001 | Quint    | Leggen       | m        |
+| 2002 | Bobine   | O'Brallaghan | w        |
+| 2003 | Ethelin  | Ferrini      | w        |
+| 2004 | Andrej   | Osgardby     | m        |
 
 7. Zum Testen einer Applikation sollen zufällige Semesterprüfungen für das Sommersemester eingetragen
    werden. Erstelle dafür 20 Datensätze. Gehe dabei so vor:
