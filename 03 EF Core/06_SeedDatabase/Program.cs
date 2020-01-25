@@ -45,15 +45,15 @@ namespace BogusTest
                         f.Random.String2(1, "ABCDE") +
                         f.Random.CollectionItem(new string[] { "HIF", "HBGM" }));
 
-                // Die Klassen könnten auch mehrmals vorkommen, da ein "ziehen mit zurücklegen"
+                // Die Klassen könnten auch mehrmals vorkommen, da ein "Ziehen mit zurücklegen"
                 // durchgeführt wird. Daher verwenden wir unsere Distinct Methode.
                 List<Klasse> classes = classGenerator
                     .Generate(3)
                     .Distinct(c=>c.K_Nr)
                     .ToList();
 
-                // Generator für Schüler. Die Klassenbezeichnung wird über die Schülercollection
-                // in der Klasse gesetzt.
+                // Generator für Schüler. Die Klassenzuordnung wird über das Navigation Property
+                // S_KlasseNavigation gesetzt. Verwende nicht den Fremdschlüssel direkt!
                 Faker<Schueler> pupilGenerator = new Faker<Schueler>()
                     .RuleFor(s => s.S_Nr, f => 1000 + f.UniqueIndex)
                     .RuleFor(s => s.S_Geschl, f => f.Random.String2(1, "mw"))
@@ -103,8 +103,8 @@ namespace BogusTest
                 // Die Schüler schreiben. Die Klassen werden durch die Navigation auch implizit
                 // angelegt. Ein db.Klasse.AddRange(classes) stört aber nicht.
                 db.Schueler.AddRange(pupils);
-
                 db.SaveChanges();
+
                 Console.WriteLine(
                     JsonSerializer.Serialize(
                         db.Klasse.Select(k => new { k.K_Nr, Count = k.Schueler.Count() })));
