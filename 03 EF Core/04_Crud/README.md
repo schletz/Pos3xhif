@@ -164,7 +164,8 @@ Alle auf *Id* endenden Spalten sind AUTOINCREMENT Werte.
 ```text
 md SempruefCrud
 cd SempruefCrud
-dotnet new SempruefCrud
+REM Die DB in diesen Ordner kopieren.
+dotnet new console
 dotnet add package Microsoft.EntityFrameworkCore.Tools
 dotnet add package Microsoft.EntityFrameworkCore.Sqlite
 dotnet ef dbcontext scaffold "DataSource=Sempruef.db" Microsoft.EntityFrameworkCore.Sqlite --output-dir Model --use-database-names --force --data-annotations
@@ -198,14 +199,14 @@ using (SempruefContext db = new SempruefContext())
    gleich eine Klasse mit einer fertig definierten Liste von Schülern, damit nur ein *Add* Befehl
    nötig ist. Details sind auf
    [Microsoft Docs - Saving Related Data](https://docs.microsoft.com/en-us/ef/core/saving/related-data)
-   zu finden.
+   zu finden. Beachte, dass die Schülernummer kein Autowert ist.
 
-| S_Zuname | S_Vorname    | S_Geschl |
-| -------- | ------------ | -------- |
-| Quint    | Leggen       | m        |
-| Bobine   | O'Brallaghan | w        |
-| Ethelin  | Ferrini      | w        |
-| Andrej   | Osgardby     | m        |
+| S_Nr | S_Zuname | S_Vorname    | S_Geschl |
+| ---- | -------- | ------------ | -------- |
+| 2001 | Quint    | Leggen       | m        |
+| 2002 | Bobine   | O'Brallaghan | w        |
+| 2003 | Ethelin  | Ferrini      | w        |
+| 2004 | Andrej   | Osgardby     | m        |
 
 7. Zum Testen einer Applikation sollen zufällige Semesterprüfungen für das Sommersemester eingetragen
    werden. Erstelle dafür 20 Datensätze. Gehe dabei so vor:
