@@ -1,5 +1,6 @@
 @echo off
 REM Löscht alle temporären Visual Studio Dateien
+taskkill /f /im MSBuild.exe
 rd /S /Q .vs
 rd /S /Q .vscode
 rd /S /Q netcoreapp3.1
