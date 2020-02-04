@@ -118,9 +118,9 @@ Scaffold-DbContext "Server=tcp:aaaa,1433;Initial Catalog=bbbb;Persist Security I
 
 ## Modell unserer Musterdatenbank
 
-[Download der Tests Datenbank](Tests.db)
-[SQL Dump der Tests Datenbank für SQL Server](testsdb_sqlserver.sql)
-[Access Datei der Tests Datenbank](Tests.mdb)
+- [Download der Tests Datenbank](Tests.db)
+- [SQL Dump der Tests Datenbank für SQL Server](testsdb_sqlserver.sql)
+- [Access Datei der Tests Datenbank](Tests.mdb)
 
 ![](images/er_diagram.png)
 
