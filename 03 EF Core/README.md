@@ -33,8 +33,7 @@ Beim Verbindungsstring von scaffold sind folgende Dinge anzupassen:
 ```powershell
 dotnet add package Microsoft.EntityFrameworkCore.Tools
 dotnet add package Microsoft.EntityFrameworkCore.Sqlite
-dotnet ef dbcontext scaffold "DataSource=xxxx" Microsoft.EntityFrameworkCore.Sqlite ^
-    --output-dir Model --use-database-names --force --data-annotations
+dotnet ef dbcontext scaffold "DataSource=xxxx" Microsoft.EntityFrameworkCore.Sqlite --output-dir Model --use-database-names --force --data-annotations
 ```
 
 #### Packet Manager Console (Visual Studio)
@@ -76,8 +75,7 @@ Beim Verbindungsstring von scaffold sind folgende Dinge anzupassen:
 dotnet add package Microsoft.EntityFrameworkCore.Tools
 dotnet add package Pomelo.EntityFrameworkCore.MySql
 dotnet ef dbcontext scaffold ^
-    "Server=aaaaa;Database=bbbbb;User=ccccc;Password=ddddd;TreatTinyAsBoolean=true;" Pomelo.EntityFrameworkCore.MySql ^
-    --output-dir Model --use-database-names --force --data-annotations
+    "Server=aaaaa;Database=bbbbb;User=ccccc;Password=ddddd;TreatTinyAsBoolean=true;" Pomelo.EntityFrameworkCore.MySql --output-dir Model --use-database-names --force --data-annotations
 ```
 
 #### Packet Manager Console (Visual Studio)
