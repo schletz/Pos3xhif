@@ -84,7 +84,8 @@ verwendet, da sie durch das .NET Framework wesentlich einfacher zugänglich sind
     nächsten Synchronisation überschrieben.
 3. Initialisiere den Ordner mit folgenden Befehlen, die du in der Konsole in diesem Verzeichnis
     (z. B. *C:\Schule\POS\Examples*) ausführst:
-```bash {.line-numbers}
+    
+```text
 git init
 git remote add origin https://github.com/schletz/Pos3xhif.git
 ```
