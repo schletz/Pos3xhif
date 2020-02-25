@@ -7,6 +7,8 @@
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="*" />
+    <PackageReference Include="Microsoft.ML" Version="*" />
+    <PackageReference Include="Microsoft.ML.FastTree" Version="*" />
   </ItemGroup>
 
 </Project>

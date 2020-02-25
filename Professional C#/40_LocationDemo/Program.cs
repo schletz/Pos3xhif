@@ -34,9 +34,25 @@ using System.Linq;
 using System.Text;
 using Bogus;
 using Bogus.Distributions.Gaussian;
+using Microsoft.ML;                         // Install-Package Microsoft.ML
+using Microsoft.ML.Data;
+using Microsoft.ML.Trainers.FastTree;      // Install-Package Microsoft.ML.FastTree
 
 namespace LocationDemo
 {
+    public class RoomMeasurement
+    {
+        public string Room { get; set; }
+        public string Accesspoint { get; set; }
+        public float Value { get; set; }
+    }
+    public class RoomPrediction
+    {
+        [ColumnName("PredictedRoom")]
+        public string Room;
+    }
+
+
     public class Program
     {
         private static void Main(string[] args)
@@ -105,6 +121,18 @@ namespace LocationDemo
                 foreach (var row in table)
                     outStream.WriteLine($"{row.Device}\t{row.Room}\t{row.Date}\t{string.Join('\t', row.Signals)}");
             }
+
+
+            // https://docs.microsoft.com/en-us/dotnet/machine-learning/tutorials/github-issue-classification
+            var _mlContext = new MLContext(seed: 0);
+            var trainData = _mlContext.Data.LoadFromEnumerable(from m in measurements
+                                               from s in m.Signals
+                                               select new RoomMeasurement
+                                               {
+                                                   Room = m.Location.Room,
+                                                   Accesspoint = s.Accesspoint.Mac,
+                                                   Value = s.Value
+                                               });
         }
     }
 }
