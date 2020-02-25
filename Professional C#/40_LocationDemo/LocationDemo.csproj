@@ -9,6 +9,7 @@
     <PackageReference Include="Bogus" Version="*" />
     <PackageReference Include="Microsoft.ML" Version="*" />
     <PackageReference Include="Microsoft.ML.FastTree" Version="*" />
+    <PackageReference Include="Microsoft.ML.LightGBM" Version="1.4.0" />
   </ItemGroup>
 
 </Project>

@@ -32,24 +32,29 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using Bogus;
 using Bogus.Distributions.Gaussian;
 using Microsoft.ML;                         // Install-Package Microsoft.ML
 using Microsoft.ML.Data;
-using Microsoft.ML.Trainers.FastTree;      // Install-Package Microsoft.ML.FastTree
+//using Microsoft.ML.Trainers.FastTree;      // Install-Package Microsoft.ML.FastTree
+using Microsoft.ML.Trainers.LightGbm;          // Install-Package Install-Package Microsoft.ML.LightGBM
 
 namespace LocationDemo
 {
     public class RoomMeasurement
     {
-        public string Room { get; set; }
-        public string Accesspoint { get; set; }
-        public float Value { get; set; }
+        public string Label { get; set; }
+        [VectorType(3)]
+        public float[] Values;
     }
+
     public class RoomPrediction
     {
-        [ColumnName("PredictedRoom")]
-        public string Room;
+        // Original label.
+        public uint Label { get; set; }
+        // Predicted label from the trainer.
+        public uint PredictedLabel { get; set; }
     }
 
 
@@ -122,17 +127,56 @@ namespace LocationDemo
                     outStream.WriteLine($"{row.Device}\t{row.Room}\t{row.Date}\t{string.Join('\t', row.Signals)}");
             }
 
+            // https://docs.microsoft.com/en-us/dotnet/api/microsoft.ml.lightgbmextensions.lightgbm?view=ml-dotnet
 
-            // https://docs.microsoft.com/en-us/dotnet/machine-learning/tutorials/github-issue-classification
-            var _mlContext = new MLContext(seed: 0);
-            var trainData = _mlContext.Data.LoadFromEnumerable(from m in measurements
-                                               from s in m.Signals
-                                               select new RoomMeasurement
-                                               {
-                                                   Room = m.Location.Room,
-                                                   Accesspoint = s.Accesspoint.Mac,
-                                                   Value = s.Value
-                                               });
+            // Define trainer options.
+            var options = new LightGbmMulticlassTrainer.Options
+            {
+                LabelColumnName = nameof(RoomMeasurement.Label),
+                FeatureColumnName = nameof(RoomMeasurement.Values),
+                Booster = new DartBooster.Options()
+                {
+                    TreeDropFraction = 0.15,
+                    XgboostDartMode = false
+                }
+            };
+
+            var mlContext = new MLContext(seed: 0);
+            var trainData = mlContext.Data.LoadFromEnumerable(from m in measurements
+                                                              select new RoomMeasurement
+                                                              {
+                                                                  Label = m.Location.Room,
+                                                                  Values = m.Signals.Spread(accesspoints, s => s.Accesspoint).Select(s => s?.Value ?? 0).ToArray()
+                                                              });
+            // Define the trainer.
+            var pipeline = mlContext.Transforms.Conversion.MapValueToKey(nameof(RoomMeasurement.Label))
+                .Append(mlContext.MulticlassClassification.Trainers.LightGbm(options));
+            var model = pipeline.Fit(trainData);
+
+            // Create testing data. Use different random seed to make it different
+            // from training data.
+            var testData = trainData;
+
+            // Run the model on test data set.
+            var transformedTestData = model.Transform(testData);
+
+            // Convert IDataView object to a list.
+            var predictions = mlContext.Data
+                .CreateEnumerable<RoomPrediction>(transformedTestData, reuseRowObject: false).ToList();
+
+            // Look at 5 predictions
+            foreach (var p in predictions.Take(5))
+                Console.WriteLine($"Label: {p.Label}, Prediction: {p.PredictedLabel}");
+
+            var metrics = mlContext.MulticlassClassification.Evaluate(transformedTestData);
+
+            PrintMetrics(metrics);
+
+        }
+
+        private static void PrintMetrics(MulticlassClassificationMetrics metrics)
+        {
+            Console.WriteLine(JsonSerializer.Serialize(metrics));
         }
     }
 }
