@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Entity Framework Core</title>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+        
+        <style>
+.task-list-item { list-style-type: none; } .task-list-item-checkbox { margin-left: -20px; vertical-align: middle; }
+</style>
+        <style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        
+        
+    </head>
+    <body class="vscode-light">
+        <h1 id="entity-framework-core">Entity Framework Core</h1>
+<h2 id="tools-zum-erstellen-von-datenbanken">Tools zum Erstellen von Datenbanken</h2>
+<ul>
+<li>DBeaver: <a href="Dbeaver.md">Information zur Installation und Konfiguration</a></li>
+<li>JetBrains DataGrip: <a href="DataGrip.md">Information zur Installation und Konfiguration</a></li>
+</ul>
+<h2 id="t%c3%a4glich-verwendete-befehle">(Täglich) verwendete Befehle</h2>
+<p>Für die Verwendung der CLI Tools müssen diese für EF Core vor der ersten Verwendung und nach einem
+Update der .NET Core Version installiert werden:</p>
+<pre><code class="language-powershell"><div>dotnet tool update --global dotnet-ef
+</div></code></pre>
+<blockquote>
+<p><strong>Hinweis:</strong> Nach der Installation der ef Tools muss die Konsole neu geöffnet werden, da die PATH
+Variable geändert wurde.</p>
+</blockquote>
+<h2 id="generieren-der-modelklassen-f%c3%bcr-applikationen">Generieren der Modelklassen für Applikationen</h2>
+<p>Die CLI Befehle sind im Verzeichnis der <em>csproj</em> Datei auszuführen. Die Applikation muss kompilierbar
+sein.</p>
+<h3 id="sqlite">SQLite</h3>
+<p>Beim Verbindungsstring von scaffold sind folgende Dinge anzupassen:</p>
+<ul>
+<li><em>DataSource=xxxx</em>: Ort der SQLite Datei. Der Pfad geht von der ausführbaren Datei aus.</li>
+</ul>
+<h4 id="cli">CLI</h4>
+<pre><code class="language-powershell"><div>dotnet add package Microsoft.EntityFrameworkCore.Tools
+dotnet add package Microsoft.EntityFrameworkCore.Sqlite
+dotnet ef dbcontext scaffold <span class="hljs-string">"DataSource=xxxx"</span> Microsoft.EntityFrameworkCore.Sqlite --output-dir Model --use-database-names --force --data-annotations
+</div></code></pre>
+<h4 id="packet-manager-console-visual-studio">Packet Manager Console (Visual Studio)</h4>
+<pre><code class="language-powershell"><div>Install-Package Microsoft.EntityFrameworkCore.Tools   <span class="hljs-comment"># EF Tools installieren</span>
+Install-Package Microsoft.EntityFrameworkCore.Sqlite  <span class="hljs-comment"># SQLite Treiber installieren</span>
+Scaffold-DbContext <span class="hljs-string">"DataSource=xxxx"</span> Microsoft.EntityFrameworkCore.Sqlite
+    -OutputDir Model -UseDatabaseNames -Force -DataAnnotations
+</div></code></pre>
+<h4 id="problem-mit-autoincrement">Problem mit Autoincrement</h4>
+<p>Wird eine Spalte als <em>AUTOINCREMENT</em> Wert deklariert, wird dies unter Umständen nicht korrekt erkannt.
+Um das zu beheben, ist in der Conextklasse die Methode <em>OnModelCreating()</em> anzupassen. Dafür wird beim
+entsprechenden Entity statt der Methode <em>ValueGeneratedNever()</em> die Methode <em>ValueGeneratedOnAdd()</em>
+verwendet:</p>
+<pre><code class="language-c#"><div>entity.Property(e =&gt; e.U_ID)
+    .IsRequired()
+    .ValueGeneratedOnAdd();
+</div></code></pre>
+<p>Außerdem werden Datumswerte in den einzelnen Modelklassen als Bytearray generiert. Hier muss <em>byte[]</em>
+durch <em>DateTime</em> ersetzt werden.</p>
+<h3 id="mysql">MySQL</h3>
+<p>Beim Verbindungsstring von scaffold sind folgende Dinge anzupassen:</p>
+<ul>
+<li><em>Server=aaaaa</em>: Durch den Servernamen (DNS oder IP) des MySQL Servers zu ersetzen.</li>
+<li><em>Database=bbbbb</em>: Durch den Datenbanknamen zu ersetzen.</li>
+<li><em>User=ccccc</em>:  Benutzername des Users für den Datenbankzugriff.</li>
+<li><em>Password=ddddd</em>: Passwort des Benutzers.</li>
+</ul>
+<h4 id="cli-1">CLI</h4>
+<pre><code class="language-powershell"><div>dotnet add package Microsoft.EntityFrameworkCore.Tools
+dotnet add package Pomelo.EntityFrameworkCore.MySql
+dotnet ef dbcontext scaffold ^
+    <span class="hljs-string">"Server=aaaaa;Database=bbbbb;User=ccccc;Password=ddddd;TreatTinyAsBoolean=true;"</span> Pomelo.EntityFrameworkCore.MySql --output-dir Model --use-database-names --force --data-annotations
+</div></code></pre>
+<h4 id="packet-manager-console-visual-studio-1">Packet Manager Console (Visual Studio)</h4>
+<pre><code class="language-powershell"><div>Install-Package Microsoft.EntityFrameworkCore.Tools   <span class="hljs-comment"># EF Tools installieren</span>
+Install-Package Pomelo.EntityFrameworkCore.MySql      <span class="hljs-comment"># MySQL Treiber installieren</span>
+Scaffold-DbContext <span class="hljs-string">"Server=aaaaa;Database=bbbbb;User=ccccc;Password=ddddd;TreatTinyAsBoolean=true;"</span>
+    Pomelo.EntityFrameworkCore.MySql -OutputDir Model -UseDatabaseNames -Force -DataAnnotations
+</div></code></pre>
+<h3 id="sql-server">SQL Server</h3>
+<p>Beim Verbindungsstring von scaffold sind folgende Dinge anzupassen:</p>
+<ul>
+<li><em>Server=tcp:aaaa,1433</em>: Durch den Servernamen (DNS oder IP) des SQL Servers zu ersetzen. 1433 ist der Standardport.</li>
+<li><em>Initial Catalog=bbbb</em>: Durch den Datenbanknamen zu ersetzen.</li>
+<li><em>User ID=cccc</em>: Benutzername des Datenbankusers.</li>
+<li><em>Password=dddd</em>: Passwort des Datenbankusers.</li>
+</ul>
+<h4 id="cli-2">CLI</h4>
+<pre><code class="language-powershell"><div>dotnet add package Microsoft.EntityFrameworkCore.Tools
+dotnet add package Microsoft.EntityFrameworkCore.SqlServer
+dotnet ef dbcontext scaffold ^
+    <span class="hljs-string">"Server=tcp:aaaa,1433;Initial Catalog=bbbb;Persist Security Info=False;User ID=cccc;Password=dddd;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"</span> ^
+    Microsoft.EntityFrameworkCore.SqlServer ^
+    --output-dir Model --use-database-names --force --data-annotations
+</div></code></pre>
+<h4 id="packet-manager-console-visual-studio-2">Packet Manager Console (Visual Studio)</h4>
+<pre><code class="language-powershell"><div>Install-Package Microsoft.EntityFrameworkCore.Tools      <span class="hljs-comment"># EF Tools installieren</span>
+Install-Package Microsoft.EntityFrameworkCore.SqlServer  <span class="hljs-comment"># SQL Server Treiber installieren</span>
+Scaffold-DbContext <span class="hljs-string">"Server=tcp:aaaa,1433;Initial Catalog=bbbb;Persist Security Info=False;User ID=cccc;Password=dddd;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"</span>
+    Microsoft.EntityFrameworkCore.SqlServer -OutputDir Model -UseDatabaseNames -Force -DataAnnotations
+</div></code></pre>
+<h2 id="modell-unserer-musterdatenbank">Modell unserer Musterdatenbank</h2>
+<ul>
+<li><a href="Tests.db">Download der Tests Datenbank</a></li>
+<li><a href="testsdb_sqlserver.sql">SQL Dump der Tests Datenbank für SQL Server</a></li>
+<li><a href="Tests.mdb">Access Datei der Tests Datenbank</a></li>
+</ul>
+<p><img src="file:///c:\Github\Pos3xhif\03 EF Core\images\er_diagram.png" alt=""></p>
+<p><img src="file:///c:\Github\Pos3xhif\03 EF Core\images\classdiagram.png" alt=""></p>
+
+    </body>
+    </html>
