@@ -20,7 +20,7 @@ namespace Grouping
 
             // *************************************************************************************
             // Schreibe in den nachfolgenden Übungen statt der Zeile
-            // object result1 = null;
+            // object resultX = null;
             // die korrekte LINQ Abfrage. Verwende den entsprechenden Datentyp statt object.
             // *************************************************************************************
             // ÜBUNG 1: Wie viele Klassen gibt es pro Abteilung?

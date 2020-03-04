@@ -89,7 +89,7 @@ namespace LinqUebung2
             // *************************************************************************************
             // ÜBUNGEN
             // Schreibe in den nachfolgenden Übungen statt der Zeile
-            // object result1 = null;
+            // object resultX = null;
             // die korrekte LINQ Abfrage. Verwende den entsprechenden Datentyp statt object.
             // *************************************************************************************
 
