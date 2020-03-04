@@ -88,6 +88,9 @@ namespace LinqUebung2
 
             // *************************************************************************************
             // ÜBUNGEN
+            // Ersetze die Zeile 
+            // object resultX = null; 
+            // durch deine Lösung (natürlich mit dem korrekten Datentyp statt object)
             // *************************************************************************************
 
             // 1. Drucke eine Liste aller Fächer. Hinweis: Verwende Distinct, um doppelte Einträge
