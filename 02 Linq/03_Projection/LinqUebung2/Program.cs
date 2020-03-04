@@ -95,31 +95,21 @@ namespace LinqUebung2
             // Füge hier die Lösung ein.
             // IEnumerable<Pruefung> --> IEnumerable<string>
 
-            IEnumerable<string> result1 = db.Pruefungen.Select(p => p.Fach).Distinct();
+            object result1 = null;
             Console.WriteLine("Die Prüfungsfächer sind " + String.Join(",", result1));
 
             // 2. Ermittle die schlechteste Prüfungsnote in E. Dabei verwende allerdings die Max
             //    Funktion ohne Parameter, indem vorher eine Liste von int Werten erzeugt wird.
             // Füge hier die Lösung ein.       
             // IEnumerable<Pruefung> --> IEnumerable<int>
-            int result2 = db.Pruefungen.Where(p => p.Fach == "E").Select(p => p.Note).Max();
+            object result2 = null;
             Console.WriteLine($"Die schlechteste E Note ist {result2}");
 
             // 3. Liefere eine Liste mit Klasse, Name, Vorname und der Anzahl der Prüfungen
             //    (soll Anzahl heißen) der 3CHIF. Sortiere die Liste nach Klasse und Name.
             //    Hinweis: Verwende OrderBy und dann ThenBy.
             // Füge hier die Lösung ein.       
-            var result3 = db.Schuelers
-                .Where(s => s.Klasse == "3CHIF")
-                .Select(s => new
-                {
-                    s.Klasse,
-                    s.Name,
-                    s.Vorname,
-                    Anzahl = s.Pruefungen?.Count() ?? 0
-                })
-                .OrderBy(x => x.Klasse)
-                .ThenBy(x => x.Name);
+            object result3 = null;
             Console.WriteLine("Beispiel 3");
             result3.ToList().ForEach(s => { Console.WriteLine($"   {s.Klasse}: {s.Name} {s.Vorname} hat {s.Anzahl} Prüfungen."); });
 
@@ -127,15 +117,7 @@ namespace LinqUebung2
             //    Die Fächer sollen als Stringliste (IEnumerable<string> ohne doppelte Einträge 
             //    in das Property Faecher gespeichert werden.
             // Füge hier die Lösung ein.
-            var result4 = db.Schuelers
-                .Where(s => s.Klasse == "3BHIF")
-                .Select(s => new
-                {
-                    s.Klasse,
-                    s.Name,
-                    s.Vorname,
-                    Faecher = s.Pruefungen.Select(p => p.Fach).Distinct()
-                });
+            object result4 = null;
             Console.WriteLine("Beispiel 4");
             result4.ToList().ForEach(s => { Console.WriteLine($"   {s.Klasse}: {s.Name} {s.Vorname} hat {String.Join(",", s.Faecher)}"); });
 
@@ -145,21 +127,8 @@ namespace LinqUebung2
             //    erzeugt werden. Es sind natürlich 2 new Anweisungen nötig.
             //    Außerdem sollen nur Schüler der 3AHIF berücksichtigt werden.
             // Füge hier die Lösung ein.
+            object result5 = null;
             Console.WriteLine("Beispiel 5");
-            var result5 = db.Schuelers
-                .Where(s => s.Klasse == "3AHIF")
-                .Select(s => new
-                {
-                    s.Name,
-                    s.Vorname,
-                    NegativePruefungen = s.Pruefungen
-                                               .Where(p => p.Note == 5)
-                                               .Select(p => new
-                                               {
-                                                   p.Fach,
-                                                   p.Datum
-                                               })
-                });
             foreach (var schueler in result5)
             {
                 Console.WriteLine($"   Negative Prüfungen von {schueler.Name} {schueler.Vorname}:");
@@ -177,13 +146,7 @@ namespace LinqUebung2
             //    Where Filter berechnet.
             //    Später werden wir dieses Problem mit Group by lösen.
             // Füge hier die Lösung ein.
-            var pruefer = db.Pruefungen.Select(p => p.Pruefer).Distinct();
-            var result6 = pruefer.Select(p => new
-            {
-                Pruefer = p,
-                BesteNote = db.Pruefungen.Where(pr => pr.Pruefer == p).Min(pr => pr.Note),
-                SchlechtesteNote = db.Pruefungen.Where(pr => pr.Pruefer == p).Max(pr => pr.Note)
-            });
+            object result6 = null;
             Console.WriteLine("Beispiel 6");
             result6.ToList().ForEach(p => { Console.WriteLine($"   {p.Pruefer} gibt Noten von {p.BesteNote} bis {p.SchlechtesteNote}"); });
         }
