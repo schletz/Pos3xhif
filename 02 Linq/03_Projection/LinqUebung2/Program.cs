@@ -88,30 +88,24 @@ namespace LinqUebung2
 
             // *************************************************************************************
             // ÜBUNGEN
-            // Ersetze die Zeile 
-            // object resultX = null; 
-            // durch deine Lösung (natürlich mit dem korrekten Datentyp statt object)
+            // Schreibe in den nachfolgenden Übungen statt der Zeile
+            // object result1 = null;
+            // die korrekte LINQ Abfrage. Verwende den entsprechenden Datentyp statt object.
             // *************************************************************************************
 
             // 1. Drucke eine Liste aller Fächer. Hinweis: Verwende Distinct, um doppelte Einträge
             //    zu entfernen. Speichere das Ergebnis in IEnumerable<string>.
-            // Füge hier die Lösung ein.
-            // IEnumerable<Pruefung> --> IEnumerable<string>
-
             object result1 = null;
             Console.WriteLine("Die Prüfungsfächer sind " + String.Join(",", result1));
 
             // 2. Ermittle die schlechteste Prüfungsnote in E. Dabei verwende allerdings die Max
             //    Funktion ohne Parameter, indem vorher eine Liste von int Werten erzeugt wird.
-            // Füge hier die Lösung ein.       
-            // IEnumerable<Pruefung> --> IEnumerable<int>
             object result2 = null;
             Console.WriteLine($"Die schlechteste E Note ist {result2}");
 
             // 3. Liefere eine Liste mit Klasse, Name, Vorname und der Anzahl der Prüfungen
             //    (soll Anzahl heißen) der 3CHIF. Sortiere die Liste nach Klasse und Name.
             //    Hinweis: Verwende OrderBy und dann ThenBy.
-            // Füge hier die Lösung ein.       
             object result3 = null;
             Console.WriteLine("Beispiel 3");
             result3.ToList().ForEach(s => { Console.WriteLine($"   {s.Klasse}: {s.Name} {s.Vorname} hat {s.Anzahl} Prüfungen."); });
@@ -119,7 +113,6 @@ namespace LinqUebung2
             // 4. Liefere eine Liste der Schüler (Klasse, Name, Vorname) der 3BHIF mit ihren Prüfungsfächern. 
             //    Die Fächer sollen als Stringliste (IEnumerable<string> ohne doppelte Einträge 
             //    in das Property Faecher gespeichert werden.
-            // Füge hier die Lösung ein.
             object result4 = null;
             Console.WriteLine("Beispiel 4");
             result4.ToList().ForEach(s => { Console.WriteLine($"   {s.Klasse}: {s.Name} {s.Vorname} hat {String.Join(",", s.Faecher)}"); });
@@ -129,7 +122,6 @@ namespace LinqUebung2
             //    ein neues Objekt mit Datum und Fach aller negativen Prüfungen (Note = 5) 
             //    erzeugt werden. Es sind natürlich 2 new Anweisungen nötig.
             //    Außerdem sollen nur Schüler der 3AHIF berücksichtigt werden.
-            // Füge hier die Lösung ein.
             object result5 = null;
             Console.WriteLine("Beispiel 5");
             foreach (var schueler in result5)
@@ -148,7 +140,6 @@ namespace LinqUebung2
             //    BesteNote und SchlechtesteNote werden wieder von allen Prüfungen mit entsprechdem
             //    Where Filter berechnet.
             //    Später werden wir dieses Problem mit Group by lösen.
-            // Füge hier die Lösung ein.
             object result6 = null;
             Console.WriteLine("Beispiel 6");
             result6.ToList().ForEach(p => { Console.WriteLine($"   {p.Pruefer} gibt Noten von {p.BesteNote} bis {p.SchlechtesteNote}"); });

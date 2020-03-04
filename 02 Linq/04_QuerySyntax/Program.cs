@@ -22,7 +22,10 @@ namespace QuerySyntax
             // Alternative mit Method Syntax:
             demo1 = data.Pupil.Where(p => p.P_Class == "3BHIF");
 
-
+            // *************************************************************************************
+            // Schreibe in den nachfolgenden Übungen statt der Zeile
+            // object result1 = null;
+            // die korrekte LINQ Abfrage. Verwende den entsprechenden Datentyp statt object.
             // *************************************************************************************
             // ÜBUNG 1: Gib alle Tests des Lehrers ZUM in der 4EHIF aus.
             // *************************************************************************************
