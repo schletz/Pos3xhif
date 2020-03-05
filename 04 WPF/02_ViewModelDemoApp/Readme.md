@@ -49,3 +49,5 @@ die gefundenen Personen anzeigen.
 
 Achte stets auf den State der Applikation, sodass die Ausgaben keine falschen Werte liefern (z. B.
 stehengebliebene Statusmeldungen, ...).
+
+[Lösung zur Übung](Loesung_ViewModelDemoApp.zip)
