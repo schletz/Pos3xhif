@@ -19,6 +19,17 @@ Grafik erstellt mit [draw.io].
 
 [draw.io]: https://www.draw.io
 
+Hinweis: Um eine Methode aus dem ViewModel aufzurufen, wenn ein Button angeklickt wurde, kann
+ein Eventhandler im code behind verwendet werden. Er kann so aussehen:
+
+```c#
+private void DeleteTrack_Click(object sender, RoutedEventArgs e)
+{
+    var vm = DataContext as MainViewModel;
+    vm.DeleteSelectedTrack();
+}
+```
+
 ## Ubung
 
 **(1)** Baue über den Formularfeldern ein Suchfeld mit einem Button ein, mit dessen Hilfe Personen
