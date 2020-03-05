@@ -40,9 +40,8 @@ soll die Suche durchgeführt werden.
 erneuten Klick darauf sollen wieder alle Personen angezeigt werden.
 
 **(3)** Füge eine Statusbar zur App hinzu. Eine Anleitung dazu ist auf [www.wpf-tutorial.com](https://www.wpf-tutorial.com/de/53/einfache-steuerelemente/die-wpf-statusbar/).
-Wenn nach Personen gesucht wurde, soll der Text "x Personen gefunden" erscheinen. Hinweis:
-Definiere für die Anzahl der gefundenen Personen einen Textblock und über Binding soll die
-Anzahl eingefügt werden.
+Wenn nach Personen gesucht wurde, soll der Text "x Personen gefunden" erscheinen. Dies kann im
+code behind gesetzt werden.
 
 **(4)** Wenn das Suchergebnis angezeigt wird, sollen die Buttons für die Navigation natürlich nur
 die gefundenen Personen anzeigen.
