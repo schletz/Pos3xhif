@@ -157,7 +157,7 @@ namespace LocationDemo
             // from training data.
             var testData = trainData;
 
-            // Run the model on test data set.
+            // Wandelt die Label in UInt32 Werte für die interne Verarbeitung.
             var transformedTestData = model.Transform(testData);
 
             // Convert IDataView object to a list.
