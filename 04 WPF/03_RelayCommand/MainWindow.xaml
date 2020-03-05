@@ -102,10 +102,10 @@ Achtung: Bei den png Icons in Icons muss als Build Action "Resource" eingetragen
             <!-- Panel mit den Buttons für die Navigation in der Liste. -->
             <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="5">
                 <!-- Binding an das Property PrevCommand in MainViewModel.-->
-                <Button x:Name="PrevButton" Width="32" Margin="0 0 30 0" Click="PrevButton_Click">
+                <Button Width="32" Margin="0 0 30 0" Command="{Binding PrevCommand}">
                     <Image Source="Icons\left-arrow.png"></Image>
                 </Button>
-                <Button x:Name="NextButton" Width="32" Click="NextButton_Click">
+                <Button Width="32" Command="{Binding NextCommand}">
                     <Image Source="Icons\right-arrow.png" ></Image>
                 </Button>
             </StackPanel>

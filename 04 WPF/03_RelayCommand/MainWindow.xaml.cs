@@ -12,7 +12,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using ViewModelDemoApp.ViewModels;
 
 namespace ViewModelDemoApp
 {
@@ -24,16 +23,6 @@ namespace ViewModelDemoApp
         public MainWindow()
         {
             InitializeComponent();
-        }
-
-        private void PrevButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is MainViewModel vm) { vm.PrevPerson(); }
-        }
-
-        private void NextButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is MainViewModel vm) { vm.NextPerson(); }
         }
     }
 }

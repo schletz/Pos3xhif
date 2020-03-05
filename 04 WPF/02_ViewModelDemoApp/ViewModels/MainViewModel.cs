@@ -19,24 +19,6 @@ namespace ViewModelDemoApp.ViewModels
         /// </summary>
         private readonly PersonDb personDb = PersonDb.FromMockup();
         /// <summary>
-        /// Aktuell angezeigter Index der Personenliste.
-        /// </summary>
-        private int currentIndex = 0;
-        /// <summary>
-        /// Aktuelle Person.
-        /// </summary>
-        private Person currentPerson;
-
-        /// <summary>
-        /// Konstruktor mit Initialisierungen.
-        /// </summary>
-        public MainViewModel()
-        {
-            CurrentPerson = Persons[currentIndex];
-            InitCommands();
-        }
-
-        /// <summary>
         /// Wird aufgerufen, wenn das Binding aktualisiert werden soll. Das muss beim Schreiben
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
@@ -45,6 +27,42 @@ namespace ViewModelDemoApp.ViewModels
         /// das Aufrufen von PropertyChanged im setter, da sonst die Bindings nicht aktualisiert
         /// werden!
         /// </summary>
+
+        /// <summary>
+        /// Aktuell angezeigter Index der Personenliste. Setzt auch die aktuell angezeigte Person.
+        /// </summary>
+        private int currentIndex;
+        public int CurrentIndex
+        {
+            get => currentIndex;
+            set
+            {
+                // Damit der Index nicht außerhalb von 0 ... Count-1 ist, begrenzen wir ihn mit
+                // Max und Min.
+                currentIndex = Math.Max(0, Math.Min(Persons.Count - 1, value));
+                CurrentPerson = Persons[currentIndex];
+            }
+        }
+        /// <summary>
+        /// Aktuell angezeigte Person. Ist das Bindingfeld für die View.
+        /// </summary>
+        private Person currentPerson;
+
+        /// <summary>
+        /// Liste der gefundenen Personen aus der Datenbank.
+        /// </summary>
+        private List<Person> persons;
+        public List<Person> Persons
+        {
+            get => persons;
+            set
+            {
+                persons = value;
+                // Wenn die Liste neu zugewiesen wird, positionieren wir uns immer auf das erste
+                // Element.
+                CurrentIndex = 0;
+            }
+        }
         public Person CurrentPerson
         {
             get => currentPerson;
@@ -60,46 +78,23 @@ namespace ViewModelDemoApp.ViewModels
                 }
             }
         }
-        /// <summary>
-        /// Binding Property für den Next Button.
-        /// </summary>
-        public ICommand NextCommand { get; private set; }
-        /// <summary>
-        /// Liest alle Personen aus der Datenbank in den Speicher. Sonst können wir nicht mit dem
-        /// Index arbeiten, da Collections keinen Indexzugriff ermöglichen.
-        /// </summary>
-        public IList<Person> Persons => personDb.Persons.ToList();
-        /// <summary>
-        /// Binding Property für den Previous Button
-        /// </summary>
-        public ICommand PrevCommand { get; private set; }
-        /// <summary>
-        /// Initialisiert die Properties für die Buttons. Hier kann die Action, die durchgeführt
-        /// werden soll, direkt mitgegeben werden. Bei längeren Methoden sollte aber die Methode
-        /// im View Model als private definiert werden und es wird hier einfach der Methodenname
-        /// übergeben.
-        /// Das Erzeugen des RelayCommand sollte nicht direkt im getter des Binding Properties
-        /// geschehen, da sonst immer eine neue Instanz erzeugt wird. Deswegen initialisieren wir
-        /// hier vorher.
-        /// </summary>
-        private void InitCommands()
-        {
-            NextCommand = new RelayCommand(
-                // Action für den Klick
-                () =>
-                {
-                    CurrentPerson = Persons[++currentIndex];
-                },
-                // Gibt an, wann der Button aktiv sein soll.
-                () => currentIndex < Persons.Count - 1
-                );
 
-            PrevCommand = new RelayCommand(
-                () =>
-                {
-                    CurrentPerson = Persons[--currentIndex];
-                },
-                () => currentIndex > 0);
+        /// <summary>
+        /// Konstruktor mit Initialisierungen.
+        /// </summary>
+        public MainViewModel()
+        {
+            Persons = personDb.Persons.ToList();
         }
+
+        /// <summary>
+        /// Lädt die vorige Person für die Anzeige.
+        /// </summary>
+        public void NextPerson() => CurrentIndex++;
+        /// <summary>
+        /// Lädt die nächste Person für die Anzeige.
+        /// </summary>
+        public void PrevPerson() => CurrentIndex--;
+
     }
 }
