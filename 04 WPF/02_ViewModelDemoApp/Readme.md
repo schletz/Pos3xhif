@@ -30,7 +30,7 @@ private void DeleteTrack_Click(object sender, RoutedEventArgs e)
 }
 ```
 
-## Ubung
+## Übung
 
 **(1)** Baue über den Formularfeldern ein Suchfeld mit einem Button ein, mit dessen Hilfe Personen
 gesucht werden können, dessen Nachname mit der Eingabe beginnt. Nach Klick auf den Button
