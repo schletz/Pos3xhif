@@ -93,8 +93,9 @@ public MainViewModel()
 ## Übung
 
 Im vorigen Beispiel [ViewModelDemoApp](../02_ViewModelDemoApp) sollte eine Suchfunktion eingebaut
-werden. Dies wurde noch auf Basis von code behind und Eventhandlern umgesetzt. Nun führe folgende
-Verbesserungen durch
+werden. Dies wurde noch auf Basis von code behind und Eventhandlern umgesetzt. Nun führe **auf Basis
+der Lösung des vorigen Beispiels** (Link ist unter der vorigen Übungsaufgabe) folgende
+Verbesserungen durch:
 
 - Der Suchbutton soll an ein Command im Viewmodel gebunden werden.
 - Der Text des Buttons (Suche oder Filter entfernen) soll über ein Binding aus dem Viewmodel geladen
