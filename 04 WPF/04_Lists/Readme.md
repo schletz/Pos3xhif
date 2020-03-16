@@ -145,7 +145,8 @@ Das ist deswegen notwendig, da sich die Liste beim Anlegen oder Löschen eines S
 Außerdem wird beim Wechsel der Klasse die Liste neu befüllt.
 
 > **Wichtig:** Observable Collections arbeiten nur richtig, wenn mit der gleichen Instanz gearbeitet
-> wird. Ein häufiger Fehler ist das Erstellen einer neuen Observable Collection mit *new*.
+> wird. Ein häufiger Fehler ist das Erstellen einer neuen Observable Collection mit *new* um
+> z. B. alle Werte zu ändern.
 
 In [MainViewModel](ListDemo/ViewModels/MainViewModel.cs) werden die Properties *Pupils* und
 *CurrentClass* so definiert:
