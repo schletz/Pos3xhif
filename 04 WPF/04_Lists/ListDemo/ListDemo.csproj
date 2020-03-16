@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <None Remove="Icons\boy.png" />
+    <None Remove="Icons\delete.png" />
     <None Remove="Icons\girl.png" />
     <None Remove="Icons\left-arrow.png" />
     <None Remove="Icons\person.png" />
@@ -15,7 +16,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Bogus" Version="*" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Icons\boy.png" />
+    <Resource Include="Icons\delete.png" />
     <Resource Include="Icons\girl.png" />
     <Resource Include="Icons\left-arrow.png" />
     <Resource Include="Icons\person.png" />
