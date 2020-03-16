@@ -43,6 +43,9 @@ und vom gleichen Typ wie die Listenelemente sein. Soll nur ein Property des List
 zurückgeschrieben werden, gibt es mit der Eigenschaft *SelectedValuePath* noch die Möglichkeit,
 das zurückgeschriebene Property des Listenelements zu definieren.
 
+Mit *SelectedIndex* kann z. B. das erste Element beim Start ausgewählt werden. Das Standardverhalten
+ist kein ausgewählter Wert (leerer Eintrag).
+
 ### Definition in XAML
 
 In unserem Musterprogramm ist die ComboBox, die die Liste aller Klassen für die Filterung darstellt,
