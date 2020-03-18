@@ -25,7 +25,7 @@ zu sehen.
 
 ### Anpassen des Projektfiles
 
-Durch Doppelklick auf das Projekt (Eintrag ListDemo im Solution Explorer) öffnet sich die Datei
+Durch Doppelklick auf das Projekt (Eintrag *ListDemo* im Solution Explorer) öffnet sich die Datei
 [ListDemo.csproj](EfCoreDemo/ListDemo.csproj). Sie ist eine XML Datei,
 die alle Einstellungen und die installierten Pakete (Dependencies) als XML Datei anzeigt.
 
@@ -269,8 +269,8 @@ Collections bereitstellt, können wir sie mit gewohnten Mitteln nutzen.
 
 Wie im Kapitel [EF Core - CRUD](https://github.com/schletz/Pos3xhif/tree/master/03%20EF%20Core/04_Crud)
 bereits beschrieben, läuft das Hinzufügen von Daten im Wesentlichen durch ein *Add()* im DbSet und
-*SaveChanges()* ab. Im Command *SavePupilCommand* in [MainViewModel](EfCoreDemo/ViewModels/MainViewModel.cs)
-wird über den Entry State gearbeitet.
+*SaveChanges()* ab. Im Command *SavePupilCommand* in
+[MainViewModel](EfCoreDemo/ViewModels/MainViewModel.cs) wird über den Entry State gearbeitet.
 
 ```c#
 using (var transaction = _db.Database.BeginTransaction())        // (1)
@@ -301,11 +301,11 @@ using (var transaction = _db.Database.BeginTransaction())        // (1)
 }
 ```
 
-**(1)** Eine Transaktion ist eine Abfolge von SQL Anweisungen. Eine Datenbank kann diese im Notfall
+**(1)** Eine Transaktion ist eine Abfolge von SQL Anweisungen. Eine Datenbank kann diese
 zur Gänze rückgängig machen, um wieder einen definierten Ausgangszustand zu erhalten. Sonst würden
 Fälle eintreten, wo im Fehlerfall einige *INSERT* Anweisungen schon geschrieben wurden, andere
 nicht. Ein beliebtes Beispiel ist eine Kontobuchung mit 2 INSERT Anweisungen. Es darf nie vorkommen,
-dass von Konto A abgebucht, aber durch einen Fehler bei Konto B nie gutgeschrieben wurde.
+dass von Konto A abgebucht, aber durch einen Fehler bei Konto B nie gutgeschrieben wird.
 
 **(2)** Beim Klick auf *Neuer Schüler* wird mit *new* ein neuer Schüler angelegt. Diesen Schüler
 hat EF Core natürlich noch nicht im DbSet erfasst. Er hat also den Status *Detached*. Mit dieser
@@ -364,6 +364,10 @@ im aktuellen Kapitel, die schon eine SQLite Datenbank samt Musterdaten erzeugt.
 
 Starte zuerst das Musterprogamm und analysiere es mit dem Debugger. Arbeite dabei auch mit
 falschen Eingaben (z. B. Schüler wird erzeugt, danach wird gleich auf Speichern geklickt).
+
+Betrachte außerdem die erzeugte SQLite Datenbank mit DBeaver (Informationen auf
+[Arbeiten mit DBeaver Community](https://github.com/schletz/Dbi2Sem/blob/master/01_OracleVM/01_Dbeaver/README.md)). Die Datenbank liegt im Ausgabeverzeichnis des Programmes (*bin\Debug\netcoreapp3.1\School.db*).
+Betrachte durch *SELECT* Anweisungen den Inhalt der Tabellen.
 
 ![](angabe.png)
 
