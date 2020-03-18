@@ -365,7 +365,7 @@ im aktuellen Kapitel, die schon eine SQLite Datenbank samt Musterdaten erzeugt.
 Starte zuerst das Musterprogamm und analysiere es mit dem Debugger. Arbeite dabei auch mit
 falschen Eingaben (z. B. Schüler wird erzeugt, danach wird gleich auf Speichern geklickt).
 
-Betrachte außerdem die erzeugte SQLite Datenbank mit DBeaver (Informationen auf
+Betrachte außerdem die erzeugte SQLite Datenbank mit DBeaver (Informationen unter
 [Arbeiten mit DBeaver Community](https://github.com/schletz/Dbi2Sem/blob/master/01_OracleVM/01_Dbeaver/README.md)). Die Datenbank liegt im Ausgabeverzeichnis des Programmes (*bin\Debug\netcoreapp3.1\School.db*).
 Betrachte durch *SELECT* Anweisungen den Inhalt der Tabellen.
 
