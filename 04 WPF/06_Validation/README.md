@@ -128,7 +128,7 @@ einfache Prüfen eines Feldes nicht für die Validierung ausreicht:
   als für nicht volljährige Schüler gelten.
 - Die Validierung braucht komplexere Routinen wie das Abfragen von Webservices, ...  
 
-Ein sehr guter Beitrag auf ![social.technet.microsoft.com](https://social.technet.microsoft.com/wiki/contents/articles/22506.asynchronous-validation-in-wpf-using-the-mvvm-pattern-and-inotifydataerrorinfo.aspx) zeigt die
+Ein sehr guter Beitrag auf [social.technet.microsoft.com](https://social.technet.microsoft.com/wiki/contents/articles/22506.asynchronous-validation-in-wpf-using-the-mvvm-pattern-and-inotifydataerrorinfo.aspx) zeigt die
 Verwendung dieses Patterns. Dieser Ansatz verursacht allerdings einen höheren Codeaufwand, da die
 Validierung eine benutzerdefinierte set Methode braucht. Somit funktioniert kein Binding direkt
 an eine Modelklasse.
