@@ -139,7 +139,7 @@ git pull origin master --allow-unrelated-histories
 git push origin master
 ```
 
-1. Zur Dokumentation wird im Programmierbereich die sogenannte Markdown Syntax verwendet. Sie definiert
+7. Zur Dokumentation wird im Programmierbereich die sogenannte Markdown Syntax verwendet. Sie definiert
     Formatierungsanweisungen in Textdateien. Eine Übersicht ist unter
     https://help.github.com/articles/basic-writing-and-formatting-syntax/ abrufbar. 
 
