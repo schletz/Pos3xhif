@@ -124,8 +124,9 @@ git remote add origin (URL)
 ```
 
 5. Erstellen von .gitignore: Damit nicht Builds und temporäre Dateien von Visual Studio hochgeladen werden,
-   gibt es auf https://github.com/github/gitignore/blob/master/VisualStudio.gitignore ein Muster für
-   die Datei *.gitignore*. Kopiere diese Datei in den Hauptordner deines Repositories.
+   gibt es auf https://raw.githubusercontent.com/github/gitignore/master/VisualStudio.gitignore ein
+   Muster für die Datei *.gitignore*. Speichere die Datei mit dem Namen *.gitignore* in das
+   Hauptverzeichnis deines Repositories.
 
 6. Lege dir in diesem Ordner eine Datei *syncGit.cmd* mit folgenden Befehlen an. Durch Doppelklick
     auf diese Datei im Explorer werden alle Änderungen bestätigt ("Commit") und der Inhalt mit dem
