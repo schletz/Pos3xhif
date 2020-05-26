@@ -1,0 +1,90 @@
+﻿<Window x:Class="Artikelverwaltung.ArtikelWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Artikelverwaltung"
+        xmlns:vm="clr-namespace:Artikelverwaltung.ViewModel"
+        Title="Artikel">
+    <Window.DataContext>
+        <vm:ArtikelViewModel/>
+    </Window.DataContext>
+    <DockPanel>
+        <TextBlock DockPanel.Dock="Top" FontSize="24" Text="Artikel" Padding="5 5 5 5" />        
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <Label Content="Kategorie"></Label>
+            <ComboBox ItemsSource="{Binding Kategorien}" 
+                      SelectedIndex="0"
+                      SelectedValue="{Binding SelectedKategorie}"
+                      DisplayMemberPath="Name"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom">
+            <Button Padding=" 5 5 5 5" FontSize="18"
+            DockPanel.Dock="Bottom"
+            Command="{Binding SaveCommand}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="Resources/save.png" Width="32" Height="32" Margin="0 0 5 0" />
+                    <TextBlock Text="Speichern"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+
+
+        <DataGrid x:Name="Grid" ItemsSource="{Binding Artikel}" AutoGenerateColumns="False" CanUserAddRows="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Ean}" Header="EAN" />
+                <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="*" />
+                <DataGridTextColumn Binding="{Binding Preis}" Header="Preis" />
+                <DataGridTextColumn Binding="{Binding Hersteller}" Header="Hersteller" />
+
+                <DataGridTemplateColumn Header="Produziert ab">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <DatePicker SelectedDate="{Binding ProduziertAb, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                
+                <DataGridTemplateColumn Header="Eingestellt ab">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <DatePicker SelectedDate="{Binding EingestelltAb, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                
+                <DataGridTemplateColumn SortMemberPath="Kategorie.Name" Header="Kategorie">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox 
+                                ItemsSource="{Binding RelativeSource={RelativeSource Findancestor, AncestorType={x:Type Window}}, Path=DataContext.Kategorien}" 
+                                DisplayMemberPath="Name"
+                                SelectedValue="{Binding Kategorie, UpdateSourceTrigger=PropertyChanged}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Button
+                                    Command="{Binding RelativeSource={RelativeSource Findancestor, AncestorType={x:Type Window}}, Path=DataContext.DeleteCommand}" 
+                                    CommandParameter="{Binding .}">
+                                    <Image Source="Resources/trash.png" Width="16" Height="16" />
+                                </Button>
+
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+    </DockPanel>
+
+
+
+
+</Window>
