@@ -6,11 +6,13 @@
         xmlns:local="clr-namespace:Artikelverwaltung"
         xmlns:vm="clr-namespace:Artikelverwaltung.ViewModel"
         Title="Artikel">
+    <!-- Instanziert das Viewmodel -->
     <Window.DataContext>
         <vm:ArtikelViewModel/>
     </Window.DataContext>
     <DockPanel>
-        <TextBlock DockPanel.Dock="Top" FontSize="24" Text="Artikel" Padding="5 5 5 5" />        
+        <TextBlock DockPanel.Dock="Top" FontSize="24" Text="Artikel" Padding="5 5 5 5" />  
+        <!-- Combobox für die Anzeige der Kategorien im oberen Bereich -->
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
             <Label Content="Kategorie"></Label>
             <ComboBox ItemsSource="{Binding Kategorien}" 
@@ -31,9 +33,11 @@
         </StackPanel>
 
 
+        <!-- DataGrid für die Artikel -->
         <DataGrid x:Name="Grid" ItemsSource="{Binding Artikel}" AutoGenerateColumns="False" CanUserAddRows="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Ean}" Header="EAN" />
+                <!-- Diese Spalte soll den verbleibenden Platz ausfüllen -->
                 <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="*" />
                 <DataGridTextColumn Binding="{Binding Preis}" Header="Preis" />
                 <DataGridTextColumn Binding="{Binding Hersteller}" Header="Hersteller" />
@@ -41,6 +45,7 @@
                 <DataGridTemplateColumn Header="Produziert ab">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
+                            <!-- Ohne UpdateSourceTrigger=PropertyChanged würde nichts geschrieben werden -->
                             <DatePicker SelectedDate="{Binding ProduziertAb, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -57,6 +62,7 @@
                 <DataGridTemplateColumn SortMemberPath="Kategorie.Name" Header="Kategorie">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
+                            <!-- Da wir für das Binding wieder direkt auf das VM greifen, brauchen wir eine RelativeSource -->
                             <ComboBox 
                                 ItemsSource="{Binding RelativeSource={RelativeSource Findancestor, AncestorType={x:Type Window}}, Path=DataContext.Kategorien}" 
                                 DisplayMemberPath="Name"

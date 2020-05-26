@@ -14,21 +14,39 @@ namespace Artikelverwaltung.Model
         public DbSet<Kunde> Kunden { get; set; }
         public DbSet<Bestellung> Bestellungen { get; set; }
 
+        /// <summary>
+        /// Legt das Datenbanksystem (MySQL) fest und richtet die Verbindungsparameter ein.
+        /// </summary>
+        /// <param name="optionsBuilder"></param>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder
+                // EF Core lädt nicht von Haus aus über die Navigation Properties Daten nach.
+                // Das Paket Microsoft.EntityFrameworkCore.Proxies ermöglicht das Verhalten von
+                // EF 6
                 .UseLazyLoadingProxies()
                 .UseSqlite("Data Source=Artikel.db");
         }
 
+        /// <summary>
+        /// Passt das Datenbankschema an, wenn dies nicht durch Annotations gemacht werden kann.
+        /// </summary>
+        /// <param name="modelBuilder"></param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Kategorie- und Artikelname müssen eindeutig sein. Sonst sind in der ComboBox
+            // doppelte Werte.
             modelBuilder.Entity<Kategorie>().HasIndex(k => k.Name).IsUnique();
             modelBuilder.Entity<Artikel>().HasIndex(a => a.Name).IsUnique();
         }
 
+        /// <summary>
+        /// Initialisiert die Datenbank mit dem Musterdatengenerator Bogus.
+        /// Erfordert das NuGet Paket Bogus.
+        /// </summary>
         public void Seed()
         {
+            // Damit immer die gleichen Werte generiert werden, wird ein fixes Seed verwendet.
             Randomizer.Seed = new Random(201227);
             Faker f = new Faker();
 

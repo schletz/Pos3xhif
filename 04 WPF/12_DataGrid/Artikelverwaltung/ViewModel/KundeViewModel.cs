@@ -9,8 +9,15 @@ namespace Artikelverwaltung.ViewModel
 {
     public class KundeViewModel : BaseViewModel
     {
+        /// <summary>
+        /// Observable Collection für das DataGrid
+        /// </summary>
         public ObservableCollection<Kunde> Kunden { get; } = new ObservableCollection<Kunde>();
 
+        /// <summary>
+        /// Konstruktor. Liest alle Kunden aus der Datenbank und schreibt sie in die Observable
+        /// Collection.
+        /// </summary>
         public KundeViewModel()
         {
             Kunden.Clear();
