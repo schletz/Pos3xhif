@@ -11,7 +11,7 @@
         <vm:ArtikelViewModel/>
     </Window.DataContext>
     <DockPanel>
-        <TextBlock DockPanel.Dock="Top" FontSize="24" Text="Artikel" Padding="5 5 5 5" />  
+        <TextBlock DockPanel.Dock="Top" FontSize="24" Text="Artikel" Padding="5 5 5 5" />
         <!-- Combobox für die Anzeige der Kategorien im oberen Bereich -->
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
             <Label Content="Kategorie"></Label>
@@ -34,7 +34,9 @@
 
 
         <!-- DataGrid für die Artikel -->
-        <DataGrid x:Name="Grid" ItemsSource="{Binding Artikel}" AutoGenerateColumns="False" CanUserAddRows="True">
+        <DataGrid ItemsSource="{Binding Artikel}" 
+                  AutoGenerateColumns="False" 
+                  CanUserAddRows="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Ean}" Header="EAN" />
                 <!-- Diese Spalte soll den verbleibenden Platz ausfüllen -->
@@ -42,15 +44,15 @@
                 <DataGridTextColumn Binding="{Binding Preis}" Header="Preis" />
                 <DataGridTextColumn Binding="{Binding Hersteller}" Header="Hersteller" />
 
-                <DataGridTemplateColumn Header="Produziert ab">
+                <DataGridTemplateColumn Header="Produktion von">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <!-- Ohne UpdateSourceTrigger=PropertyChanged würde nichts geschrieben werden -->
                             <DatePicker SelectedDate="{Binding ProduziertAb, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <!-- Ohne UpdateSourceTrigger=PropertyChanged würde nichts geschrieben werden -->
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                
+
                 <DataGridTemplateColumn Header="Eingestellt ab">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -58,7 +60,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                
+
                 <DataGridTemplateColumn SortMemberPath="Kategorie.Name" Header="Kategorie">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -80,7 +82,6 @@
                                     CommandParameter="{Binding .}">
                                     <Image Source="Resources/trash.png" Width="16" Height="16" />
                                 </Button>
-
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

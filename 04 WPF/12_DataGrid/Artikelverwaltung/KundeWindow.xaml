@@ -9,10 +9,12 @@
              Title="Kunden" Width="600" Height="700">
     <Window.DataContext>
         <vm:KundeViewModel/>
+        <!-- DataContext = new KundeViewModel() -->
     </Window.DataContext>
     <DockPanel>
         <TextBlock DockPanel.Dock="Top" FontSize="24" Text="Kunden"  Padding="5 5 5 5" />
-        <DataGrid ItemsSource="{Binding Kunden}" AutoGenerateColumns="False" 
+        <DataGrid ItemsSource="{Binding Kunden}" 
+                  AutoGenerateColumns="False" 
                   RowDetailsVisibilityMode="VisibleWhenSelected"
                   CanUserAddRows="False">
             <DataGrid.Columns>
@@ -24,6 +26,7 @@
             </DataGrid.Columns>
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
+                    <!-- foreach (var k in Kunden) -->
                     <StackPanel Background="AliceBlue">
                         <TextBlock Text="Bestellungen" Padding="0 5 5 5" FontSize="14" />
                         <ListView ItemsSource="{Binding Bestellungen}">
@@ -33,10 +36,12 @@
                                         <GridViewColumn Header="Datum">
                                             <GridViewColumn.CellTemplate>
                                                 <DataTemplate>
+                                                    <!-- foreach (var b in k.Bestellungen) -->
                                                     <TextBlock Text="{Binding Datum}"/>
                                                 </DataTemplate>
                                             </GridViewColumn.CellTemplate>
                                         </GridViewColumn>
+
                                         <GridViewColumn Header="Menge">
                                             <GridViewColumn.CellTemplate>
                                                 <DataTemplate>
@@ -44,6 +49,7 @@
                                                 </DataTemplate>
                                             </GridViewColumn.CellTemplate>
                                         </GridViewColumn>
+
                                         <GridViewColumn Header="Artikel">
                                             <GridViewColumn.CellTemplate>
                                                 <DataTemplate>
@@ -57,14 +63,12 @@
                                                     <TextBlock Text="{Binding BezahltAm}"/>
                                                 </DataTemplate>
                                             </GridViewColumn.CellTemplate>
-                                        </GridViewColumn>                                        
+                                        </GridViewColumn>
                                     </GridView.Columns>
                                 </GridView>
                             </ListView.View>
-
                         </ListView>
                     </StackPanel>
-
                 </DataTemplate>
             </DataGrid.RowDetailsTemplate>
         </DataGrid>

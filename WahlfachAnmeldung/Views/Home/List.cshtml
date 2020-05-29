@@ -1,0 +1,42 @@
+﻿@model WahlfachAnmeldung.ViewModel.ListViewModel
+
+<h1>Eingetragene Erstanmeldungen</h1>
+<h3>Statistik</h3>
+<table>
+    <tr>
+        @foreach (var s in Model.RegistrationStats.Select(r => r.SubjectId))
+        {
+            <td>@s</td>
+        }
+    </tr>
+    <tr>
+        @foreach (var rc in Model.RegistrationStats.Select(r => r.RegistrationCount))
+        {
+            <td>@rc</td>
+        }
+    </tr>
+</table>
+
+<h3>Einzelliste</h3>
+<table class="table-sm">
+    <thead>
+        <tr>
+            <th>Klasse</th>
+            <th>Anmeldedatum</th>
+            <th>Token</th>
+            <th>Fach</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model.Registrations.OrderBy(r => r.Schoolclass).ThenBy(r => r.RegistrationDate))
+        {
+            <tr>
+                <td>@r.Schoolclass</td>
+                <td>@r.RegistrationDate</td>
+                <td>@r.Token</td>
+                <td>@r.Subject</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

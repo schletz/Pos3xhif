@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30002.166
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WahlfachAnmeldung", "WahlfachAnmeldung.csproj", "{C6B1B8AF-4C43-401B-BC67-251FB020584A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C6B1B8AF-4C43-401B-BC67-251FB020584A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6B1B8AF-4C43-401B-BC67-251FB020584A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6B1B8AF-4C43-401B-BC67-251FB020584A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6B1B8AF-4C43-401B-BC67-251FB020584A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F1DE86FD-11C0-436C-8DEE-B936ADAA5BE1}
+	EndGlobalSection
+EndGlobal
