@@ -62,7 +62,7 @@ namespace WahlfachAnmeldung.Pages
         {
             RegistrationStats = await (from r in _context.Registrations
                                        where r.Rating == 1
-                                       group r by r.Subject.SubjectId into g
+                                       group r by r.SubjectId into g
                                        orderby g.Key
                                        select new RegistrationStat
                                        {
@@ -89,8 +89,8 @@ namespace WahlfachAnmeldung.Pages
                                    {
                                        Schoolclass = r.Token.SchoolClass,
                                        RegistrationDate = r.Token.LastValidRegistration ?? DateTime.MinValue,
-                                       Token = r.Token.TokenId,
-                                       Subject = r.Subject.SubjectId
+                                       Token = r.TokenId,
+                                       Subject = r.SubjectId
                                    }).ToListAsync();
 
             MissingRegistrations = await (from t in _context.Tokens

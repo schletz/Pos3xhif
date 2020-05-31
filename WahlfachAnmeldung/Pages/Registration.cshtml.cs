@@ -52,15 +52,56 @@ namespace WahlfachAnmeldung.Pages
             /// <returns></returns>
             public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
             {
-                var rating = this.Select(s => s.Rating);
-                var count = this.Count;
+                DateTime now = DateTime.UtcNow;
+                // Nach der Deadline ist keine Anmeldung mehr möglich.
+                if (now >= RegistrationClosedFrom)
+                {
+                    yield return new ValidationResult("Der Anmeldezeitraum ist beendet.");
+                    yield break;
+                }
+                var ratingStats = new
+                {
+                    Min = this.Min(r => r.Rating),
+                    Max = this.Max(r => r.Rating),
+                    Count = this.Count,
+                    DistinctCount = this.Select(r => r.Rating).Distinct().Count()
+                };
 
-                if (!(rating.Min() == 1 && rating.Max() == count && rating.Distinct().Count() == count))
+                if (!(ratingStats.Min == 1 && ratingStats.Max == ratingStats.Count && ratingStats.DistinctCount == ratingStats.Count))
                 {
                     yield return new ValidationResult("Ungültige Auswahl");
+                    yield break;
+                }
+
+                // Im eingeschränkten Zeitraum können nur mehr Fächer gebucht werden, die unter der maximalen
+                // Anmeldezahl haben.
+                if (now >= RegistrationRestrictedFrom)
+                {
+                    var firstRating = this.SingleOrDefault(r => r.Rating == 1);
+                    var context = validationContext.GetService(typeof(RegistrationContext)) as RegistrationContext;
+                    if (context.Registrations.Count(r => r.Rating == 1 && r.SubjectId == firstRating.SubjectId) >= MaxRegistrations)
+                    {
+                        yield return new ValidationResult($"Das Fach {firstRating.SubjectId} hat bereits {MaxRegistrations} Erstreihungen. Die Reihung wurde daher nicht eingetragen oder verändert.");
+                        yield break;
+                    }
                 }
             }
         }
+
+        /// <summary>
+        /// Maximale Zahl der Erstreihungen, die im Zeitraum ab RegistrationRestrictedFrom gebucht
+        /// werden können.
+        /// </summary>
+        public static int MaxRegistrations { get; } = 30;
+        /// <summary>
+        /// Ab diesem Zeitpunkt kann die Reihung nur soweit verändert/eingegbeben werden, sodass
+        /// MaxRegistrations nicht überschritten wird.
+        /// </summary>
+        public static DateTime RegistrationRestrictedFrom { get; } = new DateTime(2020, 6, 7, 22, 0, 0, DateTimeKind.Utc);
+        /// <summary>
+        /// Ab diesem Zeitpunkt sind keine Änderungen oder Eingaben mehr möglich.
+        /// </summary>
+        public static DateTime RegistrationClosedFrom { get; } = new DateTime(2020, 6, 11, 22, 0, 0, DateTimeKind.Utc);
 
         // Binding für die Anzeige des Datums der letzten Änderung.
         public Token Token { get; private set; }
@@ -112,8 +153,8 @@ namespace WahlfachAnmeldung.Pages
                     {
                         _context.Registrations.Add(new Registration
                         {
-                            Subject = _context.Subjects.Find(r.SubjectId),
-                            Token = token,
+                            SubjectId = r.SubjectId,
+                            TokenId = id,
                             Rating = r.Rating
                         });
                     }
@@ -144,10 +185,10 @@ namespace WahlfachAnmeldung.Pages
 
             // Die angemeldeten Fächer des Users auslesen
             var subjectRegistrations = from r in _context.Registrations
-                                       where r.Token.TokenId == token.TokenId
+                                       where r.TokenId == token.TokenId
                                        select new SubjectRegistration
                                        {
-                                           SubjectId = r.Subject.SubjectId,
+                                           SubjectId = r.SubjectId,
                                            SubjectName = r.Subject.Name,
                                            RegistrationId = r.RegistrationId,
                                            Rating = r.Rating

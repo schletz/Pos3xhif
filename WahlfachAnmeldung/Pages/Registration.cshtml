@@ -40,13 +40,13 @@
             @Html.HiddenFor(m => m.SubjectRegistrations[i].SubjectName)
         }
     </table>
+    @Html.ValidationSummary()
     <button type="submit" class="btn btn-primary">Eintragen!</button>
 }
 <div class="pt-3">
-    @Html.ValidationSummary()
 </div>
 
-<h3>Bisher eingelangte Anmeldungen</h3>
+<h3>Bisher eingelangte Erstreihungen</h3>
 <table>
     <tr>
         @foreach (var s in Model.RegistrationStats.Select(r => r.SubjectId))

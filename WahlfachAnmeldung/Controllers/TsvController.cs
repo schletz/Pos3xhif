@@ -46,8 +46,8 @@ namespace WahlfachAnmeldung.Controllers
                                      Schoolclass = r.Token.SchoolClass,
                                      // Azure hat die englische Locale Einstellung, manuelle Konvertierung auf deutsches Schema.
                                      RegistrationDate = ((DateTime)r.Token.LastValidRegistration).ToString("d.MM.yyyy HH:mm"),
-                                     Token = r.Token.TokenId,
-                                     Subject = r.Subject.SubjectId
+                                     Token = r.TokenId,
+                                     Subject = r.SubjectId
                                  }).ToListAsync();
 
             // Excel benötigt den Windows 1252 Zeichensatz.

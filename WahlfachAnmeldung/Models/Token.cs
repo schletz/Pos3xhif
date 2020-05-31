@@ -12,8 +12,11 @@ namespace WahlfachAnmeldung.Models
         [Required]
         [MaxLength(8)]
         public string SchoolClass { get; set; }
-        public Subject AssignedSubject { get; set; }
-        public List<Registration> Registrations { get; set; }
         public DateTime? LastValidRegistration { get; set; }
+
+        public string AssignedSubjectSubjectId { get; set; }
+        public Subject AssignedSubject { get; set; }
+
+        public List<Registration> Registrations { get; set; }
     }
 }

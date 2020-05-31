@@ -14,13 +14,8 @@ namespace WahlfachAnmeldung.Models
         [Required]
         [MaxLength(255)]
         public string Name { get; set; }
-        public List<Registration> Registrations { get; set; }
         public int Order { get; internal set; }
-    }
 
-    public class TeacherToken
-    {
-        [MaxLength(32)]
-        public string TeacherTokenId { get; set; }
+        public List<Registration> Registrations { get; set; }
     }
 }
