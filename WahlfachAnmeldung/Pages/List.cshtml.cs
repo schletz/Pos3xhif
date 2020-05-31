@@ -15,6 +15,7 @@ namespace WahlfachAnmeldung.Pages
     public class ListModel : PageModel
     {
         private readonly RegistrationContext _context;
+        public TeacherToken Token { get; private set; } = new TeacherToken();
 
         public ListModel(RegistrationContext context)
         {
@@ -47,7 +48,7 @@ namespace WahlfachAnmeldung.Pages
 
         public async Task<IActionResult> OnGetAsync(string id)
         {
-            if (_context.TeacherTokens.Find(id) == null) { return NotFound(); }
+            if ((Token = _context.TeacherTokens.Find(id)) == null) { return NotFound(); }
             await InitializeAsync();
             return Page();
         }

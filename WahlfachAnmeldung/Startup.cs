@@ -25,7 +25,13 @@ namespace WahlfachAnmeldung
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<RegistrationContext>();
-            services.AddRazorPages();
+            var razorService = services.AddRazorPages();
+            // Damit eine Liveänderung der cshtml Dateien möglich ist (nach Aktualisieren des Browsers),
+            // wird die Runtime Compilation im Debugmodus aktiviert.
+#if DEBUG
+            // Nuget: Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation 
+            razorService.AddRazorRuntimeCompilation();
+#endif
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
