@@ -36,8 +36,6 @@
             // Damit die Formulardaten auch gespeichert werden können, werden die IDs mitübertragen.
             @Html.HiddenFor(m => m.SubjectRegistrations[i].RegistrationId)
             @Html.HiddenFor(m => m.SubjectRegistrations[i].SubjectId)
-            // Damit im Fehlerfall beim Zurücksenden der Seite der Langname auch angezeigt wird.
-            @Html.HiddenFor(m => m.SubjectRegistrations[i].SubjectName)
         }
     </table>
     @Html.ValidationSummary()

@@ -108,11 +108,8 @@ namespace WahlfachAnmeldung.Pages
 
         // Binding für die Statistik.
         public List<RegistrationStat> RegistrationStats { get; private set; } = new List<RegistrationStat>();
-        // Bereits eingetragene Reihungen in der Datenbank.
-        public SubjectRegistrationList ExistingSubjectRegistrations { get; private set; } = new SubjectRegistrationList();
         // Binding für das Formular
-        [BindProperty]
-        public SubjectRegistrationList SubjectRegistrations { get; set; } = new SubjectRegistrationList();
+        public SubjectRegistrationList SubjectRegistrations { get; private set; } = new SubjectRegistrationList();
 
         private readonly ILogger<RegistrationModel> _logger;
         private readonly RegistrationContext _context;
@@ -129,25 +126,26 @@ namespace WahlfachAnmeldung.Pages
             if (token == null) { return NotFound(); }
 
             await InitializeAsync(token);
-            // Initialisierung des Formulares mit eingetragenen Reihungen (wenn vorhanden)
-            SubjectRegistrations = ExistingSubjectRegistrations;
             return Page();
         }
 
         /// <summary>
         /// Speichert die Formulareingaben in der Datenbank.
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">Token</param>
+        /// <param name="subjectRegistrations">Formulardaten, die gespeichert werden müssen.</param>
         /// <returns></returns>
-        public async Task<IActionResult> OnPostAsync(string id)
+        public async Task<IActionResult> OnPostAsync(string id, SubjectRegistrationList subjectRegistrations)
         {
             // Nur mit gültigem Token verarbeiten.
             var token = _context.Tokens.Find(id);
             if (token == null) { return NotFound(); }
 
+            // Die restlichen Daten für die Anzeige (Statistik) nachladen, denn es werden nur die
+            // Formulardaten übermittelt.
             if (ModelState.IsValid)
             {
-                foreach (var r in SubjectRegistrations ?? Enumerable.Empty<SubjectRegistration>())
+                foreach (var r in subjectRegistrations ?? Enumerable.Empty<SubjectRegistration>())
                 {
                     if (r.RegistrationId == 0)
                     {
@@ -168,8 +166,6 @@ namespace WahlfachAnmeldung.Pages
                 token.LastValidRegistration = DateTime.UtcNow;
                 _context.SaveChanges();
             }
-            // Die restlichen Daten für die Anzeige (Statistik) nachladen, denn es werden nur die
-            // Formulardaten übermittelt.
             await InitializeAsync(token);
             return Page();
         }
@@ -215,7 +211,7 @@ namespace WahlfachAnmeldung.Pages
                                            RegistrationCount = g.Count()
                                        }).ToListAsync();
 
-            ExistingSubjectRegistrations = new SubjectRegistrationList(await subjectRegistrations.ToListAsync());
+            SubjectRegistrations = new SubjectRegistrationList(await subjectRegistrations.ToListAsync());
         }
 
     }
