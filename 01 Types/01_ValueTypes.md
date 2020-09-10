@@ -135,6 +135,7 @@ erstellen Sie mit *dotnet new console* eine neue Konsolenapplikation. Öffnen Si
 
 ```text
 Path> md ValueTypes
+Path> cd ValueTypes
 Path> dotnet new console
 Path> start ValueTypes.csproj
 ```
