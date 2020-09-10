@@ -1,79 +1,17 @@
-# POS im III. Jahrgang der HTL Spengergasse
+# POS im III. Jahrgang / 5. Semester Kolleg der HTL Spengergasse
 
 ## Wichtiges zum Start
 
 1. [Anleitung zum Verbinden mit dem VPN und den Laufwerken](VpnSpengergasse.md)
 1. [Installation von Visual Studio 2019](VisualStudioInstallation.md)
-1. [Markdown Editing mit VS Code](markdown.md)
-1. Optional: [Installation von SQL Server 2017](SqlServerInstallation.md)
-
-## Lehrinhalte auf Basis von Microsoft .NET und C#
-
-![](dotnet-bot.png)
-
-Gem. [Lehrplan BGBl. II Nr. 262/2015](https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20009288)
-für den 3. Jahrgang. Die *kursiv* gedruckten Teile in der Spalte Lehrplan kennzeichnen die wesentlichen
-Punkte im Sinne der LBVO.
-
-Beachte bei der Umsetzung des Lehrplanes: Die Inhalte kommen noch aus der pre .NET Zeit (ausgehendes 20. Jhd.).
-Daher werden auch Konzepte, die eigentlich im IV. Jahrgang vorkommen (OR Mapper, Parallele Programmierung, Reflection)
-verwendet, da sie durch das .NET Framework wesentlich einfacher zugänglich sind.
-
-<table>
-    <tr><th>Inhalt</th><th>Lehrplan</th></tr>
-    <tr><td colspan="2"><strong>Wintersemester</strong></td></tr>
-    <tr>
-        <td>
-            - OOP Grundlagen in C# (Properties, Vererbung)<br>
-            - Basisklassen und Interfaces im .NET Framework (Collections, IEquatable, ICompareable)<br>
-            - LINQ (das IEnumerable Interface, Navigation Properties, Method Syntax und Lambda Expressions, Query Syntax, Gruppierung)<br>
-            - LINQ to XML, Newtonsoft JSON (JArray und JObject mit LINQ, JsonConvert )
-        </td>
-        <td>
-            <em>Polymorphie, generische Datentypen und Programmiertechniken, Serialisierung von Objekten</em>, 
-            Versionsverwaltung, Teststrategien, Unit-Tests.
-        </td>
-    <tr>
-        <td>
-            - WPF und XAML (Syntax, Controls, Code-Behind, Eventhandler, Binding an Controlwerte)<br>
-            - Umsetzung des MVVM Patterns in WPF Teil 1 (ViewModel, Binding, Commands)
-        </td>
-        <td>
-             <em>Elemente von graphischen Benutzeroberflächen, Design, Layout</em>, Usability,  <em>Eventhandling.</em>
-        </td>
-    </tr>
-    <tr><td colspan="2"><strong>Sommersemester</strong></td></tr>
-    <tr>
-        <td>
-            Umsetzung des MVVM Patterns in WPF Teil 2 (Aktualisierung, Listviews, Menüs, User Controls, States)
-        </td>
-        <td>
-            <em>Graphische Benutzerschnittstellen mit Validierung der Benutzereingaben und Fehlerbehandlung.</em>
-        </td>
-    <tr>
-        <td>
-            Das Entity Framework, Erstellen von Modelklassen, Verwendung in WPF.
-        </td>
-        <td>
-            <em>Zugriffe auf Datenbanken.</em>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            TPL (Task Parallel Library) in C# (Task Scheduler, Parallel, await/async, lock, SemaphoreSlim, TPL Dataflow)
-        </td>
-        <td>
-             <em>Threads</em>, Lebenszyklus, Race Conditions
-        </td>
-    </tr>    
-</table>
-
 
 ## Weiterführende Unterlagen:
+
 - Moissenböck: C# (JKU Linz) http://dotnet.jku.at/courses/csharp/download/Agree.aspx?ReturnUrl=%2fcourses%2fcsharp%2fdownload%2fSlides.aspx
-- C# 7 in a Nutshell: http://2.238.16.249:8880/get/pdf/106
+- Albahari, J: C# 7.0 in a Nutshell
 
 ## Synchronisieren des Repositories in einen Ordner
+
 1. Lade von https://git-scm.com/downloads die Git Tools (Button *Download 2.20.1 for WIindows*)
     herunter. Es können alle Standardeinstellungen belassen werden, bei *Adjusting your PATH environment*
     muss aber der mittlere Punkt (*Git from the command line [...]*) ausgewählt sein.
