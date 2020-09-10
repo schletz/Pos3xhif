@@ -195,9 +195,6 @@ namespace ValueTypes
         /// Geben Sie die durchschnittliche Schülerzahl pro Klasse zurück. Sie
         /// berechnet sich aus schuelerGesamt / klassenGesamt.
         /// </summary>
-        /// <param name="schuelerGesamt"></param>
-        /// <param name="klassenGesamt"></param>
-        /// <returns></returns>
         public double BerechneSchuelerProKlasse(int schuelerGesamt, int klassenGesamt)
         {
 
