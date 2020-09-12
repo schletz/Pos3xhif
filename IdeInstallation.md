@@ -33,7 +33,7 @@ Unter *Help* - *Register Product* kann der Produktkey der Schule eingegeben werd
 
 ## Optional: Produkte von JetBrains
 
-Jetbrains bietet 2 Produkte für die .NET Entwicklung an: ReSharper ist eine Erweiterung von Visual
+Jetbrains bietet 2 Produkte für die .NET Entwicklung an: ReSharper ist eine Erweiterung für Visual
 Studio. Rider ist ein eigenständiges Programm für die Entwicklung von .NET Programmen.
 
 ![](rider_vs_resharper.png)
@@ -54,7 +54,7 @@ Aus https://intranet.spengergasse.at/news/jetbrains-produkte-in-den-laboren-und-
 Nach der Registrierung können die beliebtesten Produkte von https://account.jetbrains.com/licenses/assets
 geladen werden:
 
-![](resharper_download_2.png)
+![](resharper_download_3.png)
 
 ## Optional: Visual Studio Code
 
