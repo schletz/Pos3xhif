@@ -67,5 +67,5 @@ Path>cd MyProjektName
 Path>dotnet new console
 ```
 
-> **Hinweis:** Öffnen Sie Ihr Projekt mit *File* - *Open Folder* und nicht nur die *.cs* Datei alleine.
+> **Hinweis:** Öffne das Projekt mit *File* - *Open Folder* und nicht nur die *.cs* Datei alleine.
 
