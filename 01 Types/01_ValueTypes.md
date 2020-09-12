@@ -8,6 +8,7 @@ wie *uint*, *ulong*, ... Sie werden allerdings selten verwendet, da die Framewor
 signed Typen wie int, ... arbeiten.
 
 Die Dekleration erfolgt wie aus Java gewohnt:
+
 ```c#
 int myInt = 1;
 bool myBool = true;
@@ -125,6 +126,130 @@ if (myInt2.HasValue)
 {
     Console.WriteLine("int2 hat einen Wert, dieser ist " + myInt2.Value);
 }
+```
+
+## Spezialkapitel (nicht prüfungsrelevant): Wertetypen und Methoden
+
+Werden Wertetypen als Parameter übergeben, verhält sich C# wie Java: Sie können den Parameter
+zwar in der Methode setzen, aber der Wert bleibt in der aufrufenden Methode unverändert.
+
+In C# gibt es mit den Schlüsselwörtern *out* und *ref* die Möglichkeit, die Übergabe als
+Referenz zu erreichen. Somit können Sie auch die Variable in der aufrufenden Methode ändern.
+
+Eine gute Übersicht finden Sie auf
+https://www.c-sharpcorner.com/UploadFile/ff2f08/ref-vs-out-keywords-in-C-Sharp/
+
+> **Hinweis:** Dies ist ein spezielles Feature in C# und nicht für den alltäglichen Gebrauch bestimmt.
+> Sie finden solche Übergabearten bei *TryParse()* und in machen Methoden der Task Parallel Library (*Interlocked*)
+
+```c#
+        static void Main(string[] args)
+        {
+            // Seit C# 7 ist die Dekleration im out möglich. Vorher musste
+            // int itemCount
+            // vor dem Aufruf extra deklariert werden.
+            if (GetCount(out int itemCount))
+            {
+                Console.WriteLine($"{itemCount} items found.");
+            }
+
+            // value muss initialisiert werden, da wir mit ref arbeiten.
+            int value = 1;
+            SetValue(ref value);                      // Value ist nun 2
+
+            // Bessere Lösung mit Tuples.
+            (bool success, int count) = BetterGetCount();
+            if (success) { Console.WriteLine($"{count} items found."); }
+
+            // Ganz neu mit C# 8 Pattern matching und dem discard Operator (_)
+            // Vgl. https://docs.microsoft.com/en-us/dotnet/csharp/tutorials/pattern-matching
+            var result = BetterGetCount() switch
+            {
+                (true, 0) => "No items found",
+                (true, _) => "Some items found",
+                (false, _) => "Error"
+            };
+            Console.Write(result);
+        }
+
+        /// <summary>
+        /// Demonstration von out
+        /// count muss in der Methode zugewiesen werden, sonst gibt es einen Compilerfehler.
+        /// </summary>
+        static bool GetCount(out int count)
+        {
+            count = 1;
+            return true;
+        }
+
+        static (bool success, int count) BetterGetCount()
+        {
+            return (success: true, count: 1);
+        }
+
+        /// <summary>
+        /// Demonstration von ref
+        /// Der Parameter val muss nicht - im Gegensatz von out - zwangsweise zugewiesen werden.
+        /// </summary>
+        static bool SetValue(ref int val)
+        {
+            if (val != 0) { val++; return true; }
+            return false;
+        }
+
+```
+
+## Parsen von Werten
+
+Oft müssen Zahlen aus einem String gewonnen werden. Diesen Vorgang bezeichnet man als *parsen*. Er
+hat nichts mit dem Typencast zu tun, da beim Parsen weit mehr Programmlogik zum Einsatz kommen muss.
+
+In C# gibt es für die Grundtypen die Methoden *Parse()* und *TryParse()*. *Parse()* wirft eine
+Exception, wenn der String nicht interpretiert werden kann. *TryParse()* arbeitet mit einem
+bool Rückgabewert und setzt den Wert als *out* Parameter.
+
+> **Hinweis:** Der Parser verwendet die Spracheinstellung des Betriebssystems, wenn es um das
+> Dezimalzeichen oder das Datumsformat geht. Deswegen können sich die Ergebnisse - wenn nicht
+> sorgsam entwickelt wird - bei anderen Spracheinstellungen unterscheiden. Bei DateTime muss
+> man sich zusätzlich über die Zeitzone Gedanken machen.
+
+```c#
+// Verwendung von Parse()
+string myStrNumber1 = "12";
+int myIntNumber1 = int.Parse(myStrNumber1);
+try
+{
+    int myIntNumber2 = int.Parse("A");                             // Liefert eine Exception
+}
+catch { }
+
+// Verwendung von TryParse(). Hier wird keine Exception geworfen, wenn der String
+// nicht geparst werden kann.
+if (int.TryParse(myStrNumber1, out int myIntNumber3))            // Liefert Success
+{ Console.WriteLine("Success"); }
+else
+{ Console.WriteLine("Error"); }
+
+// Je nach Windowseinstellung kann 12.1 oder 12,1 geparst werden.
+if (double.TryParse("12.1", out double result1))  
+    Console.WriteLine($"12.1 wurde in {result1} geparst.");
+if (double.TryParse("12,1", out double result2))
+    Console.WriteLine($"12,1 wurde in {result2} geparst.");
+
+// Unabhängig von der Einstellung wird 12.1 jetzt immer geparst.
+if (double.TryParse("12.1", System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double result3))
+    Console.WriteLine($"12.1 wurde mit InvariantCulture in {result3} geparst.");
+// Hier wird 121 gespeichert.
+if (double.TryParse("12,1", System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double result4))
+    Console.WriteLine($"12,1 wurde mit InvariantCulture in {result4} geparst.");
+
+if (DateTime.TryParseExact(
+        "2020-01-22 06:07:08",                                 // String, der zu parsen ist.
+        "yyyy-MM-dd hh:mm:ss",                                 // Format
+        System.Globalization.CultureInfo.InvariantCulture,     // Englische Einstellung für Komma (wenn vorhanden)
+        System.Globalization.DateTimeStyles.AdjustToUniversal, // Eine UTC Zeit erstellen
+        out DateTime result5))
+    Console.WriteLine(result5.ToString("yyyy-MM-ddTHH:mm:ssZ"));    
 ```
 
 ## Übung
