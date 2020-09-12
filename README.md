@@ -3,7 +3,7 @@
 ## Wichtiges zum Start
 
 1. [Anleitung zum Verbinden mit dem VPN und den Laufwerken](VpnSpengergasse.md)
-1. [Installation von Visual Studio 2019](VisualStudioInstallation.md)
+1. [Installation der IDE (z. B. Visual Studio 2019)](IdeInstallation.md)
 
 ## Weiterführende Unterlagen:
 
