@@ -1,4 +1,4 @@
-# Vererbung 2: Interfaces überschreiben: IEquatable und IComparable
+# Vererbung 2: Interfaces implementieren: IEquatable und IComparable
 Vererbung wird hauptsächlich dazu verwendet, um ein bestehendes Framework (in unserem Fall das .NET
 Framework) zu erweitern. Oft werden Interfaces, die bereitgestellt werden, in eigenen Klassen implementiert.
 
