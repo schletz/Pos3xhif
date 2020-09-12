@@ -145,7 +145,7 @@ https://www.c-sharpcorner.com/UploadFile/ff2f08/ref-vs-out-keywords-in-C-Sharp/
 ```c#
         static void Main(string[] args)
         {
-            // Seit C# 7 ist die Dekleration im out möglich. Vorher musste
+            // Seit C# 7 ist die Deklaration im out möglich. Vorher musste
             // int itemCount
             // vor dem Aufruf extra deklariert werden.
             if (GetCount(out int itemCount))
