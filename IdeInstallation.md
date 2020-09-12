@@ -56,8 +56,8 @@ geladen werden:
 https://code.visualstudio.com/ sind 2 Extensions für die C#/ASP.NET Core Entwicklung erforderlich
 bzw. ratsam:
 
-[C#](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp)
-[Awesome DotNetCorePack](https://marketplace.visualstudio.com/items?itemName=salbert.awesome-dotnetcore-pack)
+- [C#](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp)
+- [Awesome DotNetCorePack](https://marketplace.visualstudio.com/items?itemName=salbert.awesome-dotnetcore-pack)
 
 Eine .NET Core Applikation kann im Terminal direkt erstellt werden:
 
