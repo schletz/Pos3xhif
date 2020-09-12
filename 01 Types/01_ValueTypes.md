@@ -163,13 +163,13 @@ https://www.c-sharpcorner.com/UploadFile/ff2f08/ref-vs-out-keywords-in-C-Sharp/
 
             // Ganz neu mit C# 8 Pattern matching und dem discard Operator (_)
             // Vgl. https://docs.microsoft.com/en-us/dotnet/csharp/tutorials/pattern-matching
-            var result = BetterGetCount() switch
+            string result = BetterGetCount() switch
             {
-                (true, 0) => "No items found",
-                (true, _) => "Some items found",
-                (false, _) => "Error"
+                (true, 0) => "No items found.",
+                (true, _) => "Some items found.",
+                (false, _) => "Error."
             };
-            Console.Write(result);
+            Console.WriteLine(result);
         }
 
         /// <summary>
