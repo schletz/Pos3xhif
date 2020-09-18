@@ -88,6 +88,7 @@ obj1.age = 12;          // Natürlich nicht mehr möglich.
 ```
 
 ## is und as
+
 In C# erleichtern die Schlüsselwörter *is* und *as* den Umgang mit Typencasts.
 ```c#
 // Wenn pu nicht in Pupil umgewandelt werden kann, wird NULL 
@@ -102,4 +103,49 @@ if (pu is Person)
 // In object gibt es die Methode GetType() und ToString().
 // Liefert "ReferenceTypesApp.Pupil".
 string type = pu.GetType().ToString();
+```
+
+## Für Profis: Konkrete Anwendung vom is und as
+
+Der folgende Code zeigt ein Anwendungsbeispiel aus der generischen Programmierung. Solcher Code
+kommt z. B. in JSON Serializern vor.
+
+```c#
+class Program
+{
+    static string GetBeautifulString<T>(T val)
+    {
+        // Aus bool Werten wollen wir 1 oder 0 machen.
+        if (val is bool)
+        {
+            // Ich muss casten, da T ein beliebiger Typ sein kann. Ohne Cast könnten nur die
+            // Methoden von Object verwendet werden. Der explizite Typencast mit
+            // (Type) variable
+            // liefert einen Compilerfehler, da der Compiler nicht jeden Typ in bool casten kann.
+            return (val as bool?) == true ? "1" : "0";
+        }
+        // Bei int und long (Ganzzahlen) geben wir die Zahl als String zurück.
+        if (val is int || val is long)
+        {
+            return val.ToString();
+        }
+        if (val is float || val is double)
+        {
+            // Bei Gleitkommatypen wollen wir 2 Kommastellen mit englischem . als Dezimalzeichen
+            // zurückgeben.
+            return string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0:0.00}", val);
+        }
+        return "Unknown Type";
+    }
+
+    static void Main(string[] args)
+    {
+        Console.WriteLine(GetBeautifulString<bool>(true));             // 1
+        Console.WriteLine(GetBeautifulString<int>(12));                // 12
+        Console.WriteLine(GetBeautifulString<double>(3.123));          // 3.12
+        // Ausblick: Durch Type inference wird der Typparameter automatisch gesetzt.
+        Console.WriteLine(GetBeautifulString(3.123));                  // 3.12
+        Console.WriteLine(GetBeautifulString<decimal>(3.123M));        // 3.12
+    }
+}
 ```
