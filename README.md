@@ -7,12 +7,15 @@
 
 ## Weiterführende Unterlagen:
 
-- Moissenböck: C# (JKU Linz) http://dotnet.jku.at/courses/csharp/download/Agree.aspx?ReturnUrl=%2fcourses%2fcsharp%2fdownload%2fSlides.aspx
-- Albahari, J: C# 7.0 in a Nutshell
+- YouTube Channels: [dotNET](https://www.youtube.com/channel/UCvtT19MZW8dq5Wwfu6B0oxw),
+  [Nick Chapsas](https://www.youtube.com/channel/UCrkPsvLGln62OMZRO6K-llg),
+  [NDC Conferences](https://www.youtube.com/channel/UCTdw38Cw6jcm0atBPA39a0Q)
+- [C# 8.0 in a Nutshell: The Definitive Reference](https://www.amazon.de/C-8-0-Nutshell-Definitive-Reference-dp-1492051136/dp/1492051136/ref=dp_ob_title_bk)
+- [Functional Programming in C#: How to write better C# code](https://www.amazon.de/Functional-Programming-C-Enrico-Buonanno/dp/1617293954/ref=sr_1_1?__mk_de_DE=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=18ZFWZ2G0KO0J&dchild=1&keywords=functional+programming+c%23&qid=1600494628&sprefix=Functional+programmin%2Caps%2C174&sr=8-1)
 
 ## Synchronisieren des Repositories in einen Ordner
 
-1. Lade von https://git-scm.com/downloads die Git Tools (Button *Download 2.20.1 for WIindows*)
+1. Lade von https://git-scm.com/downloads die Git Tools (Button *Download 2.20.1 for Windows*)
     herunter. Es können alle Standardeinstellungen belassen werden, bei *Adjusting your PATH environment*
     muss aber der mittlere Punkt (*Git from the command line [...]*) ausgewählt sein.
 2. Lege einen Ordner auf der Festplatte an, wo du die Daten speichern möchtest 

@@ -64,6 +64,7 @@ len = string.IsNullOrEmpty(myStr) ? 0 : myStr.Length;
 
 ## Eigene Typen
 Viele Eigenschaften aus Java lassen sich 1:1 übertragen.
+
 ```c#
 Person p;            // p ist null.
 p = new Person();    // Eine Person wird am Heap erstellt und
@@ -77,9 +78,10 @@ Person p3;
 ```
 
 In Zusammenhang mit der Vererbung ergeben sich folgende Besonderheiten:
+
 ```c#
-p3 = (Person)pu;        // "Hinaufcasten" ist möglich, da die 
-                        // Vererbung ja eine "is-a" beziehung ist. 
+p3 = pu;                // "Hinaufcasten" ist (auch implizit) möglich, da die 
+                        // Vererbung ja eine "is-a" Beziehung ist. 
 p3.klasse = "3BHIF";    // Geht natürlich nicht mehr.
 object obj1 = pu;       // Alles ist von object abgeleitet.
 obj1.age = 12;          // Natürlich nicht mehr möglich.
@@ -90,6 +92,7 @@ obj1.age = 12;          // Natürlich nicht mehr möglich.
 ## is und as
 
 In C# erleichtern die Schlüsselwörter *is* und *as* den Umgang mit Typencasts.
+
 ```c#
 // Wenn pu nicht in Pupil umgewandelt werden kann, wird NULL 
 // geliefert. In diesem Fall wird eine neue Instanz von 
