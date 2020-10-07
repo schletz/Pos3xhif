@@ -123,7 +123,7 @@ Ersetze danach den Inhalt von Program.cs durch die untenstehende Version. Vervol
 Path>md ExCollection
 Path>cd ExCollection
 Path>dotnet new console
-Path>start ExCollection
+Path>start ExCollection.csproj
 ```
 
 ```c#
