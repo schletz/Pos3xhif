@@ -110,15 +110,15 @@ funktioniert der Zugriff auf *g.L_Teacher* so wie auf *data.Lessons.L_Teacher* s
 Möchte man nach mehreren Spalten gruppieren, wird mit *new* ein neuer Typ erzeugt:
 
 ```c#
-from l in data.Lesson
-group l by new { l.L_Class, l.L_Subject } into g
-select new
-{
-    Class   = g.Key.L_Class,
-    Subject = g.Key.L_Subject,
-    Count   = g.Count(),
-    MaxHour = g.Max(x => x.L_Hour)
-};
+data.Lesson
+    .GroupBy(l => new { l.L_Class, l.L_Subject })
+    .Select(g => new
+		{
+			Class   = g.Key.L_Class,
+			Subject = g.Key.L_Subject,
+			Count   = g.Count(),
+			MaxHour = g.Max(x => x.L_Hour)
+		});
 ```
 
 Manchmal möchte man eine DISTINCT Abfrage erstellen, die nur einen Wert pro Gruppierung liefert.
