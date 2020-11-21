@@ -56,7 +56,7 @@ namespace Grouping
 
             // *************************************************************************************
             // ÜBUNG 3: Jeder Schüler der 5AHIF soll eine Übersicht bekommen, welche Tests er pro Fach
-            //          negativ abgeschlossen hat.
+            //          abgeschlossen hat.
             //          Es sind nur die ersten 2 Schüler mit OrderBy(p => p.P_ID).Take(2) am Ende des
             //          Statements auszugeben.
             //          Hinweis: Beachte die Datenstruktur in der Ausgabe.
