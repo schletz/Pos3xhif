@@ -295,6 +295,8 @@ Setzen Sie das folgende Datenmodell in Modelklassen um. Berücksichtigen Sie fol
 - Der Primärschlüssel der Tabelle *Period* heißt P_Nr. Verwenden Sie den Namen *Nr*. Da EF Core
   diesen Wert nicht als Primärschlüssel erkennt, müssen Sie mit folgenden Annotations arbeiten.
   Überlegen Sie, warum die zweite Annotation nötig ist und was diese macht.
+- In *Period* wird das Stundenraster (Stunde 1 von 8:00 - 8:50, ...) gespeichert. Verwenden Sie
+  für die Zeitangaben den Datentyp *TimeSpan*.
 
 ```c#
 [Key]
