@@ -39,7 +39,7 @@ die *Nullable* Option gesetzt werden:
 </Project>
 ```
 
-Nach der aktivierung entstehen auf einmal grün unterlegte Warnungen in Visual Studio:
+Nach der Aktivierung entstehen auf einmal grün unterlegte Warnungen in Visual Studio:
 
 ![](nullable.png)
 
@@ -112,7 +112,7 @@ Diese Klassen verwenden bereits neue Sprachfeatures von C# 9: *init* und *new()*
 Mit dem Schlüsselwort *new()* ersparen wir uns z. B. in der Klasse *Class* die Angabe von
 *new List<Pupil>();*. Der Compiler weiß aufgrund der linken Seite, welche Instanz zu erzeugen ist.
 
-Statt *set* wird bei Properties manchmal *init* verwendes. Es bedeutet, dass wir den Wert nur im
+Statt *set* wird bei Properties manchmal *init* verwendet. Es bedeutet, dass wir den Wert nur im
 Initializer setzen dürfen. So ist es möglich, die Klassen-ID bei der Initialisierung zu setzen. Im
 weiteren Programmverlauf darf sie allerdings nicht mehr verändert werden.
 
@@ -130,8 +130,8 @@ Bevor wir aus den Klassen eine Datenbank erzeugen können, müssen wir EF Core u
 SQLite über die NuGet Packet Manager Console (*Tools* - *NuGet Packet Manager*) installieren:
 
 ```text
-Install-Package Microsoft.EntityFrameworkCore -Version 5.0.0
-Install-Package Microsoft.EntityFrameworkCore.Sqlite -Version 5.0.0
+Install-Package Microsoft.EntityFrameworkCore
+Install-Package Microsoft.EntityFrameworkCore.Sqlite
 ```
 
 Nun erzeugen wir eine neue Klasse *PupilContext*. Sie repräsentiert die Datenbank mit ihren Tabellen.
@@ -208,8 +208,8 @@ EF Core hat von sich aus eine vernünftige Datenbank aufbauen können. Das liegt
 *Conventions", die wir heimlich in den Klassen eingehalten haben.
 
 - Properties mit dem Namen *Id* werden automatisch als Primärschlüssel definiert.
-- Id Properties mit dem Datentyp *int* werden automatisch zu AutoIncrement werden.
-- Properties vom Typ *List<Typname>* finden "automatisch" ihren Weg in die Richtige Tabelle. So
+- Id Properties mit dem Datentyp *int* werden automatisch zu AutoIncrement Feldern.
+- Properties vom Typ *List&lt;Typname&gt;* finden "automatisch" ihren Weg in die Richtige Tabelle. So
   verweist das Property *Pupils* automatisch auf alle Schüler dieser Klasse.  
 - Properties vom Typ *Typname Propertyname* verweisen automatisch auf die "1er Seite". So referenziert
   *Class Class* automatisch auf die Klasse des Schülers.
