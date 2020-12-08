@@ -172,6 +172,9 @@ class Program
 {
     static void Main(string[] args)
     {
+        // Mit EnsureDeleted wird die Datenbank gelöscht, danach wird mit EnsureCreated
+        // die Datenbank basierend auf den Modelklassen neu erstellt. Wird die Datenbank nicht
+        // gelöscht, werden Änderungen nicht übernommen (da die Datenbank ja schon existiert).
         using (var db = new PupilContext())
         {
             db.Database.EnsureDeleted();
@@ -277,3 +280,28 @@ public class PupilContext : DbContext
 }
 ```
 
+## Übung
+
+Setzen Sie das folgende Datenmodell in Modelklassen um. Berücksichtigen Sie folgende Punkte
+
+- Verwenden Sie die C# Notation für Properties anstatt der Feldnamen mit Unterstrich.
+- Legen Sie bei einer 1:n Beziehung immer in der "1er Seite" eine Liste als Navigation an. Bei
+  der n Seite verwenden Sie 2 Properties: Eines für den Fremdschlüsselwert und eines für die
+  Navigation.
+- Die ID Werte für *Teacher* und *Schoolclass* sind Strings (Kürzel), ansonsten handelt es sich um Integer Werte.
+- Der Wert *UntisId* in der Tabelle *Lesson* kann weggelassen werden. *Day* und *Hour* sind
+  Integer Werte (MO = 1, ...)
+- Das Feld *Date* in *Tests* ist ein Datumswert. Verwenden Sie *DateTime* in C#.
+- Der Primärschlüssel der Tabelle *Period* heißt P_Nr. Verwenden Sie den Namen *Nr*. Da EF Core
+  diesen Wert nicht als Primärschlüssel erkennt, müssen Sie mit folgenden Annotations arbeiten.
+  Überlegen Sie, warum die zweite Annotation nötig ist und was diese macht.
+
+```c#
+[Key]
+[DatabaseGenerated(DatabaseGeneratedOption.None)]
+```
+
+Am Ende soll eine SQLite Datenbank mit dem Namen *TestsDb* ohne Werte erzeugt werden, die diese
+Features korrekt abbildet. Kontrollieren Sie das mit einem Datenbankeditor wie z. B. DBeaver.
+
+![](test_er_diagram.png)

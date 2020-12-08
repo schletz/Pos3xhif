@@ -3,9 +3,9 @@
 Im vorigen Kapitel haben wir mit den Conventions und Annotations sehr viel Einfluss auf die Erstellung
 der Datenbank nehmen können. Einige Szenarien blieben aber noch unberücksichtigt:
 
-- Tabellen mit mehreren Schlüsselteilen
-- Anlegen von Indexfeldern sowie Unique Indizes
-- Verwenden von *value objects*, die mehrere Properties zusammenfassen
+- Tabellen mit mehreren Schlüsselteilen.
+- Anlegen von Indexfeldern sowie Unique Indizes.
+- Verwenden von *value objects*, die mehrere Properties zusammenfassen.
 
 Als Beispiel für diese Punkte werden wir eine kleine Kursdatenbank erstellen, in der sich Studenten
 zu Kursen anmelden können:
@@ -201,3 +201,18 @@ static void Main(string[] args)
 }
 ```
 
+## Übung
+
+Verwenden Sie Ihre Modelklassen, welche Sie in der vorigen Übung (*02_CodeFirstEfCore5*) entworfen haben.
+Führen Sie dabei folgende Ergänzungen durch:
+
+- Der Name (Vor- und Zuname) soll als value object mit dem Typ *PersonName* modelliert werden.
+- Es darf pro Tag und Stunde nur 1 Test sein. Stellen Sie dies durch einen Unique Index sicher.
+- Die Email Adresse in Teacher muss ebenfalls eindeutig sein.
+- Fügen Sie in das Modell eine Tabelle *TestResult* ein, wo jeder Schüler das Ergebnis des Tests
+  abfragen kann. Bestimmen Sie selbst, welche Schlüssel und Properties hier sinnvoll sind.
+
+Am Ende soll eine SQLite Datenbank mit dem Namen *TestsDb* ohne Werte erzeugt werden, die diese
+Features korrekt abbildet. Kontrollieren Sie das mit einem Datenbankeditor wie z. B. DBeaver.
+
+![](test_er_diagram.png)
