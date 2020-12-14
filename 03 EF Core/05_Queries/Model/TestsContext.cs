@@ -7,9 +7,6 @@ namespace Queries.Model
 {
     public partial class TestsContext : DbContext
     {
-        public static readonly ILoggerFactory MyLoggerFactory
-            = LoggerFactory.Create(builder => { builder.AddConsole(); });
-
         public TestsContext()
         {
         }
@@ -30,9 +27,9 @@ namespace Queries.Model
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder 
+                optionsBuilder
                  // .UseLazyLoadingProxies()
-                    .UseLoggerFactory(MyLoggerFactory) // Warning: Do not create a new ILoggerFactory instance each time                    
+                    .LogTo(Console.WriteLine, LogLevel.Information)
                     .UseSqlite("DataSource=Tests.db");
             }
         }

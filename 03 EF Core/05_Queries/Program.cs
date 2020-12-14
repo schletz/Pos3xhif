@@ -22,14 +22,14 @@ namespace Queries
                 //     WHERE "s"."C_ID" = "p"."P_Class") AS "Pupils"
                 // FROM "Schoolclass" AS "s"
                 // WHERE "s"."C_Department" = 'HIF'
-                
-                var result1 = from c in context.Schoolclass
-                              where c.C_Department == "HIF"
-                              select new
-                              {
-                                  Class = c.C_ID,
-                                  Pupils = c.Pupil.Count()
-                              };
+
+                var result1 = context.Schoolclass
+                    .Where(c => c.C_Department == "HIF")
+                    .Select(c => new
+                    {
+                        Class = c.C_ID,
+                        Pupils = c.Pupil.Count()
+                    });
                 Console.WriteLine(JsonSerializer.Serialize(result1));
 
 
@@ -46,13 +46,13 @@ namespace Queries
                 //     SELECT COUNT(*)
                 //     FROM "Pupil" AS "p0"
                 //     WHERE "s"."C_ID" = "p0"."P_Class") > 30)
-                var result2 = from c in context.Schoolclass
-                              where c.C_Department == "HIF" && c.Pupil.Count() > 30
-                              select new
-                              {
-                                  Class = c.C_ID,
-                                  PupilsCount = c.Pupil.Count()
-                              };
+                var result2 = context.Schoolclass
+                    .Where(c => c.C_Department == "HIF" && c.Pupil.Count() > 30)
+                    .Select(c => new
+                    {
+                        Class = c.C_ID,
+                        Pupils = c.Pupil.Count()
+                    });
                 Console.WriteLine(JsonSerializer.Serialize(result2));
 
                 // *********************************************************************************
@@ -67,16 +67,14 @@ namespace Queries
                 //     SELECT COUNT(*)
                 //     FROM "Pupil" AS "p0"
                 //     WHERE "s"."C_ID" = "p0"."P_Class") > 30)
-                var result3a = from c in context.Schoolclass
-                               where c.C_Department == "HIF"
-                               select c;
-                var result3b = from c in result3a
-                               where c.Pupil.Count() > 30
-                               select new
-                               {
-                                   Class = c.C_ID,
-                                   PupilsCount = c.Pupil.Count()
-                               };
+                var result3a = context.Schoolclass.Where(c => c.C_Department == "HIF");
+                var result3b = result3a
+                                    .Where(c => c.Pupil.Count() > 30)
+                                    .Select(c => new
+                                    {
+                                        Class = c.C_ID,
+                                        PupilsCount = c.Pupil.Count()
+                                    });
                 Console.WriteLine(JsonSerializer.Serialize(result3b));
 
                 // *********************************************************************************
@@ -93,14 +91,14 @@ namespace Queries
                 //     FROM "Pupil" AS "p1"
                 //     WHERE "s"."C_ID" = "p1"."P_Class") > 30)
                 // ORDER BY "s"."C_ID", "p0"."P_ID"
-                var result4 = from c in context.Schoolclass
-                              where c.C_Department == "HIF" && c.Pupil.Count() > 30
-                              select new
+                var result4 = context.Schoolclass
+                              .Where(c => c.C_Department == "HIF" && c.Pupil.Count() > 30)
+                              .Select(c => new
                               {
                                   Class = c.C_ID,
                                   PupilsCount = c.Pupil.Count(),
                                   Pupils = c.Pupil
-                              };
+                              });
                 Console.WriteLine("${result3.Count()} Results");
 
                 // *********************************************************************************
@@ -111,9 +109,8 @@ namespace Queries
                 //     SELECT 1
                 //     FROM "Test" AS "t"
                 //     WHERE ("s"."C_ID" = "t"."TE_Class") AND ("t"."TE_Subject" = 'BWM1'))
-                var result5 = from c in context.Schoolclass
-                              where c.Test.Any(t => t.TE_Subject == "BWM1")
-                              select c;
+                var result5 = context.Schoolclass
+                              .Where(c => c.Test.Any(t => t.TE_Subject == "BWM1"));
                 Console.WriteLine(JsonSerializer.Serialize(result5));
 
                 // *********************************************************************************
@@ -123,14 +120,14 @@ namespace Queries
                 // INNER JOIN "Schoolclass" AS "s" ON "t"."TE_Class" = "s"."C_ID"
                 // WHERE "s"."C_ClassTeacher" = 'SZ'
                 // GROUP BY "t"."TE_Class"
-                var result6 = from te in context.Test
-                              where te.TE_ClassNavigation.C_ClassTeacher == "SZ"
-                              group te by te.TE_Class into g
-                              select new
+                var result6 = context.Test
+                              .Where(te => te.TE_ClassNavigation.C_ClassTeacher == "SZ")
+                              .GroupBy(te => te.TE_Class)
+                              .Select(g => new
                               {
                                   Class = g.Key,
                                   Tests = g.Count()
-                              };
+                              });
                 Console.WriteLine(JsonSerializer.Serialize(result6));
 
                 // *********************************************************************************
@@ -143,9 +140,9 @@ namespace Queries
                 // SELECT "s"."C_ID", "s"."C_ClassTeacher", "s"."C_Department"
                 // FROM "Schoolclass" AS "s"
                 // WHERE "s"."C_Department" = 'HIF'
-                var result10 = (from c in context.Schoolclass
-                                where c.C_Department == "HIF"
-                                select c).FirstOrDefault();
+                var result10 = context.Schoolclass
+                                .Where(c => c.C_Department == "HIF")
+                                .FirstOrDefault();
                 // Im Speicher steht folgendes Ergebnis:
                 // {"C_ID":"1AHIF","C_Department":"HIF","C_ClassTeacher":"NIJ",
                 //  "C_ClassTeacherNavigation":null,"Lesson":[],"Pupil":[],"Test":[]}
