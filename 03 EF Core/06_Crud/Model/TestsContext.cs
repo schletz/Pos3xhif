@@ -7,9 +7,6 @@ namespace Crud.Model
 {
     public partial class TestsContext : DbContext
     {
-        public static readonly ILoggerFactory MyLoggerFactory
-            = LoggerFactory.Create(builder => { builder.AddConsole(); });
-
         public TestsContext()
         {
         }
@@ -31,8 +28,7 @@ namespace Crud.Model
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder 
-                 // .UseLazyLoadingProxies()
-                 //   .UseLoggerFactory(MyLoggerFactory) // Warning: Do not create a new ILoggerFactory instance each time                    
+                    .LogTo(Console.WriteLine, LogLevel.Information)
                     .UseSqlite("DataSource=Tests.db");
             }
         }

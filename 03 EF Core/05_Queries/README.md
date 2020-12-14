@@ -2,34 +2,16 @@
 
 ## Ausgeben der SQL Statements
 
-In dieser Solution wurde die Ausgabe der SQL Statements aktiviert. Möchte man in anderen Projekten
-diese Statements ausgeben, so muss das Paket *Microsoft.Extensions.Logging.Console* installiert
-werden:
-
-```powershell
-Install-Package Microsoft.Extensions.Logging.Console
-```
-
-Danach wird in der Klasse *TestsContext* eine statische Membervariable (kein Property!)
-*MyLoggerFactory* angelegt. Static ist wichtig, da sonst bei jeder Abfrage eine neue Instanz erzeugt
-wird.
-
-```c#
-public static readonly ILoggerFactory MyLoggerFactory
-    = LoggerFactory.Create(builder => { builder.AddConsole(); });
-```
-
-Zum Schluss wird in der Methode *OnConfiguring()* der Logger registriert:
+In dieser Solution wurde die Ausgabe der SQL Statements aktiviert. Möchte man
+diese Statements ausgeben, so muss ab EF Core 5 der Logger über die Methode *LogTo()* in
+*OnConfiguring()* der DbContext Klasse aktiviert werden:
 
 ```c#
 protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 {
-    if (!optionsBuilder.IsConfigured)
-    {
         optionsBuilder
-            .UseLoggerFactory(MyLoggerFactory)
-            .UseSqlite("DataSource=../Tests.db");
-    }
+            .LogTo(Console.WriteLine, LogLevel.Information)
+            .UseSqlite("DataSource=Tests.db");
 }
 ```
 
@@ -41,13 +23,13 @@ verwendet wird.
 ### Beispiel 1: Filtern und anonyme Typen
 
 ```c#
-from c in context.Schoolclass
-where c.C_Department == "HIF"
-select new
-{
-    Class = c.C_ID,
-    Pupils = c.Pupil.Count()
-};
+context.Schoolclass
+    .Where(c => c.C_Department == "HIF")
+    .Select(c => new
+    {
+        Class = c.C_ID,
+        Pupils = c.Pupil.Count()
+    });
 ```
 
 ```sql
@@ -64,13 +46,13 @@ Anzahl wird als (korrespondierende) Unterabfrage übersetzt. Hier ist der
 Optimizer der Datenbank gefragt.
 
 ```c#
-from c in context.Schoolclass
-where c.C_Department == "HIF" && c.Pupil.Count() > 30
-select new
-{
-    Class = c.C_ID,
-    PupilsCount = c.Pupil.Count()
-};
+context.Schoolclass
+    .Where(c => c.C_Department == "HIF" && c.Pupil.Count() > 30)
+    .Select(c => new
+    {
+        Class = c.C_ID,
+        Pupils = c.Pupil.Count()
+    });
 ```
 
 ```sql
@@ -91,18 +73,14 @@ Wird die Abfrage in 2 Schritten definiert, liefert sie trotzdem das selbe SELECT
 *result3a* wird nämlich bei der Definition noch nicht ausgeführt.
 
 ```c#
-
-    var result3a = from c in context.Schoolclass
-                    where c.C_Department == "HIF"
-                    select c;
-    var result3b = from c in result3a
-                    where c.Pupil.Count() > 30
-                    select new
+var result3a = context.Schoolclass.Where(c => c.C_Department == "HIF");
+var result3b = result3a
+                    .Where(c => c.Pupil.Count() > 30)
+                    .Select(c => new
                     {
                         Class = c.C_ID,
                         PupilsCount = c.Pupil.Count()
-                    };
-    Console.WriteLine(JsonSerializer.Serialize(result3b));
+                    });
 ```
 
 ```sql
@@ -122,14 +100,14 @@ WHERE("s"."C_Department" = 'HIF') AND((
 Geben wir Navigations explizit zurück, so werden durch einen JOIN die entsprechenden Daten geladen.
 
 ```c#
-from c in context.Schoolclass
-where c.C_Department == "HIF" && c.Pupil.Count() > 30
-select new
-{
-    Class = c.C_ID,
-    PupilsCount = c.Pupil.Count(),
-    Pupils = c.Pupil
-};
+var result4 = context.Schoolclass
+                .Where(c => c.C_Department == "HIF" && c.Pupil.Count() > 30)
+                .Select(c => new
+                {
+                    Class = c.C_ID,
+                    PupilsCount = c.Pupil.Count(),
+                    Pupils = c.Pupil
+                });
 ```
 
 ```sql
@@ -151,12 +129,9 @@ ORDER BY "s"."C_ID", "p0"."P_ID"
 
 Abfragen mit Any() erzeugen automatisch eine EXISTS Klausel in SQL.
 
-
 ```c#
-from c in context.Schoolclass
-where c.Test.Any(t => t.TE_Subject == "BWM1")
-select c;
-
+context.Schoolclass
+    .Where(c => c.Test.Any(t => t.TE_Subject == "BWM1"));
 ```
 
 ```sql
@@ -171,14 +146,14 @@ WHERE EXISTS (
 ### Beispiel 6: Gruppierungen
 
 ```c#
-from te in context.Test
-where te.TE_ClassNavigation.C_ClassTeacher == "SZ"
-group te by te.TE_Class into g
-select new
-{
-    Class = g.Key,
-    Tests = g.Count()
-};
+context.Test
+    .Where(te => te.TE_ClassNavigation.C_ClassTeacher == "SZ")
+    .GroupBy(te => te.TE_Class)
+    .Select(g => new
+    {
+        Class = g.Key,
+        Tests = g.Count()
+    });
 ```
 
 ```sql
@@ -194,9 +169,9 @@ GROUP BY "t"."TE_Class"
 Betrachten wir folgenden Code:
 
 ```c#
-var result10 = (from c in context.Schoolclass
-                where c.C_Department == "HIF"
-                select c).FirstOrDefault();
+var result10 = context.Schoolclass
+    .Where(c => c.C_Department == "HIF")
+    .FirstOrDefault();
 // Im Speicher steht folgendes Ergebnis:
 // {"C_ID":"1AHIF","C_Department":"HIF","C_ClassTeacher":"NIJ",
 //  "C_ClassTeacherNavigation":null,"Lesson":[],"Pupil":[],"Test":[]}
@@ -299,9 +274,9 @@ die Navigationen leer. Die erste der folgenden 2 Abfragen funktioniert wie erwar
 Schüler. Die 2. Abfrage liefert allerdings 0.
 
 ```c#
-var pupils = (from c in context.Schoolclass
-                where c.C_ID == "3BHIF"
-                select c.Pupil.Count).SingleOrDefault();    // Liefert 31
+var pupils = context.Schoolclass
+              .Where(c => c.C_ID == "3BHIF"=
+              .Select(c => c.Pupil.Count).SingleOrDefault();    // Liefert 31
 
 pupils = context.Schoolclass.Find("3BHIF").Pupil.Count();   // Liefert 0
 ```
@@ -319,7 +294,7 @@ protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder
             .UseLazyLoadingProxies()
-            .UseLoggerFactory(MyLoggerFactory)
+            .LogTo(Console.WriteLine, LogLevel.Information)
             .UseSqlite("DataSource=Tests.db");
     }
 }
@@ -374,13 +349,13 @@ Wir wollen alle Tests gruppiert nach dem Fach zurückgeben. Das ist ein häufige
 aus flachen Tabellen hierarchische JSON Objekte erzeugt werden sollen.
 
 ```c#
-var tests = from t in context.Test
-            group t by t.TE_Subject into g
-            select new
+var tests = context.Test
+            .GroupBy(t => t.TE_Subject)
+            .Select(g => new
             {
                 Subject = g.Key,
                 Tests = g
-            };
+            });
 Console.WriteLine(JsonSerializer.Serialize(tests));
 ```
 
@@ -399,17 +374,17 @@ ElementSelector:(EntityShaperExpression:
 limitation in EF Core. See https://go.microsoft.com/fwlink/?linkid=2101433 for more detailed information.
 ```
 
-Gut, das zurückgeben der reinen Gruppierungsvariable ist nie eine gute Idee. Also wählen wir mit
+Gut, das zurückgeben der reinen Gruppierungsvariable ist vielleicht keine gute Idee. Also wählen wir mit
 *Select()* die Properties aus, die wir pro Fach als JSON Array ausgeben wollen.
 
 ```c#
-var tests = from t in context.Test
-            group t by t.TE_Subject into g
-            select new
+var tests = context.Test
+            .GroupBy(t => t.TE_Subject)
+            .Select(g => new
             {
                 Subject = g.Key,
                 Tests = g.Select(te => new { te.TE_Date, te.TE_Lesson, te.TE_Teacher})
-            };
+            });
 Console.WriteLine(JsonSerializer.Serialize(tests));
 ```
 
@@ -442,13 +417,13 @@ beim Auslesen der Tests ausgeführt. Der Rest geschieht am Client im Speicher. I
 kann, bevor noch alle Daten da sind (wenn das möglich ist).
 
 ```c#
-var tests = from t in context.Test.AsEnumerable()          // Hier wird SELECT * FROM Test gesendet.
-            group t by t.TE_Subject into g                 // Alles Weitere im Speicher am Client.
-            select new
+var tests = context.Test.AsEnumerable()          // Hier wird SELECT * FROM Test gesendet.
+            .GroupBy(t=> t.TE_Subject)                 // Alles Weitere im Speicher am Client.
+            .Select(g => new
             {
                 Subject = g.Key,
                 Tests = g.Select(te => new { te.TE_Date, te.TE_Lesson, te.TE_Teacher })
-            };
+            });
 Console.WriteLine(JsonSerializer.Serialize(tests));
 ```
 
@@ -456,14 +431,14 @@ Doch jetzt  möchten wir nur die HIF Abteilung ausgeben. Mit *where* kann das le
 werden:
 
 ```c#
-var tests = from t in context.Test.AsEnumerable()
-            where t.TE_ClassNavigation.C_Department == "HIF"
-            group t by t.TE_Subject into g
-            select new
+var tests = context.Test.AsEnumerable()
+            .Where(t => t.TE_ClassNavigation.C_Department == "HIF")
+            .GroupBy(t => t.TE_Subject)
+            .Select(g => new
             {
                 Subject = g.Key,
                 Tests = g.Select(te => new { te.TE_Date, te.TE_Lesson, te.TE_Teacher })
-            };
+            });
 Console.WriteLine(JsonSerializer.Serialize(tests));
 ```
 
@@ -472,14 +447,14 @@ da durch *AsEnumerable()* die Abfrage ausgeführt wird und somit keine Navigatio
 Diesen Fehler können wir mit *Include()* beheben:
 
 ```c#
-from t in context.Test.Include(t=>t.TE_ClassNavigation).AsEnumerable()
-where t.TE_ClassNavigation.C_Department == "HIF"
-group t by t.TE_Subject into g
-select new
+context.Test.Include(t=>t.TE_ClassNavigation).AsEnumerable()
+.Where(t => t.TE_ClassNavigation.C_Department == "HIF")
+.GroupBy(t => t.TE_Subject)
+.Select(g => new
 {
     Subject = g.Key,
     Tests = g.Select(te => new { te.TE_Date, te.TE_Lesson, te.TE_Teacher })
-};
+});
 ```
 
 Der Preis ist allerdings sehr hoch: es werden alle Tests samt Klassen geladen:
@@ -494,16 +469,16 @@ INNER JOIN "Schoolclass" AS "s" ON "t"."TE_Class" = "s"."C_ID"
 Erst das Filtern vor *AsEnumerable()* verhindert das Auslesen ohne WHERE Bedingung:
 
 ```c#
-from t in context.Test
+context.Test
     .Include(t=>t.TE_ClassNavigation)
     .Where(t=>t.TE_ClassNavigation.C_Department == "HIF")
     .AsEnumerable()
-group t by t.TE_Subject into g
-select new
-{
+    .GroupBy(t => t.TE_Subject)
+    .Select(g => new
+    {
     Subject = g.Key,
     Tests = g.Select(te => new { te.TE_Date, te.TE_Lesson, te.TE_Teacher })
-};
+    });
 ```
 
 ```sql
