@@ -1,10 +1,11 @@
-﻿using OpenCvSharp;
+using OpenCvSharp;
 using OpenCvSharp.XPhoto;
 using OpenCvSharp.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace OpenCvDemo.Application.Services
 {
@@ -51,22 +52,22 @@ namespace OpenCvDemo.Application.Services
             return found;
         }
 
+        /// <summary>
+        /// Erkennt den Text mit Hilfe von Tesseract OCR. Dafür muss folgendes gegeben sein:
+        /// -) Die Datei deu.traineddata liegt im Projektverzeichnis und wird mit "copy if newer" ins Ausgabeverzeichnis kopiert.
+        ///    https://tesseract-ocr.github.io/tessdoc/Data-Files.html und https://github.com/tesseract-ocr/tessdata_fast
+        ///    bieten trainierte Dateien an.
+        /// -) Die CPU unterstützt AVX (mit HWDIAG zu ermitteln)
+        /// </summary>
         public string GetText(string filename)
         {
             EnsureFileExists(filename);
-            // Die Datei deu.traineddata von
-            // https://tesseract-ocr.github.io/tessdoc/Data-Files.html und
-            // https://github.com/tesseract-ocr/tessdata_fast
-            // muss ins Outputverzeichnis kopiert werden (copy if newer in Visual Studio)
-            using var ocr = OCRTesseract.Create(".", "deu", "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZäöüßÄÖÜ", 1);
+            using var ocr = OCRTesseract.Create(".", "deu", "", 1);
             using var mat = new Mat(filename)
                 .CvtColor(ColorConversionCodes.BGR2GRAY)
                 .Threshold(180, 255, ThresholdTypes.Binary);
-            //new Window("Schwellenwert", mat.Resize(Size.Zero, 0.5, 0.5), WindowFlags.AutoSize);
-            //Cv2.WaitKey();
-            //Cv2.DestroyAllWindows();
 
-            ocr.Run(mat, out var text, out var componentRects, out var componentTexts, out var componentConfidences, ComponentLevels.Word);
+            ocr.Run(mat, out var text, out var componentRects, out var componentTexts, out var componentConfidences, ComponentLevels.TextLine);
             return text;
         }
 

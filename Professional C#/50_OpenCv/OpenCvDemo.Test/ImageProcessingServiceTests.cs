@@ -38,7 +38,7 @@ namespace OpenCvDemo.Test
         {
             var service = new ImageProcessingService();
             var text = service.GetText("scan_text_image.jpg");
-            Assert.True(text.Length > 100);
+            Assert.Contains("natürlich", text);
         }
     }
 }
