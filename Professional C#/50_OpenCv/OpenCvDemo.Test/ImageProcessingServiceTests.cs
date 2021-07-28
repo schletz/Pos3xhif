@@ -1,4 +1,4 @@
-﻿using OpenCvDemo.Application.Services;
+﻿using OpenCvDemo.Application;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,33 +11,26 @@ namespace OpenCvDemo.Test
     public class ImageProcessingServiceTests
     {
         [Fact]
-        public void EdgeDetectionSuccessTest()
-        {
-            var service = new ImageProcessingService();
-            service.EdgeDetection("lena.png");
-        }
-
-        [Fact]
         public void DetectPhotosSuccessTest()
         {
-            var service = new ImageProcessingService();
-            int count = service.DetectPhotos("scan.jpg", sharpen: true);
+            var service = new ImageProcessor("scan.jpg");
+            int count = service.DetectPhotos(sharpen: true);
             Assert.True(count == 2);
         }
 
         [Fact]
         public void DetectPhotosInTextSuccessTest()
         {
-            var service = new ImageProcessingService();
-            int count = service.DetectPhotos("scan_text_image.jpg", sharpen: false);
+            var service = new ImageProcessor("scan_text_image.jpg");
+            int count = service.DetectPhotos(sharpen: false);
             Assert.True(count == 1);
         }
 
         [Fact]
         public void GetTextSuccessTest()
         {
-            var service = new ImageProcessingService();
-            var text = service.GetText("scan_text_image.jpg");
+            var service = new ImageProcessor("scan_text_image.jpg");
+            var text = service.ExtractText();
             Assert.Contains("natürlich", text);
         }
     }

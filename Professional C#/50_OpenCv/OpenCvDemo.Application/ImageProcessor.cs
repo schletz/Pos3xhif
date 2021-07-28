@@ -7,16 +7,34 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace OpenCvDemo.Application.Services
+namespace OpenCvDemo.Application
 {
-    public class ImageProcessingService
+    public class ImageProcessor
     {
-        private void EnsureFileExists(string filename)
+        public string Filename { get; }
+
+        /// <summary>
+        /// Schwellenwert, bis zu dem ein Pixel schwarz ist.
+        /// Zu hohe Werte bedeuten, dass helle Störungen (Scanhintergrund) als Text erkannt werden.
+        /// Zu neidrige Werte bedeuten, dass der Text nicht mehr ausgefüllt ist ausgefranst wird.
+        /// </summary>
+        public int ExtractTextThreshold { get; set; } = 180;
+
+        /// <summary>
+        /// Schwellenwert, ab dem das Pixel weiß wird.
+        /// Zu hohe Werte bedeuten, dass der Scanhintergrund nicht mehr wei wird und als Bild erkannt wird.
+        /// Zu niedrige Werte bedeuten, dass helle Randbereiche im Bild mit dem weißen Hintergrund verschmelzen.
+        /// </summary>
+        public int ExtractImageThreshold { get; set; } = 210;
+
+        public ImageProcessor(string filename)
         {
             if (!File.Exists(filename))
             {
                 throw new ArgumentException($"File {filename} dosen't exist.");
             }
+
+            Filename = filename;
         }
 
         /// <summary>
@@ -25,16 +43,14 @@ namespace OpenCvDemo.Application.Services
         /// <param name="filename">Einzulesende Bilddatei.</param>
         /// <param name="sharpen">Schärfung der Bilder. Ist für Fotos gut, für Buch- oder Magazinseiten wegen des Druckrasters aber schlecht.</param>
         /// <returns></returns>
-        public int DetectPhotos(string filename, bool sharpen = false)
+        public int DetectPhotos(bool sharpen = false, bool showImages = false)
         {
-            EnsureFileExists(filename);
-
             // Weißabgleich der erkannten Bilder.
             using var wb = SimpleWB.Create();
             Mat kernel = new Mat<double>(3, 3, new double[] { 0, -1, 0, -1, 5, -1, 0, -1, 0 });
 
             int found = 0;
-            foreach (var image in ExtractImages(filename, true))
+            foreach (var image in ExtractImages(showImages))
             {
                 found++;
                 var filteredImage = new Mat();
@@ -44,11 +60,8 @@ namespace OpenCvDemo.Application.Services
                 // https://learnopencv.com/image-filtering-using-convolution-in-opencv/
                 if (sharpen)
                     filteredImage = filteredImage.Filter2D(-1, kernel, new Point(-1, -1), 0, BorderTypes.Default);
-                filteredImage.ImWrite($"cropped{found}.jpg");
+                // Bild in Datei schreiben: filteredImage.ImWrite($"cropped{found}.jpg");
             }
-
-            Cv2.WaitKey();
-            Cv2.DestroyAllWindows();
             return found;
         }
 
@@ -59,30 +72,15 @@ namespace OpenCvDemo.Application.Services
         ///    bieten trainierte Dateien an.
         /// -) Die CPU unterstützt AVX (mit HWDIAG zu ermitteln)
         /// </summary>
-        public string GetText(string filename)
+        public string ExtractText()
         {
-            EnsureFileExists(filename);
             using var ocr = OCRTesseract.Create(".", "deu", "", 1);
-            using var mat = new Mat(filename)
+            using var mat = new Mat(Filename)
                 .CvtColor(ColorConversionCodes.BGR2GRAY)
-                .Threshold(180, 255, ThresholdTypes.Binary);
+                .Threshold(ExtractTextThreshold, 255, ThresholdTypes.Binary);
 
             ocr.Run(mat, out var text, out var componentRects, out var componentTexts, out var componentConfidences, ComponentLevels.TextLine);
             return text;
-        }
-
-        public void EdgeDetection(string filename)
-        {
-            EnsureFileExists(filename);
-            using var src = new Mat(filename, ImreadModes.Grayscale);
-            using var dst = new Mat();
-
-            Cv2.Canny(src, dst, 50, 200);
-            using (new Window("src image", src))
-            using (new Window("dst image", dst))
-            {
-                Cv2.WaitKey();
-            }
         }
 
         /// <summary>
@@ -123,9 +121,9 @@ namespace OpenCvDemo.Application.Services
         /// <param name="filename"></param>
         /// <param name="showImages">Zeigt die Bilder und die erkannten Bereiche an.</param>
         /// <returns></returns>
-        private IEnumerable<Mat> ExtractImages(string filename, bool showImages = false)
+        private IEnumerable<Mat> ExtractImages(bool showImages = false)
         {
-            using var src = new Mat(filename);
+            using var src = new Mat(Filename);
             using var displayImage = showImages ? src.Clone() : new Mat();
             // Minimale Größe eines extrahierten Bildes. Verhindert die Erkennung von weißen Stellen im Foto.
             int minSize = (int)(src.Rows * src.Cols * 0.05);
@@ -134,7 +132,7 @@ namespace OpenCvDemo.Application.Services
             double scale = 1000 / (double)src.Rows;
 
             var gray = src.Channels() == 3 ? src.CvtColor(ColorConversionCodes.BGR2GRAY) : src.Clone();
-            var threshold = gray.Threshold(210, 255, ThresholdTypes.BinaryInv);
+            var threshold = gray.Threshold(ExtractImageThreshold, 255, ThresholdTypes.BinaryInv);
 
             threshold.FindContours(
                 contours: out var contours,
@@ -162,6 +160,8 @@ namespace OpenCvDemo.Application.Services
             {
                 new Window("Schwellenwert", threshold.Resize(Size.Zero, scale, scale), WindowFlags.AutoSize);
                 new Window("Erkannte Bilder", displayImage.Resize(Size.Zero, scale, scale), WindowFlags.AutoSize);
+                Cv2.WaitKey();
+                Cv2.DestroyAllWindows();
             }
         }
     }
