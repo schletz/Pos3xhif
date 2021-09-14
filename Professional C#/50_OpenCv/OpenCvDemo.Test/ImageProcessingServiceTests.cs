@@ -14,7 +14,7 @@ namespace OpenCvDemo.Test
         public void DetectPhotosSuccessTest()
         {
             var service = new ImageProcessor("scan.jpg");
-            int count = service.DetectPhotos(sharpen: true);
+            int count = service.DetectPhotos(sharpen: true, showImages: true);
             Assert.True(count == 2);
         }
 
@@ -22,7 +22,7 @@ namespace OpenCvDemo.Test
         public void DetectPhotosInTextSuccessTest()
         {
             var service = new ImageProcessor("scan_text_image.jpg");
-            int count = service.DetectPhotos(sharpen: false);
+            int count = service.DetectPhotos(sharpen: false, showImages: true);
             Assert.True(count == 1);
         }
 

@@ -1,5 +1,22 @@
 # Wertedatentypen in C#
 
+## Create a Visual Studio solution
+
+```text
+rd /S /Q OopDemo
+md OopDemo
+cd OopDemo
+md OopDemo.App
+cd OopDemo.App
+dotnet new console
+cd ..
+dotnet new sln
+dotnet sln add OopDemo.App
+start OopDemo.sln
+```
+
+## Einführung
+
 Wertedatentypen belegen bei der Deklaration schon Speicher für ihren Wert. Sie
 können daher - im Gegensatz zu Referenztypen - nicht null enthalten.
 
