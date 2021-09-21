@@ -60,7 +60,8 @@ namespace OpenCvDemo.Application
                 // https://learnopencv.com/image-filtering-using-convolution-in-opencv/
                 if (sharpen)
                     filteredImage = filteredImage.Filter2D(-1, kernel, new Point(-1, -1), 0, BorderTypes.Default);
-                // Bild in Datei schreiben: filteredImage.ImWrite($"cropped{found}.jpg");
+                // Bild in Datei schreiben: 
+                filteredImage.ImWrite($"cropped{found}.jpg");
             }
             return found;
         }
