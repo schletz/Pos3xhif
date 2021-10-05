@@ -127,7 +127,7 @@ namespace OpenCvDemo.Application
             using var src = new Mat(Filename);
             using var displayImage = showImages ? src.Clone() : new Mat();
             // Minimale Größe eines extrahierten Bildes. Verhindert die Erkennung von weißen Stellen im Foto.
-            int minSize = (int)(src.Rows * src.Cols * 0.05);
+            int minSize = (int)(src.Rows * src.Cols * 0.01);
             // maximale Größe eines extrahierten Bildes. Verhindert die Erkennung der gescannten Seite als Gesamtes.
             int maxSize = (int)(src.Rows * src.Cols * 0.95);
             double scale = 1000 / (double)src.Rows;

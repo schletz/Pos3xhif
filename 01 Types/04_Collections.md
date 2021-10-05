@@ -109,65 +109,90 @@ foreach(string lehrer in lehrerHashSet)
 
 ## Übung
 
-Erstelle ein Projekt mit dem Namen *ExCollection* durch die untenstehenden Befehle. Installiere danach das Paket
-*Newtonsoft.Json*, indem du in Visual Studio mittels *Tools* - *NuGet Package Manager* - *Package Manager Console*
-die Konsole öffnest. Das Paket kann durch die Eingabe von *Install-Package Newtonsoft.Json* in der Konsole
-installiert werden. Bei Problemen (Newtonsoft wird nicht erkannt) kann die Installation auch über die GUI
-erfolgen: Rechte Maustaste auf das Projekt im Solution Explorer - *Manage NuGet Packages*. Unter *Browse*
-kann das Paket *Newtonsoft.Json* gesucht und installiert werden.
-
+Erstelle ein Projekt mit dem Namen *ExCollection* durch die untenstehenden Befehle in der Konsole. 
 Ersetze danach den Inhalt von Program.cs durch die untenstehende Version. Vervollständige die 2 Klassen 
-*Schueler* und *Klasse* so, dass die Ausgaben des Programmes korrekt sind.
+*SchoolClass* und *Student* so, dass die Ausgaben des Programmes korrekt sind.
 
 ```text
-Path>md ExCollection
-Path>cd ExCollection
-Path>dotnet new console
-Path>start ExCollection.csproj
+md ExCollection
+cd ExCollection
+dotnet new console
+start ExCollection.csproj
+```
+
+Aktiviere die nullable reference types, indem der Eintrag `<Nullable>enable</Nullable>` zur csproj Datei
+hinzugefügt wird. Es dürfen keine Warnings im fertigen Programm enthalten sein.
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+</Project>
+
 ```
 
 ```c#
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
-namespace ExCollection.App
+namespace ExColletions
 {
-    class Klasse
+    /// <summary>
+    /// TODO: 
+    ///    - Create a constructor to initialize Name, ClassTeacher (KV) and City (Wohnort).
+    ///    - Add a List of students to manage the students in this class.
+    ///    - Use IReadOnlyList for your public property. It sould NOT be possible to add or remove students from outside
+    ///      without calling AddStudent or RemoveStudent.
+    ///    - Add a read-only property of type HashSet<string> to get the different cities in this class.
+    /// </summary>
+    class SchoolClass
     {
-        // TODO: Erstelle ein Property Schuelers, welches alle Schüler der Klasse in einer
-        //       Liste speichert.
-        public string Name { get; set; }
-        public string KV { get; set; }
+        public string Name { get; }
+        public string ClassTeacher { get; }
+        public string City { get; }
         /// <summary>
-        /// Fügt den Schüler zur Liste hinzu und setzt das Property KlasseNavigation
-        /// des Schülers korrekt auf die aktuelle Instanz.
+        /// Adds a student and modifies the schoolclass reference of the provided
+        /// student.
         /// </summary>
-        /// <param name="s"></param>
-        public void AddSchueler(Schueler s)
+        public void AddStudent(Student s)
         {
-            // HIER DEN CODE EINFÜGEN
+        }
+
+        /// <summary>
+        /// Removes a student and modifies the schoolclass reference of the provided
+        /// student.
+        /// </summary>
+        public void RemoveStudent(Student s)
+        {
         }
     }
-    class Schueler
+
+    /// <summary>
+    /// TODO: 
+    ///    - Add a constructor to initialize the properties Id, Firstname, Lastname and City.
+    ///    - Add a reference to the class of the student (type SchoolClass). This reference is optional,
+    ///      if a student is not assigned to a class is has the value null.
+    ///    - Add an annotation [JsonIgore] above this property to suppress the content of
+    ///      the class object in your serialized output.
+    /// </summary>
+    class Student
     {
-        // TODO: Erstelle ein Proeprty KlasseNavigation vom Typ Klasse, welches auf
-        //       die Klasse des Schülers zeigt.
-        // Füge dann über das Proeprty die Zeile
-        // [JsonIgnore]
-        // ein, damit der JSON Serializer das Objekt ausgeben kann.
-        public int Id { get; set; }
-        public string Zuname { get; set; }
-        public string Vorname { get; set; }
+        public int Id { get; }
+        public string Lastname { get; }
+        public string Firstname { get; }
+        public string City { get; set; }
         /// <summary>
-        /// Ändert die Klassenzugehörigkeit, indem der Schüler
-        /// aus der alten Klasse, die in KlasseNavigation gespeichert ist, entfernt wird.
-        /// Danach wird der Schüler in die neue Klasse mit der korrekten Navigation eingefügt.
+        /// Updates the reference of the student and adds the student to the new class.
         /// </summary>
         /// <param name="k"></param>
-        public void ChangeKlasse(Klasse k)
+        public void ChangeClass(SchoolClass k)
         {
-            // HIER DEN CODE EINFÜGEN
         }
     }
 
@@ -175,41 +200,44 @@ namespace ExCollection.App
     {
         static void Main(string[] args)
         {
-            Dictionary<string, Klasse> klassen = new Dictionary<string, Klasse>();
-            klassen.Add("3AHIF", new Klasse() { Name = "3AHIF", KV = "KV1" });
-            klassen.Add("3BHIF", new Klasse() { Name = "3BHIF", KV = "KV2" });
-            klassen.Add("3CHIF", new Klasse() { Name = "3CHIF", KV = "KV3" });
-            klassen["3AHIF"].AddSchueler(new Schueler() { Id = 1001, Vorname = "VN1", Zuname = "ZN1" });
-            klassen["3AHIF"].AddSchueler(new Schueler() { Id = 1002, Vorname = "VN2", Zuname = "ZN2" });
-            klassen["3AHIF"].AddSchueler(new Schueler() { Id = 1003, Vorname = "VN3", Zuname = "ZN3" });
-            klassen["3BHIF"].AddSchueler(new Schueler() { Id = 1011, Vorname = "VN4", Zuname = "ZN4" });
-            klassen["3BHIF"].AddSchueler(new Schueler() { Id = 1012, Vorname = "VN5", Zuname = "ZN5" });
-            klassen["3BHIF"].AddSchueler(new Schueler() { Id = 1013, Vorname = "VN6", Zuname = "ZN6" });
+            Dictionary<string, SchoolClass> classes = new();
+            classes.Add("3AHIF", new SchoolClass(name: "3AHIF", classTeacher: "KV1"));
+            classes.Add("3BHIF", new SchoolClass(name: "3BHIF", classTeacher: "KV2"));
+            classes.Add("3CHIF", new SchoolClass(name: "3CHIF", classTeacher: "KV3"));
 
-            Schueler s = klassen["3AHIF"].Schuelers[0];
-            Console.WriteLine($"s sitzt in der Klasse {s.KlasseNavigation.Name} mit dem KV {s.KlasseNavigation.KV}.");            
+            classes["3AHIF"].AddStudent(new Student(id: 1001, firstname: "FN1", lastname: "LN1", city: "CTY1"));
+            classes["3AHIF"].AddStudent(new Student(id: 1002, firstname: "FN2", lastname: "LN2", city: "CTY1"));
+            classes["3AHIF"].AddStudent(new Student(id: 1003, firstname: "FN3", lastname: "LN3", city: "CTY2"));
+            classes["3BHIF"].AddStudent(new Student(id: 1011, firstname: "FN4", lastname: "LN4", city: "CTY1"));
+            classes["3BHIF"].AddStudent(new Student(id: 1012, firstname: "FN5", lastname: "LN5", city: "CTY1"));
+            classes["3BHIF"].AddStudent(new Student(id: 1013, firstname: "FN6", lastname: "LN6", city: "CTY1"));
+
+            Student s = classes["3AHIF"].Students[0];
+            Console.WriteLine($"s sitzt in der Klasse {s.SchoolClass?.Name} mit dem KV {s.SchoolClass?.ClassTeacher}.");
+            Console.WriteLine($"In der 3AHIF sind folgende Städte: {JsonSerializer.Serialize(classes["3AHIF"].Cities)}.");
+
             Console.WriteLine("3AHIF vor ChangeKlasse:");
-            Console.WriteLine(JsonConvert.SerializeObject(klassen["3AHIF"].Schuelers));
-            s.ChangeKlasse(klassen["3BHIF"]);
+            Console.WriteLine(JsonSerializer.Serialize(classes["3AHIF"].Students));
+            s.ChangeClass(classes["3BHIF"]);
             Console.WriteLine("3AHIF nach ChangeKlasse:");
-            Console.WriteLine(JsonConvert.SerializeObject(klassen["3AHIF"].Schuelers));
+            Console.WriteLine(JsonSerializer.Serialize(classes["3AHIF"].Students));
             Console.WriteLine("3BHIF nach ChangeKlasse:");
-            Console.WriteLine(JsonConvert.SerializeObject(klassen["3BHIF"].Schuelers));
-            Console.WriteLine($"s sitzt in der Klasse {s.KlasseNavigation.Name} mit dem KV {s.KlasseNavigation.KV}.");
+            Console.WriteLine(JsonSerializer.Serialize(classes["3BHIF"].Students));
+            Console.WriteLine($"s sitzt in der Klasse {s.SchoolClass?.Name} mit dem KV {s.SchoolClass?.ClassTeacher}.");
         }
     }
 }
-
 ```
 
 ### Korrekte Ausgabe:
 ```
 s sitzt in der Klasse 3AHIF mit dem KV KV1.
+In der 3AHIF sind folgende Städte: ["CTY1","CTY2"].
 3AHIF vor ChangeKlasse:
-[{"Id":1001,"Zuname":"ZN1","Vorname":"VN1"},{"Id":1002,"Zuname":"ZN2","Vorname":"VN2"},{"Id":1003,"Zuname":"ZN3","Vorname":"VN3"}]
+[{"City":"CTY1","Id":1001,"Lastname":"LN1","Firstname":"FN1"},{"City":"CTY1","Id":1002,"Lastname":"LN2","Firstname":"FN2"},{"City":"CTY2","Id":1003,"Lastname":"LN3","Firstname":"FN3"}]
 3AHIF nach ChangeKlasse:
-[{"Id":1002,"Zuname":"ZN2","Vorname":"VN2"},{"Id":1003,"Zuname":"ZN3","Vorname":"VN3"}]
+[{"City":"CTY1","Id":1002,"Lastname":"LN2","Firstname":"FN2"},{"City":"CTY2","Id":1003,"Lastname":"LN3","Firstname":"FN3"}]
 3BHIF nach ChangeKlasse:
-[{"Id":1011,"Zuname":"ZN4","Vorname":"VN4"},{"Id":1012,"Zuname":"ZN5","Vorname":"VN5"},{"Id":1013,"Zuname":"ZN6","Vorname":"VN6"},{"Id":1001,"Zuname":"ZN1","Vorname":"VN1"}]
+[{"City":"CTY1","Id":1011,"Lastname":"LN4","Firstname":"FN4"},{"City":"CTY1","Id":1012,"Lastname":"LN5","Firstname":"FN5"},{"City":"CTY1","Id":1013,"Lastname":"LN6","Firstname":"FN6"},{"City":"CTY1","Id":1001,"Lastname":"LN1","Firstname":"FN1"}]
 s sitzt in der Klasse 3BHIF mit dem KV KV2.
 ```
