@@ -145,7 +145,7 @@ namespace ExColletions
 {
     /// <summary>
     /// TODO: 
-    ///    - Create a constructor to initialize Name, ClassTeacher (KV) and City (Wohnort).
+    ///    - Create a constructor to initialize Name, ClassTeacher (KV).
     ///    - Add a List of students to manage the students in this class.
     ///    - Use IReadOnlyList for your public property. It sould NOT be possible to add or remove students from outside
     ///      without calling AddStudent or RemoveStudent.
@@ -155,7 +155,6 @@ namespace ExColletions
     {
         public string Name { get; }
         public string ClassTeacher { get; }
-        public string City { get; }
         /// <summary>
         /// Adds a student and modifies the schoolclass reference of the provided
         /// student.
@@ -178,7 +177,7 @@ namespace ExColletions
     ///    - Add a constructor to initialize the properties Id, Firstname, Lastname and City.
     ///    - Add a reference to the class of the student (type SchoolClass). This reference is optional,
     ///      if a student is not assigned to a class is has the value null.
-    ///    - Add an annotation [JsonIgore] above this property to suppress the content of
+    ///    - Add an annotation [JsonIgnore] above this property to suppress the content of
     ///      the class object in your serialized output.
     /// </summary>
     class Student
