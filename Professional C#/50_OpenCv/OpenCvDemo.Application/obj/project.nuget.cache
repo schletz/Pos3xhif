@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "dgSpecHash": "uYVu49splJJ+qIdwSaQKbPy2bkJmT4M2M35V5LEDwoOkmInBwhTggEShCQU9+FqShMr5aALcR7Xi2voOFG8xfg==",
+  "success": true,
+  "projectFilePath": "C:\\Github\\Pos3xhif\\Professional C#\\50_OpenCv\\OpenCvDemo.Application\\OpenCvDemo.Application.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Michael\\.nuget\\packages\\microsoft.netcore.platforms\\5.0.0\\microsoft.netcore.platforms.5.0.0.nupkg.sha512",
+    "C:\\Users\\Michael\\.nuget\\packages\\microsoft.win32.systemevents\\5.0.0\\microsoft.win32.systemevents.5.0.0.nupkg.sha512",
+    "C:\\Users\\Michael\\.nuget\\packages\\opencvsharp4\\4.5.3.20210725\\opencvsharp4.4.5.3.20210725.nupkg.sha512",
+    "C:\\Users\\Michael\\.nuget\\packages\\opencvsharp4.runtime.win\\4.5.3.20210725\\opencvsharp4.runtime.win.4.5.3.20210725.nupkg.sha512",
+    "C:\\Users\\Michael\\.nuget\\packages\\system.drawing.common\\5.0.2\\system.drawing.common.5.0.2.nupkg.sha512",
+    "C:\\Users\\Michael\\.nuget\\packages\\system.memory\\4.5.4\\system.memory.4.5.4.nupkg.sha512",
+    "C:\\Users\\Michael\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\5.0.0\\system.runtime.compilerservices.unsafe.5.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

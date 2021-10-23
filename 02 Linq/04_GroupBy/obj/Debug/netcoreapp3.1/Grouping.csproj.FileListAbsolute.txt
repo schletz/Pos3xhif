@@ -1,0 +1,14 @@
+C:\Github\Pos3xhif\02 Linq\04_GroupBy\bin\Debug\netcoreapp3.1\Grouping.exe
+C:\Github\Pos3xhif\02 Linq\04_GroupBy\bin\Debug\netcoreapp3.1\db\tests.json
+C:\Github\Pos3xhif\02 Linq\04_GroupBy\bin\Debug\netcoreapp3.1\Grouping.deps.json
+C:\Github\Pos3xhif\02 Linq\04_GroupBy\bin\Debug\netcoreapp3.1\Grouping.runtimeconfig.json
+C:\Github\Pos3xhif\02 Linq\04_GroupBy\bin\Debug\netcoreapp3.1\Grouping.runtimeconfig.dev.json
+C:\Github\Pos3xhif\02 Linq\04_GroupBy\bin\Debug\netcoreapp3.1\Grouping.dll
+C:\Github\Pos3xhif\02 Linq\04_GroupBy\bin\Debug\netcoreapp3.1\Grouping.pdb
+C:\Github\Pos3xhif\02 Linq\04_GroupBy\obj\Debug\netcoreapp3.1\Grouping.csprojAssemblyReference.cache
+C:\Github\Pos3xhif\02 Linq\04_GroupBy\obj\Debug\netcoreapp3.1\Grouping.AssemblyInfoInputs.cache
+C:\Github\Pos3xhif\02 Linq\04_GroupBy\obj\Debug\netcoreapp3.1\Grouping.AssemblyInfo.cs
+C:\Github\Pos3xhif\02 Linq\04_GroupBy\obj\Debug\netcoreapp3.1\Grouping.csproj.CoreCompileInputs.cache
+C:\Github\Pos3xhif\02 Linq\04_GroupBy\obj\Debug\netcoreapp3.1\Grouping.dll
+C:\Github\Pos3xhif\02 Linq\04_GroupBy\obj\Debug\netcoreapp3.1\Grouping.pdb
+C:\Github\Pos3xhif\02 Linq\04_GroupBy\obj\Debug\netcoreapp3.1\Grouping.genruntimeconfig.cache

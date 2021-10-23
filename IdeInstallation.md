@@ -10,22 +10,14 @@ hat. Der Key wird im Unterricht bekannt gegeben.
 
 ### Auswählen der Komponenten
 
-Es sollten rund 20 GB Platz auf der Festplatte für die folgenden Komponenten sein. Wenn der Speicher auf
-der SSD knapp wird, kann die Software [PatchCleaner](https://sourceforge.net/projects/patchcleaner/)
-alte Windowsinstallationen, die als Backup bei Windows Updates erhalten bleiben, entfernen. Nach dem 
+Wenn der Speicher auf der SSD knapp wird, kann die Software
+[PatchCleaner](https://sourceforge.net/projects/patchcleaner/) alte Windowsinstallationen,
+die als Backup bei Windows Updates erhalten bleiben, entfernen. Nach dem 
 Starten des Installers können die Komponenten ausgewählt werden.
 
-**Workloads:** (1) .NET Entwicklung, (2) ASP.NET Entwicklung, (3) Mobile Entwicklung (für die 4. Klasse), 
-(4) Plattformübergreifende .NET Core Entwicklung, (5) Universal WIndows Platform development
-![Vs Components](VsComponents2019.png)
-
-**Einzelne Komponenten:** Zusätzlich wird Klassen-Designer angewählt, um die Klassenmodelle öffnen zu
-können. Sonst wird nur eine XML Datei angezeigt.
-![Vs Components2](VsComponents2.png)
-
-**Sprachpakete:** Da es zu deutschen Fehlermeldungen auf Google wenig geben wird, und die Übersetzungen
-manchmal sehr kreativ sind, wähle hier Englisch als Sprache.
-![Vs Components3](VsComponents3.png)
+**Workloads:** (1) .NET Entwicklung, (2) Plattformübergreifende .NET Core Entwicklung. Unter
+*Sprachpakete* wähle *Englisch* statt Deutsch.
+![Vs Components](VsComponents2019_2.png)
 
 ### Freischaltung
 
@@ -35,8 +27,6 @@ Unter *Help* - *Register Product* kann der Produktkey der Schule eingegeben werd
 
 Jetbrains bietet 2 Produkte für die .NET Entwicklung an: ReSharper ist eine Erweiterung für Visual
 Studio. Rider ist ein eigenständiges Programm für die Entwicklung von .NET Programmen.
-
-![](rider_vs_resharper.png)
 
 Aus https://intranet.spengergasse.at/news/jetbrains-produkte-in-den-laboren-und-auf-den-laptops-von-studierenden-und-lehrkraeften/:
 > In enger Zusammenarbeit mit dem ZID (herzlichen Dank hierfür) ist es uns gelungen den von der
@@ -56,22 +46,24 @@ geladen werden:
 
 ![](resharper_download_3.png)
 
-## Optional: Visual Studio Code
+## Visual Studio Code (VS Code) zum Erstellen von Markdown (md) Dateien und Plant UML Diagrammen.
 
-.NET Core Projekte können auch in Visual Studio Code erstellt werden. Nach dem Download von
-https://code.visualstudio.com/ sind 2 Extensions für die C#/ASP.NET Core Entwicklung erforderlich
-bzw. ratsam:
+Markdown Dateien mit UML Diagrammen können am Besten mit VS Code erstellt werden.
 
-- [C#](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp)
-- [Awesome DotNetCorePack](https://marketplace.visualstudio.com/items?itemName=salbert.awesome-dotnetcore-pack)
+1. Installiere [Visual Studio Code](https://code.visualstudio.com). Wichtig: Aktiviere beim
+   Setup die Integration von VS Code in das Ordner Kontextmenü. Dadurch kann mit Rechtlick ein
+   Ordner aus dem Explorer aus in VS Code geöffnet werden.
+2. Installiere die folgenden Extensions:
+   - Markdown PDF
+   - Markdown Preview Enhanced
+   - PlantUML
+3. Öffne die VS Code Konfiguration (*F1* - "*settings*" eingeben - "*Preferences: Open Settings (JSON)*" wählen)
+   und füge folgende Zeilen hinzu:
 
-Eine .NET Core Applikation kann im Terminal direkt erstellt werden:
-
-```text
-Path>md MyProjektName
-Path>cd MyProjektName
-Path>dotnet new console
+```javascript
+    "markdown-pdf.plantumlOpenMarker": "```plantuml\n@startuml",
+    "markdown-pdf.plantumlCloseMarker": "```"   
 ```
 
-> **Hinweis:** Öffne das Projekt mit *File* - *Open Folder* und nicht nur die *.cs* Datei alleine.
-
+Nun steht durch die Extension *Markdown Preview Enhanced* ein Icon bereit, welches eine Vorschau mit
+dem gerenderten Diagramm bietet.

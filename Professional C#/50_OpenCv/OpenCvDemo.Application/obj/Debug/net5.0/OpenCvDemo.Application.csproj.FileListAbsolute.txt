@@ -1,0 +1,12 @@
+C:\Github\Pos3xhif\Professional C#\50_OpenCv\OpenCvDemo.Application\bin\Debug\net5.0\OpenCvDemo.Application.deps.json
+C:\Github\Pos3xhif\Professional C#\50_OpenCv\OpenCvDemo.Application\bin\Debug\net5.0\OpenCvDemo.Application.dll
+C:\Github\Pos3xhif\Professional C#\50_OpenCv\OpenCvDemo.Application\bin\Debug\net5.0\ref\OpenCvDemo.Application.dll
+C:\Github\Pos3xhif\Professional C#\50_OpenCv\OpenCvDemo.Application\bin\Debug\net5.0\OpenCvDemo.Application.pdb
+C:\Github\Pos3xhif\Professional C#\50_OpenCv\OpenCvDemo.Application\obj\Debug\net5.0\OpenCvDemo.Application.csprojAssemblyReference.cache
+C:\Github\Pos3xhif\Professional C#\50_OpenCv\OpenCvDemo.Application\obj\Debug\net5.0\OpenCvDemo.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Github\Pos3xhif\Professional C#\50_OpenCv\OpenCvDemo.Application\obj\Debug\net5.0\OpenCvDemo.Application.AssemblyInfoInputs.cache
+C:\Github\Pos3xhif\Professional C#\50_OpenCv\OpenCvDemo.Application\obj\Debug\net5.0\OpenCvDemo.Application.AssemblyInfo.cs
+C:\Github\Pos3xhif\Professional C#\50_OpenCv\OpenCvDemo.Application\obj\Debug\net5.0\OpenCvDemo.Application.csproj.CoreCompileInputs.cache
+C:\Github\Pos3xhif\Professional C#\50_OpenCv\OpenCvDemo.Application\obj\Debug\net5.0\OpenCvDemo.Application.dll
+C:\Github\Pos3xhif\Professional C#\50_OpenCv\OpenCvDemo.Application\obj\Debug\net5.0\ref\OpenCvDemo.Application.dll
+C:\Github\Pos3xhif\Professional C#\50_OpenCv\OpenCvDemo.Application\obj\Debug\net5.0\OpenCvDemo.Application.pdb
