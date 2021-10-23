@@ -329,19 +329,19 @@ using System;
 
 namespace PropertiesDemo.Application
 {
-    internal class Program
+    class Rectangle
     {
-        private class Rectangle
-        {
-            // TODO: Implementierung von Rectangle
+    // TODO: Implementierung von Rectangle
 
-        }
+    }
 
-        private class Teacher
-        {
-            // TODO: Implementierung von Teacher
-        }
+    class Teacher
+    {
+    // TODO: Implementierung von Teacher
+    }
 
+    class Program
+    {
         // DON'T TOUCH!
         private static void Main(string[] args)
         {
