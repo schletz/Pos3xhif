@@ -391,7 +391,7 @@ namespace PropertiesDemo.Application
             if (typeof(Teacher).GetProperty(nameof(Teacher.Firstname))?.CanWrite == false
                 && typeof(Teacher).GetProperty(nameof(Teacher.Lastname))?.CanWrite == false)
             {
-                Console.WriteLine("2 Vor- und Lastname sind immutable: OK");
+                Console.WriteLine("2 Vor- und Zuname sind immutable: OK");
             }
 
             Teacher t1 = new Teacher(firstname: "Fn", lastname: "Ln");
