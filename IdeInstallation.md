@@ -51,9 +51,10 @@ geladen werden:
 Markdown Dateien mit UML Diagrammen können am Besten mit VS Code erstellt werden.
 
 1. Installiere [Visual Studio Code](https://code.visualstudio.com). Wichtig: Aktiviere beim
-   Setup die Integration von VS Code in das Ordner Kontextmenü. Dadurch kann mit Rechtlick ein
+   Setup die Integration von VS Code in das Ordner Kontextmenü. Dadurch kann mit Rechtsklick ein
    Ordner aus dem Explorer aus in VS Code geöffnet werden.
 2. Installiere die folgenden Extensions:
+   - Markdown All in One
    - Markdown PDF
    - Markdown Preview Enhanced
    - PlantUML
