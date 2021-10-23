@@ -117,11 +117,11 @@ for (int row = 0; row < matrix.GetLength(0); row++)
 > dann verwendet werden, wenn die Organisation im Speicher aus Performancegründen wesentlich ist.
 > OpenCV z. B. speichert seine Transformationsmatrizen als "echte" zweidimensionale Arrays.
 
-## List<T> als flexiblerer Ersatz für Arrays
+## List&lt;T&gt; als flexiblerer Ersatz für Arrays
 
 Arrays haben einen Nachteil: Sie können in der Größe nicht mehr verändert werden, d. h. es gibt
 keine *Add()* oder *Remove()* Methode. Daher findet sich in den meisten Programmen der Typ
-*List<T>*. Der Zugang zu Collections im Allgemeinen führt über den Namespace
+*List&lt;T&gt;*. Der Zugang zu Collections im Allgemeinen führt über den Namespace
 *System.Collections.Generic*. Er muss mit *using* eingebunden werden:
 
 ```c#
@@ -129,9 +129,9 @@ using System.Collections.Generic;
 ```
 
 
-## Interner Aufbau der Klasse List<T>
+## Interner Aufbau der Klasse List&lt;T&gt;
 
-Der Typ *List<T>* verwendet im Inneren ein Array zur Verwaltung der Daten. Es wird zu Beginn mit
+Der Typ *List&lt;T&gt;* verwendet im Inneren ein Array zur Verwaltung der Daten. Es wird zu Beginn mit
 4 Stellen definiert. Werden durch *Add()* mehr Elemente benötigt, wird ein neues internes Array
 mit doppelt so vielen Elementen definiert und der Speicher muss kopiert werden. Der Zugriff auf
 Elemente ist daher genauso schnell wie bei einem Array.
@@ -192,7 +192,7 @@ foreach (Person p in persons)                           // (4)
 - **(2)** Da eine Liste nur Referenzen auf die mit new erzeugen Objekte, aber nicht die Objekte
   selbst (bei Referenztypen) beinhaltet, wird auch bei der Ausgabe "Other Name" zu sehen sein.
 - **(3)** Das Property *Count* liefert die Anzahl der Elemente in der Liste.
-- **(4)** Die Liste implementiert das Interface *IEnumerable<T>*. Dadurch kann mit foreach die
+- **(4)** Die Liste implementiert das Interface *IEnumerable&lt;T&gt;*. Dadurch kann mit foreach die
   Liste durchgegangen werden.
 
 Werden Elemente gelöscht, wird über die *Equals()* Methode nach Elementen in der Liste gesucht. Daher wird
