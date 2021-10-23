@@ -43,39 +43,39 @@ Betrachten wir eine Klasse *Student*, mit den get und set Methoden, wie wir sie 
 ```c#
 class Student
 {
-    string vorname;
-    string zuname;
-    int alter;
+    string firstname;
+    string lastname;
+    int age;
 
-    public Student(string vorname, string zuname)
+    public Student(string firstname, string lastname)
     {
-        this.vorname = vorname;
-        this.zuname = zuname;
-        setAlter(0);
+        this.firstname = firstname;
+        this.lastname = lastname;
+        setAge(0);
     }
 
-    public Student(string vorname, string zuname, int alter)
+    public Student(string firstname, string lastname, int age)
     {
-        this.vorname = vorname;
-        this.zuname = zuname;
-        setAlter(alter);
+        this.firstname = firstname;
+        this.lastname = lastname;
+        setAge(age);
     }
 
-    public void setAlter(int alter)
+    public void setAge(int age)
     {
-        if (alter >= 0)
+        if (age >= 0)
         {
-            this.alter = alter;
+            this.age = age;
         }
         else
         {
-            throw new ArgumentException("Ungültiges Alter");
+            throw new ArgumentException("Ungültiges Age");
         }
     }
 
-    public int getAlter()
+    public int getAge()
     {
-        return alter;
+        return age;
     }
 }
 ```
@@ -86,7 +86,7 @@ Es fallen 2 Dinge auf:
 
 ## Properties ersetzen get und set Methoden
 
-Wir schreiben nun für die Felder *alter*, *vorname* und *zuname* sogenannte Properties. Properties erscheinen
+Wir schreiben nun für die Felder *age*, *firstname* und *lastname* sogenannte Properties. Properties erscheinen
 nach außen wie Variablen, es wird aber bei der Zuweisung ein Stück Code - nämlich der in set - ausgeführt.
 Das Schema ist folgendes:
 - Anlegen der private Variable. Sie beginnen in C# mit einem Kleinbuchstaben.
@@ -97,47 +97,47 @@ Das Schema ist folgendes:
 ```c#
 class Student
 {
-    private string vorname, zuname;
-    private int alter;
+    private string firstname, lastname;
+    private int age;
 
-    public Student(string vorname, string zuname, int alter)
+    public Student(string firstname, string lastname, int age)
     {
-        this.vorname = vorname;
-        this.zuname = zuname;
-        this.alter = alter;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.age = age;
     }
 
-    public string Vorname
+    public string Firstname
     {
-        get { return vorname; }
-        set { vorname = value; }
+        get { return firstname; }
+        set { firstname = value; }
     }
-    public string Zuname
+    public string Lastname
     {
-        get { return zuname; }
-        set { zuname = value; }
+        get { return lastname; }
+        set { lastname = value; }
     }
-    public int Alter
+    public int Age
     {
-        get { return alter; }
-        set { alter = value >= 0 ? value : throw new ArgumentException("Ungültiges Alter!"); }
+        get { return age; }
+        set { age = value >= 0 ? value : throw new ArgumentException("Ungültiges Age!"); }
     }
 }
 ```
 
-> **Achtung:** Oft ist folgender Fehler zu beobachten. *Alter* ist in der get Methode
+> **Achtung:** Oft ist folgender Fehler zu beobachten. *Age* ist in der get Methode
 > großgeschrieben, daher wird eine endlose Rekursion erzeugt:
 
 ```c#
-public int Alter
+public int Age
 {
-    get { return Alter; }
+    get { return Age; }
 }
 ```
 
 ### Default Properties
 
-Die Properties für *Vorname* und *Zuname* weisen nur 1:1 zu bzw. geben den Wert 1:1 zurück. In C# gibt
+Die Properties für *Firstname* und *Lastname* weisen nur 1:1 zu bzw. geben den Wert 1:1 zurück. In C# gibt
 es mit den *Default Properties* einen eleganteren Weg, das zu bewerkstelligen. Der Compiler erledigt
 folgende Dinge:
 
@@ -147,23 +147,25 @@ folgende Dinge:
 ```c#
 class Student
 {
-    public Student(string vorname, string zuname)
+    public Student(string firstname, string lastname)
     {
-        Vorname = vorname;
-        Zuname = zuname;
+        Firstname = firstname;
+        Lastname = lastname;
     }
 
-    public string Vorname { get; set; }
-    public string Zuname { get; set; }
+    public string Firstname { get; set; }
+    public string Lastname { get; set; }
 }
 ```
 
-Möchte man die Default Properties gleich initialisieren, ist dies seit C# 6 auch möglich:
+Möchte man die Default Properties gleich initialisieren, ist dies seit C# 6 auch möglich. Der
+Konstruktor kann hier weggelassen werden, da sicher eine Initialisierung erfolgt.
+
 ```c#
 class Student
 {
-    public string Vorname { get; set; } = string.Empty;
-    public string Zuname { get; set; } = string.Empty;
+    public string Firstname { get; set; } = string.Empty;
+    public string Lastname { get; set; } = string.Empty;
 }
 ```
 
@@ -179,7 +181,7 @@ class Student
 {
     public string Longname
     {
-        get { return $"{Vorname} {Zuname}"; }
+        get { return $"{Firstname} {Lastname}"; }
     }
 }
 ```
@@ -191,28 +193,28 @@ d. h. sie wird bei jedem Zugriff auf *Longname* ausgeführt und liefert die aktu
 ```c#
 class Student
 {
-    public string Longname => $"{Vorname} {Zuname}";
+    public string Longname => $"{Firstname} {Lastname}";
 }
 ```
 
 #### Unveränderliche Werte (immutable)
 
 Oft sollen Properties nach ihrer Initialisierung nicht mehr verändert werden. So ist z. B. die
-Änderung von Vor- und Zuname nach Instanzierung der *Student* Klasse nicht notwendig. Die E-Mail
+Änderung von Vor- und Lastname nach Instanzierung der *Student* Klasse nicht notwendig. Die E-Mail
 Adresse soll jedoch geändert werden können. Durch die Definition mit *get* lassen sich die
-Properties *Vorname* und *Zuname* nur im Konstruktor oder durch Initialisierung mit =
+Properties *Firstname* und *Lastname* nur im Konstruktor oder durch Initialisierung mit =
 setzen.
 
 ```c#
 class Student
 {
-    public Student(string vorname, string zuname)
+    public Student(string firstname, string lastname)
     {
-        Vorname = vorname;
-        Zuname = zuname;
+        Firstname = firstname;
+        Lastname = lastname;
     }
-    public string Vorname { get; }
-    public string Zuname { get; } 
+    public string Firstname { get; }
+    public string Lastname { get; } 
     public string? Email { get; set; }  // Nullable, daher nicht im Konstruktor.
 }
 ```
@@ -225,14 +227,14 @@ set Methode auch private (oder protected) definiert werden.
 ```c#
 class Student
 {
-    public Student(string vorname, string zuname)
+    public Student(string firstname, string lastname)
     {
-        Vorname = vorname;
-        Zuname = zuname;
+        Firstname = firstname;
+        Lastname = lastname;
     }
     public int Id { get; private set; }
-    public string Vorname { get; }
-    public string Zuname { get; } 
+    public string Firstname { get; }
+    public string Lastname { get; } 
     public string? Email { get; set; }
     public void GenerateId()
     {
@@ -247,7 +249,7 @@ Der große Vorteil von Properties liegt in ihrer eleganten Verwendung. Folgende 
 dadurch möglich:
 
 ```c#
-Student student = new Student(vorname: "VN1", zuname: "ZN1")
+Student student = new Student(firstname: "VN1", lastname: "ZN1")
 {
     Email = "test@mail.at"
 };
@@ -278,8 +280,8 @@ Für die Klasse *Rectangle* gelten folgende Regeln:
 
 Für die Klasse *Teacher* gelten folgende Regeln:
 - Die string Properties *Firstname* und *Lastname* sind default Properties und immutable.
-- Das Property *Longname* soll den Namen in der Form *Vorname Zuname* zurückgeben.
-- Das Property *Shortname* soll read-only definiert werden. Es gibt die ersten 3 Stellen des Zunamens
+- Das Property *Longname* soll den Namen in der Form *Firstname Lastname* zurückgeben.
+- Das Property *Shortname* soll read-only definiert werden. Es gibt die ersten 3 Stellen des Lastnamens
   in Großschreibung zurück. Die Methoden *Substring(0, 3)* und *ToUpper()* können hier verwendet werden.
 - Das string Property *Email* kann leere Werte enthalten und kann auch nach der Instanzierung
   gesetzt werden.
@@ -313,7 +315,7 @@ TESTS FÜR RECTANGLE
 TESTS FÜR TEACHER
 ********************************************************************************
 1 Kein default Konstruktor OK
-2 Vor- und Zuname sind immutable: OK
+2 Vor- und Lastname sind immutable: OK
 3 Longname OK
 4 Shortname OK
 5 NetSalary OK
@@ -389,7 +391,7 @@ namespace PropertiesDemo.Application
             if (typeof(Teacher).GetProperty(nameof(Teacher.Firstname))?.CanWrite == false
                 && typeof(Teacher).GetProperty(nameof(Teacher.Lastname))?.CanWrite == false)
             {
-                Console.WriteLine("2 Vor- und Zuname sind immutable: OK");
+                Console.WriteLine("2 Vor- und Lastname sind immutable: OK");
             }
 
             Teacher t1 = new Teacher(firstname: "Fn", lastname: "Ln");
