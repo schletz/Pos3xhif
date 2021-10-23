@@ -19,8 +19,9 @@ dotnet sln add TypesDemo.Application
 start TypesDemo.sln
 ```
 
-Öffne danach durch Doppelklick auf das Projekt (*TypesDemo.Application*) und füge die Optionen für
-Nullable und TreatWarningsAsError hinzu. Die gesamte Konfiguration muss nun so aussehen:
+Öffne danach durch Doppelklick auf das Projekt (*TypesDemo.Application*) die Datei
+*TypesDemo.Application.csproj* und füge die Optionen für
+*Nullable* und *TreatWarningsAsError* hinzu. Die gesamte Konfiguration muss nun so aussehen:
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">

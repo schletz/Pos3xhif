@@ -1,111 +1,289 @@
 # Referenztypen und der Umgang mit NULL in C#
 
-Wir definieren für unsere Beispiele 2 Klassen:
-```c#
-class Person
-{
-    public int age = 0;
-}
-// Entspricht Pupil extends Person
-class Pupil : Person
-{
-    public string klasse = "";
-}
+## Erstellen einer Visual Studio Solution
+
+Um die Beispiele mitmachen zu können, muss eine .NET Konsolenapplikation erstellt werden. Führe
+dafür die folgenden Befehle in der Konsole aus. Unter macOs müssen md und rd durch die entsprechenden
+Befehle ersetzt werden.
+
+```text
+rd /S /Q ReferenceTypesDemo
+md ReferenceTypesDemo
+cd ReferenceTypesDemo
+md ReferenceTypesDemo.Application
+cd ReferenceTypesDemo.Application
+dotnet new console
+cd ..
+dotnet new sln
+dotnet sln add ReferenceTypesDemo.Application
+start ReferenceTypesDemo.sln
+
+```
+
+Öffne danach durch Doppelklick auf das Projekt (*ReferenceTypesDemo.Application*) die Datei
+*ReferenceTypesDemo.Application.csproj* und füge die Optionen für
+*Nullable* und *TreatWarningsAsError* hinzu. Die gesamte Konfiguration muss nun so aussehen:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+</Project>
 ```
 
 ### Umgang mit NULL
-Oftmals führt ein null Wert zu einer *NullReferenceException*. In C# gibt es 2 Operatoren, die den Umgang
-mit null erleichtern: ?. und ??. Folgendes Beispiel zeigt den Einsatz
+
+Der bekannteste reference type in C# ist wohl *string*. Mit diesem Typ werden wir nun einige
+Beispiele durchspielen. Oftmals führt ein null Wert zu einer *NullReferenceException*. In
+C# gibt es 2 Operatoren, die den Umgang mit null erleichtern: ?. und ??. Folgendes Beispiel
+zeigt den Einsatz
 
 ```c#
-string myStr = null;
+using System;
 
-if (myStr == null)
+string myStr = null;
+if (myStr is null)  // Seit C# 7 empfohlen (statt myStr == null)
 {
     Console.WriteLine("myStr kann NULL sein, da es ein Referenztyp ist.");
 }
-
+if (myStr is not null)  // Seit C# 7 empfohlen (statt myStr == null)
+{
+    Console.WriteLine("myStr ist nicht NULL.");
+}
 // Ermittelt die Länge des Strings. Dieser Code 
 // liefert eine NullReferenceException
-int len = 0;
 try
 {
-    len = myStr.Length;
+    int len = myStr.Length;
 }
 catch (NullReferenceException)
 {
-    Console.Error.WriteLine("OOPS.")
+    Console.Error.WriteLine("OOPS.");
 }
 ```
 
-In Java müssen wir umständlich mit *if* prüfen, ob der Wert *null* ist:
+Die erste Besonderheit ist das *is null* statement. Die Bedingung *myStr == null* funktioniert auch,
+der Unterschied ist ein Detail in der Tiefe der C# Sprachdefinition. In C# können Operatoren
+überladen werden, d. h. der Autor einer Klasse kann selbst bestimmen, welchen Wert == zurückgibt.
+Dadurch ist die Prüfung mit einem Operator, der überladen werden kann, nicht zu 100% sicher.
+Seit C# 7 wird der null check daher mit *is null* empfohlen, denn *is* ist nicht überladbar.
+
+#### Der null-conditional member access operator ("Elvis operator")
+
+Soll auf Properties von Referenztypen zugegriffen werden, dann können wir uns mit dem
+*null-conditional member access operator* (meist *Elvis operator* durch die Form einer Haarlocke
+genannt) eine Prüfung auf NULL sparen. 
+
+Der Operator liefert entweder das Ergebnis des Properties bzw. der Methode oder NULL, wenn das
+Objekt null ist.
+
 ```c#
-if (myStr == null)
+using System;
+
+string string1 = "Wert";
+string string2 = null;
+
+Console.WriteLine(string1?.Length);             // Liefert wie erwartet 4.
+Console.WriteLine(string2?.Length);             // Liefert null (nicht 0!)
+Console.WriteLine(string2?.ToUpper());          // Liefert null
+// Liefert null und keine Exception, da nach dem ersten ?. schon "abgebrochen" wird.
+// Zweimaliges Verwenden von ?. ist nicht nötig.
+Console.WriteLine(string2?.ToUpper().Length);   
+
+// Compilerfehler: int? kann nicht in int umgewandelt werden
+int len = string1?.Length;
+```
+
+
+### Nullable reference types (C# 8)
+
+Vielleicht hast du dich schon gewundert, warum in der Projektdatei die Option *nullable* aktiviert
+wird. C# 8 und höher bietet ein Sicherheitsfeature, welches mit opt-in aktiviert werden muss:
+*nullable reference types*.
+
+Die folgende Anweisung liefert mit der Option *Nullable* und *TreatWarningsAsErrors* einen
+Compilerfehler:
+
+```c#
+string myStr = null; // error CS8600: Converting null literal or possible null value to non-nullable type. 
+```
+
+Mit den nullable reference types müssen wir bei der deklaration von Variablen, die einen
+Referenztyp verwenden, nun unterscheiden:
+
+```c#
+string neverBeNull = string.Empty;
+string? canBeNull = null;
+
+neverBeNull = null;                    // (1) Converting null literal or possible null value to non-nullable type.
+Console.WriteLine(canBeNull.Length);   // (2) Dereference of a possibly null reference.
+Console.WriteLine(canBeNull?.Length);  // (3) OK
+if (!string.IsNullOrEmpty(canBeNull))
 {
-    len = 0;
-}
-else
-{
-    len = myStr.Length;
+    Console.WriteLine(canBeNull.Length);  // (4) OK
 }
 ```
 
-In C# gibt es eine elegantere Möglichkeit. *?.* ist der "ternary conditional operator".
-Er liefert NULL, wenn myStr NULL ist und keine Exception. *??* ist der NULL coalescing Operator. Er 
-liefert in diesem Beispiel 0, da der 1. Operand NULL ist.
+Mit *Type?* deklarieren wir einen *nullable type*. Im Gegensatz zu den *nullable value types*,
+welche intern eine structure mit *HasValue* und *Value* erzeugen, wird hier aber keine eigene
+Datenstruktur erzeugt. Es ist ein reiner Hinweis für den Compiler.
+
+Wird ein Referenztyp als nullable definiert, zwingt uns der Compiler zur Vorsucht:
+- Die Zuweisung von null ist nicht erlaubt (1).
+- Wir können nicht ungeprüft auf Properties oder Methoden zugreifen (2).
+- Der "Elvis Operator" kann natürlich verwendet werden (3).
+- Bemerkenswert ist der Fall (4). Der Compiler führt eine Analyse des Programmablaufes durch und
+  stellt fest, dass durch das vorige if der Wert nie null sein kann. Daher liefert (4) auch keinen
+  Syntaxfehler. Dies wird dadurch ermöglicht, dass die Methode *IsNullOrEmpty()* in .NET wie
+  folgt definiert ist: *public static bool IsNullOrEmpty([NotNullWhen(false)] String? value);*
+  Durch Attributes, die mit .NET Core 3 eingeführt wurden, kann Information an den Compiler
+  gegeben werden. Mehr Details sind auf
+  [Attributes for null-state static analysis](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/attributes/nullable-analysis)
+  nachzulesen.
+
+#### Null-forgiving Operator
+
+Die Prüfung auf null kann mit dem null-forgiving Operator (!) deaktiviert werden. Damit würde
+das folgende Programm ohne Warnungen kompiliert werden:
+
 ```c#
-len = myStr?.Length ?? 0;    // In len steht 0, wenn myStr null ist.
+string neverBeNull = string.Empty;
+string? canBeNull = null;
+neverBeNull = null!;                    // Keine Warnung.
+Console.WriteLine(neverBeNull.Length);
+Console.WriteLine(canBeNull!.Length);   // Keine Warnung.
 ```
-Bei der Prüfung von String ist die Methode *IsNullOrEmpty()* auch nützlich. Hier in Verbindung mit 
-einer bedingten Zuweisung:
-```c#
-len = string.IsNullOrEmpty(myStr) ? 0 : myStr.Length;
-```
+
+Es versteht sich von selbst, dass dieser Operator nur in begründeten Fällen verwendet werden soll:
+- Bei der Verwendung von älteren Paketen, die nullable reference types noch nicht unterstützen.
+- Bei OR Mappern wie EF Core.
+- Bei komplexeren Logiken, wo der Compiler keine Codeanalyse machen kann (LINQ Expressions).
 
 ## Eigene Typen
-Viele Eigenschaften aus Java lassen sich 1:1 übertragen.
+
+Bis jetzt haben wir uns nur mit vordefinierten Referenztypen wie string beschäftigt. Natürlich
+können wir auch eigene Typen definieren:
 
 ```c#
-Person p;            // p ist null.
-p = new Person();    // Eine Person wird am Heap erstellt und
-                     // die Referenzadresse in p geschrieben.
-Person p2 = p;       // Nun habe ich eine Instanz, auf die 2
-                     // Referenzvariablen zeigen.
-p2.age = 18;         // p.age liefert natürlich auch 18.
+class Person
+{
+    public string firstname;  // Properties wurden noch nicht besprochen, deswegen public fields.
+    public string lastname;
+}
 
-Pupil pu = new Pupil();
-Person p3;
+class Student : Person
+{
+    public DateTime dateOfBirth;
+}
 ```
 
-In Zusammenhang mit der Vererbung ergeben sich folgende Besonderheiten:
+Allerdings lässt sich dieser Code mit aktiviertem nullable feature nicht kompilieren, da
+*firstname* und *lastname* nicht initialisiert wurden. Wir benötigen daher Konstruktoren,
+die die Initialisierung sicherstellen.
 
 ```c#
-p3 = pu;                // "Hinaufcasten" ist (auch implizit) möglich, da die 
-                        // Vererbung ja eine "is-a" Beziehung ist. 
-p3.klasse = "3BHIF";    // Geht natürlich nicht mehr.
-object obj1 = pu;       // Alles ist von object abgeleitet.
-obj1.age = 12;          // Natürlich nicht mehr möglich.
-((Pupil)obj1).age = 12; // Das würde gehen, aber nur wenn obj1 
-                        // ein Pupil war.
+class Person
+{
+    public string firstname;
+    public string lastname;
+
+    public Person(string firstname, string lastname)
+    {
+        this.firstname = firstname;
+        this.lastname = lastname;
+    }
+}
+
+class Student : Person               // Java: Student extends Person
+{
+    public DateTime dateOfBirth;
+
+    // Vergleichbar mit super() in Java.
+    public Student(string firstname, string lastname, DateTime dateOfBirth)
+        : base(firstname, lastname)
+    {
+        this.dateOfBirth = dateOfBirth;
+    }
+}
 ```
+
+Nun können wir die Klassen instanzieren.
+
+```c#
+// 
+Person p = new Person(firstname: "Max", lastname: "Mustermann"); // (1)
+Person p2 = p;                 // (2)
+p2.firstname = "Max2";         // (3)
+```
+
+- **(1)** Eine Person wird am Heap erstellt und die Referenzadresse in *p* geschrieben.
+          Named arguments helfen, die Zuordnung der Parameter deutlicher zu machen. Außerdem kann
+          keine Verwechslung der Reihenfolge passieren (beides sind string Typen). In Java wird
+          dieses Problem mit dem Builder Pattern gelöst.
+- **(2)** Nun habe ich eine Instanz, auf die 2 Referenzvariablen (*p* und *p2*) zeigen.
+- **(3)** *p2.firstname* liefert natürlich auch Max2.
+
+In Zusammenhang mit Vererbung ergeben sich folgende Besonderheiten:
+
+```c#
+Student student = new Student("Max", "Musterstudent", new DateTime(2004, 12, 31));
+Person p3 = student;                                      // (1)
+p3.dateOfBirth = new DateTime(2003, 12, 31);              // (2)
+Console.WriteLine(((Student)p3).dateOfBirth);             // (3)
+Console.WriteLine(((Student)p).dateOfBirth);              // (4)
+```
+
+- **(1)** "Hinaufcasten" ist (auch implizit) möglich, da die Vererbung ja eine "is-a" Beziehung ist. 
+- **(2)** Diese Anweisung ist nicht möglich, da eine Person kein Geburtsdatum hat.
+- **(3)** Es wird 31.12.2004 ausgegeben. Die Daten werden durch den Typecast also nicht gelöscht,
+          es handelt sich immer noch um das selbe Student Objekt am Heap.
+- **(4)** Es entsteht ein Laufzeitfehler. Der Compiler prüft bei expliziten Typencasts nicht,
+          ob das auch möglich ist.
 
 ## is und as
 
 In C# erleichtern die Schlüsselwörter *is* und *as* den Umgang mit Typencasts.
 
 ```c#
-// Wenn pu nicht in Pupil umgewandelt werden kann, wird NULL 
-// geliefert. In diesem Fall wird eine neue Instanz von 
-// Pupil erstellt.
-p3 = pu as Pupil ?? new Pupil();
-// true, da is angibt, ob ein Typencast durchgeführt werden kann.
-if (pu is Person)
-{
-    Console.WriteLine("pu is Person.");
-}
-// In object gibt es die Methode GetType() und ToString().
-// Liefert "ReferenceTypesApp.Pupil".
-string type = pu.GetType().ToString();
+if (p3 is Student) { Console.WriteLine("p3 ist ein Student."); }  // (1)
+Student? s2 = p as Student;                                       // (2)
+if (s2 is not null) { Console.WriteLine(s2.dateOfBirth); }        // (3)
+```
+
+- **(1)** Liefert true, da p3 zwar eine Person ist, aber in einen Student umgewandelt werdne kann.
+          *is* prüft also, ob der Typ castbar ist.
+- **(2)** *as* versucht einen Typecast durchzuführen. Ist das nicht möglich, wird null geliefert.
+          Dadurch muss ein nullable type verwendet werden.
+- **(3)** Wird nicht ausgeführt, da *p* eine Person ist und *s2* daher null ist.
+
+## Equals und ==
+
+Javaentwickler würden bei Referenztypen automatisch *equals()* verwenden, wenn zwei Instanzen
+verglichen werden sollen. In C# kann der == Operator überladen werden. Dadurch liefert folgender
+Code auch die gewünschten Ausgaben:
+
+```c#
+string str1 = "MAX";
+string str2 = "MAX";
+
+if (str1 == str2) { Console.WriteLine("Inhalt str1 ist gleich str2."); }      // true
+if (str1.Equals(str2)) { Console.WriteLine("Inhalt str1 ist gleich str2."); } // true
+// Durch die Stringverwaltung wird in C# - da die Strings gleich sind - vorerst nur 1 Instanz
+// angelegt. Daher ist dieser Vergleich true.
+if (object.ReferenceEquals(str1, str2))
+{ Console.WriteLine("str1 ist die selbe Instanz wie str2."); }
+
+// str2 wird durch die Umwandlung MAX --> max --> MAX zur neuen Instanz.
+str2 = str2.ToLower().ToUpper();
+if (str1 == str2) { Console.WriteLine("Inhalt str1 ist gleich str2."); }      // true
+if (object.ReferenceEquals(str1, str2))
+{ Console.WriteLine("str1 ist die selbe Instanz wie str2."); }
 ```
 
 ## Für Profis: Konkrete Anwendung vom is und as
