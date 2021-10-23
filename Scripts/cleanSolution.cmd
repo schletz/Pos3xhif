@@ -1,13 +1,11 @@
-@echo off
-echo . > dirs.txt
-dir /a:d /s /b >> dirs.txt
+REM @echo off
 REM Löscht alle temporären Visual Studio Dateien
-FOR /F %%d IN (dirs.txt) DO (
-  rd /S /Q %%d\bin
-  rd /S /Q %%d\obj
-  rd /S /Q %%d\.vs
-  rd /S /Q %%d\.vscode
-  rd /S /Q %%d\Release
-  rd /S /Q %%d\Debug
+rd /S /Q ".vs"
+rd /S /Q ".vscode"
+  
+FOR /D /R %%d IN (*) DO (
+  rd /S /Q "%%d\bin"
+  rd /S /Q "%%d\obj"
 )
-del dirs.txt
+
+
