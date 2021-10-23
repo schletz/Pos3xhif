@@ -1,18 +1,38 @@
 # Wertedatentypen in C#
 
-## Create a Visual Studio solution
+## Erstellen einer Visual Studio Solution
+
+Um die Beispiele mitmachen zu können, muss eine .NET Konsolenapplikation erstellt werden. Führe
+dafür die folgenden Befehle in der Konsole aus. Unter macOs müssen md und rd durch die entsprechenden
+Befehle ersetzt werden.
 
 ```text
-rd /S /Q OopDemo
-md OopDemo
-cd OopDemo
-md OopDemo.App
-cd OopDemo.App
+rd /S /Q TypesDemo
+md TypesDemo
+cd TypesDemo
+md TypesDemo.Application
+cd TypesDemo.Application
 dotnet new console
 cd ..
 dotnet new sln
-dotnet sln add OopDemo.App
-start OopDemo.sln
+dotnet sln add TypesDemo.Application
+start TypesDemo.sln
+```
+
+Öffne danach durch Doppelklick auf das Projekt (*TypesDemo.Application*) und füge die Optionen für
+Nullable und TreatWarningsAsError hinzu. Die gesamte Konfiguration muss nun so aussehen:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+</Project>
 ```
 
 ## Einführung
@@ -80,7 +100,7 @@ expliziten Typencast:
 myInt = (int) myLong; // Wird notfalls abgeschnitten
 ```
 
-## Nullable Types
+## Nullable value types
 
 Eine Zuweisung von null ist bei Wertetypen wie *int*, *long*, ... nicht möglich. Ist ein Wert
 nicht bekannt, findet man oft folgenden Code:
@@ -271,25 +291,14 @@ if (DateTime.TryParseExact(
 
 ## Übung
 
-Erstellen Sie in der Konsole ein Verzeichnis *ValueTypes*. Gehen Sie in das Verzeichnis und
-erstellen Sie mit *dotnet new console* eine neue Konsolenapplikation. Öffnen Sie danach die Datei
-*ValueTypes.csproj* in Visual Studio.
-
-```text
-Path> md ValueTypes
-Path> cd ValueTypes
-Path> dotnet new console
-Path> start ValueTypes.csproj
-```
-
-Ersetzen Sie nun den Inhalt der Datei *Program.cs* durch den folgenden Code. Implementieren Sie
-die Funktionen der Klasse TypeExercise, sodass die Bildschirmausgaben der Musterlösung weiter
-unten entsprechen.
+Erstellen wie oben beschrieben das Projekt *TypesDemo*. Ersetze nun den Inhalt der Datei
+*Program.cs* durch den folgenden Code. Implementieren die Funktionen der Klasse TypeExercise,
+sodass die Bildschirmausgaben der Musterlösung weiter unten entsprechen.
 
 ```c#
 using System;
 
-namespace ValueTypes
+namespace TypesDemo.Application
 {
     class TypeExercise
     {
@@ -353,6 +362,15 @@ namespace ValueTypes
 
         }
 
+        /// <summary>
+        /// Berechne die Länge des gesamten Namens (Vor- und Zuname).
+        /// Ist vorname oder zuname null, so ist für diesen Teil des Namens die Länge 0
+        /// anzunehmen.
+        /// </summary>
+        public int BerechneLaenge(string? vorname, string? nachname)
+        {
+
+        }
 
     }
     class Program
@@ -373,7 +391,7 @@ namespace ValueTypes
 
             Console.WriteLine("BerechneSchuelerProKlasse(100, 6): " + typeExercise.BerechneSchuelerProKlasse(100, 6));
             Console.WriteLine("BerechneAchtel(120):               " + typeExercise.BerechneAchtel(120));
-
+            Console.WriteLine("BerechneLaenge(null, nachname):    " + typeExercise.BerechneLaenge(null, "nachname"));            
         }
     }
 }
@@ -390,4 +408,5 @@ BerechnePreis(100,null,1.1):       110.0
 BerechnePreis(100,null,null):      120.0
 BerechneSchuelerProKlasse(100, 6): 16.666666666666668
 BerechneAchtel(120):               15
+BerechneLaenge(null, nachname):    8
 ```
