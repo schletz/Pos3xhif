@@ -42,7 +42,7 @@ start ReferenceTypesDemo.sln
 Der bekannteste reference type in C# ist wohl *string*. Mit diesem Typ werden wir nun einige
 Beispiele durchspielen. Oftmals führt ein null Wert zu einer *NullReferenceException*. In
 C# gibt es 2 Operatoren, die den Umgang mit null erleichtern: ?. und ??. Folgendes Beispiel
-zeigt den Einsatz
+zeigt deren Einsatz:
 
 ```c#
 using System;
@@ -68,15 +68,15 @@ catch (NullReferenceException)
 }
 ```
 
-Die erste Besonderheit ist das *is null* statement. Die Bedingung *myStr == null* funktioniert auch,
+Eine Besonderheit ist das *is null* statement. Die Bedingung *myStr == null* funktioniert auch,
 der Unterschied ist ein Detail in der Tiefe der C# Sprachdefinition. In C# können Operatoren
 überladen werden, d. h. der Autor einer Klasse kann selbst bestimmen, welchen Wert == zurückgibt.
 Dadurch ist die Prüfung mit einem Operator, der überladen werden kann, nicht zu 100% sicher.
 Seit C# 7 wird der null check daher mit *is null* empfohlen, denn *is* ist nicht überladbar.
 
-#### Der null-conditional member access operator ("Elvis operator")
+#### Der null-conditional member access operator ?. ("Elvis operator")
 
-Soll auf Properties von Referenztypen zugegriffen werden, dann können wir uns mit dem
+Soll auf Properties oder Methoden von Referenztypen zugegriffen werden, dann können wir uns mit dem
 *null-conditional member access operator* (meist *Elvis operator* durch die Form einer Haarlocke
 genannt) eine Prüfung auf NULL sparen. 
 
@@ -134,11 +134,11 @@ Mit *Type?* deklarieren wir einen *nullable type*. Im Gegensatz zu den *nullable
 welche intern eine structure mit *HasValue* und *Value* erzeugen, wird hier aber keine eigene
 Datenstruktur erzeugt. Es ist ein reiner Hinweis für den Compiler.
 
-Wird ein Referenztyp als nullable definiert, zwingt uns der Compiler zur Vorsucht:
-- Die Zuweisung von null ist nicht erlaubt (1).
-- Wir können nicht ungeprüft auf Properties oder Methoden zugreifen (2).
-- Der "Elvis Operator" kann natürlich verwendet werden (3).
-- Bemerkenswert ist der Fall (4). Der Compiler führt eine Analyse des Programmablaufes durch und
+Wird ein Referenztyp als nullable definiert, zwingt uns der Compiler zur Vorsicht:
+- **(1)** Die Zuweisung von *null* ist nicht erlaubt.
+- **(2)** Wir können nicht ungeprüft auf Properties oder Methoden zugreifen.
+- **(3)** Der "Elvis Operator" kann natürlich verwendet werden.
+- **(4)** Der Compiler führt eine Analyse des Programmablaufes durch und
   stellt fest, dass durch das vorige if der Wert nie null sein kann. Daher liefert (4) auch keinen
   Syntaxfehler. Dies wird dadurch ermöglicht, dass die Methode *IsNullOrEmpty()* in .NET wie
   folgt definiert ist: *public static bool IsNullOrEmpty([NotNullWhen(false)] String? value);*
@@ -183,7 +183,8 @@ class Student : Person
 }
 ```
 
-Allerdings lässt sich dieser Code mit aktiviertem nullable feature nicht kompilieren, da
+Allerdings lässt sich dieser Code mit aktiviertem nullable feature und *TreatWarningsAsErrors*
+Option nicht kompilieren, da
 *firstname* und *lastname* nicht initialisiert wurden. Wir benötigen daher Konstruktoren,
 die die Initialisierung sicherstellen.
 
@@ -216,7 +217,9 @@ class Student : Person               // Java: Student extends Person
 Nun können wir die Klassen instanzieren.
 
 ```c#
-// 
+// Error (nullable aktiviert), somit auch kein nullwert über den Aufruf des Konstruktors.
+Person p0 = new Person(firstname: null, lastname: "Mustermann"); 
+
 Person p = new Person(firstname: "Max", lastname: "Mustermann"); // (1)
 Person p2 = p;                 // (2)
 p2.firstname = "Max2";         // (3)
@@ -264,8 +267,8 @@ if (s2 is not null) { Console.WriteLine(s2.dateOfBirth); }        // (3)
 
 ## Equals und ==
 
-Javaentwickler würden bei Referenztypen automatisch *equals()* verwenden, wenn zwei Instanzen
-verglichen werden sollen. In C# kann der == Operator überladen werden. Dadurch liefert folgender
+Javaentwickler würden bei Referenztypen *equals()* verwenden, wenn der Inhalt zweier Instanzen
+verglichen werden soll. In C# kann der == Operator überladen werden. Dadurch liefert folgender
 Code auch die gewünschten Ausgaben:
 
 ```c#
@@ -286,7 +289,7 @@ if (object.ReferenceEquals(str1, str2))
 { Console.WriteLine("str1 ist die selbe Instanz wie str2."); }
 ```
 
-## Für Profis: Konkrete Anwendung vom is und as
+## Für Profis: Konkrete Anwendung von is und as
 
 Der folgende Code zeigt ein Anwendungsbeispiel aus der generischen Programmierung. Solcher Code
 kommt z. B. in JSON Serializern vor.
