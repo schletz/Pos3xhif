@@ -224,7 +224,7 @@ Das *Dictionary* hat die Möglichkeit, einen Key zu definieren. Er muss eindeuti
 über den Indexer ist ein Zugriff über den Key möglich. Es kann jeder Datentyp als Key (auch eigene
 Typen) verwendet werden.
 
-Das folgende Beispiel erstellt ein Dictionary mit einem *int* Feld als Key und einer Person als Wert.
+Das folgende Beispiel erstellt ein Dictionary mit einem *string* Feld als Key und einer Person als Wert.
 Es kann auch hier der Indexer verwendet werden.
 
 ```c#
