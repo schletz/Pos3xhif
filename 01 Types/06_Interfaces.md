@@ -217,8 +217,8 @@ Product product2 = order.ElementAt(0);  // OK
 
 Folgendes Beispiel definiert eine Fluent API für eine Lottoziehung. Dabei sollen folgende
 Punkte berücksichtigt werden:
-- Im initialisierten Zustand sollen nur Tipps mit AddTipp() abgegeben werden.
-- Nach DrawNumbers() dürfen keine Tipps mehr abgegeben werden. Dafür steht mit CountTipps()
+- Im initialisierten Zustand sollen nur Tipps mit *AddTipp()* abgegeben werden.
+- Nach *DrawNumbers()* dürfen keine Tipps mehr abgegeben werden. Dafür steht mit *CountTipps()*
   eine Methode zur Verfügung, die die richtigen Tipps zählt. Diese Methode darf vor der
   Ziehung nicht aufgerufen werden.
 
