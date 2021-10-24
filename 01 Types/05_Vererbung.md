@@ -267,11 +267,11 @@ https://www.plantuml.com/plantuml/uml/XL9BRi8m45tZKtWPL7o12aKWr0KI0jGR3FQ8MlKdSc
 </small>
 
 - **Order** repräsentiert die Bestellung, die aus mehreren Produkten besteht. Beim
-  instanzieren ist ein Payment Provider zu übergeben. Speichere eventuell benötigte
+  Instanzieren ist ein Payment Provider zu übergeben. Speichere eventuell benötigte
   interne Felder als *private readonly* (wenn möglich).
 - **Order.Products** ist eine *IReadOnlyList&lt;Product&gt;*. In die Liste der Produkte darf von außen nicht
   geschrieben werden können.
-- **Order.InvoiceAmount** liefert den Gesamtbetrag (summe der Produktpreise) als read-only
+- **Order.InvoiceAmount** liefert den Gesamtbetrag (Summe der Produktpreise) als read-only
   Property.
 - **Order.AddProduct()** fügt ein Produkt zur internen Liste der Produkte hinzu.
 - **Order.Checkout()** ruft die Methode *Pay()* des Payment Providers auf. Liefert die
