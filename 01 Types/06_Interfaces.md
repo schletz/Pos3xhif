@@ -215,7 +215,7 @@ Product product2 = order.ElementAt(0);  // OK
 
 ## Praktisches Beispiel: Fluent API
 
-Folgendes Beispiel definiert eine Fluid API für eine Lottoziehung. Dabei sollen folgende
+Folgendes Beispiel definiert eine Fluent API für eine Lottoziehung. Dabei sollen folgende
 Punkte berücksichtigt werden:
 - Im initialisierten Zustand sollen nur Tipps mit AddTipp() abgegeben werden.
 - Nach DrawNumbers() dürfen keine Tipps mehr abgegeben werden. Dafür steht mit CountTipps()
