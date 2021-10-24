@@ -1,4 +1,5 @@
 # Dependency Injection
+
 Eine praktische Anwendung von Interfaces findet sich in der Technik der *Dependency Injection*. In unserem
 Beispiel simulieren wir den Zugriff auf den GPS Sensor des Smartphones. Je nach Betriebssystem (Android oder iOS)
 benötigen wir spezifischen Code, um den Standort herauszufinden.

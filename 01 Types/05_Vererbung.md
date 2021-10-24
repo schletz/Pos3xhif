@@ -65,8 +65,8 @@ UML sieht Basistypen wie *String*, *Boolean*, ... vor, zur konkreteren Darstellu
 C# Datentypen verwendet.
 
 ![](vererbung_diagram.svg)
-<small>https://www.plantuml.com/plantuml/uml/fLB1QW8n4BtdA-QerFq1aKMHMWGBWj9xt4qra4sMJTABzT-RxSpOB9NMKW-oUMyoyzxBp7sGNOYD4Sh61dRIn223TXR4MK3whLGZZPh0S_eN5o4FFdIo2b0PwJriLUTJxMp6U5dIlOULxdomib4mXSHfUqHy8s_2sUHf9WF9CxU_mAAgNBGtEXH5WSMeQOGKlBAC2H1Y90FPJ7_z76CNAdvIuR6Hseo6yDxXHu8lWa9mHL7coWL6j5UoEgcEOzcTN7VB_zgleZ6BOuyVd3E8_kwMsjzXbm7F2lxib2tjGgoL3Mnf6rjjrdKIg6r0QFbPnuhlzK9zx_6I9a6BSvd5bHp_fzLFrYbeA69Rl9Uq-OBc3D5hJjMfVydpuANwM3RQXncTou7WAqjdPe-I2HpnXVF5PHyklG5pFF8Rj_OlqkWQs-AwvG_H8x2ewxrB5IES22sby-Pq3TikzKeaPeD6q_sIrps7I646SKvpPUlOc0y0
-</small>
+<sup>https://www.plantuml.com/plantuml/uml/fLB1QW8n4BtdA-QerFq1aKMHMWGBWj9xt4qra4sMJTABzT-RxSpOB9NMKW-oUMyoyzxBp7sGNOYD4Sh61dRIn223TXR4MK3whLGZZPh0S_eN5o4FFdIo2b0PwJriLUTJxMp6U5dIlOULxdomib4mXSHfUqHy8s_2sUHf9WF9CxU_mAAgNBGtEXH5WSMeQOGKlBAC2H1Y90FPJ7_z76CNAdvIuR6Hseo6yDxXHu8lWa9mHL7coWL6j5UoEgcEOzcTN7VB_zgleZ6BOuyVd3E8_kwMsjzXbm7F2lxib2tjGgoL3Mnf6rjjrdKIg6r0QFbPnuhlzK9zx_6I9a6BSvd5bHp_fzLFrYbeA69Rl9Uq-OBc3D5hJjMfVydpuANwM3RQXncTou7WAqjdPe-I2HpnXVF5PHyklG5pFF8Rj_OlqkWQs-AwvG_H8x2ewxrB5IES22sby-Pq3TikzKeaPeD6q_sIrps7I646SKvpPUlOc0y0
+</sup>
 
 
 ## Implementierung der Klasse Person
@@ -297,7 +297,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CollectionDemo.Application
+namespace InheritanceDemo.Application
 {
     class Program
     {
