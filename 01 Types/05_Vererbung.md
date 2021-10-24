@@ -87,9 +87,7 @@ abstract class Person   // (2a)
 	public string Lastname { get; }
 	public Salutation Salutation { get; }
 	public abstract string Accountname { get; }                             // (2)
-
 	public virtual string GetEmail() => $"{Accountname}@spengergasse.at";   // (3)
-
 	public override string ToString() => $"{Firstname} {Lastname}";         // (4)
 }
 ```
@@ -120,9 +118,7 @@ class Teacher : Person   // (1)
 
 	public string Shortname { get; }
 	public override string Accountname => Lastname.ToLower();                               // (3)
-
 	public override string GetEmail() => $"{Accountname}@teachers.spengergasse.at";         // (4)
-
 	public override string ToString() => $"Teacher {Shortname} - {Firstname} {Lastname}";   // (5)
 }
 ```
