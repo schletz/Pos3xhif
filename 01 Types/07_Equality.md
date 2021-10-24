@@ -9,6 +9,12 @@ die den Längen- und Breitengrad eines Punktes speichert:
 ```c#
 class Position : IEquatable<Position>, IComparable, IComparable<Position>
 {
+    public Position(double lat, double lng)
+    {
+        Lat = lat;
+        Lng = lng;
+    }
+
     // Read only Properties für Lat und Lng, damit sich der Hash nicht mehr ändert.
     public double Lat { get; }
     public double Lng { get; }
@@ -17,31 +23,14 @@ class Position : IEquatable<Position>, IComparable, IComparable<Position>
     /// <summary>
     /// Vergleicht 2 Positionen über die geografische Breite (Lat)
     /// </summary>
-    /// <param name="other"></param>
-    /// <returns></returns>
-    public int CompareTo(Position other)
-    {
-        return Lat.CompareTo(other?.Lat);
-    }
-
-    public int CompareTo(object obj)
-    {
-        return CompareTo(obj as Position);
-    }
+    public int CompareTo(Position? other) => Lat.CompareTo(other?.Lat);
+    public int CompareTo(object? obj) => CompareTo(obj as Position);
 
     /// <summary>
     /// 2 Punkte sind ident, wenn sie die selbe Länge und Breite haben.
     /// </summary>
-    /// <param name="other"></param>
-    /// <returns></returns>
-    public bool Equals(Position other)
-    {
-        return Lat.Equals(other?.Lat) && Lng.Equals(other?.Lng);
-    }
-    public override bool Equals(object obj)
-    {
-        return Equals(obj as Position);
-    }
+    public bool Equals(Position? other) => Lat.Equals(other?.Lat) && Lng.Equals(other?.Lng);
+    public override bool Equals(object? obj) => Equals(obj as Position);
 
     public double GetDistance(Position p)
     {
@@ -52,33 +41,19 @@ class Position : IEquatable<Position>, IComparable, IComparable<Position>
     /// <summary>
     /// Überschreibt GetHashCode() von object, sodass ihr Verhalten mit Equals übereinstimmt . Kein Interface nötig.
     /// </summary>
-    /// <returns></returns>
-    public override int GetHashCode()
-    {
-        return Lat.GetHashCode() ^ Lng.GetHashCode();
-    }
+    public override int GetHashCode() => HashCode.Combine(Lat, Lng);
+
     /// <summary>
     /// Überschreibt ToString von object. Kein Interface nötig.
     /// </summary>
-    /// <returns></returns>
-    public override string ToString()
-    {
-        return $"({Lat} {Lng} (Hash: {GetHashCode()})";
-    }
+    public override string ToString() => $"({Lat} {Lng} (Hash: {GetHashCode()})";
+
     // Überschreiben der Operatoren für den Vergleich, damit sie das selbe Verhalten wie
     // CompareTo() zeigen.
     public static bool operator <(Position p1, Position p2) => p1.CompareTo(p2) < 0;
     public static bool operator <=(Position p1, Position p2) => p1.CompareTo(p2) <= 0;
     public static bool operator >(Position p1, Position p2) => p1.CompareTo(p2) > 0;
     public static bool operator >=(Position p1, Position p2) => p1.CompareTo(p2) >= 0;
-
-    public Position(double lat, double lng)
-    {
-        // Zuweisung zu read-only Properties im Konstruktur sind möglich, da die Veriable
-        // dahinter als readonly angelegt wird.
-        this.Lat = lat;
-        this.Lng = lng;
-    }
 }
 
 class Program
@@ -100,7 +75,7 @@ class Program
 
         Console.WriteLine($"Instanzen von Wien ident?:                 {p1.Equals(p4)}");
         Console.WriteLine($"Instanzen von Wien auch mit == ident?:     {p1 == p4}");
-        Console.WriteLine($"Instanzen von Wien auch als object ident?: {p1.Equals((object) p4)}");
+        Console.WriteLine($"Instanzen von Wien auch als object ident?: {p1.Equals((object)p4)}");
         Console.WriteLine($"Gleiche Referenz der Instanzen von Wien?:  {object.ReferenceEquals(p1, p4)}");
 
         List<Position> positions = new List<Position>() { p1, p2, p3, p4 };
@@ -156,14 +131,8 @@ Dies lässt sich am Leichtesten so erreichen, dass *object.Equals()* die spezifi
 Es ist darauf zu achten, dass die Methode keine Exception verursacht. Wird null übergeben, so soll diese
 Methode einfach *false* liefern. Der *?.* Operator hilft uns hierbei.
 ```c#
-public bool Equals(Position other)
-{
-    return Lat.Equals(other?.Lat) && Lng.Equals(other?.Lng);
-}
-public override bool Equals(object obj)
-{
-    return Equals(obj as Position);
-}
+public bool Equals(Position? other) => Lat.Equals(other?.Lat) && Lng.Equals(other?.Lng);
+public override bool Equals(object? obj) => Equals(obj as Position);
 ```
 
 ### Was ist der Hashcode?
@@ -176,13 +145,10 @@ Verhalten zeigen:
   Wert abgebildet wird, ist eine Kollision nicht immer vermeidbar. Diese Kollisionen sollen aber minimiert
   werden. 
 
-Um das zu erreichen, verrechnen wir einfach mit einer XOR Verknüpfung (50% der Bits in der Wahrheitstabelle
-sind hier 1) die bestehenden Hashcodes der verglichenen Felder.
+Um das zu erreichen, verwenden wir die Methode *HashCode.Combine()* die uns im Namespace System
+zur Verfügung steht:
 ```c#
-public override int GetHashCode()
-{
-    return Lat.GetHashCode() ^ Lng.GetHashCode();
-}
+public override int GetHashCode() => HashCode.Combine(Lat, Lng);
 ```
 
 ### Wer verwendet *Equals()*?
@@ -202,15 +168,8 @@ Sollen Instanzen verglichen werden, so können diese beiden Interfaces implement
 gibt es hier ein generisches Interface, es soll jedoch auch das nicht generische Interface entsprechend
 implementiert werden. Dies wird durch folgende Implementierung erreicht:
 ```c#
-public int CompareTo(Position other)
-{
-    return Lat.CompareTo(other?.Lat);
-}
-
-public int CompareTo(object obj)
-{
-    return CompareTo(obj as Position);
-}
+public int CompareTo(Position? other) => Lat.CompareTo(other?.Lat);
+public int CompareTo(object? obj) => CompareTo(obj as Position);
 ```
 
 Auch hier ist es am Einfachsten, die *CompareTo()* Methode des zu vergleichenden Feldes einfach aufzurufen.
@@ -268,21 +227,12 @@ Wir betrachten diese technisch vollkommen korrekte Implementierung von *Equals()
 class Person : IEquatable<Person>
 {
     public int Nr { get; set; }
-    public string Zunamne { get; set; }
-    public string Vorname { get; set; }
+    public string Zunamne { get; set; } = string.Empty;
+    public string Vorname { get; set; } = string.Empty;
 
-    public bool Equals(Person other)
-    {
-        return Nr.Equals(other?.Nr);
-    }
-    public override bool Equals(object obj)
-    {
-        return Equals(obj);
-    }
-    public override int GetHashCode()
-    {
-        return Nr.GetHashCode();
-    }
+    public bool Equals(Person? other) => Nr.Equals(other?.Nr);
+    public override bool Equals(object? obj) => Equals(obj);
+    public override int GetHashCode() => Nr.GetHashCode();
 }
 ```
 
@@ -297,6 +247,7 @@ pe2.Nr = 1;
 ```
 
 ## Übung
+
 Erstelle eine neue Solution mit dem Titel *EqualsExercise*. Kopiere danach die Klasse *Program* von der
 untenstehenden Angabe in deine cs Datei. 
 
@@ -343,7 +294,6 @@ class Program
     }
 }
 ```
-
 
 ```
 nr1 ist ident mit nr2?:           False

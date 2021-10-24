@@ -71,7 +71,7 @@ navigation property.
 
 ## Interfaces als Contract (Vertrag)
 
-Betrachten wir eine Beispielimplementierung von Checkout() in der Klasse Order.
+Betrachten wir eine Beispielimplementierung von *Checkout()* in der Klasse Order.
 
 ```c#
 public void Checkout()
@@ -88,7 +88,7 @@ können wir sie auch ohne konkrete Implementierung nutzen.
 
 Wir fordern aber im Konstruktor eine konkrete Implementierung (also eine Instanz)
 von PaymentProvider an. Eigentlich ist das nicht nötig. Daher können wir ein Interface
-IPaymentProvider implementieren:
+*IPaymentProvider* implementieren:
 
 ```c#
 interface IPaymentProvider
@@ -115,7 +115,7 @@ Property *Order.PaymentProvider* ebenfalls den Typ *IPaymentProvider*.
 
 Was bringt das nun?
 - Ich kann - sobald ich das Interface *IPaymentProvider* implementiert habe (was ja
-  schnell geht) schon mit der Implementierung von Order beginnen.
+  schnell geht) - schon mit der Implementierung von Order beginnen.
 - Im Team kann parallel dazu ein anderer Entwickler eine konkrete Implementierung von
   *IPaymentProvider* vornehmen.
 
@@ -171,9 +171,10 @@ class CreditCard : IPaymentProvider
 ## Das Interface segregation principle
 
 Das I in SOLID <sup>https://en.wikipedia.org/wiki/SOLID</sup> bedeutet
-*Interface segregation principle*: "Many client-specific interfaces are better than one general-purpose interface."
+*Interface segregation principle*.
+> "Many client-specific interfaces are better than one general-purpose interface."
 
-Was bedeutet das? Sehen wir uns die Definition der Klasse List&lt;T&gt; in
+Was bedeutet das? Sehen wir uns die Definition der Klasse *List&lt;T&gt;* in
 System.Collections.Generic mit *F12* in Visual Studio genauer an.
 
 ```c#
@@ -189,7 +190,7 @@ eine Liste zur Speicherung der
 Produkte verwendet. Damit nicht ohne Prüfung Produkte eingefügt werden können, wurde ein public
 Property vom Typ *IReadOnlyList&lt;T&gt;* definiert. 
 
-Im Klassendiagramm könnte sich die Situation so darstellen (die Methoden in *IReadOnlyList&lt;T&gt;* sind andere, zur Verdeutlichung wird ElementAt definiert):
+Im Klassendiagramm könnte sich die Situation so darstellen (die Methoden in *IReadOnlyList&lt;T&gt;* sind andere, zur Veranschaulichung wird ElementAt definiert):
 
 ![](ireadonlylist.svg)
 <sup>
@@ -202,7 +203,7 @@ das Interface *IReadOnlyList&lt;Product&gt;* definiert, ist ein impliziter Typec
 class Product { /* ... */ }
 class Order
 {
-    private readonly List<Product> _products;
+    private readonly List<Product> _products = new();
     public IReadOnlyList<Product> Products => _products;
 }
 
@@ -350,3 +351,7 @@ namespace LotteryDemo.Application
     }
 }
 ```
+
+## Übung
+Im Kapitel [Dependency Injection](08_DependencyInjection.md) gibt es eine Aufgabe für den
+"echten" Zweck von Interfaces zu lösen.
