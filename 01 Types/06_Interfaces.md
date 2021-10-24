@@ -213,7 +213,7 @@ order.Products.Remove(product);  // Compilerfehler: IReadOnlyList definiert kein
 Product product2 = order.ElementAt(0);  // OK
 ```
 
-## Praktisches Beispiel: Fluid API
+## Praktisches Beispiel: Fluent API
 
 Folgendes Beispiel definiert eine Fluid API für eine Lottoziehung. Dabei sollen folgende
 Punkte berücksichtigt werden:
