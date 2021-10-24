@@ -6,25 +6,25 @@ benötigen wir spezifischen Code, um den Standort herauszufinden.
 
 Die Trackeranwendung selbst soll auf allen Geräten laufen. Daher müssen wir gerätespezifischen Code
 auslagern. Wir definieren einmal eine Klasse Point, die Längen- und Breitengrad speichert sowie ein 
-Interface ILocationProvider:
+Interface *ILocationProvider*:
 ```c#
-public class Point
+class Point
 {
     public double Lat { get; }
     public double Lng { get; }
+
     public Point(double lat, double lng)
     {
         Lat = lat;
         Lng = lng;
     }
-
 }
+
 interface ILocationProvider
 {
-    public DateTime LastMeasurement { get; }
-    public Point GetLocation();
+    DateTime LastMeasurement { get; }
+    Point GetLocation();
 }
-
 ```
 
 Damit wir unterschiedliche Betriebssysteme simulieren können, implementieren wir dieses Interface in
@@ -33,12 +33,10 @@ jedoch liefert die Apple Version nur alle 5 Sekunden einen neuen Standort, währ
 2 Sekunden einen neuen Standort liefert:
 
 ```c#
-public class AppleLocationProvider : ILocationProvider
+class AppleLocationProvider : ILocationProvider
 {
-    private Point currentPoint;
-    // Ein set ist möglich, obwohl im Interface nur get "vorgeschrieben" ist.
+    private Point? _currentPoint;
     public DateTime LastMeasurement { get; private set; } = DateTime.MinValue;
-
     public Point GetLocation()
     {
         // DEVICE SPECIFIC CODE
@@ -48,17 +46,19 @@ public class AppleLocationProvider : ILocationProvider
         if ((now - LastMeasurement).TotalSeconds > 5)
         {
             LastMeasurement = now;
-            currentPoint = new Point(rnd.NextDouble() * 180 - 90, rnd.NextDouble() * 360);
+            _currentPoint = new Point(rnd.NextDouble() * 180 - 90, rnd.NextDouble() * 360);
         }
-        return currentPoint;
+        // Die Nullable analyse schlägt hier fehl. Wenn noch nie gemessen wurde, ist LastMeasurement
+        // der 1.1.0001 und daher wird sicher ein Wer generiert. Mit NULL forgiving (!) sagen
+        // wir, dass wir es besser wissen.
+        return _currentPoint!;
     }
 }
 
-public class AndroidLocationProvider : ILocationProvider
+class AndroidLocationProvider : ILocationProvider
 {
-    private Point currentPoint;
+    private Point? _currentPoint;
     public DateTime LastMeasurement { get; private set; } = DateTime.MinValue;
-
     public Point GetLocation()
     {
         // DEVICE SPECIFIC CODE
@@ -68,11 +68,12 @@ public class AndroidLocationProvider : ILocationProvider
         if ((now - LastMeasurement).TotalSeconds > 2)
         {
             LastMeasurement = now;
-            currentPoint = new Point(rnd.NextDouble() * 180 - 90, rnd.NextDouble() * 360);
+            _currentPoint = new Point(rnd.NextDouble() * 180 - 90, rnd.NextDouble() * 360);
         }
-        return currentPoint;
+        return _currentPoint!;
     }
 }
+
 ```
 Der Tracker selbst soll geräteunabhängig sein. Um das zu erreichen, übergeben wir im Konstruktor einfach
 eine Instanz des Interfaces und verlangen nicht eine spezifische Implementierung als Parameter. Die Methode
@@ -82,6 +83,7 @@ eine Instanz des Interfaces und verlangen nicht eine spezifische Implementierung
 class MyTracker
 {
     private readonly ILocationProvider locator;
+
     // Die "Injection" erfolgt im Konstruktor.
     public MyTracker(ILocationProvider locator)
     {
@@ -106,13 +108,13 @@ und einmal mit einer Instanz von *AppleLocationProvider*.
 ```c#
 class Program
 {
-    static void Main(string[] args)
+    private static void Main(string[] args)
     {
         MyTracker tracker;
-        Console.WriteLine("Tracking mit ANDROID:");
+        Console.WriteLine("Tracking mit ANDROID (alle 2 Messungen ein neuer Wert):");
         tracker = new MyTracker(new AndroidLocationProvider());
         tracker.DoTracking(10);
-        Console.WriteLine("Tracking mit APPLE:");
+        Console.WriteLine("Tracking mit APPLE (alle 5 Messungen ein neuer Wert):");
         tracker = new MyTracker(new AppleLocationProvider());
         tracker.DoTracking(10);
     }
@@ -121,7 +123,7 @@ class Program
 
 In der Ausgabe erkennen wir die unterschiedlichen Intervalle bei der Aktualisierung der Werte.
 ```
-Tracking mit ANDROID:
+Tracking mit ANDROID (alle 2 Messungen ein neuer Wert):
 Lat: -12.95°, Lng: 3.2°
 Lat: -12.95°, Lng: 3.2°
 Lat: 45.51°, Lng: 26.2°
@@ -132,7 +134,7 @@ Lat: -56.19°, Lng: 232.6°
 Lat: -56.19°, Lng: 232.6°
 Lat: -27.74°, Lng: 185.7°
 Lat: -27.74°, Lng: 185.7°
-Tracking mit APPLE:
+Tracking mit APPLE (alle 5 Messungen ein neuer Wert):
 Lat: -7.93°, Lng: 202.5°
 Lat: -7.93°, Lng: 202.5°
 Lat: -7.93°, Lng: 202.5°
@@ -148,11 +150,13 @@ Lat: -13.71°, Lng: 86.0°
 ## Was bringt das?
 Diese Implementierung bietet viele Möglichkeiten:
 - Leichteres Testen: Wir können zum Testen unser Interface in einer "Dummy" Klasse implementieren, die Demowerte
-  liefert.
+  liefert. Diese Implementierung nennt sich "Mockup" und kann z. B. mit dem Paket
+  [Moq](https://github.com/moq/moq4) durchgeführt werden.
 - Trennung von gerätespezifischem Code: Wir sagen nur was wir brauchen und nicht schon wie wir dazu kommen.
 - Erweiterbarkeit: Ein weiterer Gerätetyp kann ohne Änderung des Trackers angebunden werden.
 
 ## Übung
+
 Unser Tracker soll nicht fix auf der Konsole ausgeben, sondern über einen zu definierenden Logger schreiben. 
 Dabei wird der Logger in der Klasse *MyTracker* als Property definiert und von außen gesetzt.
 1. Verwende als Basis statt der obigen *MyTracker* und *Program* Klasse die untenstehenden Versionen.
