@@ -39,7 +39,7 @@ start LambdaDemo.sln
 ## Intro in LINQ und Lambdas
 
 Als Einstieg definieren wir einen Record *Pupil* (records sind im Kapitel
-[Equality](../../01%20Types/07_Equality.md) beschrieben), der Daten von Schülern erfasst.
+[Equality](../../01%20Types/07_Equality.md#records-in-c-9) beschrieben), der Daten von Schülern erfasst.
 Eine Klasse *PupilList* verwaltet diese in einer Liste. Wir möchten in dieser *PupilList* auch
 filtern können. Ein Filter, der alle Schüler einer Klasse heraussucht, kann so aussehen:
 
