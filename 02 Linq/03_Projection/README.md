@@ -237,7 +237,6 @@ var uebung3 = db.Students.Select(s => new
 
 ```c#
 var uebung4 = db.Students
-      .Where(s => s.Schoolclass == "3CHIF")
       .Select(s => new
       {
          s.Lastname,
