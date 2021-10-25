@@ -17,7 +17,10 @@
 
 Installiere die neueste Version von [git](https://git-scm.com/downloads) mit den Standardeinstellungen.
 Gehe danach in die Windows Eingabeaufforderung (cmd) und führe in einem geeigneten Ordner
-(z. B. *C:\POS*) den Befehl `git clone https://github.com/schletz/Pos3xhif.git`
+(z. B. *C:\POS*) den Befehl
+```
+git clone https://github.com/schletz/Pos3xhif.git
+```
 
 Soll der neueste Stand vom Server geladen werden, führe die Datei *resetGit.cmd* aus. Achtung:
 alle lokalen Änderungen werden dabei zurückgesetzt.
