@@ -157,11 +157,11 @@ wird über *GetHashCode()* und in weiterer Folge mit *Equals()* geprüft, ob es 
 handelt. Deswegen ist es auch wichtig, dass *GetHashCode()* korrekt implementiert ist.
 
 ### *Equals()* und der *==* Operator
-Wird *Equals()* überschrieben, so liefert die Methode ein anderes Vergleichsergebnis als der == Operator.
-Es gibt zwar die Möglichkeit, diesen Operator ebenfalls zu überschreiben, allerdings sollte das nur der
-Stringklasse vorbehalten sein. Daher gilt als Konsequenz für den C# Programmierer: **Verwende in deinen 
-Methoden *Equals()* wie in Java, um Vergleiche durchzuführen. Mit == wird - mit Ausnahme von Strings - 
-die Referenzgleichheit geprüft.** 
+Wird *Equals()* überschrieben, so liefert die Methode ein anderes Vergleichsergebnis als der == 
+und der != Operator.
+Die Guidelines zum Überschreiben auf
+https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/statements-expressions-operators/how-to-define-value-equality-for-a-type
+besagen, dass dies optional, aber empfohlen ist.
 
 ## *IComparable* sowie *IComparable&lt;T&gt;*
 Sollen Instanzen verglichen werden, so können diese beiden Interfaces implementiert werden. Aus Performancegründen
@@ -209,7 +209,7 @@ public static bool operator >=(Position p1, Position p2) => p1.CompareTo(p2) > 0
 > some value(s).
 >
 > Most reference types must not overload the equality operator, even if they override Equals. However, 
-> if you are implementing a reference type that is intended to have value >> semantics, such as a complex 
+> if you are implementing a reference type that is intended to have value semantics, such as a complex 
 > number type, you must override the equality operator.
 >
 > You should not override Equals on a mutable reference type. This is because overriding Equals requires 
@@ -242,8 +242,58 @@ hat unser Hashset auf einmal 2 idente Instanzen:
 Person pe1 = new Person { Nr = 1, Vorname = "VN1", Zunamne = "ZN1" };
 Person pe2 = new Person { Nr = 2, Vorname = "VN2", Zunamne = "ZN2" };
 HashSet<Person> personHash = new HashSet<Person>() { pe1, pe2 };
+pe2.Nr = 1;                        // Nachträgliche Änderung von pe2.
 // personHash hat nun 2 Einträge, die jedoch lt. Equals() ident sind!
-pe2.Nr = 1;
+```
+
+## Records in C# 9
+
+Die Klasse *Position* hat 2 Eigenschaften, die oft benötigt werden:
+- Alle Properties sind read-only
+- Sie besitzt einen Konstruktor mit allen Properties zur Zuweisung der Werte
+- Sie überschreibt Equals() so, dass 2 Instanzen gleich sind, wenn alle Properties gleich sind.
+
+Seit C# 9 können wir die Klasse wesentlich kürzer definieren:
+
+```c#
+using System;
+
+record Position(double Lat, double Lng);
+
+public class Program
+{
+	public static void Main()
+	{
+		Position position1 = new Position(Lat: 48, Lng: 16);
+		Position position2 = new Position(Lat: 48, Lng: 16);
+		Console.WriteLine(position1 == position2);              // True
+		Console.WriteLine(position1.Equals(position2));         // True
+        // Erzeugt eine neue Position, indem die Werte von position1 geändert in ein neues
+        // Objekt geschrieben werden (Position selbst ist natürlich immutable).
+		Position position3 = position1 with {Lng = 17};
+		Console.WriteLine(position3);           // ToString liefert Position { Lat = 48, Lng = 17 }
+        // Deconstruct
+		var (lat, lng) = position3;
+		Console.WriteLine($"{lat}° NB, {lng}° ÖL");        
+	}
+}
+```
+
+Es ist natürlich auch möglich, zusätzliche Properties (sowohl get und set) oder Methoden in einem
+Record zu definieren:
+
+```c#
+record Position(double Lat, double Lng)
+{
+	public double LatRad => Lat * Math.PI / 180;
+    public double LngRad => Lng * Math.PI / 180;
+    public double GetDistance(Position p)
+    {
+        return Math.Acos(
+            Math.Sin(LatRad) * Math.Sin(p.LatRad) +
+            Math.Cos(LatRad) * Math.Cos(p.LatRad) * Math.Cos(p.LngRad - LngRad)) * 6370;
+    }	
+}
 ```
 
 ## Übung
@@ -254,6 +304,10 @@ untenstehenden Angabe in deine cs Datei.
 Ergänze danach die Klasse *PhoneNr* so, sodass das Programm kompilierbar und die untenstehenden Ausgaben 
 erreicht werden. Zwei Instanzen von *PhoneNr* sind ident, wenn ihre Vorwahl und ihre Telefonnummer gleich
 sind. Die Sortierung erfolgt zuerst nach der Vorwahl und dann nach der Telefonnummer.
+
+Erstelle danach eine Klasse *PhoneRecord*, wo diese Klasse als C# 9 Record definiert wird.
+Equals muss natürlich nicht mehr überschrieben werden, nur *IComparable*
+
 ```c#
 class PhoneNr : IEquatable<PhoneNr>, IComparable<PhoneNr>, IComparable
 {
