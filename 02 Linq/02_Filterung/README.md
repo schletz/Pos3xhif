@@ -26,7 +26,7 @@ IEnumerable<int> result = numbers.Where(n => n % 2 == 0);
 
 In .NET implementieren alle Collections das Interface *IEnumerable&lt;T&gt;*. Mit dem Einbinden
 des Namespace *System.Linq* werden sogenannte Extension Methoden aktiv. Details dazu sind im Kapitel
-[Extension Methods](../Professional%20C%23/10_ExtensionMethods) erklärt.
+[Extension Methods](../../Professional%20C%23/10_ExtensionMethods) erklärt.
 
 ## Musterprogramm mit Schülerdaten
 
