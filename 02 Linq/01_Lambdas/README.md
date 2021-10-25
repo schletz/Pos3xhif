@@ -220,7 +220,7 @@ Somit sind flexible Aufrufe möglich:
 ```c#
 PupilList pupils3bhif = pupils.Filter(p => p.SchoolClass == "3BHIF");
 PupilList pupilsLukas = pupils.Filter(p => p.Firstname == "Lukas");
-PupilList fullAged = pupils.Filter(p => p.dateOfBirth < DateTime.Now.AddYears(-18));
+PupilList fullAged = pupils.Filter(p => p.dateOfBirth <= DateTime.Now.AddYears(-18));
 ```
 
 Wir können Filterausdrücke auch in der Klasse *Pupil* speichern, damit die Bedingung "ist volljährig"
