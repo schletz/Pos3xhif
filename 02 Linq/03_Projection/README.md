@@ -1,5 +1,7 @@
 # Projektionen mit Select
+
 ## var (Implicitly Typed Local Variables) und anonyme Typen
+
 Mit C# 3 wurde das Schlüsselwort *var* eingeführt. Es bedeutet soviel wie "der Compiler ersetzt dies
 durch den Typ". Bei einer Zuweisung kann der Compiler nämlich schon aufgrund der rechten Seite des
 Zuweisungsoperators eindeutig bestimmen, welcher Typ als Ergebnis geliefert wird:
@@ -26,6 +28,7 @@ var pupilList = new List<Pupil>();   // var ist vom Typ List<Pupil>
 ```
 
 ### Soll *var* nun immer und überall verwendet werden?
+
 Es gibt 4 mögliche Situationen:
 1. *var* darf nicht verwendet werden. Dies ist z. B. in einer Funktions- oder Memberdeklaration der Fall.
 2. Wir möchten einen impliziten Typencast mit der Zuweisung durchführen. Die Entscheidung des
@@ -62,6 +65,7 @@ x.SchoolClass = "3AHIF"                   // x ist IEnumerable<Pupil> und nicht 
 ```
 
 ### var ist weiterhin statisch
+
 Wenn wir den Cursor in Visual Studio über var bewegen, erscheint der vom Compiler bestimmte Typ als
 Schnellhilfe:
 
@@ -70,7 +74,7 @@ Schnellhilfe:
 Dieser Typ wird fix mit der Variable p verbunden. Deswegen führt folgender Code auch zu einem
 Syntaxfehler:
 ```c#
-var p = new Pupil { Id = 1, Firstname = "FN1", Lastname = "LN1", SchoolClass = "3BHIF" };
+var p = new Pupil (id: 1, firstname: "FN1", lastname: "LN1", schoolClass: "3BHIF" );
 p = "Hello!";                                       // Syntaxfehler, p ist vom Typ Pupil.
 ```
 
@@ -80,10 +84,18 @@ Zur Verdeutlichung betrachten wir wieder unsere Pupil Klasse:
 ```c#
 class Pupil
 {
-   public int Id { get; set; }
-   public string Firstname { get; set; }
-   public string Lastname { get; set; }
-   public string SchoolClass { get; set; }
+   public Pupil(int id, string firstname, string lastname, string schoolClass)
+   {
+      Id = id;
+      Firstname = firstname;
+      Lastname = lastname;
+      SchoolClass = schoolClass;
+   }
+
+   public int Id { get; }
+   public string Firstname { get; }
+   public string Lastname { get; }
+   public string SchoolClass { get; }
 }
 ```
 
@@ -91,7 +103,7 @@ Nun möchten wir eine Klasse definieren, die die Schulklasse nicht enthält, abe
 (Vor- und Zuname) liefert. Dies kommt häufig bei der Serialisierung in einen JSON String vor, wenn wir
 das Ergebnis einer LINQ Abfrage als JSON über ein Webservice ausgeben wollen.
 ```c#
-Pupil p = new Pupil { Id = 1, Firstname = "FN1", Lastname = "LN1", SchoolClass = "3BHIF" };
+Pupil p = new Pupil (id: 1, firstname: "FN1", lastname: "LN1", schoolClass: "3BHIF" );
 var exportPupil = new                             // (1)
 {
       p.Id,                                       // (2)
@@ -117,12 +129,14 @@ Was der Compiler genau generiert, verrät uns wieder die Schnellhilfe. Beachte, 
 
 
 ## Einsatz in der Select Funktion von LINQ
+
 Wir möchten nun für jedes Element einer Liste einen anonymen Typ generieren. Der Rückgabewert ist
 natürlich eine Liste dieses anonymen Types. Wie könnte unser Code aussehen?
+
 ```c#
 List<Pupil> pupilList = new List<Pupil>
 {
-      new Pupil { Id = 1, Firstname = "FN1", Lastname = "LN1", SchoolClass = "3BHIF" }
+      new Pupil (id: 1, firstname: "FN1", lastname: "LN1", schoolClass: "3BHIF" );
 };
 
 foreach (Pupil p in pupilList)
@@ -140,13 +154,14 @@ foreach (Pupil p in pupilList)
 
 Das Hinzufügen ist nicht möglich, da wir ja vorher eine Liste mit diesem anonymen Typ deklarieren
 müssen. Die Lösung bietet die *Select()* Funktion:
+
 ```c#
 var exportList = pupilList.Select(p => new
 {
       p.Id,
       FirstName = p.Firstname,
       LastName = p.Lastname,
-      FullName = p.Firstname + " " + p.Lastname
+      FullName = $"{p.Firstname}  {p.Lastname}"
 });
 ```
 
@@ -155,23 +170,27 @@ anderen Sprachen wird es auch als *Mapping* bezeichnet. Eine Liste mit n Element
 Liste mit wiederum n Elementen, jedoch eines anderen Typs, abgebildet.
 
 ## Beispiele aus dem Übungsprojekt in diesem Ordner
-Liefere eine Liste aller Prüfungsfächer als *IEnumerable&lt;string&gt;*. Mit *Select()* kann der zurückgegebene
+
+Die nachfolgenden Beispiele sind im Projekt [LinqUebung2](LinqUebung2) definiert und können live
+getestet werden.
+
+1. Liefere eine Liste aller Prüfungsfächer als *IEnumerable&lt;string&gt;*. Mit *Select()* kann der zurückgegebene
 Typ jedes Listenelements definiert werden.
 ```c#
 // Liste beinhaltet D, E, E, AM, D, AM, ...
-IEnumerable<string> uebung1 = db.Pruefungen.Select(p => p.Fach);
+IEnumerable<string> uebung1 = db.Exams.Select(e => e.Subject);
 // Liste beinhaltet D, E, AM, POS, DBI (jedes Fach nur 1x)
-IEnumerable<string> uebung2 = db.Pruefungen.Select(p => p.Fach).Distinct();
+IEnumerable<string> uebung1a = db.Exams.Select(e => e.Subject).Distinct();
 ```
 
-Liefere eine Liste aller Schüler mit einem neu erstellten Objekt. Es soll die Anzahl der Prüfungen,
+2. Liefere eine Liste aller Schüler mit einem neu erstellten Objekt. Es soll die Anzahl der Prüfungen,
 Name und Vorname als Property speichern. Mit Hilfe von *new {}* im nachfolgenden Beispiel legt der 
 Compiler legt eine anonyme Klasse an:
 ```
 class A {
-  string Name {get;set;}
-  string Vorname {get;set;}
-  int Anzahl {get;set;}
+  string Lastname {get; }
+  string Firstname {get; }
+  int ExamsCount {get; }
 }
 ```
 
@@ -179,59 +198,61 @@ Da dieser Typ keinen Namen hat, wird das Schlüsselwort *var* verwendet. Der Com
 beim Kompilieren (nicht zur Laufzeit!) den Typ zu. Der Typ der Variable kann danach nicht mehr geändert
 werden, da wir nach wie vor static typing haben.
 ```c#
-var uebung3 = db.Schuelers.Select(s => new
+var uebung2 = db.Students.Select(s => new
 {
-      s.Name,
-      s.Vorname,                    // Propertyname wird übernommen.
-      Anzahl = s.Pruefungen.Count   // Propertynamen mit = festlegen
-}).OrderBy(x => x.Anzahl).ThenBy(x => x.Name);
+      s.Lastname,                    // Name wird übernommen (Lastname)
+      s.Firstname,                   // Name wird übernommen (Firstname)
+      ExamsCount = s.Exams.Count()   // Propertynamen muss festlegt werden.
+}).OrderBy(s => s.ExamsCount).ThenBy(s => s.Lastname);
 // Funktioniert nicht:
 // uebung3 = "Ein String".
 ```
 
-Liefere ein JSON Objekt mit folgendem Aufbau:
+3. Liefere ein JSON Array mit folgendem Aufbau:
 ```
-{
-   Name: Mustermann,
-   Vorname: Max,
-   Pruefer: [KY, FAV]
-},...
-```
-```c#
-var uebung4 = db.Schuelers.Select(s => new
-{
-      s.Name,
-      s.Vorname,
-      Pruefer = s.Pruefungen.Select(p => p.Pruefer).Distinct()
-});
-WriteJson(uebung4, "Beispiel 5 - Schüler mit Prüfer", true);
+[{
+   Lastname: Mustermann,
+   Firstname: Max,
+   Examinators: [KY, FAV]
+},...]
 ```
 
-Liefere ein JSON Objekt mit folgendem Aufbau:
-```
+```c#
+var uebung3 = db.Students.Select(s => new
 {
+      s.Lastname,
+      s.Firstname,
+      Examinators = s.Exams.Select(e => e.Examinator).Distinct()
+});
+```
+
+4. Liefere ein JSON Array mit folgendem Aufbau:
+```
+[{
    Name: "Mustermann,"
    Vorname: "Max",
    db.Pruefungen: [{"Pruefer"="KY", "Fach"="AM"}, ...]
-},...
+},...]
 ```
 
 ```c#
-var uebung5 = db.Schuelers.Select(s => new
-{
-      s.Name,
-      s.Vorname,
-      Pruefungen = s.Pruefungen.Select(p => new
+var uebung4 = db.Students
+      .Where(s => s.Schoolclass == "3CHIF")
+      .Select(s => new
       {
-         p.Pruefer,
-         p.Fach
-      })
-});
-WriteJson(uebung5, "Beispiel 6 - Schüler mit Prüfungen", true);
+         s.Lastname,
+         s.Firstname,
+         Exams = s.Exams.Select(e => new
+         {
+            e.Examinator,
+            e.Subject
+         })
+      });
 ```
 
 ## Übung
-Öffne das Projekt in *LinqUebung2/LinqUebung2.App.csproj*. Die Angaben sind in der Datei *Program.cs*,
+
+Öffne die Solution in [LinqUebung2](LinqUebung2). Die Angaben sind in der Datei *Program.cs*,
 beim Ausführen lautet die korrekte Ausgabe in der Konsole:
 ```
 Die Prüfungsfächer sind D,AM,DBI,POS,E
