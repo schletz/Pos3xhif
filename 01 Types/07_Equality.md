@@ -159,8 +159,8 @@ handelt. Deswegen ist es auch wichtig, dass *GetHashCode()* korrekt implementier
 ### *Equals()* und der *==* Operator
 Wird *Equals()* überschrieben, so liefert die Methode ein anderes Vergleichsergebnis als der == 
 und der != Operator.
-Die Guidelines zum Überschreiben auf
-https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/statements-expressions-operators/how-to-define-value-equality-for-a-type
+Die Guidelines zum Überschreiben
+(vgl. [docs.microsoft.com](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/statements-expressions-operators/how-to-define-value-equality-for-a-type))
 besagen, dass dies optional, aber empfohlen ist.
 
 ## *IComparable* sowie *IComparable&lt;T&gt;*
