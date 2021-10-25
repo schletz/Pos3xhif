@@ -122,9 +122,9 @@ IEnumerable<Student> negative5 = db.Students
 ```
 
 ## Übungen
-Öffne die Solution [LinqUebung1.sln](LinqUebung1). Die Beispiele sind in den Kommentaren in der Main() Methode.
-Schreibe dein Ergebnis in die entsprechende Variable, die ausgegeben wird. Die korrekte Ausgabe
-soll so aussehen:
+Öffne die Solution [LinqUebung1.sln](LinqUebung1). Die Beispiele sind in den Kommentaren in der *Main()* Methode.
+Schreibe dein Ergebnis in die entsprechende Variable, die ausgegeben wird. Verwende den korrekten
+Rückgabetyp statt *object*. Die korrekte Ausgabe soll so aussehen:
 ```
 Beispiel 5: FAV gab schlechtestens die Note 4.
 Beispiel 6: Notenschnitt der Schülerinnen in POS: 3.67
