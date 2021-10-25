@@ -262,20 +262,20 @@ record Position(double Lat, double Lng);   // "Positional record" in C# 9
 
 public class Program
 {
-	public static void Main()
-	{
-		Position position1 = new Position(Lat: 48, Lng: 16);
-		Position position2 = new Position(Lat: 48, Lng: 16);
-		Console.WriteLine(position1 == position2);              // True
-		Console.WriteLine(position1.Equals(position2));         // True
+    public static void Main()
+    {
+        Position position1 = new Position(Lat: 48, Lng: 16);
+        Position position2 = new Position(Lat: 48, Lng: 16);
+        Console.WriteLine(position1 == position2);              // True
+        Console.WriteLine(position1.Equals(position2));         // True
         // Erzeugt eine neue Position, indem die Werte von position1 geändert in ein neues
         // Objekt geschrieben werden (Position selbst ist natürlich immutable).
-		Position position3 = position1 with {Lng = 17};
-		Console.WriteLine(position3);           // ToString liefert Position { Lat = 48, Lng = 17 }
+        Position position3 = position1 with {Lng = 17};
+        Console.WriteLine(position3);           // ToString liefert Position { Lat = 48, Lng = 17 }
         // Deconstruct
-		var (lat, lng) = position3;
-		Console.WriteLine($"{lat}° NB, {lng}° ÖL");        
-	}
+        var (lat, lng) = position3;
+        Console.WriteLine($"{lat}° NB, {lng}° ÖL");        
+    }
 }
 ```
 
@@ -285,14 +285,14 @@ Record zu definieren:
 ```c#
 record Position(double Lat, double Lng)
 {
-	public double LatRad => Lat * Math.PI / 180;
+    public double LatRad => Lat * Math.PI / 180;
     public double LngRad => Lng * Math.PI / 180;
     public double GetDistance(Position p)
     {
         return Math.Acos(
             Math.Sin(LatRad) * Math.Sin(p.LatRad) +
             Math.Cos(LatRad) * Math.Cos(p.LatRad) * Math.Cos(p.LngRad - LngRad)) * 6370;
-    }	
+    }    
 }
 ```
 
