@@ -205,7 +205,7 @@ var uebung2 = db.Students.Select(s => new
       ExamsCount = s.Exams.Count()   // Propertynamen muss festlegt werden.
 }).OrderBy(s => s.ExamsCount).ThenBy(s => s.Lastname);
 // Funktioniert nicht:
-// uebung3 = "Ein String".
+// uebung2 = "Ein String".
 ```
 
 3. Liefere ein JSON Array mit folgendem Aufbau:
