@@ -229,7 +229,10 @@ nicht mehrfach in Form von Lambdas geschrieben werden muss:
 ```c#
 record Pupil(int Id, string Firstname, string Lastname, string SchoolClass, DateTime DateOfBirth)
 {
-    public static Func<Pupil, bool> IsFullAge => (p) => p.DateOfBirth <= DateTime.Now.Date.AddYears(-18);
+    public static readonly Func<Pupil, bool> IsFullAge = (p) => p.DateOfBirth <= DateTime.Now.Date.AddYears(-18);
+    // Alternativ ist auch ein Property möglich. Obere Variante vermeidet Methodenaufrufe
+    // (Properties sind schließlich nur get Methoden) für maximale Performance.
+    // public static Func<Pupil, bool> IsFullAge => (p) => p.DateOfBirth <= DateTime.Now.Date.AddYears(-18);
 }
 
 PupilList fullAged = pupils.Filter(Pupil.IsFullAge);

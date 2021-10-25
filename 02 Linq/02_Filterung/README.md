@@ -24,80 +24,105 @@ IEnumerable<int> result = numbers.Where(n => n % 2 == 0);
 
 ## Musterprogramm mit Schülerdaten
 
-Das Musterprogramm in diesem Ordner definiert 3 Klassen:
-![](klassenmodellSchuelerPrüfung.png)
+Das Musterprogramm in [LinqUebung1](LinqUebung1) definiert 3 Klassen:
+
+![](model_exams.svg)
+<sup>
+https://www.plantuml.com/plantuml/uml/TPBDQiCm383lUWhTjxp0AA67hcNGdReNS6EjqV3Fi1NOA7ltsPKP3govHFhGpoVmDej9idW7Zju59MBYooneET4a70FCR0d9VyetUf8vsWn0OV5ue60f8Lm1oxSdRnmztkBN4i4FJCxaZ2TPB0LfPGyl5f-GWsXsD5c2yLHObiJXedZFwL-kAmlKGE5fccDqkcnT_lnbV6L7phAfoLYie0dXC8njJZEj5QhPMTO5o_c39kc7wsmEHc9QyqCobhhcdP6QrjyRUxgnPb1mYtgjpL34rANpsftXslV-dTNo4UuVhFqOwznMtZFTjQLWwpFu1G00
+</sup>
 
 Nun wollen wir folgende Beispiele lösen.
+
+## Where, Count und First
 
 1. Suche den Schüler mit der Id 1003. *Where()* liefert **immer** eine Collection, da wir ja nie wissen,
    wie viele Ergebnisse kommen. Mit *First()* suchen wir das erste Element und schreiben es in *result1*.
 ```c#
-Schueler result1 = db.Schuelers.Where(s => s.Id == 1003).First();
+Student result1 = db.Students.Where(s => s.Id == 1003).First();
 ```
 
 2. Wird eine Id nicht gefunden, liefert *Where()* eine leere Collection. *First()* wirft aber dann einen Fehler.
 Daher sollte immer *FirstOrDefault()* verwendet werden. Es liefert null, wenn nichts gefunden wurde.
 ```c#
-Schueler result2 = db.Schuelers.Where(s => s.Id == 1090).FirstOrDefault();
+Student? result2 = db.Students.Where(s => s.Id == 1090).FirstOrDefault();
 ```
 
-3. Wie viele Schüler sind in der Liste gespeichert?
+Beachte den Typ *Student?*. *FirstOrDefault()* kann null liefern, daher brauchen wir bei aktivierten
+nullable reference types den entsprechenden nullable type. *FirstOrDefault()* kann auch direkt
+einen Filterausdruck verwenden, was die Abfrage noch einmal vereinfacht:
 ```c#
-int result3 = db.Schuelers.Count();
+Student? result2a = db.Students.FirstOrDefault(s => s.Id == 1090);
+```
+
+3. Wie viele Schüler sind in der Datenbank gespeichert?
+```c#
+int result3 = db.Students.Count();
 ```
 
 4. Wie viele Schüler sind in der 3AHIF? Bei *Count()* kann ich ebenfalls eine Lambda Expression übergeben.
 ```c#
-int result4 = db.Schuelers.Count(s => s.Klasse == "3AHIF");
+int result4 = db.Students.Count(s => s.Schoolclass == "3AHIF");
 // Alternativ:
-int result5 = db.Schuelers.Where(s => s.Klasse == "3AHIF").Count();
+ int result5 = db.Students.Where(s => s.Schoolclass == "3AHIF").Count();
 ```
+
+## All und Any
 
 5. Liefere eine Liste aller Schüler, die irgendeine Prüfung auf 5 geschrieben haben. 
 ```c#
 // Bitte nicht so, die Datenbank muss sonst zählen:
-IEnumerable<Schueler> negative = db.Schuelers
-    .Where(s => s.Pruefungen.Count(p => p.Note == 5) != 0);
+IEnumerable<Student> negative = db.Students
+    .Where(s => s.Exams.Count(e => e.Grade == 5) != 0);
 // Besser mit Any:
-IEnumerable<Schueler> negative2 = db.Schuelers
-    .Where(s => s.Pruefungen.Any(p => p.Note == 5));
+IEnumerable<Student> negative2 = db.Students
+    .Where(s => s.Exams.Any(e => e.Grade == 5));
 
 // Ich kann aus jedem Any Ausdruck einen All Ausdruck mittels Negation erzeugen.
-IEnumerable<Schueler> negative2a = db.Schuelers
-    .Where(s => !s.Pruefungen.All(p => p.Note != 5));
+IEnumerable<Student> negative2a = db.Students
+    .Where(s => !s.Exams.All(e => e.Grade != 5));
 ```
 
 6. Liefere eine Liste aller Schüler, die alle Prüfungen auf 5 geschrieben haben.
 ```c#   
-IEnumerable<Schueler> negative2b = db.Schuelers
-    .Where(s => s.Pruefungen.All(p => p.Note == 5));
+IEnumerable<Student> negative2b = db.Students
+    .Where(s => s.Exams.All(e => e.Grade == 5));
+```
+
+Betrachten wir das Ergebnis der Abfrage, liefert sie 2 Resultate. Doch bei genauerem Hinsehen
+fällt uns auf, dass diese 2 Schüler keine Prüfungen hatten. Warum liefert also die Abfrage
+diese 2 Schüler? In der Prädikatenlogik liegt die Antwort: Die Bedingung "alle Prüfungen sind
+negativ" ist erfüllt, wenn es keine Prüfung gibt. Möchten wir diese Fälle ausschließen, brauchen
+wir zusätzlich *Any()*:
+```c#
+IEnumerable<Student> negative2b = db.Students
+      .Where(s => s.Exams.Any() && s.Exams.All(e => e.Grade == 5));
 ```
 
 7. Liefert eine Liste aller Schüler, die eine negative D Prüfung hatten.
 ```c#
-IEnumerable<Schueler> negative3 = db.Schuelers
-    .Where(s => s.Pruefungen.Any(p => p.Note == 5 && p.Fach == "D"));
+IEnumerable<Student> negative3 = db.Students
+      .Where(s => s.Exams.Any(e => e.Grade == 5 && e.Subject == "D"));
 ```
 
 8. Besonderheit: All liefert true, wenn die Ausgangsliste leer ist. Beispiel: Sind alle GGP Prüfungen 
 eines Schülers negativ? Man muss wissen, dass es keine GGPB Prüfungen in den Testdaten gibt. Deswegen 
 werden alle Schüler geliefert!
 ```c#
-IEnumerable<Schueler> negative4 = db.Schuelers
-    .Where(s => s.Pruefungen
-            .Where(p => p.Fach == "GGP")
-            .All(p => p.Note == 5));
+IEnumerable<Student> negative4 = db.Students
+      .Where(s => s.Exams
+            .Where(e => e.Subject == "GGP")
+            .All(e => e.Grade == 5));
 ```
 
 9. Dies liefert Schüler ohne irgendeine Prüfung oder Schüler, die ausschließlich negative GGP Prüfungen 
 und sonst keine anderen Fächer hatten.
 ```c#
-IEnumerable<Schueler> negative5 = db.Schuelers
-    .Where(s => s.Pruefungen.All(p => p.Fach == "GGP" && p.Note == 5));
+IEnumerable<Student> negative5 = db.Students
+    .Where(s => s.Exams.All(e => e.Subject == "GGP" && e.Grade == 5));
 ```
 
 ## Übungen
-Öffne die Solution LinqUebung1.sln. Die Beispiele sind in den Kommentaren in der Main() Methode.
+Öffne die Solution [LinqUebung1.sln](LinqUebung1). Die Beispiele sind in den Kommentaren in der Main() Methode.
 Schreibe dein Ergebnis in die entsprechende Variable, die ausgegeben wird. Die korrekte Ausgabe
 soll so aussehen:
 ```

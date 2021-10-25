@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
-using LinqUebung1.App.Model;
+using LinqUebung1.Application.Model;
 
-namespace LinqUebung1.App
+namespace LinqUebung1.Application
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            PruefDb db = PruefDb.FromMockup();
-
+            using ExamsDb db = ExamsDb.FromSeed();
             // *************************************************************************************
             // MUSTERBEISPIELE
             // *************************************************************************************
@@ -19,21 +17,21 @@ namespace LinqUebung1.App
             //    Where liefert IEnumerable, also immer eine Collecion.
             //    Deswegen brauchen wir First, um auf das erste Element zugreifen
             //    zu können.
-            Schueler result1 = db.Schuelers.Where(s => s.Id == 1003).First();
+            Student result1 = db.Students.Where(s => s.Id == 1003).First();
 
             // 2. Welcher Schüler hat die Id 999?
             //    First liefert eine Exception, da die Liste leer ist.
             //    FirstOrDefault liefert in diesem Fall den Standardwert (null).
-            Schueler result2 = db.Schuelers.Where(s => s.Id == 999).FirstOrDefault();
+            Student? result2 = db.Students.Where(s => s.Id == 999).FirstOrDefault();
 
             // 3. Wie viele Schüler sind in der Liste?
-            int result3 = db.Schuelers.Count();
+            int result3 = db.Students.Count();
 
             // 4. Wie viele Schüler gehen in die 3BHIF?
-            int result4 = db.Schuelers.Where(s => s.Klasse == "3BHIF").Count();
+            int result4 = db.Students.Where(s => s.Schoolclass == "3BHIF").Count();
             //    Für Count existiert eine Überladung, die auch eine Filterfunktion
             //    bekommen kann.
-            result4 = db.Schuelers.Count(s => s.Klasse == "3BHIF");
+            result4 = db.Students.Count(s => s.Schoolclass == "3BHIF");
 
             // *************************************************************************************
             // ÜBUNGEN
@@ -49,7 +47,7 @@ namespace LinqUebung1.App
             Console.WriteLine($"Beispiel 6: Notenschnitt der Schülerinnen in POS: {result6:0.00}");
 
             // 7. Welche Schüler haben 6 oder mehr Prüfungen? Gib eine Liste von Schülern zurück und gib Sie aus.
-            // Schreibe das Ergebnis mit dem richtigen Datentyp in die Variable result7 (kein var verwenden!).            
+            // Schreibe das Ergebnis mit dem richtigen Datentyp in die Variable result7 (kein var verwenden!).
             object result7 = null;
             Console.WriteLine("Beispiel 7: Schüler mit mehr als 6 Prüfungen.");
             result7.ToList().ForEach(s => { Console.WriteLine($"   {s.Name} {s.Vorname} hat mehr 6 oder mehr Prüfungen."); });
@@ -90,7 +88,7 @@ namespace LinqUebung1.App
             Console.WriteLine("Beispiel 12: Schüler, die im Juni eine AM Prüfung hatten.");
             result12.ToList().ForEach(p => { Console.WriteLine($"   {p.Schueler.Name} {p.Schueler.Vorname} hat bei {p.Pruefer} eine Prüfung in AM."); });
 
-            // 13. Welche Schüler haben bei einer AM Prüfung eine negative Note, 
+            // 13. Welche Schüler haben bei einer AM Prüfung eine negative Note,
             //     aber in E nur positive Prüfungen?
             // Schreibe das Ergebnis mit dem richtigen Datentyp in die Variable result13 (kein var verwenden!).
             object result13 = null;
@@ -108,18 +106,6 @@ namespace LinqUebung1.App
             object result14 = null;
             Console.WriteLine("Beispiel 14: Schüler, in DBI bessere Prüfungen (Notenschnitt) als in D hatten.");
             result14.ToList().ForEach(s => { Console.WriteLine($"   {s.Name} {s.Vorname} ist in DBI besser als in D."); });
-
-
-        }
-        static void WriteJson(object data)
-        {
-            string result = JsonConvert.SerializeObject(data);
-            Console.WriteLine(result);
-
-
         }
     }
-
-
 }
-
