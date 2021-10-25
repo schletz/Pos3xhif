@@ -224,24 +224,26 @@ PupilList fullAged = pupils.Filter(p => p.dateOfBirth <= DateTime.Now.AddYears(-
 ```
 
 Wir können Filterausdrücke auch in der Klasse *Pupil* speichern, damit die Bedingung "ist volljährig"
-nicht mehrfach in Form von Lambdas geschrieben werden muss:
+nicht mehrfach in Form von Lambdas geschrieben werden muss. Dafür gibt es 2 Ansätze:
+- Definition des Filterausdruckes (Predicate) als statisches Feld.
+- Definition eines read-only Properties.
 
 ```c#
 record Pupil(int Id, string Firstname, string Lastname, string SchoolClass, DateTime DateOfBirth)
 {
-    public static readonly Func<Pupil, bool> IsFullAge = (p) => p.DateOfBirth <= DateTime.Now.Date.AddYears(-18);
-    // Alternativ ist auch ein Property möglich. Obere Variante vermeidet Methodenaufrufe
-    // (Properties sind schließlich nur get Methoden) für maximale Performance.
-    // public static Func<Pupil, bool> IsFullAge => (p) => p.DateOfBirth <= DateTime.Now.Date.AddYears(-18);
+    public static readonly Func<Pupil, bool> IsFullAgePredicate = (p) => p.DateOfBirth <= DateTime.Now.Date.AddYears(-18);
+    public bool IsFullAge => DateOfBirth <= DateTime.Now.Date.AddYears(-18);
 }
 
-PupilList fullAged = pupils.Filter(Pupil.IsFullAge);
+PupilList fullAged = pupils.Filter(Pupil.IsFullAgePredicate);
+PupilList fullAged2 = pupils.Filter(p => p.IsFullAge);
 ```
 
-Beachte, dass das Property statisch ist, da die Function mit den Instanzen der Liste aufgerufen wird.
+Beachte, dass *IsFullAgePredicate* statisch ist, da die Function mit den Instanzen der Liste aufgerufen wird.
 Beim Aufrufen von *pupils.Filter()* haben wir noch keine konkrete Instanz von Pupil.
-Ein "klassisches" Property der Instanz mit dem Aufbau
-*bool IsFullAge => ...* würde bei der Verwendung ja den Rückgabewert (true oder false) liefern.
+
+Der 2. Ansatz (Property) ist in C# weiter verbreitet. Der 1. Ansatz wird im Javabereich, wo es keine
+Properties aber den double colon (::) operator gibt, in Java Streams verwendet.
 
 ## Übung
 
