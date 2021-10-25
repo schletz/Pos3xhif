@@ -249,8 +249,8 @@ pe2.Nr = 1;                        // Nachträgliche Änderung von pe2.
 ## Records in C# 9
 
 Die Klasse *Position* hat 2 Eigenschaften, die oft benötigt werden:
-- Alle Properties sind read-only
-- Sie besitzt einen Konstruktor mit allen Properties zur Zuweisung der Werte
+- Alle Properties sind read-only.
+- Sie besitzt einen Konstruktor mit allen Properties zur Zuweisung der Werte.
 - Sie überschreibt Equals() so, dass 2 Instanzen gleich sind, wenn alle Properties gleich sind.
 
 Seit C# 9 können wir die Klasse wesentlich kürzer definieren:
@@ -258,7 +258,7 @@ Seit C# 9 können wir die Klasse wesentlich kürzer definieren:
 ```c#
 using System;
 
-record Position(double Lat, double Lng);
+record Position(double Lat, double Lng);   // "Positional record" in C# 9
 
 public class Program
 {
