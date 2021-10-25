@@ -22,6 +22,12 @@ bestimmt, welche Elemente genommen werden sollen. Dadurch wird unser Code auf ei
 IEnumerable<int> result = numbers.Where(n => n % 2 == 0);
 ```
 
+## Was ist LINQ?
+
+In .NET implementieren alle Collections das Interface *IEnumerable&lt;T&gt;*. Mit dem Einbinden
+des Namespace *System.Linq* werden sogenannte Extension Methoden aktiv. Details dazu sind im Kapitel
+[Extension Methods](../Professional%20C%23/10_ExtensionMethods) erklärt.
+
 ## Musterprogramm mit Schülerdaten
 
 Das Musterprogramm in [LinqUebung1](LinqUebung1) definiert 3 Klassen:
