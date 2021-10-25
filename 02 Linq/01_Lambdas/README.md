@@ -68,6 +68,8 @@ Der Aufruf der Filtermethode ist wie erwartet:
 ```c#
 static void Main(string[] args)
 {
+    DateTime dob18 = DateTime.Now.Date.AddYears(-18);
+
     PupilList pupils = new PupilList
     {
         new Pupil(Id: 1, Firstname: "FN1", Lastname: "LN1", SchoolClass: "3AHIF", DateOfBirth: dob18.AddMonths(-2)),
