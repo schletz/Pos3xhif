@@ -1,16 +1,51 @@
 # Lambdas in C#
+
+## Erstellen einer Visual Studio Solution
+
+Um die Beispiele mitmachen zu können, muss eine .NET Konsolenapplikation erstellt werden. Führe
+dafür die folgenden Befehle in der Konsole aus. Unter macOs müssen md und rd durch die entsprechenden
+Befehle ersetzt werden.
+
+```text
+rd /S /Q LambdaDemo
+md LambdaDemo
+cd LambdaDemo
+md LambdaDemo.Application
+cd LambdaDemo.Application
+dotnet new console
+cd ..
+dotnet new sln
+dotnet sln add LambdaDemo.Application
+start LambdaDemo.sln
+```
+
+Öffne danach durch Doppelklick auf das Projekt (*LambdaDemo.Application*) die Datei
+*LambdaDemo.Application.csproj* und füge die Optionen für
+*Nullable* und *TreatWarningsAsError* hinzu. Die gesamte Konfiguration muss nun so aussehen:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+</Project>
+```
+
 ## Intro in LINQ und Lambdas
-Als Einstieg definieren wir eine Klasse *Pupil*, die Daten von Schülern erfasst. Eine Klasse *PupilList*
-verwaltet diese in einer Liste. Wir möchten in dieser *PupilList* auch filtern können. Ein Filter, der
-alle Schüler einer Klasse heraussucht, kann so aussehen:
+
+Als Einstieg definieren wir einen Record *Pupil* (records sind im Kapitel
+[Equality](../../01%20Types/07_Equality.md) beschrieben), der Daten von Schülern erfasst.
+Eine Klasse *PupilList* verwaltet diese in einer Liste. Wir möchten in dieser *PupilList* auch
+filtern können. Ein Filter, der alle Schüler einer Klasse heraussucht, kann so aussehen:
+
 ```c#
-class Pupil
-{
-    public int Id { get; set; }
-    public string Firstname { get; set; }
-    public string Lastname { get; set; }
-    public string SchoolClass { get; set; }
-}
+record Pupil(int Id, string Firstname, string Lastname, string SchoolClass, DateTime DateOfBirth);
+
 class PupilList : List<Pupil>
 {
     public PupilList Filter(string schoolClass)
@@ -29,24 +64,26 @@ class PupilList : List<Pupil>
 ```
 
 Der Aufruf der Filtermethode ist wie erwartet:
+
 ```c#
 static void Main(string[] args)
 {
     PupilList pupils = new PupilList
     {
-        new Pupil{Id = 1, Firstname = "FN1", Lastname = "LN1", SchoolClass = "3AHIF"},
-        new Pupil{Id = 2, Firstname = "FN2", Lastname = "LN2", SchoolClass = "3BHIF"},
-        new Pupil{Id = 3, Firstname = "FN3", Lastname = "LN3", SchoolClass = "3BHIF"},
-        new Pupil{Id = 4, Firstname = "FN4", Lastname = "LN4", SchoolClass = "3BHIF"}
+        new Pupil(Id: 1, Firstname: "FN1", Lastname: "LN1", SchoolClass: "3AHIF", DateOfBirth: dob18.AddMonths(-2)),
+        new Pupil(Id: 2, Firstname: "FN2", Lastname: "LN2", SchoolClass: "3BHIF", DateOfBirth: dob18.AddMonths(-1)),
+        new Pupil(Id: 3, Firstname: "FN3", Lastname: "LN3", SchoolClass: "3BHIF", DateOfBirth: dob18),
+        new Pupil(Id: 4, Firstname: "FN4", Lastname: "LN4", SchoolClass: "3BHIF", DateOfBirth: dob18.AddMonths(1))
     };
 
     PupilList pupils3bhif = pupils.Filter("3BHIF");
 }
 ```
+
 Nun wollen wir auch nach dem Zunamen filtern. Unsere *Filter()* Funktion filtert fix nach der Klasse,
 daher haben wir mehrere Möglichkeiten:
-- Wir schreiben eine Funktion FilterLastname(). Der Code ist allerdings meist ident zur *Filter()* Methode,
-  und Code kopieren ist bekanntlich das Schlechteste Design.
+- Wir schreiben eine Funktion *FilterLastname()*. Der Code ist allerdings meist ident zur *Filter()* Methode,
+  und Code kopieren ist bekanntlich das schlechteste Design.
 - Wir könnten den Propertynamen, den wir filtern möchten, auch übergeben. Über Reflection wäre das zwar
   möglich, aber sehr fehleranfällig falls einmal so ein Property nicht existiert.
 - **Wir übergeben keinen String, nach den wir filtern sollen, sondern eine Funktion, die für
@@ -56,125 +93,8 @@ Wir betrachten den letzten Punkt. Eine Funktion zu übergeben ist in C# möglich
 static Typing um, das bedeutet, wir müssen dem Compiler einmal sagen, wie unsere Funktion aufgebaut
 ist.
 
-### Eine Reise durch die Geschichte: delegates
-Die nachfolgende Technik wird heute nicht mehr verwendet, falls jedoch einmal älterer Code bearbeitet
-werden soll, kann dieser mit dem Wissen verstanden werden.
-
-Wir ergänzen unsere Klasse *PupilList* um ein public Member *FilterDelegate*:
-```c#
-class PupilList : List<Pupil>
-{
-    public delegate bool FilterDelegate(Pupil item);
-    public PupilList Filter(string schoolClass)
-    {
-        // ...
-    }
-}
-```
-
-Ein *delegate* ist eine "Schablone" für eine Funktion. Er steht für alle Funktionen, die in diesem Fall
-*bool* zurückliefern und ein Argument vom Typ *Pupil* bekommen. Es ist ähnlich den Interfaces, die auch
-nur eine "Schablone" für Klassen, die es implementieren, darstellen.
-
-Wir können wir diese Funktion nun in unserem Filter verwenden? Da die konkrete Filterfunktion als 
-Argument für die Filtermethode übergeben wird, können wir diese dort nutzen. Den Delegate selbst
-können wir nicht aufrufen, da er ja nur eine Schablone und keine konkrete Funktion ist.
-```c#
-class PupilList : List<Pupil>
-{
-    public delegate bool FilterDelegate(Pupil item);
-    public PupilList Filter(FilterDelegate filterFunction)
-    {
-        PupilList result = new PupilList();
-        foreach(Pupil pupil in this)
-        {
-            if (filterFunction(pupil))
-            {
-                result.Add(pupil);
-            }
-        }
-        return result;
-    }
-}
-```
-
-Der konkrete Filter wird übergeben, das bedeutet er wird in der Program Klasse definiert:
-```c#
-class Program
-{
-    static bool ClassFilter3bhif(Pupil item)
-    {
-        return item.SchoolClass == "3BHIF";
-    }
-    static void Main(string[] args)
-    {
-        // ...
-        PupilList pupils3bhif = pupils.Filter(ClassFilter3bhif);
-    }
-}
-```
-
-Das Ergebnis sind wieder alle Schüler der 3BHIF. Wir können jedoch jetzt mehrere Filter definieren.
-Im folgenden Beispiel wollen wir alle Schüler, dessen Id kleiner als 10 ist, bekommen:
-```c#
-class Program
-{
-    static bool IdUnder10Filter(Pupil item)
-    {
-        return item.Id < 10;
-    }
-    static void Main(string[] args)
-    {
-        // ...
-        PupilList pupilsUnder10 = pupils.Filter(IdUnder10Filter);
-    }
-}
-```
-
-### Generische Delegates und Lambdas helfen
-Der obere Ansatz ist für den Programmierer natürlich sehr mühsam:
-- Der delegate muss definiert werden.
-- Die Filtermethode muss mit Namen angelegt werden, auch wenn sie nur 1x verwendet wird.
-
-Deswegen wurden mit C# 3 im Jahr 2007 einer der größen Schritte in der Entwicklung der Sprache
-gemacht: Die Einführung von *Lambdas* und *Linq*.
-
-Unser Code kann mit C# 3 so aussehen:
-```c#
-class PupilList : List<Pupil>
-{
-    public PupilList Filter(Func<Pupil, bool> filterFunction)   // (1)
-    {
-        PupilList result = new PupilList();
-        foreach(Pupil pupil in this)
-        {
-            if (filterFunction(pupil))
-            {
-                result.Add(pupil);
-            }
-        }
-        return result;
-    }
-}
-
-
-class Program
-{
-    static void Main(string[] args)
-    {
-        // ...
-        PupilList pupils3bhif = pupils.Filter(p => p.SchoolClass == "3BHIF");   // (2)
-    }
-}
-```
-1. Mit den Generics in C# 2.0 konnten auch delegates, also unsere "Funktionsschablonen" generisch
-   definiert werden. `Func<Pupil, bool>` steht für alle Funktionen, die Pupil als Argument bekommen
-   und bool zurückgeben.
-2. Der Lambdaausdruck definiert eine anonyme Funktion. Details zum Aufbau dieser Lambda Expressions
-   folgen in diesem Dokument.
-   
-      
 ## Lambdas im Detail      
+
 Betrachten wir eine Funktion, die in C# mit einem Namen deklariert wird. Sie erwartet 2 Parameter 
 und liefert ein Ergebnis zurück.
 ```c#
@@ -201,8 +121,8 @@ Besteht die Funktion nur aus einem Statement, und soll dieses mit return zurück
 param1 => statement
 ```
 
-
 ## Lambdas für Funktionen, die nichts (void) liefern
+
 | Langform                                                                   |  Lambda                                                         |
 | -------------------------------------------------------------------------- | --------------------------------------------------------------- |
 | `void action0() { }`                                                         | `()     => { }`                                                 |
@@ -211,6 +131,7 @@ param1 => statement
 | `void action3(int x, int y) { Console.WriteLine(x + y); }`                   | `(x, y) => Console.WriteLine(x + y)`                            |
 
 ## Lambdas für Funktionen, die einen Rückgabewert besitzen
+
 | Langform                                                                   |  Lambda                                                         |
 | -------------------------------------------------------------------------- | --------------------------------------------------------------- |
 | `int func1() { return 1; }`                                                 | `()     => true`  oder `() => { return true; }`                 |
@@ -219,10 +140,12 @@ param1 => statement
 
 
 ## Datentypen für Lambdas
+
 In den Schreibweisen davor wurde auf eine Information verzichtet: Der Datentyp. Da C# *static typing* umsetzt,
 müssen Lambda Ausdrücke natürlich auch einen Datentyp haben. Hier gibt es 2 Verianten:
 
 ### Lambdas, die keinen Wert zurückgeben
+
 Diese Ausdrücke sind Instanzen des sogenannten *Action* Delegates. Er ist generisch, in den spitzen Klammern
 werden die Datentypen der Parameter geschrieben:
 ```c#
@@ -248,9 +171,11 @@ Func<int, int, bool> func3 = (x, y) => x == y;
 ```
 
 ### Lambdas und der Zugriff auf äußere Variablen
+
 Lambdas können auf die äußeren Variablen zugreifen. Das ist besonders hilfreich, wenn private
 Variablen in Lambdas gelesen oder gesetzt werden sollen. Wir betrachten noch einmal die *Main()* 
 Methode aus dem Einführungsbeispiel:
+
 ```c#
 static void Main(string[] args)
 {
@@ -266,8 +191,56 @@ Methode deklariert wurde. Sie wird jedoch noch nicht ausgeführt, deswegen führ
 der Variable *classToFilter* in (2) dazu, dass die Filterfunktion in (3) nach der 3AHIF sucht. **Wir
 müssen daher immer zwischen der Deklaration und dem tatsächlichen Ausführen von Funktionen unterscheiden!**
 
+Nun können wir die Methode Filter() in der Klasse PupilList so allgemein definieren, dass sie
+jede Art von Filterung unterstützt. Der Parameter predicate ist eine Function, die ein Pupil
+Objekt auf einen bool Wert (nehmen oder nicht nehmen) abbildet.
+
+```c#
+class PupilList : List<Pupil>
+{
+    public PupilList Filter(Func<Pupil, bool> predicate)
+    {
+        PupilList result = new PupilList();
+        foreach (Pupil pupil in this)
+        {
+            if (predicate(pupil))
+            {
+                result.Add(pupil);
+            }
+        }
+        return result;
+    }
+}
+```
+
+Somit sind flexible Aufrufe möglich:
+
+```c#
+PupilList pupils3bhif = pupils.Filter(p => p.SchoolClass == "3BHIF");
+PupilList pupilsLukas = pupils.Filter(p => p.Firstname == "Lukas");
+PupilList fullAged = pupils.Filter(p => p.dateOfBirth < DateTime.Now.AddYears(-18));
+```
+
+Wir können Filterausdrücke auch in der Klasse *Pupil* speichern, damit die Bedingung "ist volljährig"
+nicht mehrfach in Form von Lambdas geschrieben werden muss:
+
+```c#
+record Pupil(int Id, string Firstname, string Lastname, string SchoolClass, DateTime DateOfBirth)
+{
+    public static Func<Pupil, bool> IsFullAge => (p) => p.DateOfBirth <= DateTime.Now.Date.AddYears(-18);
+}
+
+PupilList fullAged = pupils.Filter(Pupil.IsFullAge);
+```
+
+Beachte, dass das Property statisch ist, da die Function mit den Instanzen der Liste aufgerufen wird.
+Beim Aufrufen von *pupils.Filter()* haben wir noch keine konkrete Instanz von Pupil.
+Ein "klassisches" Property der Instanz mit dem Aufbau
+*bool IsFullAge => ...* würde bei der Verwendung ja den Rückgabewert (true oder false) liefern.
+
 ## Übung
-Erstelle eine neue Solution mit dem Namen *LambdaUebung*. Erstelle danach eine leere Klasse mit dem Namen
+
+Erstelle wie oben beschrieben die Solution *LambdaDemo*. Erstelle danach eine leere Klasse mit dem Namen
 *LambdaTest.cs* und kopiere den Code von unten in die Datei. Danach ersetze die Program Klasse durch den 
 Code von unten.
 

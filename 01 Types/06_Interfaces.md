@@ -326,7 +326,7 @@ namespace LotteryDemo.Application
 
     class Program
     {
-        private static void Main()
+        public static void Main()
         {
             // Ein fixes Seed liefert bei jedem Programmstart gleiche Werte. Das macht das
             // Ergebnis reproduzierbar und somit testbar. Es ist ein beliebiger int Wert.
