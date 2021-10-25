@@ -313,6 +313,7 @@ class PhoneNr : IEquatable<PhoneNr>, IComparable<PhoneNr>, IComparable
 {
     public long Vorwahl { get; }
     public long Telefonummer { get; }
+    public override string ToString() => $"0{Vorwahl}/{Telefonummer}";
 }
 
 
