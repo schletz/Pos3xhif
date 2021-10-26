@@ -16,7 +16,7 @@ Ist eine reine datenhaltende Klasse für die Userdaten. Alle Properties sind rea
 
 #### Klasse Comment
 Speichert die Daten eines Kommentares. Alle Properties sind read-only.
-- **Comment()** Der Konstruktor setzt den Wert von Created auf die aktuelle UTC Systemzeit
+- **Comment()** Der Konstruktor setzt den Wert von *Created* auf die aktuelle UTC Systemzeit
   (DateTime.UtcNow).
 
 #### Klasse Post
