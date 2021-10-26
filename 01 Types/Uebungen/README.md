@@ -5,5 +5,5 @@ Das Lehrziel ist das Anwenden des objektorientierten Designs, sodass das Typsyst
 erst gar nicht möglich macht.
 
 Jede Übung hat eine vorgegebenes Testprogramm, welches die Implementierung prüft. Daher ist
-das bereitstellen von "Musterlösungen" nicht nötig und sogar kontraproduktiv, da die
-Auseinandersetzung mit dem Thema damit nicht gegeben ist.
+das Bereitstellen von "Musterlösungen" nicht nötig und sogar kontraproduktiv, da eine
+tiefere Auseinandersetzung mit dem Thema damit nicht gegeben ist.
