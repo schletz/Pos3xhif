@@ -12,9 +12,9 @@ Es gibt gesetzliche Vorschriften, welche Noten ein Bewerber für einen Schultyp 
 Folgendes Modell soll diesen Sachverhalt vereinfacht wiedergeben:
 
 ![](klassenmodell.svg)
-<sup>
+<sup><pre>
 https://www.plantuml.com/plantuml/uml/jP9HZjem48RVSugH-WA2N00X10sbHQfKYVO2Wps0kuuTsHCajBjttus30uQiUDbz0ez___ddcvbxHiTrgRE3aWHKLdo2dI8jVPO9ZTx3eggq4cWOikSC062qKiwpmP9W0fwTClks_XjxopzALFgcjgGA7PTa-ERYfqD9_hsutX3AFqQVbagmiWRTQTeAnw0Cpu8yp_Fm-wqBERZ4jNmWDsnjjzPgM4WPx0Uj3_Xw-vy41pyuegvfcBrsRGj15PFi_6BtIsIAbp21vlXFbPJa6KL1NouCNxbJG5vN-SlimZicsT1UUNROKFXBxgW4nIoTDY5MMAqfG9jsWfHNvD6VB_vBs8MudIWYf6QsPrr3iR2ruTXQ5CauxEXuj4gUso8NHb8SI3oHktynXlMr0FPNXy2nXmxOF9-bxpwI9RYLON8x59I-FSE6mA50yvsw1XyjQHlN3m4kY_MBTO_xw9FSL_vBp6z2nrrDEQtyOysSZAnB_GO0
-</sup>
+<pre></sup>
 
 ## Klassenbeschreibung
 
