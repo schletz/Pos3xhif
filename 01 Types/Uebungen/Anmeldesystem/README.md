@@ -116,6 +116,6 @@ Teste RegistrationService
    19 OK: RegistrationService.AcceptApplicant liefert false, wenn der Bewerber schon akzeptiert wurde.
    20 OK: RegistrationService.AcceptApplicant liefert false, wenn die Noten für die HTL nicht passen.
    21 OK: RegistrationService.AcceptApplicant liefert false, wenn die Noten für die FS nicht passen.
-   22 OK: RegistrationService.AcceptApplicant berpcksichtigt keine Noten, wenn kein GradeChecker für die Abteilung definiert wurde.
+   22 OK: RegistrationService.AcceptApplicant berücksichtigt keine Noten, wenn kein GradeChecker für die Abteilung definiert wurde.
 22 von 22 Punkte erreicht.
   ```

@@ -87,7 +87,7 @@ namespace RegistrationSystem.Application
                 && !registrationService.AcceptApplicant(applicantFsToBad.Email), "RegistrationService.AcceptApplicant liefert false, wenn die Noten für die FS nicht passen.");
             CheckAndWrite(() =>
                 registrationService.AcceptApplicant(applicantNoGradeCheckDepartment.Email),
-                "RegistrationService.AcceptApplicant berpcksichtigt keine Noten, wenn kein GradeChecker für die Abteilung definiert wurde.");
+                "RegistrationService.AcceptApplicant berücksichtigt keine Noten, wenn kein GradeChecker für die Abteilung definiert wurde.");
             Console.WriteLine($"{_testsSucceeded} von {_testCount} Punkte erreicht.");
         }
 
