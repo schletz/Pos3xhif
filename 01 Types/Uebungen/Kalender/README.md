@@ -24,7 +24,7 @@ liegt oder wenn der Beginn des anderen Termines nach dem Ende dieses Termines li
 das nicht der Fall, liefert die Methode false.
 
 #### Klasse PrivateItem
-Diese Klasse repräsentiert einen Privaten Termin. Sie hat keine Daten, da der Typ dieser
+Diese Klasse repräsentiert einen privaten Termin. Sie hat keine Daten, da der Typ dieser
 Klasse zur Bestimmung der Terminart verwendet wird. *User.RemoveItem()* darf nämlich nur einen
 privaten Termin löschen, dies wird durch diesen Typ sichergestellt.
 
