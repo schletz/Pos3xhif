@@ -66,7 +66,7 @@ da, die die Bewerbungen bearbeiten.
     ein Dictionary sicher.
   - Liefert true, wenn der Bewerber aufgenommen werden konnte.
   - Liefert false, wenn die E-Mail Adresse schon existiert.
-- **AcceptApplicant()** Sucht nach der übergebenen ID in der Liste der
+- **AcceptApplicant()** Sucht nach der übergebene Email in der Liste der
   Bewerber und setzt den Status auf aufgenommen: 
   - Liefert false, wenn die Email nicht existiert. 
   - Ist der Bewerber schon aufgenommen (der Eintrag ist ein 
