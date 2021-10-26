@@ -13,7 +13,7 @@ Folgendes Modell soll diesen Sachverhalt vereinfacht wiedergeben:
 
 ![](klassenmodell.svg)
 <sup>
-https://www.plantuml.com/plantuml/uml/hPBTxjem3CNl-nIMTWE2li2440p6XeGqYUq5J68WMvfMYOk4sDvz_MX2K-1_1JVKpl7fyQzPE4RBPQQJiv84b1LyXQCYBLsI28tEmR8ej19e699R0jLlifNm6PJXjjeewzXWHbNJiLNcrFPt-BJzDKEb1xqr5MWv8yE3WsyM9RcgkTqJoXz6NzTAiCeDskki5Kxh9FD6dgPfy_yfH1w59yZvJ7RSsXxoNCDIoiP-rFg0Am-_IN3Z1nVK9OsJVm6245GmoU3dMQoHgJkigTJbBvLHb6SIJyUvi7dBWmBIiaZ_pk_qVP8zdLIL66iAFybUb22V9MWZOhjAFWj7CQb0ucao_zIZre6uosjOIdQAkbZbfM6_ZcSh_GVsNfTSoMuLiirdM9r9_27xE365RLy0frxHi7j21F8qdSTphsGHuce1iaSKD9YzzGYiq7oXiE2B-zYcT6E0-ntwplhzfXltJiz1H7y9OnZ-bHzf5cHacUd_
+https://www.plantuml.com/plantuml/uml/jP9HZjem48RVSugH-WA2N00X10sbHQfKYVO2Wps0kuuTsHCajBjttus30uQiUDbz0ez___ddcvbxHiTrgRE3aWHKLdo2dI8jVPO9ZTx3eggq4cWOikSC062qKiwpmP9W0fwTClks_XjxopzALFgcjgGA7PTa-ERYfqD9_hsutX3AFqQVbagmiWRTQTeAnw0Cpu8yp_Fm-wqBERZ4jNmWDsnjjzPgM4WPx0Uj3_Xw-vy41pyuegvfcBrsRGj15PFi_6BtIsIAbp21vlXFbPJa6KL1NouCNxbJG5vN-SlimZicsT1UUNROKFXBxgW4nIoTDY5MMAqfG9jsWfHNvD6VB_vBs8MudIWYf6QsPrr3iR2ruTXQ5CauxEXuj4gUso8NHb8SI3oHktynXlMr0FPNXy2nXmxOF9-bxpwI9RYLON8x59I-FSE6mA50yvsw1XyjQHlN3m4kY_MBTO_xw9FSL_vBp6z2nrrDEQtyOysSZAnB_GO0
 </sup>
 
 ## Klassenbeschreibung
@@ -60,11 +60,15 @@ da, die die Bewerbungen bearbeiten.
 - **RegisterGradeChecker()**  Fügt die übergebene Instanz eines
   GradeCheckers zu einem internen Dictionary hinzu. Das Dictionary
   soll den Typ *Dictionary&lt;string, IGradeChecker&gt;* haben.
-- **AddApplicant()** Fügt den übergebenen Bewerber zur internen Liste
-  hinzu.
+- **AddApplicant()** 
+  - Fügt den übergebenen Bewerber zur internen Collection hinzu. 
+  - Es darf pro E-Mail Adresse nur eine Registrierung geben. Stelle dies z. B. durch
+    ein Dictionary sicher.
+  - Liefert true, wenn der Bewerber aufgenommen werden konnte.
+  - Liefert false, wenn die E-Mail Adresse schon existiert.
 - **AcceptApplicant()** Sucht nach der übergebenen ID in der Liste der
   Bewerber und setzt den Status auf aufgenommen: 
-  - Liefert false, wenn die ID nicht existiert. 
+  - Liefert false, wenn die Email nicht existiert. 
   - Ist der Bewerber schon aufgenommen (der Eintrag ist ein 
     *AcceptedApplicant*), wird false geliefert. 
   - Danach wird der entsprechende GradeChecker im Dictionary
@@ -73,8 +77,45 @@ da, die die Bewerbungen bearbeiten.
     false geliefert.
   - Existiert kein GradeChecker, so wird die Prüfung ausgelassen.
   - Am Ende wird der Bewerber durch eine neu erzeugte Instanz von
-    *AcceptedApplicant* ersetzt.  Hinweis: Verwende Remove() zum Entfernen 
-    des alten Bewerbers aus der Liste und füge dann den neu erstellten
-    aufgenommenen Bewerber hinzu.
+    *AcceptedApplicant* ersetzt.  Hinweis: Setze einfach über den Indexer des Dictionaries
+    den neuen Wert.
 - **CountAccepted()** Liefert zurück, wie viele Bewerber einer Abteilung
   den Status "aufgenommen" (also *AcceptedApplicant*) haben.
+
+## Durchzuführende Arbeiten
+
+Öffne die Solution [RegistrationSystem.sln](RegistrationSystem) im Ordner *RegistrationSystem*.
+Definiere jede notwendige Klasse in einer eigenen Datei. Am Ende muss das Testprogramm folgende
+Ausgabe zeigen. Die Datei *Program.cs* darf nicht geändert werden. Programme, die nicht kompilieren,
+werden mit Nicht genügend bewertet. Erstelle daher notfalls eine Klasse mit Default Properties, damit
+die geprüften Properties vorhanden sind.
+
+  ```text
+  Teste Klassenimplementierung.
+   1 OK: Kein Defaultkonstruktor in Applicant.
+   2 OK: Kein Defaultkonstruktor in AcceptedApplicant.
+   3 OK: Alle Properties in RegistrationService sind read only.
+   4 OK: Alle Properties in Applicant sind read only.
+   5 OK: Alle Properties in AcceptedApplicant sind read only.
+   6 OK: IGradeChecker ist ein Interface.
+   7 OK: HtlGradeChecker implementiert IGradeChecker.
+   8 OK: FsGradeChecker implementiert IGradeChecker.
+   9 OK: Applicant.Grades ist IReadOnlyDictionary<string, int>.
+Teste GradeCheckers
+   10 OK: HtlGradeChecker.CanBeAccepted rechnet richtig.
+   11 OK: FsGradeChecker.CanBeAccepted rechnet richtig.
+Teste Applicants
+   12 OK: AddGrades fügt die Noten hinzu.
+   13 OK: AddGrades lehnt vorhandene Noten ab.
+   14 OK: Konstruktor von AcceptedApplicant setzt die Werte.
+Teste RegistrationService
+   15 OK: RegistrationService.Applicants zeigt die richtige Anzahl an Bewerbern.
+   16 OK: RegistrationService.AddApplicant prüft Emails auf Eindeutigkeit.
+   17 OK: RegistrationService.AcceptApplicant akzeptiert Bewerber mit ausreichenden Noten.
+   18 OK: RegistrationService.AcceptApplicant liefert false, wenn die Email nicht existiert.
+   19 OK: RegistrationService.AcceptApplicant liefert false, wenn der Bewerber schon akzeptiert wurde.
+   20 OK: RegistrationService.AcceptApplicant liefert false, wenn die Noten für die HTL nicht passen.
+   21 OK: RegistrationService.AcceptApplicant liefert false, wenn die Noten für die FS nicht passen.
+   22 OK: RegistrationService.AcceptApplicant berpcksichtigt keine Noten, wenn kein GradeChecker für die Abteilung definiert wurde.
+22 von 22 Punkte erreicht.
+  ```
