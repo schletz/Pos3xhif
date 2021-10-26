@@ -84,9 +84,10 @@ da, die die Bewerbungen bearbeiten.
 
 ## Durchzuführende Arbeiten
 
-Öffne die Solution [RegistrationSystem.sln](RegistrationSystem) im Ordner *RegistrationSystem*.
+Öffne die Solution *RegistrationSystem.sln* in diesem Ordner.
 Definiere jede notwendige Klasse in einer eigenen Datei. Am Ende muss das Testprogramm folgende
-Ausgabe zeigen. Die Datei *Program.cs* darf nicht geändert werden. Programme, die nicht kompilieren,
+Ausgabe zeigen. Die Datei *Program.cs* darf nicht geändert werden. Programme, die nicht kompilieren
+oder Laufzeitfehler verursachen,
 werden mit Nicht genügend bewertet. Erstelle daher notfalls eine Klasse mit Default Properties, damit
 die geprüften Properties vorhanden sind.
 
