@@ -127,6 +127,32 @@ IEnumerable<Student> negative5 = db.Students
     .Where(s => s.Exams.All(e => e.Subject == "GGP" && e.Grade == 5));
 ```
 
+## Max, Min und Average
+
+Um das Maximum, das Minimum oder den Durchschnitt aus einer Liste zu berechnen, gibt es auch
+dafür Funktionen. 
+```c#
+List<int> numbers = new List<int> {1, 2};
+int max = numbers.Max();  // 2
+```
+
+Wollen wir allerdings die schlechteste Note berechnen, führt der folgende Ausdruck zu einem Fehler:
+```c#
+db.Exams.Max();
+```
+
+Das ist auch klar, da die Max-Funktion nur aus einer Liste von Zahlen (genauer gesagt: eine
+Liste dessen Elemente mit *ICompareable* vergleichbar sind) einen Wert ermitteln kann. Die Funktion weiß nicht,
+wie der Ausdruck *Prüfung1 &lt; Prüfung2* berechnet werden soll. Deswegen können wir mit einer
+Lambda Expression einen Ausdruck hinterlegen, wenn wir den Vergleich über ein Property
+durchführen wollen:
+```c#
+db.Exams.Max(e => e.Grade);  // 5
+```
+
+Vorsicht: Diese Funktionen liefern einen Fehler, wenn die Liste leer ist. Dies ist z. B. mit
+*Any()* im Vorfeld zu prüfen.
+
 ## Übungen
 Öffne die Solution [LinqUebung1.sln](LinqUebung1). Die Beispiele sind in den Kommentaren in der *Main()* Methode.
 Schreibe dein Ergebnis in die entsprechende Variable, die ausgegeben wird. Verwende den korrekten
