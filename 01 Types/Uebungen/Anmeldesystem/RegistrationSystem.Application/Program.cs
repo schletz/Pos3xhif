@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using static TestHelpers.ProgramChecker;
 
 namespace RegistrationSystem.Application
 {
     public class Program
     {
-        private static int _testCount = 0;
-        private static int _testsSucceeded = 0;
-
         public static void Main(string[] args)
         {
             Console.WriteLine("Teste Klassenimplementierung.");
@@ -36,19 +34,19 @@ namespace RegistrationSystem.Application
             var htlGradeChecker = new HtlGradeChecker();
             CheckAndWrite(() =>
                 htlGradeChecker.CanBeAccepted(new Dictionary<string, int> { { "D", 1 }, { "E", 2 }, { "M", 3 } })
-                && !htlGradeChecker.CanBeAccepted(new Dictionary<string, int> { { "D", 1 }, { "E", 2 }, { "M", 4 } }), "HtlGradeChecker.CanBeAccepted rechnet richtig.");
+                && !htlGradeChecker.CanBeAccepted(new Dictionary<string, int> { { "D", 1 }, { "E", 2 }, { "M", 4 } }), "HtlGradeChecker.CanBeAccepted rechnet richtig.", 2);
             var fsGradeChecker = new FsGradeChecker();
             CheckAndWrite(() =>
                 fsGradeChecker.CanBeAccepted(new Dictionary<string, int> { { "D", 1 }, { "E", 2 }, { "M", 4 } })
-                && !fsGradeChecker.CanBeAccepted(new Dictionary<string, int> { { "D", 1 }, { "E", 2 }, { "M", 5 } }), "FsGradeChecker.CanBeAccepted rechnet richtig.");
+                && !fsGradeChecker.CanBeAccepted(new Dictionary<string, int> { { "D", 1 }, { "E", 2 }, { "M", 5 } }), "FsGradeChecker.CanBeAccepted rechnet richtig.", 2);
 
             Console.WriteLine("Teste Applicants");
             var applicantHif = new Applicant(firstname: "A", lastname: "B", email: "C", department: "HIF");
             applicantHif.AddGrade("D", 1); applicantHif.AddGrade("E", 2); applicantHif.AddGrade("M", 3);
-            CheckAndWrite(() => applicantHif.Grades.Count == 3 && applicantHif.Grades["D"] == 1, "AddGrades fügt die Noten hinzu.");
-            CheckAndWrite(() => !applicantHif.AddGrade("D", 2) && applicantHif.Grades.Count == 3 && applicantHif.Grades["D"] == 1, "AddGrades lehnt vorhandene Noten ab.");
+            CheckAndWrite(() => applicantHif.Grades.Count == 3 && applicantHif.Grades["D"] == 1, "AddGrades fügt die Noten hinzu.", 2);
+            CheckAndWrite(() => !applicantHif.AddGrade("D", 2) && applicantHif.Grades.Count == 3 && applicantHif.Grades["D"] == 1, "AddGrades lehnt vorhandene Noten ab.", 2);
             var acceptedApplicant = new AcceptedApplicant(applicantHif);
-            CheckAndWrite(() => acceptedApplicant.Email == applicantHif.Email && acceptedApplicant.DateAccepted > DateTime.UtcNow.AddMinutes(-1), "Konstruktor von AcceptedApplicant setzt die Werte.");
+            CheckAndWrite(() => acceptedApplicant.Email == applicantHif.Email && acceptedApplicant.DateAccepted > DateTime.UtcNow.AddMinutes(-1), "Konstruktor von AcceptedApplicant setzt die Werte.", 2);
 
             Console.WriteLine("Teste RegistrationService");
             var applicantHifToBad = new Applicant(firstname: "A", lastname: "B", email: "D", department: "HIF");
@@ -73,36 +71,23 @@ namespace RegistrationSystem.Application
             registrationService.AddApplicant(applicantFsToBad);
             registrationService.AddApplicant(applicantNoGradeCheckDepartment);
 
-            CheckAndWrite(() => registrationService.Applicants.Count == 5, "RegistrationService.Applicants zeigt die richtige Anzahl an Bewerbern.");
-            CheckAndWrite(() => !registrationService.AddApplicant(applicantduplicateMail), "RegistrationService.AddApplicant prüft Emails auf Eindeutigkeit.");
+            CheckAndWrite(() => registrationService.Applicants.Count == 5, "RegistrationService.Applicants zeigt die richtige Anzahl an Bewerbern.", 2);
+            CheckAndWrite(() => !registrationService.AddApplicant(applicantduplicateMail), "RegistrationService.AddApplicant prüft Emails auf Eindeutigkeit.", 2);
             registrationService.RegisterGradeChecker("HIF", htlGradeChecker);
             registrationService.RegisterGradeChecker("FIT", fsGradeChecker);
 
-            CheckAndWrite(() => registrationService.AcceptApplicant(applicantHif.Email), "RegistrationService.AcceptApplicant akzeptiert Bewerber mit ausreichenden Noten.");
-            CheckAndWrite(() => !registrationService.AcceptApplicant("X"), "RegistrationService.AcceptApplicant liefert false, wenn die Email nicht existiert.");
-            CheckAndWrite(() => !registrationService.AcceptApplicant(applicantHif.Email), "RegistrationService.AcceptApplicant liefert false, wenn der Bewerber schon akzeptiert wurde.");
-            CheckAndWrite(() => !registrationService.AcceptApplicant(applicantHifToBad.Email), "RegistrationService.AcceptApplicant liefert false, wenn die Noten für die HTL nicht passen.");
+            CheckAndWrite(() => registrationService.AcceptApplicant(applicantHif.Email), "RegistrationService.AcceptApplicant akzeptiert Bewerber mit ausreichenden Noten.", 2);
+            CheckAndWrite(() => !registrationService.AcceptApplicant("X"), "RegistrationService.AcceptApplicant liefert false, wenn die Email nicht existiert.", 2);
+            CheckAndWrite(() => !registrationService.AcceptApplicant(applicantHif.Email), "RegistrationService.AcceptApplicant liefert false, wenn der Bewerber schon akzeptiert wurde.", 2);
+            CheckAndWrite(() => !registrationService.AcceptApplicant(applicantHifToBad.Email), "RegistrationService.AcceptApplicant liefert false, wenn die Noten für die HTL nicht passen.", 2);
             CheckAndWrite(() =>
                 registrationService.AcceptApplicant(applicantFs.Email)
-                && !registrationService.AcceptApplicant(applicantFsToBad.Email), "RegistrationService.AcceptApplicant liefert false, wenn die Noten für die FS nicht passen.");
+                && !registrationService.AcceptApplicant(applicantFsToBad.Email), "RegistrationService.AcceptApplicant liefert false, wenn die Noten für die FS nicht passen.", 2);
             CheckAndWrite(() =>
                 registrationService.AcceptApplicant(applicantNoGradeCheckDepartment.Email),
-                "RegistrationService.AcceptApplicant berücksichtigt keine Noten, wenn kein GradeChecker für die Abteilung definiert wurde.");
-            Console.WriteLine($"{_testsSucceeded} von {_testCount} Punkte erreicht.");
-        }
+                "RegistrationService.AcceptApplicant berücksichtigt keine Noten, wenn kein GradeChecker für die Abteilung definiert wurde.", 2);
 
-        private static void CheckAndWrite(Func<bool> predicate, string message)
-        {
-            _testCount++;
-            if (predicate())
-            {
-                Console.WriteLine($"   {_testCount} OK: {message}");
-                _testsSucceeded++;
-                return;
-            }
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"   {_testCount} Nicht erfüllt: {message}");
-            Console.ResetColor();
+            WriteSummary();
         }
     }
 }

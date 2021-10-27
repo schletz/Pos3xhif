@@ -1,30 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TestHelpers;
+using static TestHelpers.ProgramChecker;
 
 namespace TeamCalendar.Application
 {
     public class Program
     {
-        private static int _testCount = 0;
-        private static int _testsSucceeded = 0;
-        private static int _points = 0;
-        private static int _pointsMax = 0;
-
         public static void Main(string[] args)
         {
             {
                 Console.WriteLine("Teste Klassenimplementierung.");
-                CheckAndWrite(() => typeof(User).GetConstructor(Type.EmptyTypes) is null, "Kein Defaultkonstruktor in User.");
-                CheckAndWrite(() => typeof(CalendarItem).GetConstructor(Type.EmptyTypes) is null, "Kein Defaultkonstruktor in CalendarItem.");
-                CheckAndWrite(() => typeof(PrivateItem).GetConstructor(Type.EmptyTypes) is null, "Kein Defaultkonstruktor in PrivateItem.");
-                CheckAndWrite(() => typeof(Meeting).GetConstructor(Type.EmptyTypes) is null, "Kein Defaultkonstruktor in Meeting.");
+                CheckAndWrite(() => !typeof(User).HasDefaultConstructor(), "Kein Defaultkonstruktor in User.");
+                CheckAndWrite(() => !typeof(CalendarItem).HasDefaultConstructor(), "Kein Defaultkonstruktor in CalendarItem.");
+                CheckAndWrite(() => !typeof(PrivateItem).HasDefaultConstructor(), "Kein Defaultkonstruktor in PrivateItem.");
+                CheckAndWrite(() => !typeof(Meeting).HasDefaultConstructor(), "Kein Defaultkonstruktor in Meeting.");
                 CheckAndWrite(() => typeof(CalendarItem).IsAbstract, "CalendarItem ist eine abstrakte Klasse.");
                 CheckAndWrite(
-                    () => typeof(User).GetProperty(nameof(User.CalendarItems))?.PropertyType == typeof(IReadOnlyList<CalendarItem>),
+                    () => typeof(User).PropertyHasType<IReadOnlyList<CalendarItem>>(nameof(User.CalendarItems)),
                     "User.CalendarItems ist vom Typ IReadOnlyList<CalendarItem>.");
-                CheckAndWrite(
-                    () => typeof(Meeting).GetProperty(nameof(Meeting.Participants))?.PropertyType == typeof(IReadOnlyList<User>),
+                CheckAndWrite(() => typeof(User).PropertyHasType<IReadOnlyList<User>>(nameof(Meeting.Participants)),
                     "Meeting.Participants ist vom Typ IReadOnlyList<User>.");
             }
             {
@@ -92,24 +88,8 @@ namespace TeamCalendar.Application
                 CheckAndWrite(() => oldOwnerItemsCount == 1 && owner.CalendarItems.Count == 0, "User.CancelMeeting löscht das Meeting aus dem Kalender des Eigentümers.");
                 CheckAndWrite(() => oldParticipantsItemsCount == 1 && participant.CalendarItems.Count == 0, "User.CancelMeeting löscht das Meeting aus dem Kalender des Teilnehmers.");
             }
-            Console.WriteLine($"{_testsSucceeded} von {_testCount} Tests erfüllt.");
-            Console.WriteLine($"{_points} von {_pointsMax} Punkte erreicht.");
-        }
 
-        private static void CheckAndWrite(Func<bool> predicate, string message, int weight = 1)
-        {
-            _testCount++;
-            _pointsMax += weight;
-            if (predicate())
-            {
-                Console.WriteLine($"   {_testCount} OK: {message}");
-                _testsSucceeded++;
-                _points += weight;
-                return;
-            }
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"   {_testCount} Nicht erfüllt: {message}");
-            Console.ResetColor();
+            WriteSummary();
         }
     }
 }

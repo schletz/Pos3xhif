@@ -34,7 +34,7 @@ Speichert einen Post. Alle Properties sind read-only.
 #### Klasse ImagePost
 Speichert einen Post, der aus einem Bild besteht. Alle Properties sind read-only.
 
-- **Html** Erzeugt ein HTML Element für das Bild mit dem Aufbau `<img src="(Url)" />";` 
+- **Html** Erzeugt ein HTML Element für das Bild mit dem Aufbau `<img src="(Url)" />` 
 Der Wert (Url) ist durch die tatsächliche URL zu ersetzen. Hinweis: Anführungszeichen
 im String müssen mit einem Backshash escaped werden.
 
@@ -42,7 +42,7 @@ im String müssen mit einem Backshash escaped werden.
 Speichert einen Post, der Text beinhaltet. Alle Properties sind read-only.
 
 - **Html** Erzeugt ein HTML Element für den Inhalt mit dem Aufbau
-`<h1>(Title)</h1><p>(Content)</p>";` 
+`<h1>(Title)</h1><p>(Content)</p>` 
 Die Werte (Title) und (Content) sind durch die tatsächlichen Werte zu ersetzen.
 
 ## Durchzuführende Arbeiten
@@ -76,13 +76,9 @@ Teste Kommentieren
    16 OK: Post.AddComment setzt Created auf UtcNow.
 Teste Rating
    17 OK: Post.TryRate lehnt ungültige Werte ab.
-   18 OK: Post.TryRate ein Rating hinzu.
+   18 OK: Post.TryRate fügt ein Rating hinzu.
    19 OK: Post.TryRate liefert false, wenn die Email schon geratet hat.
 Teste AverageRating
    20 OK: Post.AverageRating ist null, wenn kein Rating abgegeben wurde.
    21 OK: Post.AverageRating berechnet den Durchschnitt der Ratings.
-21 von 21 Tests erfüllt.
-28 von 28 Punkte erreicht.
-
-
 ```

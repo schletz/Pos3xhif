@@ -89,6 +89,4 @@ Teste User.CancelMeeting (participant)
 Teste User.CancelMeeting (owner)
    18 OK: User.CancelMeeting löscht das Meeting aus dem Kalender des Eigentümers.
    19 OK: User.CancelMeeting löscht das Meeting aus dem Kalender des Teilnehmers.
-19 von 19 Tests erfüllt.
-24 von 24 Punkte erreicht.
 ```
