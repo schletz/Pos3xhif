@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
 using LinqUebung1.Application.Model;
+using TestHelpers;
+using static TestHelpers.ProgramChecker;
 
 namespace LinqUebung1.Application
 {
@@ -10,6 +14,7 @@ namespace LinqUebung1.Application
         private static void Main(string[] args)
         {
             using ExamsDb db = ExamsDb.FromSeed();
+            var results = JsonDocument.Parse(File.ReadAllText("results.json", System.Text.Encoding.UTF8)).RootElement;
             // *************************************************************************************
             // MUSTERBEISPIELE
             // *************************************************************************************
@@ -17,95 +22,94 @@ namespace LinqUebung1.Application
             //    Where liefert IEnumerable, also immer eine Collecion.
             //    Deswegen brauchen wir First, um auf das erste Element zugreifen
             //    zu können.
-            Student result1 = db.Students.Where(s => s.Id == 1003).First();
-
+            Student demo1 = db.Students.Where(s => s.Id == 1003).First();
+            demo1.WriteJson("(1) Schüler mit der ID 1003");
             // 2. Welcher Schüler hat die Id 999?
             //    First liefert eine Exception, da die Liste leer ist.
             //    FirstOrDefault liefert in diesem Fall den Standardwert (null).
-            Student? result2 = db.Students.Where(s => s.Id == 999).FirstOrDefault();
+            Student? demo2 = db.Students.Where(s => s.Id == 999).FirstOrDefault();
 
             // 3. Wie viele Schüler sind in der Liste?
-            int result3 = db.Students.Count();
+            int demo3 = db.Students.Count();
+            demo3.WriteJson("(3) Schüler in der Liste");
 
             // 4. Wie viele Schüler gehen in die 3BHIF?
-            int result4 = db.Students.Where(s => s.Schoolclass == "3BHIF").Count();
+            int demo4 = db.Students.Where(s => s.Schoolclass == "3BHIF").Count();
             //    Für Count existiert eine Überladung, die auch eine Filterfunktion
             //    bekommen kann.
-            result4 = db.Students.Count(s => s.Schoolclass == "3BHIF");
+            demo4 = db.Students.Count(s => s.Schoolclass == "3BHIF");
+            demo4.WriteJson("(4) Schüler der 3BHIF");
 
             // *************************************************************************************
             // ÜBUNGEN
             // *************************************************************************************
-            // 5. Welche Note hat die Prüferin FAV bei ihrer schlechtesten Prüfung vergeben.
-            // Schreibe das Ergebnis mit dem richtigen Datentyp in die Variable result5 (kein var verwenden!).
-            object result5 = null;
-            Console.WriteLine($"Beispiel 5: FAV gab schlechtestens die Note {result5}.");
+            // 1. Welche Note hat die Prüferin FAV bei ihrer schlechtesten Prüfung vergeben.
+            // Schreibe das Ergebnis mit dem richtigen Datentyp in die Variable result1 (kein var verwenden!).
+            object result1 = null!;
+            CheckJsonAndWrite(result1, results.GetProperty("Result1"), "Beispiel 1");
 
-            // 6. Welchen Notendurchschnitt haben die weiblichen Schülerinnen in POS?
-            // Schreibe das Ergebnis mit dem richtigen Datentyp in die Variable result6 (kein var verwenden!).
-            object result6 = null;
-            Console.WriteLine($"Beispiel 6: Notenschnitt der Schülerinnen in POS: {result6:0.00}");
+            // 2. Welchen Notendurchschnitt haben die weiblichen Schülerinnen in POS?
+            // Schreibe das Ergebnis mit dem richtigen Datentyp in die Variable result2 (kein var verwenden!).
+            object result2 = null!;
+            CheckJsonAndWrite(result2, results.GetProperty("Result2"), "Beispiel 2");
 
-            // 7. Welche Schüler haben 6 oder mehr Prüfungen? Gib eine Liste von Schülern zurück und gib Sie aus.
-            // Schreibe das Ergebnis mit dem richtigen Datentyp in die Variable result7 (kein var verwenden!).
-            object result7 = null;
-            Console.WriteLine("Beispiel 7: Schüler mit mehr als 6 Prüfungen.");
-            result7.ToList().ForEach(s => { Console.WriteLine($"   {s.Lastname} {s.Firstname} hat mehr 6 oder mehr Prüfungen."); });
+            // 3. Welche Schüler haben 6 oder mehr Prüfungen? Gib eine Liste von Schülern zurück und gib Sie aus.
+            // Schreibe das Ergebnis mit dem richtigen Datentyp in die Variable result3 (kein var verwenden!).
+            object result3 = null!;
+            CheckJsonAndWrite(result3, results.GetProperty("Result3"), "Beispiel 3");
 
-            // 8. Welche Schüler haben eine DBI Prüfung? Gib eine Liste von Schülern zurück und gib sie aus.
+            // 4. Welche Schüler haben eine DBI Prüfung? Gib eine Liste von Schülern zurück und gib sie aus.
             //    Hinweis: kombiniere Where und Any, indem Any in der Where Funktion verwendet wird.
-            // Schreibe das Ergebnis mit dem richtigen Datentyp in die Variable result8 (kein var verwenden!).
-            object result8 = null;
-            Console.WriteLine("Beispiel 8: Schüler mit DBI Prüfungen.");
-            result8.ToList().ForEach(s => { Console.WriteLine($"   {s.Lastname} {s.Firstname} hat eine DBI Prüfung."); });
+            // Schreibe das Ergebnis mit dem richtigen Datentyp in die Variable result4 (kein var verwenden!).
+            object result4 = null!;
+            CheckJsonAndWrite(result4, results.GetProperty("Result4"), "Beispiel 4");
 
-            // 9. Gibt es Schüler, die nur in POS eine Prüfung haben? Gib eine Liste von Schülern zurück und gib sie aus.
+            // 5. Gibt es Schüler, die nur in POS eine Prüfung haben?
+            //    Gib eine Liste von Schülern zurück und gib sie aus.
             //    Hinweis: kombiniere Where und All, indem All in der Where Funktion verwendet wird.
             //    All gibt auch Schüler aus, die keine Prüfung haben. Dies kann so belassen werden.
-            // Schreibe das Ergebnis mit dem richtigen Datentyp in die Variable result9 (kein var verwenden!).
-            object result9 = null;
-            Console.WriteLine("Beispiel 9: Schüler, die nur in POS eine Prüfung haben.");
-            result9.ToList().ForEach(s => { Console.WriteLine($"   {s.Lastname} {s.Firstname} hat nur in POS eine Prüfung."); });
+            // Schreibe das Ergebnis mit dem richtigen Datentyp in die Variable result5 (kein var verwenden!).
+            object result5 = null!;
+            CheckJsonAndWrite(result5, results.GetProperty("Result5"), "Beispiel 5");
 
-            // 10. Welche Schüler haben keine POS Prüfung? Gib eine Liste von Schülern zurück und gib sie aus.
+            // 6. Welche Schüler haben keine POS Prüfung? Gib eine Liste von Schülern zurück und gib sie aus.
             //    Hinweis: kombinieren Where und Any, indem Any in der Where Funktion verwendet wird.
-            // Schreibe das Ergebnis mit dem richtigen Datentyp in die Variable result10 (kein var verwenden!).
-            object result10 = null;
-            Console.WriteLine("Beispiel 10: Schüler, die keine POS Prüfung haben.");
-            result10.ToList().ForEach(s => { Console.WriteLine($"   {s.Lastname} {s.Firstname} hat keine POS Prüfung."); });
+            // Schreibe das Ergebnis mit dem richtigen Datentyp in die Variable result6 (kein var verwenden!).
+            object result6 = null!;
+            CheckJsonAndWrite(result6, results.GetProperty("Result6"), "Beispiel 6");
 
-            // 11. Welche Schüler haben überhaupt keine Prüfung? Gib eine Liste von Schülern zurück und gib sie aus.
-            //     Hinweis: Verwende das Count Property.
-            // Schreibe das Ergebnis mit dem richtigen Datentyp in die Variable result11 (kein var verwenden!).
-            object result11 = null;
-            Console.WriteLine("Beispiel 11: Schüler, die überhaupt keine Prüfung haben.");
-            result11.ToList().ForEach(s => { Console.WriteLine($"   {s.Lastname} {s.Firstname} hat keine Prüfung."); });
+            // 7. Welche Schüler haben überhaupt keine Prüfung? Gib eine Liste von Schülern zurück und gib sie aus.
+            //     Hinweis: Verwende Any statt dem Count Property.
+            // Schreibe das Ergebnis mit dem richtigen Datentyp in die Variable result7 (kein var verwenden!).
+            object result7 = null!;
+            CheckJsonAndWrite(result7, results.GetProperty("Result7"), "Beispiel 7");
 
-            // 12. Welche Schüler hatten in Juni AM Prüfungen? Gib eine Liste von Prüfungen zurück und gib sie mit dem Schülernamen aus.
+            // 8. Welche Schüler hatten in Juni AM Prüfungen? Gib eine Liste von Prüfungen zurück.
             //     Hinweis: Verwende das Month Property des Datum Feldes.
-            // Schreibe das Ergebnis mit dem richtigen Datentyp in die Variable result12 (kein var verwenden!).
-            object result12 = null;
-            Console.WriteLine("Beispiel 12: Schüler, die im Juni eine AM Prüfung hatten.");
-            result12.ToList().ForEach(e => { Console.WriteLine($"   {e.Student.Lastname} {e.Student.Firstname} hat bei {e.Examinator} eine Prüfung in AM."); });
+            // Schreibe das Ergebnis mit dem richtigen Datentyp in die Variable result8 (kein var verwenden!).
+            object result8 = null!;
+            CheckJsonAndWrite(result8, results.GetProperty("Result8"), "Beispiel 8");
 
-            // 13. Welche Schüler haben bei einer AM Prüfung eine negative Note,
-            //     aber in E nur positive Prüfungen?
-            // Schreibe das Ergebnis mit dem richtigen Datentyp in die Variable result13 (kein var verwenden!).
-            object result13 = null;
-            Console.WriteLine("Beispiel 13: Schüler, die in AM einmal negativ, aber in E immer positiv waren.");
-            result13.ToList().ForEach(s => { Console.WriteLine($"   {s.Lastname} {s.Firstname} war in AM negativ, in E aber nie."); });
+            // 9. Welche Schüler haben in E nur negative Prüfungen? Überlege, warum man diesen Filterausdruck
+            //     nicht zusammengesetzt schreiben kann.
+            // Schreibe das Ergebnis mit dem richtigen Datentyp in die Variable result9 (kein var verwenden!).
+            object result9 = null!;
+            CheckJsonAndWrite(result9, results.GetProperty("Result9"), "Beispiel 9");
 
-            // 14. Welche Schüler haben im Mittel bessere DBI Prüfungen als D Prüfungen. Anders gesagt: Bei wem
+            // 10. Welche Schüler haben im Mittel bessere DBI Prüfungen als D Prüfungen. Anders gesagt: Bei wem
             //     ist der Notenschnitt der DBI Prüfungen kleiner als der Notenschnitt der D Prüfungen.
             //     Gib eine Liste von Schülern zurück, auf die das zutrifft.
             //     Hinweise:
             //       -) Wenn mit Where gefiltert wird, kann es sein, dass eine leere Liste zurückkommt.
             //       -) Average kann nur von einer Liste mit Elementen aufgerufen werden.
             //       -) Erstelle daher eine Lambda Expression mit try und catch im inneren, die false im Fehlerfall liefert.
-            // Schreibe das Ergebnis mit dem richtigen Datentyp in die Variable result14 (kein var verwenden!).
-            object result14 = null;
-            Console.WriteLine("Beispiel 14: Schüler, in DBI bessere Prüfungen (Notenschnitt) als in D hatten.");
-            result14.ToList().ForEach(s => { Console.WriteLine($"   {s.Lastname} {s.Firstname} ist in DBI besser als in D."); });
+            // Schreibe das Ergebnis mit dem richtigen Datentyp in die Variable result10 (kein var verwenden!).
+            // Beginne deine Abfrage mit db.Students.ToList(), da für diesen Ausdruck alle Daten
+            // vorher in den Speicher geladen werden müssen.
+            object result10 = null!;
+            CheckJsonAndWrite(result10, results.GetProperty("Result10"), "Beispiel 10");
+
+            WriteSummary();
         }
     }
 }

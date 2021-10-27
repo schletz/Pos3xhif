@@ -7,7 +7,7 @@ namespace LinqUebung2.Application
 {
     internal class Program
     {
-        private static void WriteJson(object data, string title = "", bool indent = false)
+        private static void WriteJson(object? data, string title = "", bool indent = false)
         {
             string result = System.Text.Json.JsonSerializer.Serialize(
                 data,
@@ -94,6 +94,7 @@ namespace LinqUebung2.Application
                 });
             //WriteJson(uebung6, "Beispiel 6 - Schüler der 3CHIF mit Prüfungen", true);
 
+            
             // *************************************************************************************
             // ÜBUNGEN
             // Schreibe in den nachfolgenden Übungen statt der Zeile
@@ -151,6 +152,7 @@ namespace LinqUebung2.Application
             object result6 = null;
             Console.WriteLine("Beispiel 6");
             result6.ToList().ForEach(e => { Console.WriteLine($"   {e.Examinator} gibt Noten von {e.BestGrade} bis {e.WorstGrade}"); });
+            
         }
     }
 }

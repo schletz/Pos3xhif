@@ -1,0 +1,406 @@
+{
+  "Empty": null,
+  "Result1": 4,
+  "Result2": 3.6666,
+  "Result3": [
+    {
+      "Id": 1002,
+      "Lastname": "Nayshe",
+      "Firstname": "Eli\u00E8s",
+      "Gender": 2,
+      "Schoolclass": "3BHIF"
+    },
+    {
+      "Id": 1003,
+      "Lastname": "Domanek",
+      "Firstname": "No\u00E9mie",
+      "Gender": 2,
+      "Schoolclass": "3CHIF"
+    },
+    {
+      "Id": 1008,
+      "Lastname": "Dibden",
+      "Firstname": "Ma\u00E9na",
+      "Gender": 2,
+      "Schoolclass": "3CHIF"
+    }
+  ],
+  "Result4": [
+    {
+      "Id": 1001,
+      "Lastname": "Mattack",
+      "Firstname": "Lo\u00EFca",
+      "Gender": 2,
+      "Schoolclass": "3AHIF"
+    },
+    {
+      "Id": 1002,
+      "Lastname": "Nayshe",
+      "Firstname": "Eli\u00E8s",
+      "Gender": 2,
+      "Schoolclass": "3BHIF"
+    },
+    {
+      "Id": 1003,
+      "Lastname": "Domanek",
+      "Firstname": "No\u00E9mie",
+      "Gender": 2,
+      "Schoolclass": "3CHIF"
+    },
+    {
+      "Id": 1004,
+      "Lastname": "Avramovitz",
+      "Firstname": "Chlo\u00E9",
+      "Gender": 2,
+      "Schoolclass": "3BHIF"
+    },
+    {
+      "Id": 1007,
+      "Lastname": "Kynge",
+      "Firstname": "Val\u00E9rie",
+      "Gender": 2,
+      "Schoolclass": "3CHIF"
+    },
+    {
+      "Id": 1008,
+      "Lastname": "Dibden",
+      "Firstname": "Ma\u00E9na",
+      "Gender": 2,
+      "Schoolclass": "3CHIF"
+    },
+    {
+      "Id": 1010,
+      "Lastname": "Cuseick",
+      "Firstname": "Cl\u00E9a",
+      "Gender": 1,
+      "Schoolclass": "3CHIF"
+    },
+    {
+      "Id": 1020,
+      "Lastname": "Minerdo",
+      "Firstname": "Laur\u00E9lie",
+      "Gender": 1,
+      "Schoolclass": "3CHIF"
+    },
+    {
+      "Id": 1022,
+      "Lastname": "Works",
+      "Firstname": "Styrbj\u00F6rn",
+      "Gender": 2,
+      "Schoolclass": "3CHIF"
+    },
+    {
+      "Id": 1026,
+      "Lastname": "Jeandin",
+      "Firstname": "Ma\u00EFt\u00E9",
+      "Gender": 2,
+      "Schoolclass": "3BHIF"
+    },
+    {
+      "Id": 1027,
+      "Lastname": "McComiskey",
+      "Firstname": "L\u00E9a",
+      "Gender": 1,
+      "Schoolclass": "3CHIF"
+    }
+  ],
+  "Result5": [
+    {
+      "Id": 1015,
+      "Lastname": "Wilton",
+      "Firstname": "L\u00E8i",
+      "Gender": 2,
+      "Schoolclass": "3CHIF"
+    },
+    {
+      "Id": 1018,
+      "Lastname": "Santori",
+      "Firstname": "C\u00E9line",
+      "Gender": 2,
+      "Schoolclass": "3CHIF"
+    },
+    {
+      "Id": 1021,
+      "Lastname": "Gianulli",
+      "Firstname": "L\u00E9onie",
+      "Gender": 2,
+      "Schoolclass": "3BHIF"
+    }
+  ],
+  "Result6": [
+    {
+      "Id": 1000,
+      "Lastname": "Elt",
+      "Firstname": "C\u00E9lia",
+      "Gender": 1,
+      "Schoolclass": "3AHIF"
+    },
+    {
+      "Id": 1003,
+      "Lastname": "Domanek",
+      "Firstname": "No\u00E9mie",
+      "Gender": 2,
+      "Schoolclass": "3CHIF"
+    },
+    {
+      "Id": 1004,
+      "Lastname": "Avramovitz",
+      "Firstname": "Chlo\u00E9",
+      "Gender": 2,
+      "Schoolclass": "3BHIF"
+    },
+    {
+      "Id": 1006,
+      "Lastname": "Riseborough",
+      "Firstname": "Laur\u00E9na",
+      "Gender": 2,
+      "Schoolclass": "3AHIF"
+    },
+    {
+      "Id": 1007,
+      "Lastname": "Kynge",
+      "Firstname": "Val\u00E9rie",
+      "Gender": 2,
+      "Schoolclass": "3CHIF"
+    },
+    {
+      "Id": 1009,
+      "Lastname": "Pinder",
+      "Firstname": "J\u00FA",
+      "Gender": 2,
+      "Schoolclass": "3BHIF"
+    },
+    {
+      "Id": 1013,
+      "Lastname": "Elbourn",
+      "Firstname": "Jos\u00E9e",
+      "Gender": 2,
+      "Schoolclass": "3AHIF"
+    },
+    {
+      "Id": 1014,
+      "Lastname": "Fosdike",
+      "Firstname": "Kallist\u00E9",
+      "Gender": 1,
+      "Schoolclass": "3AHIF"
+    },
+    {
+      "Id": 1016,
+      "Lastname": "Billson",
+      "Firstname": "El\u00E9a",
+      "Gender": 2,
+      "Schoolclass": "3BHIF"
+    },
+    {
+      "Id": 1018,
+      "Lastname": "Santori",
+      "Firstname": "C\u00E9line",
+      "Gender": 2,
+      "Schoolclass": "3CHIF"
+    },
+    {
+      "Id": 1020,
+      "Lastname": "Minerdo",
+      "Firstname": "Laur\u00E9lie",
+      "Gender": 1,
+      "Schoolclass": "3CHIF"
+    },
+    {
+      "Id": 1021,
+      "Lastname": "Gianulli",
+      "Firstname": "L\u00E9onie",
+      "Gender": 2,
+      "Schoolclass": "3BHIF"
+    },
+    {
+      "Id": 1022,
+      "Lastname": "Works",
+      "Firstname": "Styrbj\u00F6rn",
+      "Gender": 2,
+      "Schoolclass": "3CHIF"
+    },
+    {
+      "Id": 1025,
+      "Lastname": "Clearley",
+      "Firstname": "\u00C5sa",
+      "Gender": 2,
+      "Schoolclass": "3CHIF"
+    },
+    {
+      "Id": 1029,
+      "Lastname": "Spurnier",
+      "Firstname": "St\u00E9phanie",
+      "Gender": 1,
+      "Schoolclass": "3CHIF"
+    }
+  ],
+  "Result7": [
+    {
+      "Id": 1018,
+      "Lastname": "Santori",
+      "Firstname": "C\u00E9line",
+      "Gender": 2,
+      "Schoolclass": "3CHIF"
+    },
+    {
+      "Id": 1021,
+      "Lastname": "Gianulli",
+      "Firstname": "L\u00E9onie",
+      "Gender": 2,
+      "Schoolclass": "3BHIF"
+    }
+  ],
+  "Result8": [
+    {
+      "Id": 39,
+      "Subject": "AM",
+      "Examinator": "KY",
+      "Grade": 5,
+      "Date": "2018-06-09T00:00:00"
+    },
+    {
+      "Id": 47,
+      "Subject": "AM",
+      "Examinator": "KY",
+      "Grade": 4,
+      "Date": "2018-06-02T00:00:00"
+    },
+    {
+      "Id": 63,
+      "Subject": "AM",
+      "Examinator": "KY",
+      "Grade": 4,
+      "Date": "2018-06-18T00:00:00"
+    }
+  ],
+  "Result9": [
+    {
+      "Id": 1000,
+      "Lastname": "Elt",
+      "Firstname": "C\u00E9lia",
+      "Gender": 1,
+      "Schoolclass": "3AHIF"
+    },
+    {
+      "Id": 1001,
+      "Lastname": "Mattack",
+      "Firstname": "Lo\u00EFca",
+      "Gender": 2,
+      "Schoolclass": "3AHIF"
+    },
+    {
+      "Id": 1003,
+      "Lastname": "Domanek",
+      "Firstname": "No\u00E9mie",
+      "Gender": 2,
+      "Schoolclass": "3CHIF"
+    },
+    {
+      "Id": 1004,
+      "Lastname": "Avramovitz",
+      "Firstname": "Chlo\u00E9",
+      "Gender": 2,
+      "Schoolclass": "3BHIF"
+    },
+    {
+      "Id": 1006,
+      "Lastname": "Riseborough",
+      "Firstname": "Laur\u00E9na",
+      "Gender": 2,
+      "Schoolclass": "3AHIF"
+    },
+    {
+      "Id": 1009,
+      "Lastname": "Pinder",
+      "Firstname": "J\u00FA",
+      "Gender": 2,
+      "Schoolclass": "3BHIF"
+    },
+    {
+      "Id": 1011,
+      "Lastname": "Calladine",
+      "Firstname": "Cl\u00E9mence",
+      "Gender": 2,
+      "Schoolclass": "3CHIF"
+    },
+    {
+      "Id": 1014,
+      "Lastname": "Fosdike",
+      "Firstname": "Kallist\u00E9",
+      "Gender": 1,
+      "Schoolclass": "3AHIF"
+    },
+    {
+      "Id": 1015,
+      "Lastname": "Wilton",
+      "Firstname": "L\u00E8i",
+      "Gender": 2,
+      "Schoolclass": "3CHIF"
+    },
+    {
+      "Id": 1017,
+      "Lastname": "Dunstall",
+      "Firstname": "Lys\u00E9a",
+      "Gender": 2,
+      "Schoolclass": "3AHIF"
+    },
+    {
+      "Id": 1018,
+      "Lastname": "Santori",
+      "Firstname": "C\u00E9line",
+      "Gender": 2,
+      "Schoolclass": "3CHIF"
+    },
+    {
+      "Id": 1020,
+      "Lastname": "Minerdo",
+      "Firstname": "Laur\u00E9lie",
+      "Gender": 1,
+      "Schoolclass": "3CHIF"
+    },
+    {
+      "Id": 1021,
+      "Lastname": "Gianulli",
+      "Firstname": "L\u00E9onie",
+      "Gender": 2,
+      "Schoolclass": "3BHIF"
+    },
+    {
+      "Id": 1022,
+      "Lastname": "Works",
+      "Firstname": "Styrbj\u00F6rn",
+      "Gender": 2,
+      "Schoolclass": "3CHIF"
+    },
+    {
+      "Id": 1026,
+      "Lastname": "Jeandin",
+      "Firstname": "Ma\u00EFt\u00E9",
+      "Gender": 2,
+      "Schoolclass": "3BHIF"
+    },
+    {
+      "Id": 1027,
+      "Lastname": "McComiskey",
+      "Firstname": "L\u00E9a",
+      "Gender": 1,
+      "Schoolclass": "3CHIF"
+    },
+    {
+      "Id": 1029,
+      "Lastname": "Spurnier",
+      "Firstname": "St\u00E9phanie",
+      "Gender": 1,
+      "Schoolclass": "3CHIF"
+    }
+  ],
+  "Result10": [
+    {
+      "Id": 1022,
+      "Lastname": "Works",
+      "Firstname": "Styrbj\u00F6rn",
+      "Gender": 2,
+      "Schoolclass": "3CHIF"
+    }
+  ]
+}

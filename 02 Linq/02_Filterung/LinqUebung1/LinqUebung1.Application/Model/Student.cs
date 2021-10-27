@@ -28,6 +28,7 @@ namespace LinqUebung1.Application.Model
         public Gender Gender { get; private set; } = default!; // for EF Core
         public string Schoolclass { get; private set; } = default!; // for EF Core
 
-        public IReadOnlyList<Exam> Exams { get; } = new List<Exam>();
+        [System.Text.Json.Serialization.JsonIgnore]
+        public IEnumerable<Exam> Exams { get; } = new List<Exam>();
     }
 }

@@ -27,6 +27,8 @@ namespace LinqUebung1.Application.Model
         public string Examinator { get; private set; } = default!; // For EF Core
         public int Grade { get; set; }
         public DateTime Date { get; set; }
+
+        [System.Text.Json.Serialization.JsonIgnore]
         public Student Student { get; private set; } = default!; // For EF Core
     }
 }

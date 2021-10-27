@@ -11,4 +11,10 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.*" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.*" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="results.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

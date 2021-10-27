@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 /// <summary>
@@ -12,6 +13,9 @@ using System.Threading.Tasks;
 /// </summary>
 namespace TestHelpers
 {
+    /// <summary>
+    /// Erweitert die Typeklasse fürdie Prüfung der Implementierung einer Klasse
+    /// </summary>
     public static class TypeExtensions
     {
         public static bool HasDefaultConstructor(this Type type) =>
@@ -31,6 +35,65 @@ namespace TestHelpers
         }
     }
 
+    /// <summary>
+    /// Fügt JsonEquals für LINQ Übungen hinzu. Aufruf: x.JsonEquals(other). Erweitert jedes
+    /// object.
+    /// </summary>
+    public static class JsonElementExtensions
+    {
+        private static int CalculateHash(this JsonElement element) => element.ValueKind switch
+        {
+            JsonValueKind.Number => (int)(element.GetDecimal() * 1000),
+            JsonValueKind.String => element.GetString()!.GetHashCode(),
+            JsonValueKind.Array => element
+                .EnumerateArray()
+                .Aggregate(0, (prev, current) => prev ^ current.CalculateHash()),
+            JsonValueKind.Object => element
+                .EnumerateObject()
+                .Aggregate(0,
+                    (prev, current) => prev ^ HashCode.Combine(current.Name.GetHashCode(), current.Value.CalculateHash())),
+            _ => (int)element.ValueKind
+        };
+
+        private static JsonDocument ToJsonDocument(this object obj) => obj switch
+        {
+            JsonDocument doc => doc,
+            string str => JsonDocument.Parse(str),
+            object o => JsonDocument.Parse(JsonSerializer.Serialize(o))
+        };
+
+        public static bool JsonEquals(this JsonElement element, JsonElement other) =>
+            element.CalculateHash() == other.CalculateHash();
+
+        public static bool JsonEquals(this object obj, JsonElement other)
+        {
+            using var doc1 = obj.ToJsonDocument();
+            return doc1.RootElement.JsonEquals(other);
+        }
+
+        public static bool JsonEquals(this object obj, object other)
+        {
+            using var doc1 = obj.ToJsonDocument();
+            using var doc2 = other.ToJsonDocument();
+            return doc1.RootElement.JsonEquals(doc2.RootElement);
+        }
+
+        public static void WriteJson(this object data, string title = "", bool indent = false)
+        {
+            string result = JsonSerializer.Serialize(
+                data,
+                new JsonSerializerOptions() { WriteIndented = indent });
+            ConsoleColor oldColor = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Green;
+            if (!string.IsNullOrEmpty(title)) { Console.Write(title); Console.Write(" "); }
+            Console.ForegroundColor = oldColor;
+            Console.WriteLine(result);
+        }
+    }
+
+    /// <summary>
+    /// Implementiert die Punktezählung und Helper Methoden für die Main Methode.
+    /// </summary>
     public static class ProgramChecker
     {
         private static int _testCount = 0;
@@ -50,14 +113,34 @@ namespace TestHelpers
             _pointsMax += weight;
             if (predicate())
             {
-                Console.WriteLine($"   {_testCount} OK: {message}");
+                Console.WriteLine($"   ({_testCount}) OK: {message}");
                 _testsSucceeded++;
                 _points += weight;
                 return;
             }
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"   {_testCount} Nicht erfüllt: {message}");
+            Console.WriteLine($"   ({_testCount}) Nicht erfüllt: {message}");
             Console.ResetColor();
+        }
+
+        public static void CheckJsonAndWrite(object? obj1, JsonElement element, string message, int weight = 1)
+        {
+            if (obj1 is null)
+            {
+                CheckAndWrite(() => false, message, weight);
+                return;
+            }
+            var equals = obj1.JsonEquals(element);
+            CheckAndWrite(() => equals, message, weight);
+            if (!equals)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Write("   Geliefertes Ergebnis: ");
+                obj1.WriteJson(string.Empty, true);
+                Console.Write("   Korrektes Ergebnis: ");
+                Console.WriteLine(element);
+                Console.ResetColor();
+            }
         }
 
         public static void WriteSummary()
