@@ -52,7 +52,7 @@ if (myStr is null)  // Seit C# 7 empfohlen (statt myStr == null)
 {
     Console.WriteLine("myStr kann NULL sein, da es ein Referenztyp ist.");
 }
-if (myStr is not null)  // Seit C# 7 empfohlen (statt myStr == null)
+if (myStr is not null)  // Seit C# 7 empfohlen (statt myStr != null)
 {
     Console.WriteLine("myStr ist nicht NULL.");
 }
