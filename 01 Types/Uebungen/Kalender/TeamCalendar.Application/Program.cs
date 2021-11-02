@@ -20,7 +20,8 @@ namespace TeamCalendar.Application
                 CheckAndWrite(
                     () => typeof(User).PropertyHasType<IReadOnlyList<CalendarItem>>(nameof(User.CalendarItems)),
                     "User.CalendarItems ist vom Typ IReadOnlyList<CalendarItem>.");
-                CheckAndWrite(() => typeof(User).PropertyHasType<IReadOnlyList<User>>(nameof(Meeting.Participants)),
+                CheckAndWrite(
+                    () => typeof(Meeting).PropertyHasType<IReadOnlyList<User>>(nameof(Meeting.Participants)),
                     "Meeting.Participants ist vom Typ IReadOnlyList<User>.");
             }
             {
