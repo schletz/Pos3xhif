@@ -8,47 +8,10 @@ As of November 2021, employees must provide a COVID health certificate to enter 
 
 The different types of tests as well as different vaccines are not considered for simplicity. The following class model shows a possible implementation:
 
-```plantuml
-@startuml
-hide empty fields
-
-interface ISafetyCheck {
-    +bool IsValid(DateTime date)
-}
-
-class Test {
-    +TestDate : DateTime
-    ---
-    +bool IsValid(DateTime date)
-}
-Test -up-|> ISafetyCheck
-
-class Cured {
-    +DateOfDiagnosis : DateTime
-    ---
-    +bool IsValid(DateTime date)
-}
-Cured -up-|> ISafetyCheck
-
-class Vaccination {
-    +FirstVaccination : DateTime
-    +SecondVaccination : DateTime?
-    ---
-    +bool IsValid(DateTime date)
-}
-Vaccination -up-|> ISafetyCheck
-
-class Employee {
-    +Firstname : string
-    +Lastname : string
-    +SafetyChecks : IReadOnlyList<ISafetyCheck>
-    ---
-    +void AddSafetyCheck(ISafetyCheck safetyCheck)
-    +bool IsSafe(DateTime date)
-}
-Employee o--> ISafetyCheck
-@enduml
-```
+![](klassenmodell.svg)
+<sup>
+https://www.plantuml.com/plantuml/uml/dO_TIiD048NlzodcigNi2uZKIgjGA1HiwVsuEsa7zoTaDa9Gtzsa9RgffQXxDSoUETyvCqbOfTexTM1BGBvC3HHCpefI719L1Hg2vGOBIityGEO5tXIqR_8SeuEbxD2n7IqmqPOzWMs7iVfGoZWKWIr9wW-wkTF13VJouuVM-ZUEHojTb_fzEiZJe-PrHRPdTTVhOi6u3r5O_eayMLvXxj0O3fWuXfxyo9MaV7-6dcp8n60lA-x-aYwtk9BnmPSkDaI3W04zjLn95OVzQR_2Y-lCKTglvHEXNGVNh5ZIRSwR3hE_HhPmRssc6ELoaEzvFAZRYNws_QeHjJuhEgDWQ-y-0G00
+</sup>
 
 ## Description of each class
 
