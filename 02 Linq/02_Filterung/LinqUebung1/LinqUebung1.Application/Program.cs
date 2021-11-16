@@ -43,6 +43,11 @@ namespace LinqUebung1.Application
             // *************************************************************************************
             // ÜBUNGEN
             // *************************************************************************************
+            // Genereller Hinweis: Schreibe nach deiner Abfrage - wenn sie eine Collection liefert - .ToList().
+            // Sonst kann es zu Exceptions bei CheckJsonAndWrite kommen, da in wirklichkeit ein OR Mapper
+            // dahintersteckt und eine Datenbankfrage ausgewertet wird. ToList() lädt das Ergebnis vorab
+            // in den Speicher.
+            
             // 1. Welche Note hat die Prüferin FAV bei ihrer schlechtesten Prüfung vergeben.
             // Schreibe das Ergebnis mit dem richtigen Datentyp in die Variable result1 (kein var verwenden!).
             object result1 = null!;

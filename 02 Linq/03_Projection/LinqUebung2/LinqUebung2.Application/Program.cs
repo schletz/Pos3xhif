@@ -101,7 +101,11 @@ namespace LinqUebung2.Application
             // object resultX = null;
             // die korrekte LINQ Abfrage. Verwende den entsprechenden Datentyp statt object.
             // *************************************************************************************
-
+            // Genereller Hinweis: Schreibe nach deiner Abfrage - wenn sie eine Collection liefert - .ToList().
+            // Sonst kann es zu Exceptions bei CheckJsonAndWrite kommen, da in wirklichkeit ein OR Mapper
+            // dahintersteckt und eine Datenbankfrage ausgewertet wird. ToList() lädt das Ergebnis vorab
+            // in den Speicher.
+            
             // 1. Drucke eine Liste aller Fächer. Hinweis: Verwende Distinct, um doppelte Einträge
             //    zu entfernen. Speichere das Ergebnis in IEnumerable<string>.
             object result1 = null;
