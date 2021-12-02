@@ -1,309 +1,453 @@
-# Code first mit EF Core 5 und C# 9
+# Klassenmodelle persistieren mit EF Core
 
-## Konfiguration des Projektes: Nullable reference Types
+## Anlegen des Musterprojektes (.NET 6)
 
-Mit C# 8 wurden die *nullable reference types* eingeführt. Der Vorteil ist, dass der Compiler eine
-Warnung ausgibt, wenn auf Methoden oder Properties von Objekten zugegriffen wird, die null sein
-könnten:
-
-```c#
-class Person
-{
-    public string Firstname { get; set; }
-    public string Lastname { get; set; }
-}
-class Program
-{
-    static void Main(string[] args)
-    {
-        var p = new Person();
-        var nameLength = p.Firstname.Length + p.Lastname.Length;
-
-        Console.WriteLine($"Der Name ist {nameLength} Stellen lang");
-    }
-}
-```
-
-Dieses Programm liefert einen Laufzeitfehler, da *Firstname* und *Lastname* den Wert *null* haben.
-Um solche Situationen zu vermeiden, kann für das Projekt durch Doppelklicken auf den Projektnamen
-die *Nullable* Option gesetzt werden:
-
-```xml
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-</Project>
-```
-
-Nach der Aktivierung entstehen auf einmal grün unterlegte Warnungen in Visual Studio:
-
-![](nullable.png)
-
-- *Firstname* und *Lastname* haben den Datentyp string (ohne ?). Das bedeutet, dass sie nicht
-  *null* sein dürfen.
-- *Email* hat den Datentyp *string?*. Das bedeutet, dass die Email Adresse *null* sein darf.
-- Bei der E-Mail entsteht zwar keine Warnung in der Deklaration der Klasse, jedoch wird beim
-  Abfragen der Länge eine Warnung angezeigt.
-
-Wie können wir nun den Compiler zufrieden stellen? Indem wir - wie es auch bei "klassischen"
-Programmen sein sollte - initialisieren bzw. eine Abfrage auf *null* einbauen.
-
-```c#
-class Person
-{
-    public string Firstname { get; set; } = "";
-    public string Lastname { get; set; } = "";
-    public string? Email { get; set; }
-}
-
-class Program
-{
-    static void Main(string[] args)
-    {
-        var p = new Person();
-        var nameLength = p.Firstname.Length + p.Lastname.Length;
-        Console.WriteLine($"Der Name ist {nameLength} Stellen lang.");
-
-        if (!string.IsNullOrEmpty(p.Email))
-        {
-            var emailLength = p.Email.Length;
-            Console.WriteLine($"Die E-Mail Adresse ist {emailLength} Stellen lang.");
-        }
-    }
-}
-```
-
-Der Compiler führt also eine Codeanalyse durch und erkennt, dass das Feld Email innerhalb der
-*if* Abfrage nicht null sein kann. Diese "Intelligenz" liegt in der Dekleration der Methode
-*IsNullOrEmpty* im .NET Framework:
-
-```c#
-public static bool IsNullOrEmpty([NotNullWhen(false)] String? value);
-```
-
-> Was hat das nun mit EF Core und Datenbankzugriff zu tun? In einer Datenbank können manche Felder
-> NULL Werte enthalten (nullable), andere Felder werden mit NOT NULL definiert. Sie können mit den
-> Datentypen steuern, ob EF Core ein Feld mit NULL oder NOT NULL anlegt. Deaktivieren Sie die
-> nullable Features von C# 8, dreht sich die Bedeutung um und aus ihrem Modell wird ein anderes
-> Datenbankschema erzeugt! Sie müssen sich also schon am Beginn Ihres Projektes entscheiden, ob
-> Sie dieses Feature aktivieren oder nicht.
-
-## Was ist "Code first"
-
-Wir betrachten wieder unseren "Klassiker": Eine Schulklasse, die aus mehreren Schülern besteht.
-In C# können wir diesen Sachverhalt mittels 2 Klassen abbilden:
-
-![](simple_relation.png)
-
-- *Class* hat eine Liste von Schülern (1:n)
-- *Pupil* hat einen Verweis auf die Klasse des Schülers (Property *Class*)
-- Zusätzlich wird noch der Name der Klasse im Property *ClassId* gespeichert.
-- Das Property *Pupil.Class* wird mit dem Wert *default!* initialisiert. Rufzeichen ist der null
-  forgiving Operatior. Er bedeutet: "Wir kümmern uns selbst, dass dieser Wert nicht null sein wird".
-
-### Neuigkeiten in C# 9: init und new()
-
-Diese Klassen verwenden bereits neue Sprachfeatures von C# 9: *init* und *new()*.
-
-Mit dem Schlüsselwort *new()* ersparen wir uns z. B. in der Klasse *Class* die Angabe von
-*new List<Pupil>();*. Der Compiler weiß aufgrund der linken Seite, welche Instanz zu erzeugen ist.
-
-Statt *set* wird bei Properties manchmal *init* verwendet. Es bedeutet, dass wir den Wert nur im
-Initializer setzen dürfen. So ist es möglich, die Klassen-ID bei der Initialisierung zu setzen. Im
-weiteren Programmverlauf darf sie allerdings nicht mehr verändert werden.
-
-```c#
-var @class = new Class { Id = "5AHIF" };     // @class, da class ein reserviertes Wort ist.
-@class.Id = "4AHIF";                         // Compilerfehler
-```
-
-Gerade bei Primärschlüsseln ist eine Änderung heikel bzw. wird von EF Core nicht unterstützt.
-Deswegen verwenden wir dieses Schlüsselwort bei den Schlüsselfeldern.
-
-## Aus Klassen wird eine Datenbank: Der DbContext
-
-Bevor wir aus den Klassen eine Datenbank erzeugen können, müssen wir EF Core und den Provider für
-SQLite über die NuGet Packet Manager Console (*Tools* - *NuGet Packet Manager*) installieren:
+Um ein Klassenmodell umsetzen zu können, legen wir eine kleine Solution an. Wir nutzen nun
+*2 Projekte* und keine Konsolenapplikation:
+- **CodeFirstDemo.Application** beinhaltet die Modelklassen und die Logik für den Datenbankzugriff.
+  Mit *dotnet add package* können wir die NuGet Pakete für EF Core und Bogus (Musterdaten Generator)
+  hinzufügen.
+- **CodeFirstDemo.Test** beinhaltet sogenannte *Unit Tests*. Diese rufen unseren Programmcode im
+  Application Projekt auf. Dafür wird eine Referenz auf das Application Projekt hinzugefügt.
+- **CodeFirstDemo.sln** ist die Solution, die die 2 Projekte beinhaltet und wird in Visual
+  Studio (oder Rider) gestartet.
 
 ```text
-Install-Package Microsoft.EntityFrameworkCore
-Install-Package Microsoft.EntityFrameworkCore.Sqlite
+rd /S /Q CodeFirstDemo
+md CodeFirstDemo
+cd CodeFirstDemo
+md CodeFirstDemo.Application
+cd CodeFirstDemo.Application
+dotnet new classlib
+dotnet add package Microsoft.EntityFrameworkCore --version 6.*
+dotnet add package Microsoft.EntityFrameworkCore.Sqlite --version 6.*
+dotnet add package Microsoft.EntityFrameworkCore.Proxies --version 6.*
+dotnet add package Bogus --version 34.*
+cd ..
+md CodeFirstDemo.Test
+cd CodeFirstDemo.Test
+dotnet new xunit
+dotnet add reference ..\CodeFirstDemo.Application
+cd ..
+dotnet new sln
+dotnet sln add CodeFirstDemo.Application
+dotnet sln add CodeFirstDemo.Test
+start CodeFirstDemo.sln
 ```
 
-Nun erzeugen wir eine neue Klasse *PupilContext*. Sie repräsentiert die Datenbank mit ihren Tabellen.
-In dieser Klasse wird jede Tabelle als *DbSet* angelegt. Später können wir dann mit *db.Tabellenname*
-auf diese Tabelle zugreifen und mittels LINQ Abfragen die Daten aus der Datenbank holen.
+Nun stellen wir durch Doppelklick auf die Projektdatei (*CodeFirstDemo.Application*) die
+Option *TreatWarningsAsErrors* ein.
 
-```c#
-public class Class
-{
-    public string Id { get; init; } = "";
-    public List<Pupil> Pupils { get; } = new();
-    public string Department =>
-        Id.Length < 5 ? Id : Id.Substring(2, 3);
-}
-
-public class Pupil
-{
-    public int Id { get; init; }
-    public string Firstname { get; set; } = "";
-    public string Lastname { get; set; } = "";
-    public string? Email { get; set; }
-    public string ClassId { get; set; } = "";
-    public Class Class { get; set; } = default!;
-}
-
-public class PupilContext : DbContext
-{
-    public DbSet<Class> Classes => Set<Class>();
-    public DbSet<Pupil> Pupils => Set<Pupil>();
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseSqlite("Data Source=Pupil.db");
-    }
-}
-
-class Program
-{
-    static void Main(string[] args)
-    {
-        // Mit EnsureDeleted wird die Datenbank gelöscht, danach wird mit EnsureCreated
-        // die Datenbank basierend auf den Modelklassen neu erstellt. Wird die Datenbank nicht
-        // gelöscht, werden Änderungen nicht übernommen (da die Datenbank ja schon existiert).
-        using (var db = new PupilContext())
-        {
-            db.Database.EnsureDeleted();
-            db.Database.EnsureCreated();
-
-            var myClass = new Class
-            {
-                Id = "5AHIF",
-                Pupils =
-                {
-                    new Pupil{Firstname = "Max", Lastname = "Mustermann"}
-                }
-            };
-            db.Classes.Add(myClass);
-            db.SaveChanges();
-        }
-    }
-}
-
+```xml
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	</PropertyGroup>
 ```
 
-Wenn wir dieses Programm ausführen, entsteht eine SQLite Datei *Pupil.db*. Betrachten wir
-diese Datei in einem Datenbankeditor wie DBeaver, so sehen wir, dass der OR Mapper ganze Arbeit
-geleitet hat:
+Im Ordner *CodeFirstDemo* des Kapitels *03 EF Core* befindet sich eine fertige Applikation, die
+eine fertige Implementierung beinhaltet.
 
-- Es sind 2 Tabellen entstanden: *Pupils* und *Classes*
-- Im ER Diagramm ist sichtbar, dass die Fremdschlüssel richtig abgebildet wurden.
+### Nullable reference types und EF Core
 
-![](pupils_db.png)
+In einer Datenbank können manche Felder NULL Werte enthalten (nullable), andere Felder werden
+mit NOT NULL definiert. Wir können mit den
+Datentypen steuern, ob EF Core ein Feld mit NULL oder NOT NULL anlegt. Deaktivieren wir die
+nullable Features von C# 8, dreht sich die Bedeutung um und aus ihrem Modell wird ein anderes
+Datenbankschema erzeugt! Wir müssen sich also schon am Beginn Ihres Projektes entscheiden, ob
+wir dieses Feature aktivieren oder nicht.
 
-## Conventions und Annotations in EF Core
+Daher ist das nachträgliche Aktivieren des nullable Features bei EF Core in bestehenden
+Projekten sehr gefährlich!
 
-EF Core hat von sich aus eine vernünftige Datenbank aufbauen können. Das liegt an den sogenannten
-*Conventions", die wir heimlich in den Klassen eingehalten haben.
+
+## Code first: Vom Klassenmodell zur Datenbank
+
+Seit Beginn der Programmierausbildung werden Klassen und die Beziehungen zwischen diesen
+Klassen als Assoziationen umgesetzt. Betrachten wir das folgende Modell. Es setzt ein kleines
+Bestellsystem wie z. B. Geizhals um. Produkte werden in verschiedenen Stores zu unterschiedlichen
+Preisen angeboten (offer).
+
+![](klassenmodell20211202.svg)  
+<sup>
+https://www.plantuml.com/plantuml/uml/ZP51oi8m48NtEKNsFxr05xy5xK8G5TG3X6JQ1fga9DD5aTxTb6cA146xQUQRp7jlI1LGU1nDppgjW8CPSE86i7CgCDcB4FWDdGV-P3n-VqV5IwujKdKM1c8Tq6lRifcj4vUc0VzvukgT6YL6j9u8aqT9NkccbWjI8BKHFS6J2FWObC2bSuY_kpQm69EbAuf_qdW7oOdIfN8Vfrldfryssr1jDxXZSwQOb6fXlqZb4SeyLDHU2QsGjokmAZxQ2m00
+</sup>
+
+Nun wollen wir dieses Klassenmodell speichern, also *persistieren*. Dafür stehen uns mehrere
+Techniken zur Verfügung:
+- Dateien (Serialisierung)
+- NoSQL Datenbanken
+- Relationale Datenbanken
+
+EF Core unterstützt das Erstellen einer Datenbank, damit diese das Klassenmodell speichern kann.
+Dafür schreiben wir wie gewohnt diese Klassen in C#. Um Ordnung zu halten, wird im Projekt *Application*
+ein Ordner *Model* erstellt.
+
+### Conventions und Annotations in EF Core
+
+EF Core kann in den meisten Fällen ohne besondere Anweisungen eine Datenbank erzeugen. Das liegt
+an den sogenannten *Conventions*, die wir in den nachfolgenden Klassen einhalten:
 
 - Properties mit dem Namen *Id* werden automatisch als Primärschlüssel definiert.
 - Id Properties mit dem Datentyp *int* werden automatisch zu AutoIncrement Feldern.
-- Properties vom Typ *List&lt;Typname&gt;* finden "automatisch" ihren Weg in die Richtige Tabelle. So
-  verweist das Property *Pupils* automatisch auf alle Schüler dieser Klasse.  
-- Properties vom Typ *Typname Propertyname* verweisen automatisch auf die "1er Seite". So referenziert
-  *Class Class* automatisch auf die Klasse des Schülers.
-- Fremdschlüsselfelder mit dem Namen *Navigation+Id* (wie *ClassId*) werden automatisch mit der
-  Navigation (Property *Class*) verbunden.
+- Properties vom Typ *List&lt;Typname&gt;* finden "automatisch" ihren Weg in die richtige Tabelle. So
+  verweist das Property *Pupils* in den vorigen LINQ Beispielen automatisch auf alle Schüler dieser Klasse.  
+- Properties vom Typ *Typname* verweisen automatisch auf die Tabelle dieses Typs. So referenziert
+  das Property vom Typ *Store* automatisch auf die Tabelle *Store*.
+- Fremdschlüsselfelder mit dem Namen *NavigationProperty + PK Name* (wie *StoreId*) werden automatisch zum
+  Fremdschlüsselfeld (in diesem Beispiel für die Tabelle *Store*).
 - Über NULL oder NOT NULL entscheidet der Datentyp (bei den nullable reference types werden
   Typen mit ? am Ende zu Feldern mit der NULLABLE Eigenschaft).
-- Read-only Properties (wie *Department*) werden nicht in der Datenbank abgebildet.
+- Read-only Properties werden nicht in der Datenbank abgebildet.
 
-```sql
-CREATE TABLE "Pupils" (
-    "Id" INTEGER NOT NULL CONSTRAINT "PK_Pupils" PRIMARY KEY AUTOINCREMENT,
-    "Firstname" TEXT NOT NULL,
-    "Lastname" TEXT NOT NULL,
-    "Email" TEXT NULL,
-    "ClassId" TEXT NOT NULL,
-    CONSTRAINT "FK_Pupils_Classes_ClassId" FOREIGN KEY ("ClassId") REFERENCES "Classes" ("Id") ON DELETE CASCADE
-);
+
+### Erstellen von Modelklassen: Konstruktoren verwenden
+
+Erstellen wir die Klasse *Store*, bekommen wir durch die Option *Nullable* und *TreatWarningsAsErrors*
+eine Fehlermeldung beim Property *Name*:
+```c#
+public class Store
+{
+    public int Id { get; set; }
+    public string Name { get; set; }   // Error: not initialized
+}
 ```
 
-Manchmal wollen wir allerdings in die Generierung der Datenbank eingreifen. Folgende Fälle werden
-häufig gebraucht:
+Wir müssen daher *Konstruktoren* verwenden, um alle Felder zu initialisieren. Allerdings sollte
+nicht blind jedes Feld im Konstruktor initialisiert werden. *Id* ist ein AutoIncrement Wert
+(Details unter Conventions), daher kann dieser Wert gar nicht im Konstruktor zugewiesen werden.
 
-- Wir wollen den Tabellennamen steuern (Statt *Classes* wollen wir *Class*).
-- Bei Stringfeldern wollen wir eine Länge angeben, damit die Datenbank den entsprechenden *VARCHAR(n)*
-  Typ verwendet.
+Die verbesserte Version sieht nun so aus:
+```c#
+public class Store
+{
+    public Store(string name)
+    {
+        Name = name;
+    }
 
-Diese Szenarien werden mit sogenannten *Annotations* in den Modelklassen abgebildet:
+    public int Id { get; private set; }      // ID by convention, AutoIncrement by convention
+    public string Name { get; set; }         // NOT NULL because nullable reference types are enabled
+}
+```
+
+*Id* hat nun einen private setter. Da der Primärschlüssel in EF Core nicht veränderbar ist,
+definieren wir alle Schlüsselfelder mit dieser Sichtbarkeit. Es macht wenig Sinn von einem
+bestehenden Eintrag diesen Wert zu ändern.
+Alle anderen Properties haben einen public setter, da wir die Spalten in der Datenbank ja auch
+ändern wollen (UPDATE Befehl). Wir bestimmen also, welche Properties wir im Programmverlauf
+aktualisieren dürfen. Warum wir nicht nur *get* verwenden ist in den Conventions erklärt.
+
+### Optionale Werte
+
+Die Klasse ProductCategory hat ein Property *NameEn* (englischer Name). Diese Spalte ist optional,
+darf also den Wert NULL enthalten. Bei aktivierten nullable reference Types legen wir diese Spalte
+daher mit dem Datentyp *string?* an. Sollen optionale int, DateTime, ... Werte gespeichert werden,
+wird der entsprechende nullable Datentyp (int?, DateTime?, ...) verwendet. 
 
 ```c#
-[Table("Class")]                   // Erzeugt die Tabelle "Class"
-public class Class
-{
-    [MaxLength(8)]                 // Erzeugt VARCHAR(8)
-    public string Id { get; init; } = "";
-    public List<Pupil> Pupils { get; } = new();
-    public string Department =>
-        Id.Length < 5 ? Id : Id.Substring(2, 3);
-}
+  public class ProductCategory
+  {
+      public ProductCategory(string name)
+      {
+          Name = name;
+      }
 
-[Table("Pupil")]
-public class Pupil
-{
-    public int Id { get; init; }
-    [MaxLength(255)]
-    public string Firstname { get; set; } = "";
-    [MaxLength(255)]
-    public string Lastname { get; set; } = "";
-    [MaxLength(255)]
-    public string? Email { get; set; }
-    [MaxLength(8)]                // Entspricht ID in der Klasse Class
-    public string ClassId { get; set; } = "";
-    public Class Class { get; set; } = default!;
-}
+      public int Id { get; private set; }      // ID by convention, AutoIncrement by convention
+      public string Name { get; set; }        
+      public string? NameEn { get; set; }      // nullable
+  }
+```
 
-public class PupilContext : DbContext
-{
-    public DbSet<Class> Classes => Set<Class>();
-    public DbSet<Pupil> Pupils => Set<Pupil>();
+Im Konstruktor wird das Property *NameEn* nicht initialisiert. Es kann über den Initializer
+bei Bedarf gesetzt werden:
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+```c#
+var cat = new ProductCategory(name: "Spielzeug") {NameEn = "Toys"};
+```
+
+### Navigationen
+
+Das Produkt (Klasse *Product*) verwendet die Klasse *ProductCategory*. Dies ist im Klassenmodell
+durch die Verwendung des Typs *ProductCategory* leicht ersichtlich. In einer relationalen
+Datenbank kennen wir das Konzept des Fremdschlüssels. Möchten wir Produkte und Kategorien speichern,
+würde die Produkttabelle einfach eine Spalte für den Fremdschlüssel (der Kategorie ID) beinhalten.
+
+Beim Definieren der Modelklasse müssen wir dies beachten. Daher legen wir 2 Felder für die
+Produktkategorie an: die eigentliche Navigation (*ProductCategory* vom Typ *ProductCategory*)
+und ein Feld *ProductCategoryId* vom Typ *int*.
+
+> **Achtung:** Das Fremdschlüsselfeld muss eine bestimmte Namensgebung haben.
+> *Navigation Property + Propertyname des Primärschlüssels*. In diesem Fall ist *ProductCategory* der
+> Name des Navigation Properties und *Id* der Name des Schlüssels von *ProductCategory*.
+> Der Datentyp muss natürlich auch
+> dem Datentyp des Primärschlüssels von ProductCategory entsprechen (int). Ansonsten wird das
+> Feld nicht als Fremdschlüssel erkannt und hat immer den Wert 0.
+
+Da der Schlüssel *Ean* heißt, greift die Convention (Id als Schlüsselname) nicht mehr. Wir müssen
+daher mit Annotations aus dem Namespace *System.ComponentModel.DataAnnotations* das jeweils
+nachfolgende Property genauer definieren. Damit der int Wert für die EAN Nummer nicht als
+auto increment Wert angelegt wird, setzen wir diese Information mittels der Annotation
+*DatabaseGenerated(DatabaseGeneratedOption.None)*
+
+```c#
+public class Product
+{
+    public Product(int ean, string name, ProductCategory productCategory)
     {
-        optionsBuilder.UseSqlite("Data Source=Pupil.db");
+        Ean = Ean;
+        Name = name;
+        ProductCategoryId = productCategory.Id;
+        ProductCategory = productCategory;
+    }
+
+    // Ean is the PK and not an auto increment column. Annotations are used
+    // for the next property (ean)
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
+    public int Ean { get; private set; }
+    public string Name { get; set; }
+    public int ProductCategoryId { get; set; }            // Value of the FK
+    public ProductCategory ProductCategory { get; set; }  // Navigation property
+}
+```
+
+Der Konstruktor von Product verlangt diesmal den Primärschlüssel (die EAN), da dieser Wert
+von externen Quellen kommt und nicht in der Datenbank generiert wird. Für die Navigation
+verlagen wir nur die Instanz von *ProductCategory*. Den Id Wert für das Fremdschlüsselfeld
+können wir aus dieser Instanz lesen und müssen es daher nicht als extra Argument anführen.
+
+Nun fehlt noch die Klasse *Offer*, die mit bestehendem Wissen angelegt werden kann:
+
+```c#
+public class Offer
+{
+    public Offer(Product product, Store store, decimal price, DateTime lastUpdate)
+    {
+        Product = product;
+        ProductEan = product.Ean;
+        Store = store;
+        StoreId = store.Id;
+        Price = price;
+        LastUpdate = lastUpdate;
+    }
+
+    public int Id { get; private set; }
+    public int ProductEan { get; set; }     // FK for Product
+    public Product Product { get; set; }
+    public int StoreId { get; set; }        // FK for Store
+    public Store Store { get; set; }
+    public decimal Price { get; set; }
+    public DateTime LastUpdate { get; set; }
+}
+```
+
+### Anlegen von protected Konstruktoren
+
+Zum Abschluss müssen wir noch eine Besonderheit von EF Core berücksichtigen. EF Core versucht
+beim Lesen eines Datensatzes eine Instanz der entsprechenden Klasse zu erzeugen. Dafür braucht es
+aber einen Default Kontruktor. Diese Default Konstruktoren wollen wir allerdings vermeiden. Ein
+guter Weg ist das Anlegen dieses Konstruktors als private oder protected Konstruktor. Damit kann
+niemand mit *new Store()* ein uninitialisiertes Store Objekt anlegen. Wir verwenden protected,
+da wir im nächsten Kapitel auch Vererbung verwenden wollen.
+
+Legen wir nun einen Default Konstruktor an, ergeben sich aufgrund des aktivierten nullable
+Features Warnungen bzw. Fehlermeldungen. Wir können aber in diesem Fall mit einer etwas seltsamen
+Anweisung Warnungen unterdrücken. In Visual Studio können die *#pragma* Anweisungen mit
+*STRG + .* und *Suppress or Configure issues* - *Suppress CS8618 in Source Code* deaktiviert werden.
+
+> **Hinweis:** Das Unterdrucken von Warnungen ist nur gerechtfertigt, wenn wir mit Sicherheit
+> ausschließen können, dass dadurch ein Laufzeitfehler entsteht. EF Core garantiert das Initialisieren
+> der Felder, daher kann diese Technik hier verwendet werden.
+
+```c#
+public class Store
+{
+    public Store(string name)
+    {
+        Name = name;
+    }
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    protected Store() { }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    public int Id { get; private set; }
+    public string Name { get; set; }
+}
+```
+
+## Anlegen der Datenbank: Der Datenbankkontext
+
+Damit eine Datenbank erzeugt werden kann, brauchen wir einen *Datenbankkontext*. Er ist die
+Verbindung zur darunterliegenden Datenbank. Dafür legen wir einen Ordner *Infrastructure* an und
+erstellen eine Klasse *StoreContext*. Die Klasse kann beliebig benannt werden, die Endung *Context*
+hat sich aber bei .NET Entwicklern durchgesetzt.
+
+```c#
+public class StoreContext : DbContext
+{
+    public StoreContext(DbContextOptions opt) : base(opt) { }
+
+    public DbSet<Store> Stores => Set<Store>();
+    public DbSet<Offer> Offers => Set<Offer>();
+    public DbSet<Product> Products => Set<Product>();
+    public DbSet<ProductCategory> ProductCategories => Set<ProductCategory>();
+}
+```
+
+Wir erkennen 2 Dinge:
+- Es gibt einen Konstruktor, der eine Konfiguration verlangt. Diese Konfiguration gibt an, welche
+  Datenbank verwendet werden soll.
+- Jede Tabelle wird als *DbSet\<T\>* definiert. Sie geben einfach mit der *Set()* Methode die
+  entsprechende Tabelle zurück.
+
+## Schreiben eines Tests zum Anlegen der Datenbank
+
+Wir können das Programm zwar kompilieren, es wird aber nie ausgeführt. Das Projekt *Application*
+ist eine Klassenbibliothek und hat daher keine *Main()* Methode. Um den Code aufzurufen, verwenden
+wir ein in der Softwareentwicklung sehr bekanntes Werkzeug: Der Unittest.
+
+Unittests sind dafür da, Code aufzurufen und das Ergebnis mit einem erwarteten Wert zu vergleichen.
+
+Zu Beginn haben wir bereits ein Projekt *CodeFirstDemo.Test* angelegt. Nun legen wir eine Klasse
+*StoreContextTests* darin an. Die Namensgebung sollte immer *zu testende Klasse* + *Tests* sein.
+
+```c#
+/*
+using Xunit;
+using Microsoft.EntityFrameworkCore;
+using CodeFirstDemo.Application.Infrastructure;
+*/
+
+// A file database does not support parallel test execution.
+[Collection("Sequential")] 
+public class StoreContextTests
+{
+    [Fact]
+    public void CreateDatabaseTest()
+    {
+        var opt = new DbContextOptionsBuilder()
+            .UseSqlite("Data Source=Stores.db")
+            .Options;
+        using var db = new StoreContext(opt);
+        db.Database.EnsureDeleted();
+        db.Database.EnsureCreated();
     }
 }
 ```
 
-## Übung
+Bis jetzt haben wir nirgends gesagt, welche Datenbank wir verwenden wollen. Nun müssen wir dies
+angeben. Dafür verwenden wir die Klasse *DbContextOptionsBuilder()* aus dem Namespace
+*Microsoft.EntityFrameworkCore*. EF Core arbeitet datenbankenunabhängig. Wir verwenden mit
+*UseSqlite()* eine SQLite Datenbank. Mit *UseMysql()* z. B. können wir jederzeit auch eine MySQL
+Datenbank erzeugen. Der Provider abstrahiert datenbankspezifische Anweisungen wie das Erstellen
+von Autoincrement Werten und die Definition der SQL Datentypen.
 
-Setzen Sie das folgende Datenmodell in Modelklassen um. Berücksichtigen Sie folgende Punkte
+3 Dinge sind zudem noch wichtig:
+- Die Testklasse und die Testmethode muss public sein.
+- Über jeder Testmethode muss die Annotation *[Fact]* aus dem Namespace *Xunit* geschrieben werden.
+- Tests werden normalerweise parallel ausgeführt. Da wir die Filedatenbank jedoch immer löschen
+  und neu erzeugen, ist eine parallele Ausführung nicht möglich. *[Collection("Sequential")]*
+  konfiguriert xUnit so, dass die Tests nacheinander ausgeführt werden.
 
-- Verwenden Sie die C# Notation für Properties anstatt der Feldnamen mit Unterstrich.
-- Legen Sie bei einer 1:n Beziehung immer in der "1er Seite" eine Liste als Navigation an. Bei
-  der n Seite verwenden Sie 2 Properties: Eines für den Fremdschlüsselwert und eines für die
-  Navigation.
-- Die ID Werte für *Teacher* und *Schoolclass* sind Strings (Kürzel), ansonsten handelt es sich um Integer Werte.
-- Der Wert *UntisId* in der Tabelle *Lesson* kann weggelassen werden. *Day* und *Hour* sind
-  Integer Werte (MO = 1, ...)
-- Das Feld *Date* in *Tests* ist ein Datumswert. Verwenden Sie *DateTime* in C#.
-- Der Primärschlüssel der Tabelle *Period* heißt P_Nr. Verwenden Sie den Namen *Nr*. Da EF Core
-  diesen Wert nicht als Primärschlüssel erkennt, müssen Sie mit folgenden Annotations arbeiten.
-  Überlegen Sie, warum die zweite Annotation nötig ist und was diese macht.
-- In *Period* wird das Stundenraster (Stunde 1 von 8:00 - 8:50, ...) gespeichert. Verwenden Sie
-  für die Zeitangaben den Datentyp *TimeSpan*.
+Klicken wir mit der rechten Maustaste in Visual Studio auf die Testmethode *CreateDatabaseTest*
+finden wir im Kontextmenü den Punkt *Run Tests*. Nach erfolgreicher Ausführung erscheint ein
+grünes Häkchen. Im Text Explorer (Menü *Test* - *Test Explorer*) ist der Test ebenfalls
+aufgelistet.
 
-```c#
-[Key]
-[DatabaseGenerated(DatabaseGeneratedOption.None)]
+## Ansehen der Datenbank in DBeaver
+
+Nachdem der Unittest ausgeführt wurde, findet sich im Ordner *CodeFirstDemo.Test\bin\Debug\net6.0*
+die Datei *Stores.db*. Öffnen wir mit DBeaver die Datenbank und klicken doppelt auf *Tables*,
+kann das ER Diagramm der erstellen Datenbank angezeigt werden:
+
+![](ermodell20211202.png)
+
+Die Fremdschlüssel wurden also korrekt gesetzt. Sehen wir uns die DDL Statements der Tabelle
+*Stores* an, findet sich ein klassisches *CREATE TABLE* Statement, wie es auch von Hand
+geschrieben worden wäre:
+
+```sql
+CREATE TABLE "ProductCategories" (
+    "Id" INTEGER NOT NULL CONSTRAINT "PK_ProductCategories" PRIMARY KEY AUTOINCREMENT,
+    "Name" TEXT NOT NULL,
+    "NameEn" TEXT NULL
+);
+
+CREATE TABLE "Products" (
+    "Ean" INTEGER NOT NULL CONSTRAINT "PK_Products" PRIMARY KEY,
+    "Name" TEXT NOT NULL,
+    "ProductCategoryId" INTEGER NOT NULL,
+    CONSTRAINT "FK_Products_ProductCategories_ProductCategoryId" FOREIGN KEY ("ProductCategoryId") REFERENCES "ProductCategories" ("Id") ON DELETE CASCADE
+);
 ```
 
-Am Ende soll eine SQLite Datenbank mit dem Namen *TestsDb* ohne Werte erzeugt werden, die diese
-Features korrekt abbildet. Kontrollieren Sie das mit einem Datenbankeditor wie z. B. DBeaver.
+Falls Fehler in der Datenbank auftreten, können die Modelklassen einfach geändert und mittels
+Unittest die Datenbank neu erzeugt werden.
 
-![](test_er_diagram.png)
+> **Achtung:** Trenne in DBeaver vor dem Starten des Unittests die Verbindung (roter Stecker). Sonst
+> kann der Test die Datenbank nicht löschen und bricht mit einem Zugriffsfehler ab.
+
+## Übung
+
+Lege wie am Anfang beschrieben eine Solution mit dem Namen *TaskManager.sln* und 2
+Projekten (*TaskManager.Application* und *TaskManager.Test*) an. Eine kleine
+Datenbank soll erzeugt werden, um Abgaben in MS Teams verwalten zu können. Dabei können
+pro Team mehrere Aufgaben (Tasks) definiert werden. Für Aufgaben können Studenten
+Arbeiten einrechen (HandIn).
+
+Das Klassenmodell zeigt keine EF Core spezifischen Properties wie Fremdschlüsselfelder.
+Überlege auch einen passenden primary key (auto increment Wert oder eine vorhandenes
+Property).
+
+Definiere die public Konstruktoren so, dass die benötigten Informationen bei der
+Initialisierung übergeben werden müssen. Für EF Core sind dann protected Konstruktoren
+ohne Parameter anzulegen.
+
+Prüfe am Ende in DBeaver, ob die Datenbank korrekt aufgebaut ist, d. h. die Fremdschlüssel
+Felder in der ER Ansicht auf die entsprechenden Tabellen verweisen.
+
+```plantuml
+@startuml
+class Student {
+  +Firstname : string
+  +Lastname : string
+  +Email : string
+}
+
+class Teacher {
+  +Firstname : string
+  +Lastname : string
+  +Email : string
+}
+
+class Team {
+  +Name : string
+  +Schoolclass : string
+}
+
+class Task {
+  +Subject : string
+  +Title : string
+  +Team : Team
+  +Teacher : Teacher
+  +ExpirationDate : DateTime
+  +MaxPoints : int?
+}
+ Task o--> Team
+ Task o--> Teacher
+
+class HandIn {
+  +Task : Task
+  +Student : Student
+  +Date : DateTime
+  +ReviewDate : DateTime?
+  +Points : int?
+}
+HandIn o--> Student
+HandIn o--> Task
+
+@enduml
+
+```
