@@ -1,5 +1,8 @@
-﻿namespace CodeFirstDemo.Application.Model
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace CodeFirstDemo.Application.Model
 {
+    [Table("Offer")]
     public class Offer
     {
         public Offer(Product product, Store store, decimal price, DateTime lastUpdate)

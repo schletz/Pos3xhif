@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CodeFirstDemo.Application.Model
 {
+    [Table("Product")]
     public class Product
     {
         public Product(int ean, string name, ProductCategory productCategory)

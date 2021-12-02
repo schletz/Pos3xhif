@@ -15,5 +15,10 @@ namespace CodeFirstDemo.Application.Infrastructure
         public DbSet<Offer> Offers => Set<Offer>();
         public DbSet<Product> Products => Set<Product>();
         public DbSet<ProductCategory> ProductCategories => Set<ProductCategory>();
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Offer>().Property(o => o.Price).HasPrecision(9, 4);
+            modelBuilder.Entity<Offer>().HasIndex(o => new { o.StoreId, o.ProductEan }).IsUnique();
+        }
     }
 }

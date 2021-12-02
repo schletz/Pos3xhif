@@ -1,5 +1,8 @@
-﻿namespace CodeFirstDemo.Application.Model
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace CodeFirstDemo.Application.Model
 {
+    [Table("ProductCategory")]
     public class ProductCategory
     {
         public ProductCategory(string name)
