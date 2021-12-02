@@ -169,6 +169,7 @@ definiere folgende Einstellungen:
 - Die Tabellennamen sollen alle in der Einzahl (Team, HandIn, ...) angelegt werden.
 - Der Teamname soll maximal 64 Stellen lang sein, die Klasse maximal 16 Stellen.
 - Alle anderen string Properties (Name, Mail) sollen maximal 255 Stellen lang sein.
+- Stelle mit einem Unique Index sicher, dass ein Student pro Task nur eine Abgabe einreichen kann.
 
 Hinweis: In SQLite gibt es für Strings nur den Datentyp *TEXT*. Daher ist die Einstellung
 der Länge in DBeaver nicht sichtbar.
