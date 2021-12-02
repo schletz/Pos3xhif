@@ -160,3 +160,15 @@ Preisen angeboten werden kann.
 Unter https://docs.microsoft.com/en-us/ef/core/modeling/ gibt es eine sehr detaillierte Beschreibung
 der weiteren Einstellungsmöglichkeiten. Meist kommt man aber mit den hier gezeigten
 Möglichkeiten aus.
+
+## Übung
+
+Verwende die Übung des letzten Kapitels (*Klassenmodelle persistieren mit EF Core*) und
+definiere folgende Einstellungen:
+
+- Die Tabellennamen sollen alle in der Einzahl (Team, HandIn, ...) angelegt werden.
+- Der Teamname soll maximal 64 Stellen lang sein, die Klasse maximal 16 Stellen.
+- Alle anderen string Properties (Name, Mail) sollen maximal 255 Stellen lang sein.
+
+Hinweis: In SQLite gibt es für Strings nur den Datentyp *TEXT*. Daher ist die Einstellung
+der Länge in DBeaver nicht sichtbar.
