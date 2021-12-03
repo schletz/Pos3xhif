@@ -20,9 +20,9 @@ namespace RichDomainModelDemo.Application.Model
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public int Id { get; private set; }
         public int ProductEan { get; set; }
-        public Product Product { get; set; }
+        public virtual Product Product { get; set; }
         public int StoreId { get; set; }
-        public Store Store { get; set; }
+        public virtual Store Store { get; set; }
         public decimal Price { get; set; }
         public DateTime LastUpdate { get; set; }
     }

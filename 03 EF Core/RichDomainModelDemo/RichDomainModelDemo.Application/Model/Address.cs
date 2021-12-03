@@ -2,8 +2,5 @@
 
 namespace RichDomainModelDemo.Application.Model
 {
-    /// <summary>
-    /// Value object for adress information.
-    /// </summary>
-    public record Address([MaxLength] string Street, [MaxLength] string Zip, [MaxLength] string City);
+    public record Address([MaxLength(255)] string Street, [MaxLength(255)] string Zip, [MaxLength(255)] string City);
 }

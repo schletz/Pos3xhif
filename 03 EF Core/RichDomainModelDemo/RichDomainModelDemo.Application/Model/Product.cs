@@ -23,6 +23,6 @@ namespace RichDomainModelDemo.Application.Model
         public int Ean { get; private set; }
         public string Name { get; set; }
         public int ProductCategoryId { get; set; }            // Value of the FK
-        public ProductCategory ProductCategory { get; set; }  // Navigation property
+        public virtual ProductCategory ProductCategory { get; set; }  // Navigation property
     }
 }

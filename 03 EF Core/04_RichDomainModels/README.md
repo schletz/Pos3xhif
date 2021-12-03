@@ -199,4 +199,6 @@ public class Shop
 In der Sprache der Domainmodellierung bezeichnen wir diese Klassen als *value objects*. Sie werden
 später in die Datenbanktabelle als eigene Spalten (1 Spalte pro Property) integriert.
 
+https://blog.jetbrains.com/dotnet/2021/02/24/entity-framework-core-5-pitfalls-to-avoid-and-ideas-to-try/
+
 ## Umsetzung mit EF Core
