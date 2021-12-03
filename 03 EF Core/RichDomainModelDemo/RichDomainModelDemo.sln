@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RichDomainModelDemo.Application", "RichDomainModelDemo.Application\RichDomainModelDemo.Application.csproj", "{55651388-3DEE-428D-AF95-F63F368A9713}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RichDomainModelDemo.Test", "RichDomainModelDemo.Test\RichDomainModelDemo.Test.csproj", "{72BC1F83-4172-4097-8375-9BAF2F01138A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{55651388-3DEE-428D-AF95-F63F368A9713}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55651388-3DEE-428D-AF95-F63F368A9713}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55651388-3DEE-428D-AF95-F63F368A9713}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55651388-3DEE-428D-AF95-F63F368A9713}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72BC1F83-4172-4097-8375-9BAF2F01138A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72BC1F83-4172-4097-8375-9BAF2F01138A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72BC1F83-4172-4097-8375-9BAF2F01138A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72BC1F83-4172-4097-8375-9BAF2F01138A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
