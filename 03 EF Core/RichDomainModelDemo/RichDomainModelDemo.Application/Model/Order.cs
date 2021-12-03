@@ -35,6 +35,17 @@ namespace RichDomainModelDemo.Application.Model
         public virtual IReadOnlyCollection<OrderItem> OrderItems => _orderItems;
         // Discriminator value. Needed for changing the type in an UPDATE statement.
         public virtual string OrderType { get; protected set; } = default!;
+        public void AddOrderItem(OrderItem orderItem)
+        {
+            // DO NOT query _orderItems because lazy loading is bound to OrderItems
+            var itemDb = OrderItems.FirstOrDefault(o => o.OfferId == orderItem.OfferId && o.Price == orderItem.Price);
+            if (itemDb is not null)
+            {
+                itemDb.Quantity += orderItem.Quantity;
+                return;
+            }
+            _orderItems.Add(orderItem);
+        }
 
     }
 }
