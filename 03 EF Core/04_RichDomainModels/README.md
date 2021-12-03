@@ -1,6 +1,6 @@
 # Rich Domain Models mit EF Core
 
-**Erweiterter Lehrplaninhalt (= schwer)**
+**Erweiterter Lehrplaninhalt für 3. JG, verpflichtend für 4. JG**
 
 ## Was ist ein "Rich Domain Model"?
 
