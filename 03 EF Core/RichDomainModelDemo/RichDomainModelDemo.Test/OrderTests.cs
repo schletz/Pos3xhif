@@ -35,9 +35,8 @@ namespace RichDomainModelDemo.Test
 
                 var order = new Order(
                     date: new DateTime(2021, 1, 1),
-                    shippingAddress: new Address(Street: "Street", Zip: "Zip", City: "City"),
-                    customer: customer);
-                db.Orders.Add(order);
+                    shippingAddress: new Address(Street: "Street", Zip: "Zip", City: "City"));
+                customer.AddOrder(order);
                 db.SaveChanges();
             }
         }
@@ -48,8 +47,9 @@ namespace RichDomainModelDemo.Test
             using (var db = TestHelpers.GetDbContext())
             {
                 var order = db.Orders.First();
-                var offer = db.Offers.First();
-                var orderItem = new OrderItem(offer: offer, order: order, price: 950, quantity: 2);
+                var orderItem = new OrderItem(
+                    offer: db.Offers.First(),
+                    price: 950, quantity: 1);
                 order.AddOrderItem(orderItem);
                 db.SaveChanges();
             }
@@ -65,27 +65,25 @@ namespace RichDomainModelDemo.Test
             PrepareDatabase();
             using (var db = TestHelpers.GetDbContext())
             {
-                var orderItem = new OrderItem(
-                    offer: db.Offers.First(),
-                    order: db.Orders.First(),
-                    price: 950, quantity: 2);
-                db.OrderItems.Add(orderItem);
-                db.SaveChanges();
-            }
-            using (var db = TestHelpers.GetDbContext())
-            {
-                var orderItem = new OrderItem(
-                    offer: db.Offers.First(),
-                    order: db.Orders.First(),
-                    price: 950, quantity: 1);
                 var order = db.Orders.First();
+                var orderItem = new OrderItem(
+                    offer: db.Offers.First(),
+                    price: 950, quantity: 1);
                 order.AddOrderItem(orderItem);
                 db.SaveChanges();
             }
             using (var db = TestHelpers.GetDbContext())
             {
                 var order = db.Orders.First();
-                Assert.True(order.OrderItems.Count == 1);
+                var orderItem = new OrderItem(
+                    offer: db.Offers.First(),
+                    price: 950, quantity: 2);
+                order.AddOrderItem(orderItem);
+                db.SaveChanges();
+            }
+            using (var db = TestHelpers.GetDbContext())
+            {
+                var order = db.Orders.First();
                 Assert.True(order.OrderItems.First().Quantity == 3);
             }
 

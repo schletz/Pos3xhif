@@ -17,8 +17,8 @@ namespace RichDomainModelDemo.Test
                 db.Customers.Add(customer);
                 var order = new Order(
                     date: new DateTime(2021, 1, 1),
-                    shippingAddress: new Address(Street: "street", Zip: "Zip", City: "City"),
-                    customer: customer); customer.AddOrder(order);
+                    shippingAddress: new Address(Street: "street", Zip: "Zip", City: "City")); 
+                customer.AddOrder(order);
                 db.SaveChanges();
             }
         }

@@ -1,5 +1,7 @@
 # Rich Domain Models mit EF Core
 
+**Erweiterter Lehrplaninhalt (= schwer)**
+
 ## Was ist ein "Rich Domain Model"?
 
 Bis jetzt waren unsere Modelklassen reine datenhaltende Klassen. Sie enthielten
@@ -34,15 +36,15 @@ werden, könnte es so aussehen:
 hide empty methods
 class Store {
     +Name : string
-    +Address :Address
 }
-Store *--> Address
 
 class Offer  {
     +Product : Product
     +Store : Store
     +Price : decimal
     +LastUpdate : DateTime
+    ---
+    +Offer(Product product, Store store, decimal price, DateTime lastUpdate)
 }
 Offer o--> Store
 Offer <--> Product
@@ -50,15 +52,18 @@ Offer <--> Product
 class ProductCategory {
     +Name : string
     +NameEn : string?
+    ---
+    +ProductCategory(string name)
 }
 
 class Product {
     +Ean : int <<unique>>
     +Name : string
     +ProductCategory : ProductCategory
-    +Offers : List<Offer>
+    +Offers : ICollection<Offer>
     ---
-    CalculateAveragePrice()
+    +Product(int ean, string name, ProductCategory productCategory)
+    +CalculateAveragePrice()
 }
 Product o--> ProductCategory
 
@@ -73,21 +78,22 @@ class Customer <<Aggregate>> {
     +Address : Address
     +Orders : IReadOnlyCollection<Order>
     ---
-    ConfirmOrder(Order order)
-    PlaceOrder(Order order)
+    +Customer(string firstname, string lastname, Address address)
+    +ConfirmOrder(Order order)
+    +PlaceOrder(Order order)
 }
 Customer *--> Address
+Customer o--> Order
 
 class Order <<Aggregate>> {
-    +Customer : Customer
     +Date : DateTime
-    +OrderItems : IReadOnlyCollection<OrderItem>
     +ShippingAddress : Address
+    +OrderItems : IReadOnlyCollection<OrderItem>
     ---
+    +Order(DateTime date, Address shippingAddress)
     +AddOrderItem(OrderItem orderItem)
 }
-Order <--> Customer
-Order <--> OrderItem
+Order o--> OrderItem
 
 class ConfirmedOrder {
     +ShippingDate : DateTime
@@ -102,7 +108,8 @@ class OrderItem {
     +Offer : Offer
     +Price : decimal
     +Quantity : int
-    +Order : Order
+    ---
+    +OrderItem(Offer offer, decimal price, int quantity)
 }
 OrderItem o--> Offer
 
@@ -135,7 +142,8 @@ die Liste der OrderItems). Daher bezeichnen wir die Klasse als *Aggregate*. Ein 
 verwaltet die Elemente "seiner" Collection und achtet darauf, dass nicht falsche Werte
 hinzugefügt werden können. Beachte den Datentyp der Collection: *IReadOnlyList\<T\>*.
 Dadurch ist es nicht möglich, z. B. außerhalb der *PlaceOrder()* Methode eine Bestellung
-hinzuzufügen.
+hinzuzufügen. Deswegen hat die Klasse *Order* auch keine Navigation zum *Customer*, da der
+Kunde die Bestellungen verwaltet.
 
 ### Beidseitige Navigations
 
@@ -147,7 +155,7 @@ von einer *beidseitigen Navigation*.
 ### Verwenden von Vererbung
 
 Oftmals durchlaufen Objekte einen State, wo Informationen hinzugefügt werden. Eine Bestellung
-(Order) wird mit den Grunddaten angelegt. Wird die Bestellung dann bearbeitet, entstehen
+(*Order*) wird mit den Grunddaten angelegt. Wird die Bestellung dann bearbeitet, entstehen
 neue Daten (*ShippingDate* und *ShippingCost*). Ohne Vererbung müssten diese Felder
 nullable sein, da erst nach der Bearbeitung Werte zur Verfügung stehen. Dies sollte jedoch
 vermieden werden. Was passiert, wenn z. B. *ShippingDate* ausgefüllt wird, aber *ShippingCost*
@@ -202,3 +210,6 @@ später in die Datenbanktabelle als eigene Spalten (1 Spalte pro Property) integ
 https://blog.jetbrains.com/dotnet/2021/02/24/entity-framework-core-5-pitfalls-to-avoid-and-ideas-to-try/
 
 ## Umsetzung mit EF Core
+
+Im Projekt [RichDomainModelDemo](../RichDomainModelDemo) ist dieses Modell fertig mit
+Unittests und Kommentaren umgesetzt.

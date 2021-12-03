@@ -15,14 +15,14 @@ namespace RichDomainModelDemo.Application.Model
             Price = price;
             LastUpdate = lastUpdate;
         }
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning disable CS8618
         protected Offer() { }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning restore CS8618
         public int Id { get; private set; }
         public int ProductEan { get; set; }
-        public virtual Product Product { get; set; }
+        public virtual Product Product { get; set; }  // virtual for EF Core lazy loading
         public int StoreId { get; set; }
-        public virtual Store Store { get; set; }
+        public virtual Store Store { get; set; }      // virtual for EF Core lazy loading
         public decimal Price { get; set; }
         public DateTime LastUpdate { get; set; }
     }
