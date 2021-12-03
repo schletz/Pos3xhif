@@ -31,90 +31,10 @@ dargestellt.
 Würde - bevor das Thema Persistenz behandelt wurde - ein kleines Bestellsystem entworfen
 werden, könnte es so aussehen:
 
-```plantuml
-@startuml
-hide empty methods
-class Store {
-    +Name : string
-}
-
-class Offer  {
-    +Product : Product
-    +Store : Store
-    +Price : decimal
-    +LastUpdate : DateTime
-    ---
-    +Offer(Product product, Store store, decimal price, DateTime lastUpdate)
-}
-Offer o--> Store
-Offer <--> Product
-
-class ProductCategory {
-    +Name : string
-    +NameEn : string?
-    ---
-    +ProductCategory(string name)
-}
-
-class Product {
-    +Ean : int <<unique>>
-    +Name : string
-    +ProductCategory : ProductCategory
-    +Offers : ICollection<Offer>
-    ---
-    +Product(int ean, string name, ProductCategory productCategory)
-    +CalculateAveragePrice()
-}
-Product o--> ProductCategory
-
-class Address<<value object>> {
-    +Street : string
-    +Zip : string
-    +City : string
-}
-class Customer <<Aggregate>> {
-    +Firstname : string
-    +Lastname : string
-    +Address : Address
-    +Orders : IReadOnlyCollection<Order>
-    ---
-    +Customer(string firstname, string lastname, Address address)
-    +ConfirmOrder(Order order)
-    +PlaceOrder(Order order)
-}
-Customer *--> Address
-Customer o--> Order
-
-class Order <<Aggregate>> {
-    +Date : DateTime
-    +ShippingAddress : Address
-    +OrderItems : IReadOnlyCollection<OrderItem>
-    ---
-    +Order(DateTime date, Address shippingAddress)
-    +AddOrderItem(OrderItem orderItem)
-}
-Order o--> OrderItem
-
-class ConfirmedOrder {
-    +ShippingDate : DateTime
-    +ShippingCost : decimal
-    ---
-    +ConfirmedOrder(Order order, DeliveryDate deliveryDate, decimal shippingCost)
-    +CalculateTotalPrice()
-}
-ConfirmedOrder -up-|> Order 
-
-class OrderItem {
-    +Offer : Offer
-    +Price : decimal
-    +Quantity : int
-    ---
-    +OrderItem(Offer offer, decimal price, int quantity)
-}
-OrderItem o--> Offer
-
-@enduml
-```
+![](klassenmodell_20211203.svg)
+<sup>
+https://www.plantuml.com/plantuml/uml/VLJ1RjmW4BtxApXkslKFH9QRo4cbI56JDkcbDsec3XK61yQHLcd-lU01rakskmS3Z-7DcpSB5mwvnNbKrRCKm62SSCT6m6SZNDKhxXnxG6E1lLNC_pv_uoEmS-RGIZrKxrMCkNjw0ijIqBqrOkxHnyKPmKHqJeGfKlO14j3BaIi2Rxd3dvFW67Qk_F0eHuglwvf2bdoRb6UYSHkbkl3T9ausXHpRJCHKfZ_p1P1oKzSjdOv04u387ujCouuZ3CRkZbkIeMkTmI-7uWkU3GKnpSUWgCYMibppm2SrigQPjNoPeMt_cxzKUbvgNxde_EvDPvI27gNHpGAsHnLlGdhWUijMahSVV9aErsV4qN7LpyfZbwzW-G1BwpUXu7YUcb2G9JSkXR3WNDEySZK3Cx__UBbjcznvG0k0XGk_v5GWdSJT-jzBtDtiq8oXwStbC5WOECAU-gkq3lL7Zs_vKJWAzMYSHQkjY5R_02xkjDgjBG-RXUL9LFftF2KPsNp54v1oSXgJuKRxG-D2lbc-p8HltBvNl8SZc-zLzkDJQ4WapoYrQJaIcqEBu-vT5RUOklKifycNSCgh6uJnX5yKK7X6rUIBBZYkp767ISzokpBR9i-OIRFWHu1psH5FfKUJWLXYrRd0azLtnc7nzELAzhHbW_n31ag-Wjqjv6A_M3rvRfMYl7wF1hdQNxwYW7gUwh-nJfRxctrvMpqSNlioddZ9lyzS8zqvgR5eLhQTs4pubgzsECPU8akGcqzHFqX0TG5QpAFw1m00
+</sup>
 
 Dieses Rich Domain Model bietet durch die Verwendung von Methoden viele Vorteile:
 
