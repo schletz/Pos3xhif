@@ -76,7 +76,6 @@ namespace RichDomainModelDemo.Test
             using (var db = GetDbContext())
             {
                 var customer = db.Customers.Single();
-                var orders = customer.Orders.OfType<ConfirmedOrder>().ToList();
                 Assert.True(customer.Orders.OfType<ConfirmedOrder>().Count() == 1);
             }
         }
