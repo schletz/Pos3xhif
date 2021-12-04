@@ -33,6 +33,7 @@ dotnet new sln
 dotnet sln add CodeFirstDemo.Application
 dotnet sln add CodeFirstDemo.Test
 start CodeFirstDemo.sln
+
 ```
 
 Nun stellen wir durch Doppelklick auf die Projektdatei (*CodeFirstDemo.Application*) die
@@ -391,26 +392,177 @@ Unittest die Datenbank neu erzeugt werden.
 
 ## Übung
 
-Lege wie am Anfang beschrieben eine Solution mit dem Namen *TaskManager.sln* und 2
-Projekten (*TaskManager.Application* und *TaskManager.Test*) an. Eine kleine
+Lege wie unten beschrieben eine Solution mit dem Namen *TeamsManager.sln* und 2
+Projekte (*TeamsManager.Application* und *TeamsManager.Test*) an. Vergiss nicht,
+die Option *\<TreatWarningsAsErrors\>true\</TreatWarningsAsErrors\>* in der Projektdatei 
+zu setzen.
+
+Eine kleine
 Datenbank soll erzeugt werden, um Abgaben in MS Teams verwalten zu können. Dabei können
 pro Team mehrere Aufgaben (Tasks) definiert werden. Für Aufgaben können Studenten
 Arbeiten einrechen (HandIn).
 
+![](teamsModell20211204_2.svg)
+<sup>
+https://www.plantuml.com/plantuml/uml/hPB1JiCm38RlVGeVXzQ-09h63e100eJONi2qXWMI51eN9asyEt7TZ6mQ9xZ4wH_P__TRNGJ6ZdjdYzfY2B3alY7Fi2q0ffUc2-pH4Pn2uCxuPr5ly8XuuT3ONAcgIlHntaHrU4eJInWLYmS2oQIJugiOYLQ4zPgwVoCQv_sDo2dENMuAirdlpNjFy_cGl5wthTMEenGk8UoPXP-smJ9vOdXLpsN_-48rxsLT6RPvUfqV1IbPQ5NaDcneysOwPDFwSsHfbx8oZkJn5ZVthV4iyB6SPUWH9Q47XTdHiu2KkY6EHvdyWBMMEnEWFNi9godRgfehUFwjxMaTL-YRQm_Rn1CXfMH_N5J6cuX70ZxGXw7FWmU9EVqbjtfE1ZkEHvaC86ZDiZLZ8ktH20adqnHwGRxfdVq6
+</sup>
 Das Klassenmodell zeigt keine EF Core spezifischen Properties wie Fremdschlüsselfelder.
-Überlege auch einen passenden primary key (auto increment Wert oder eine vorhandenes
+Überlege auch einen passenden primary key (auto increment Wert oder ein vorhandenes
 Property).
 
 Definiere die public Konstruktoren so, dass die benötigten Informationen bei der
 Initialisierung übergeben werden müssen. Für EF Core sind dann protected Konstruktoren
 ohne Parameter anzulegen.
 
-Erstelle eine Testklasse im Unittest Projekt mit dem Namen *DatabaseContextTests*. Diese Klasse
-hat eine Testmethode: *EnsureCreatedSuccessTest*. Dieser Test versucht, die Datenbank
-anzulegen. Prüfe am Ende in DBeaver, ob die Datenbank korrekt aufgebaut ist, d. h. die Fremdschlüssel
-Felder in der ER Ansicht auf die entsprechenden Tabellen verweisen.
+Der Kontext soll den Namen *TeamsContextTests* haben. Weiter unten ist der Mustercode
+für die Definition der Klasse.
 
-![](teamsModell20211203.svg)
-<sup>
-https://www.plantuml.com/plantuml/uml/hP7TIiD048NlynHxBtq1AMr1AnPKnEG5ncIme_iZsOaMn7Tt3xFGDlJIgzdvTlQR4xB9IgDEmJUzfvnTgzF0KTrFuzpLdOnP8mLsroxhAF4Dz84km6qWyKVosrHVnzJlUVnFNp3Pq_n9s-zJyZPsoZlA7o2xc-GzzoefBi5MHojQixRJwtkPEHU8-lDLI5402jhwaI1s0jmUFcKaRBibnNEKJWBZyf4EpqcY8bSfwnB5GYmNYvLvhK_McxMclQSuxABbnL1neA2jlw-GUWAyiF-5luI_PnThtCnZsJBBKPsdp3PlE0vJy7y0
-</sup>
+Erstelle danach eine Testklasse im Unittest Projekt mit dem Namen *TeamsContextTests*. Kopiere
+den Code weiter unten in diese Testklasse. Sie beinhaltet 2 Tests:
+- *CreateDatabaseSuccessTest()* versucht, eine leere Datenbank anzulegen.
+- *SeedDatabaseTest()* versucht, Musterdaten zu generieren und die Datenbank zu befüllen.
+
+Es müssen beide Tests erfolgreich durchlaufen. Führe die Tests zur Sicherheit nacheinander
+aus, um Zugriffskonflikte bei der Datenbank zu vermeiden.
+
+Nach dem Test *CreateDatabaseSuccessTest* soll das ER Modell der Datenbank in DBeaver so
+aussehen. Die Datenbank wird in *TeamsManager.Test\bin\Debug\net6.0* unter dem Namen
+*Teams.db* angelegt.
+
+![](ermodell20211202.png)
+
+
+### Anlegen des Projektes
+
+```text
+rd /S /Q TeamsManager
+md TeamsManager
+cd TeamsManager
+md TeamsManager.Application
+cd TeamsManager.Application
+dotnet new classlib
+dotnet add package Microsoft.EntityFrameworkCore --version 6.*
+dotnet add package Microsoft.EntityFrameworkCore.Sqlite --version 6.*
+dotnet add package Microsoft.EntityFrameworkCore.Proxies --version 6.*
+dotnet add package Bogus --version 34.*
+cd ..
+md TeamsManager.Test
+cd TeamsManager.Test
+dotnet new xunit
+dotnet add reference ..\TeamsManager.Application
+cd ..
+dotnet new sln
+dotnet sln add TeamsManager.Application
+dotnet sln add TeamsManager.Test
+start TeamsManager.sln
+
+```
+
+### Kontextklasse
+```c#
+public class TeamsContext : DbContext
+{
+    public TeamsContext(DbContextOptions opt) : base(opt) { }
+    /* TODO: Add your DbSet properties */
+}
+```
+
+### Unittest
+```c#
+using Bogus;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+using TeamsManager.Application.Model;
+using Xunit;
+
+namespace TeamsManager.Test
+{
+    [Collection("Sequential")]
+    public class TeamsContextTests
+    {
+        [Fact]
+        public void CreateDatabaseSuccessTest()
+        {
+            using var db = new TeamsContext(new DbContextOptionsBuilder()
+                .UseSqlite("Data Source=Teams.db")
+                .Options);
+            db.Database.EnsureDeleted();
+            db.Database.EnsureCreated();
+        }
+
+        [Fact]
+        public void SeedDatabaseTest()
+        {
+            Randomizer.Seed = new Random(2145);
+            using (var db = new TeamsContext(new DbContextOptionsBuilder()
+                .UseSqlite("Data Source=Teams.db")
+                .Options))
+            {
+
+                db.Database.EnsureDeleted();
+                db.Database.EnsureCreated();
+
+                var teachers = new Faker<Teacher>("de").CustomInstantiator(f => new Teacher(
+                    firstname: f.Name.FirstName(),
+                    lastname: f.Name.LastName(),
+                    email: f.Internet.Email()))
+                    .Generate(10)
+                    .ToList();
+                db.Teachers.AddRange(teachers); db.SaveChanges();
+
+                var students = new Faker<Student>("de").CustomInstantiator(f => new Student(
+                    firstname: f.Name.FirstName(),
+                    lastname: f.Name.LastName(),
+                    email: f.Internet.Email()))
+                    .Generate(10)
+                    .ToList();
+                db.Students.AddRange(students); db.SaveChanges();
+
+                var teams = new Faker<Team>("de").CustomInstantiator(f => new Team(
+                    name: f.Commerce.ProductName(),
+                    schoolclass: $"{f.Random.Int(1, 5)}{f.Random.String2(1, "ABC")}HIF"))
+                    .Generate(10)
+                    .ToList();
+                db.Teams.AddRange(teams); db.SaveChanges();
+
+                var tasks = new Faker<Task>("de").CustomInstantiator(f => new Task(
+                    subject: f.Commerce.ProductMaterial(),
+                    title: f.Commerce.ProductAdjective(),
+                    team: f.Random.ListItem(teams),
+                    teacher: f.Random.ListItem(teachers),
+                    expirationDate: new DateTime(2021, 1, 1).AddDays(f.Random.Int(0, 4 * 30))))
+                    .Rules((f, t) => t.MaxPoints = f.Random.Int(16, 48).OrNull(f, 0.5f))
+                    .Generate(10)
+                    .ToList();
+                db.Tasks.AddRange(tasks); db.SaveChanges();
+
+
+                var handIns = new Faker<HandIn>("de").CustomInstantiator(f => new HandIn(
+                    task: f.Random.ListItem(tasks),
+                    student: f.Random.ListItem(students),
+                    date: new DateTime(2021, 1, 1).AddDays(f.Random.Int(0, 4 * 30))))
+                    .Rules((f, h) =>
+                    {
+                        var reviewDate = h.Date.AddDays(f.Random.Int(1, 7)).OrNull(f, 0.5f);
+                        h.ReviewDate = reviewDate;
+                        h.Points = reviewDate.HasValue && h.Task.MaxPoints.HasValue ? f.Random.Int(0, h.Task.MaxPoints.Value) : null;
+                    })
+                    .Generate(20)
+                    .ToList();
+                db.HandIns.AddRange(handIns); db.SaveChanges();
+            }
+            using (var db = new TeamsContext(new DbContextOptionsBuilder()
+                .UseSqlite("Data Source=Teams.db")
+                .Options))
+            {
+                Assert.True(db.Students.Count() == 10);
+                Assert.True(db.Teams.Count() == 10);
+                Assert.True(db.Teachers.Count() == 10);
+                Assert.True(db.HandIns.Count() == 20);
+                Assert.True(db.Tasks.Count() == 10);
+            }
+        }
+    }
+}
+```
