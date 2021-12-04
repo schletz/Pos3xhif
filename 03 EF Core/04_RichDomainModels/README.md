@@ -130,7 +130,7 @@ später in die Datenbanktabelle als eigene Spalten (1 Spalte pro Property) integ
 ## Umsetzung mit EF Core
 
 Im Projekt [RichDomainModelDemo](../RichDomainModelDemo) ist dieses Modell fertig mit
-Unittests und Kommentaren umgesetzt. Die erzeugte Datenbank hat folgendes Aussehen
+Unittests und Kommentaren umgesetzt. Die erzeugte Datenbank hat folgendes Aussehen:
 
 ![](er_modell_20211204_1.png)
 

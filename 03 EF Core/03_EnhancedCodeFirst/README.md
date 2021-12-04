@@ -1,5 +1,15 @@
 # Erweiterte Konfigurationsmöglichkeiten mit EF Core
 
+![](klassenmodell20211203.svg)
+
+## Collection Navigations
+
+Im Klassenmodell hat der Pfeil zwischen *Product* und *Offer* zwei Pfeilspitzen. An einem Ende
+kann von der Klasse *Offer* über das Property *Product* zum Produkt navigiert werden. In der
+Klasse *Product* ist auch eine besondere Navigation vom Typ *ICollection\<Offer\>* vorhanden.
+EF Core unterstützt auch diese Art der Navigation. In *Offers* werden automatisch alle
+Angebote zum aktuellen Produkt abgerufen. Das macht LINQ Abfragen besonders einfach.
+
 ## Festlegen der Tabellennamen
 
 Die Tabellennamen werden durch den Namen des Properties in der Kontextklasse bestimmt.

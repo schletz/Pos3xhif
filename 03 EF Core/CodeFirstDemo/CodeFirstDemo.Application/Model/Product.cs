@@ -24,5 +24,6 @@ namespace CodeFirstDemo.Application.Model
         public string Name { get; set; }
         public int ProductCategoryId { get; set; }            // Value of the FK
         public ProductCategory ProductCategory { get; set; }  // Navigation property
+        public ICollection<Offer> Offers { get; } = new List<Offer>();
     }
 }
