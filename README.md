@@ -2,8 +2,52 @@
 
 ## Wichtiges zum Start
 
-1. [Anleitung zum Verbinden mit dem VPN und den Laufwerken](VpnSpengergasse.md)
-1. [Installation der IDE (z. B. Visual Studio 2019)](IdeInstallation.md)
+### Installation der IDE Visual Studio 2022
+
+Die verbreitetste IDE zur Entwicklung im .NET Bereich ist Visual Studio. Microsoft stellt unserer
+Schule eine Lizenz von Visual Studio Enterprise zur Verfügung.
+
+- Lade die Testversion von Visual Studio **Enterprise** von https://visualstudio.microsoft.com/de/downloads/
+  herunter.
+- Installiere die nachfolgenden Workloads und achte bei den Sprachpaketen darauf, nur *Englisch* auszuwählen.
+- Der Key wird im Unterricht ausgegeben.
+
+![](vs_workloads_20211204_1.png)
+
+### Alternativ: Verwenden von JetBrains Rider
+
+Eine andere weit verbreitete Entwicklungsumgebung - gerade unter macOS - ist Rider von JetBrains.
+Wer mit IntelliJ gut arbeiten konnte, kann auch mit der Schullizenz Rider beziehen. Logge dich dafür
+auf https://account.jetbrains.com/login ein. Wer noch keinen Zugang hat, kann mit der Schul Mailadresse
+eine Lizenz gratis beziehen. Nach dem Login steht Rider als Download zur Verfügung
+
+![](resharper_download_3.png)
+
+
+### PlantUML und VS Code als Modellierungswerkzeug
+
+In der Konzeptionierungsphase ist ein grafisches Tool zum Erzeugen von Klassenmodellen sehr wichtig.
+In diesen Kurs werden immer wieder UML Klassendiagramme hergezeigt. Sie können mit VS Code und
+PlantUML erzeugt werden:
+
+1. Prüfe, ob Java installiert und im PATH eingetragen ist. Der Befehl *java -version* muss erkannt werden.
+1. Installiere [Visual Studio Code](https://code.visualstudio.com). Achtung: Aktiviere beim Setup
+   die Option "In den Explorer integrieren", damit Sie im Kontextmenü VS Code starten können.
+1. Installiere die folgenden Extensions:
+   - Markdown PDF
+   - Markdown Preview Enhanced
+   - PlantUML
+1. Öffne die VS Code Konfiguration (*F1* - "*settings*" eingeben - "*Preferences: Open Settings (JSON)*" wählen)
+   und füge folgende Zeilen hinzu:
+
+```javascript
+    "markdown-pdf.plantumlOpenMarker": "```plantuml\n",
+    "markdown-pdf.plantumlCloseMarker": "```"   
+```
+
+Nun steht durch die Extension *Markdown Preview Enhanced* ein Icon bereit, welches eine Vorschau mit dem gerenderten Diagramm bietet. Beachte: Dies ist nur bei Dokumenten mit der 
+Endung *.md* Verfügbar.
+![](preview_vscode.png)
 
 ## Weiterführende Unterlagen:
 
