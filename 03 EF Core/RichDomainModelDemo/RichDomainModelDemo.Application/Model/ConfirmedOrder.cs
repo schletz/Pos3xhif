@@ -15,9 +15,6 @@
 #pragma warning restore CS8618
         public DateTime ShippingDate { get; set; }
         public decimal ShippingCost { get; set; }
-        // Discriminator value. Needed for changing the type in an UPDATE statement.
-        // Has to be configured in OnModelCreating() with HasDiscriminator()
-        public override string OrderType { get; protected set; } = default!;
         public decimal TotalPrice => OrderItems.Sum(o => o.Price) + ShippingCost;
     }
 }
