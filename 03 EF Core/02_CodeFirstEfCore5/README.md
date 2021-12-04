@@ -405,7 +405,9 @@ Definiere die public Konstruktoren so, dass die benötigten Informationen bei de
 Initialisierung übergeben werden müssen. Für EF Core sind dann protected Konstruktoren
 ohne Parameter anzulegen.
 
-Prüfe am Ende in DBeaver, ob die Datenbank korrekt aufgebaut ist, d. h. die Fremdschlüssel
+Erstelle eine Testklasse im Unittest Projekt mit dem Namen *DatabaseContextTests*. Diese Klasse
+hat eine Testmethode: *EnsureCreatedSuccessTest*. Dieser Test versucht, die Datenbank
+anzulegen. Prüfe am Ende in DBeaver, ob die Datenbank korrekt aufgebaut ist, d. h. die Fremdschlüssel
 Felder in der ER Ansicht auf die entsprechenden Tabellen verweisen.
 
 ![](teamsModell20211203.svg)

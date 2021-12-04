@@ -347,3 +347,97 @@ public class Order
 }
 ```
 
+## Übung
+
+Erweitere das Übungsmodell über die Abgabenverwaltung aus den vorigen Kapiteln.
+- Der Name wird als value object definiert. Verwende C# 9 Records zur Definition
+  des Objektes. Achte auf die korrekte Konfuration im Context mittels *OwnsOne()*.
+- In der Klasse *Team* liefert die Methode *GetActiveTasks()* alle Tasks zurück, wo das
+  *ExpirationDate* größer als das übergebene Datum ist.
+- Task ist ein Aggregate für die Abgaben (hand ins).
+  - Niemand darf Abgaben direkt in die Datenbank schreiben. Stelle dies durch die
+    Verwendung einer *IReadOnlyCollection* sicher. Zudem hat HandIn keinen Task
+    im Konstruktor.
+  - *TryHandIn()* fügt eine Abgabe hinzu, wenn das gespeicherte Abgabedatum innerhalb
+    des Abgabezeitraumes (*ExpirationDate*) liegt. Ist dem nicht so, liefert die
+    Methode false.
+  - *ReviewHandIn()* aktualisiert die übergebene Abgabe und erzeugt ein *ReviewedHandIn*.
+  - *CalculateAveragePoints()* kann als Property ausgeführt werden und berechnet die
+    durchschnittlichen Punkte der Abgaben. Berücksichtige nur Abgaben vom Typ *ReviewedHandIn*.
+
+Erstelle für die Klasse Task eine Testklasse *TaskTests* im Unittest Projekt. Prüfe danach deine
+Implementierung durch jeweils einen Success-Test pro Methode.
+
+```plantuml
+hide empty methods
+
+@startuml
+class Name<<value object>> {
+  +Firstname : string
+  +Lastname : string
+  +Email : string
+  ---
+  +Name(string firstname, string lastname, string email)
+}
+
+class Student {
+  +Name : Name
+  +HandIns : ICollection<HandIn>
+  ---
+  +Student(string name)  
+}
+Student *--> Name
+
+class Teacher {
+  +Name : Name
+  ---
+  +Teacher(string name)  
+}
+Teacher *--> Name
+
+class Team {
+  +Name : string
+  +Schoolclass : string
+  +Tasks : ICollection<Task>
+  ---
+  +Team(string name, string schoolclass)
+  +IReadOnlyCollection<Task> GetActiveTasks(DateTime date)
+}
+
+class Task<<aggregate>> {
+  +Subject : string
+  +Title : string
+  +Team : Team
+  +Teacher : Teacher
+  +ExpirationDate : DateTime
+  +MaxPoints : int
+  +HandIns : IReadOnlyCollection<HandIn>
+  ---
+  +Task(string subject, string title, Team team, Teacher teacher, DateTime expirationDate, int maxPoints)
+  +bool TryHandIn(HandIn handIn)
+  +ReviewHandIn(HandIn handIn, DateTime reviewDate, int points)
+  +decimal CalculateAveragePoints()
+}
+Task <--> Team
+Task o--> Teacher
+Task o--> HandIn
+
+class HandIn {
+  +Student : Student
+  +Date : DateTime
+  ---
+  +HandIn(Student student, DateTime date)
+  #HandIn(HandIn handIn)
+}
+HandIn <--> Student
+
+class ReviewedHandIn {
+  +ReviewDate : DateTime
+  +Points : int
+  ---
+  +ReviewedHandIn(HandIn handIn, DateTime reviewDate, int points)
+}
+
+ReviewedHandIn -up-|> HandIn
+@enduml
+```
