@@ -406,6 +406,7 @@ Arbeiten einrechen (HandIn).
 <sup>
 https://www.plantuml.com/plantuml/uml/hPB1JiCm38RlVGeVXzQ-09h63e100eJONi2qXWMI51eN9asyEt7TZ6mQ9xZ4wH_P__TRNGJ6ZdjdYzfY2B3alY7Fi2q0ffUc2-pH4Pn2uCxuPr5ly8XuuT3ONAcgIlHntaHrU4eJInWLYmS2oQIJugiOYLQ4zPgwVoCQv_sDo2dENMuAirdlpNjFy_cGl5wthTMEenGk8UoPXP-smJ9vOdXLpsN_-48rxsLT6RPvUfqV1IbPQ5NaDcneysOwPDFwSsHfbx8oZkJn5ZVthV4iyB6SPUWH9Q47XTdHiu2KkY6EHvdyWBMMEnEWFNi9godRgfehUFwjxMaTL-YRQm_Rn1CXfMH_N5J6cuX70ZxGXw7FWmU9EVqbjtfE1ZkEHvaC86ZDiZLZ8ktH20adqnHwGRxfdVq6
 </sup>
+
 Das Klassenmodell zeigt keine EF Core spezifischen Properties wie Fremdschlüsselfelder.
 Überlege auch einen passenden primary key (auto increment Wert oder ein vorhandenes
 Property).
@@ -536,7 +537,6 @@ namespace TeamsManager.Test
                     .Generate(10)
                     .ToList();
                 db.Tasks.AddRange(tasks); db.SaveChanges();
-
 
                 var handIns = new Faker<HandIn>("de").CustomInstantiator(f => new HandIn(
                     task: f.Random.ListItem(tasks),
