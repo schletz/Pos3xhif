@@ -408,7 +408,7 @@ ohne Parameter anzulegen.
 Prüfe am Ende in DBeaver, ob die Datenbank korrekt aufgebaut ist, d. h. die Fremdschlüssel
 Felder in der ER Ansicht auf die entsprechenden Tabellen verweisen.
 
-![](teamsModell20211202.svg)
+![](teamsModell20211203.svg)
 <sup>
-https://www.plantuml.com/plantuml/uml/hL5BJiGm3Dtt5DcZkK0Np2m0WGG8qLx0j1PZI1oKk30IukxK3XLgrEMi73_xVI8Via2IAVXcy92pwsGQaSLzDyvTt53AmX3GjIvB8dvLz1usmEi0vF-Hd-PFhqSOZfZEgHUAs6DDwOPZZDxMjeYGtmkncrxUS90LjoVnQpKpQitFsl8FG-nb8KyVb40eyXM8qhNq55273t1wYiIYOUQodwEK476tkpJTgbVL9Uqjy7Z79QyjjRQhxNAXThcLWXl-p_X9-5KDzZgfOnKpox5ehZ1pRWx8unJyBm00
+https://www.plantuml.com/plantuml/uml/hP7TIiD048NlynHxBtq1AMr1AnPKnEG5ncIme_iZsOaMn7Tt3xFGDlJIgzdvTlQR4xB9IgDEmJUzfvnTgzF0KTrFuzpLdOnP8mLsroxhAF4Dz84km6qWyKVosrHVnzJlUVnFNp3Pq_n9s-zJyZPsoZlA7o2xc-GzzoefBi5MHojQixRJwtkPEHU8-lDLI5402jhwaI1s0jmUFcKaRBibnNEKJWBZyf4EpqcY8bSfwnB5GYmNYvLvhK_McxMclQSuxABbnL1neA2jlw-GUWAyiF-5luI_PnThtCnZsJBBKPsdp3PlE0vJy7y0
 </sup>
