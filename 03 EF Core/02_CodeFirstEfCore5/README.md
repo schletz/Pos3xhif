@@ -416,7 +416,8 @@ Initialisierung übergeben werden müssen. Für EF Core sind dann protected Kons
 ohne Parameter anzulegen.
 
 Der Kontext soll den Namen *TeamsContextTests* haben. Weiter unten ist der Mustercode
-für die Definition der Klasse.
+für die Definition der Klasse. Er beinhaltet auch eine Methode *Seed()*, die die Datenbank
+mit Musterdaten füllt.
 
 Erstelle danach eine Testklasse im Unittest Projekt mit dem Namen *TeamsContextTests*. Kopiere
 den Code weiter unten in diese Testklasse. Sie beinhaltet 2 Tests:
@@ -432,6 +433,8 @@ aussehen. Die Datenbank wird in *TeamsManager.Test\bin\Debug\net6.0* unter dem N
 
 ![](ermodell20211202.png)
 
+> **Hinweis:** Die Klasse *Task* kommt im Namespace System.Threading.Task ebenfalls vor.
+> Bei mehrdeutigen Referenzen muss der volle Klassenname (*Model.Task*) angegeben werden.
 
 ### Anlegen des Projektes
 
@@ -461,20 +464,83 @@ start TeamsManager.sln
 
 ### Kontextklasse
 ```c#
-public class TeamsContext : DbContext
-{
-    public TeamsContext(DbContextOptions opt) : base(opt) { }
-    /* TODO: Add your DbSet properties */
-}
-```
-
-### Unittest
-```c#
 using Bogus;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using TeamsManager.Application.Model;
+
+namespace TeamsManager.Application.Infrastructure
+{
+    public class TeamsContext : DbContext
+    {
+        public TeamsContext(DbContextOptions opt) : base(opt) { }
+        /* TODO: Add your DbSets here */
+
+        public void Seed()
+        {
+            Randomizer.Seed = new Random(2145);
+
+            var teachers = new Faker<Teacher>("de").CustomInstantiator(f => new Teacher(
+                firstname: f.Name.FirstName(),
+                lastname: f.Name.LastName(),
+                email: f.Internet.Email()))
+                .Generate(10)
+                .ToList();
+            Teachers.AddRange(teachers); SaveChanges();
+
+            var students = new Faker<Student>("de").CustomInstantiator(f => new Student(
+                firstname: f.Name.FirstName(),
+                lastname: f.Name.LastName(),
+                email: f.Internet.Email()))
+                .Generate(10)
+                .ToList();
+            Students.AddRange(students); SaveChanges();
+
+            var teams = new Faker<Team>("de").CustomInstantiator(f => new Team(
+                name: f.Commerce.ProductName(),
+                schoolclass: $"{f.Random.Int(1, 5)}{f.Random.String2(1, "ABC")}HIF"))
+                .Generate(10)
+                .ToList();
+            Teams.AddRange(teams); SaveChanges();
+
+            var tasks = new Faker<Task>("de").CustomInstantiator(f => new Task(
+                subject: f.Commerce.ProductMaterial(),
+                title: f.Commerce.ProductAdjective(),
+                team: f.Random.ListItem(teams),
+                teacher: f.Random.ListItem(teachers),
+                expirationDate: new DateTime(2021, 1, 1).AddDays(f.Random.Int(0, 4 * 30))))
+                .Rules((f, t) => t.MaxPoints = f.Random.Int(16, 48).OrNull(f, 0.5f))
+                .Generate(10)
+                .ToList();
+            Tasks.AddRange(tasks); SaveChanges();
+
+
+            var handIns = new Faker<HandIn>("de").CustomInstantiator(f => new HandIn(
+                task: f.Random.ListItem(tasks),
+                student: f.Random.ListItem(students),
+                date: new DateTime(2021, 1, 1).AddDays(f.Random.Int(0, 4 * 30))))
+                .Rules((f, h) =>
+                {
+                    var reviewDate = h.Date.AddDays(f.Random.Int(1, 7)).OrNull(f, 0.5f);
+                    h.ReviewDate = reviewDate;
+                    h.Points = reviewDate.HasValue && h.Task.MaxPoints.HasValue ? f.Random.Int(0, h.Task.MaxPoints.Value) : null;
+                })
+                .Generate(20)
+                .ToList();
+            HandIns.AddRange(handIns); SaveChanges();
+        }
+    }
+
+}
+
+```
+
+### Unittest
+```c#
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using TeamsManager.Application.Infrastructure;
 using Xunit;
 
 namespace TeamsManager.Test
@@ -482,87 +548,38 @@ namespace TeamsManager.Test
     [Collection("Sequential")]
     public class TeamsContextTests
     {
+        private TeamsContext GetDatabase(bool deleteDb = false)
+        {
+            var db = new TeamsContext(new DbContextOptionsBuilder()
+                 .UseSqlite("Data Source=Teams.db")
+                 .Options);
+            if (deleteDb)
+            {
+                db.Database.EnsureDeleted();
+                db.Database.EnsureCreated();
+            }
+            return db;
+        }
         [Fact]
         public void CreateDatabaseSuccessTest()
         {
-            using var db = new TeamsContext(new DbContextOptionsBuilder()
-                .UseSqlite("Data Source=Teams.db")
-                .Options);
-            db.Database.EnsureDeleted();
-            db.Database.EnsureCreated();
+            using var db = GetDatabase(deleteDb: true);
         }
 
         [Fact]
         public void SeedDatabaseTest()
         {
-            Randomizer.Seed = new Random(2145);
-            using (var db = new TeamsContext(new DbContextOptionsBuilder()
-                .UseSqlite("Data Source=Teams.db")
-                .Options))
-            {
-
-                db.Database.EnsureDeleted();
-                db.Database.EnsureCreated();
-
-                var teachers = new Faker<Teacher>("de").CustomInstantiator(f => new Teacher(
-                    firstname: f.Name.FirstName(),
-                    lastname: f.Name.LastName(),
-                    email: f.Internet.Email()))
-                    .Generate(10)
-                    .ToList();
-                db.Teachers.AddRange(teachers); db.SaveChanges();
-
-                var students = new Faker<Student>("de").CustomInstantiator(f => new Student(
-                    firstname: f.Name.FirstName(),
-                    lastname: f.Name.LastName(),
-                    email: f.Internet.Email()))
-                    .Generate(10)
-                    .ToList();
-                db.Students.AddRange(students); db.SaveChanges();
-
-                var teams = new Faker<Team>("de").CustomInstantiator(f => new Team(
-                    name: f.Commerce.ProductName(),
-                    schoolclass: $"{f.Random.Int(1, 5)}{f.Random.String2(1, "ABC")}HIF"))
-                    .Generate(10)
-                    .ToList();
-                db.Teams.AddRange(teams); db.SaveChanges();
-
-                var tasks = new Faker<Task>("de").CustomInstantiator(f => new Task(
-                    subject: f.Commerce.ProductMaterial(),
-                    title: f.Commerce.ProductAdjective(),
-                    team: f.Random.ListItem(teams),
-                    teacher: f.Random.ListItem(teachers),
-                    expirationDate: new DateTime(2021, 1, 1).AddDays(f.Random.Int(0, 4 * 30))))
-                    .Rules((f, t) => t.MaxPoints = f.Random.Int(16, 48).OrNull(f, 0.5f))
-                    .Generate(10)
-                    .ToList();
-                db.Tasks.AddRange(tasks); db.SaveChanges();
-
-                var handIns = new Faker<HandIn>("de").CustomInstantiator(f => new HandIn(
-                    task: f.Random.ListItem(tasks),
-                    student: f.Random.ListItem(students),
-                    date: new DateTime(2021, 1, 1).AddDays(f.Random.Int(0, 4 * 30))))
-                    .Rules((f, h) =>
-                    {
-                        var reviewDate = h.Date.AddDays(f.Random.Int(1, 7)).OrNull(f, 0.5f);
-                        h.ReviewDate = reviewDate;
-                        h.Points = reviewDate.HasValue && h.Task.MaxPoints.HasValue ? f.Random.Int(0, h.Task.MaxPoints.Value) : null;
-                    })
-                    .Generate(20)
-                    .ToList();
-                db.HandIns.AddRange(handIns); db.SaveChanges();
-            }
-            using (var db = new TeamsContext(new DbContextOptionsBuilder()
-                .UseSqlite("Data Source=Teams.db")
-                .Options))
-            {
-                Assert.True(db.Students.Count() == 10);
-                Assert.True(db.Teams.Count() == 10);
-                Assert.True(db.Teachers.Count() == 10);
-                Assert.True(db.HandIns.Count() == 20);
-                Assert.True(db.Tasks.Count() == 10);
-            }
+            using var db = GetDatabase(deleteDb: true);
+            db.Seed();
+            // Multiple assert statements should be avoided in real unit tests, but in this case
+            // the database is tested, not the program logic.
+            Assert.True(db.Students.Count() == 10);
+            Assert.True(db.Teams.Count() == 10);
+            Assert.True(db.Teachers.Count() == 10);
+            Assert.True(db.HandIns.Count() == 20);
+            Assert.True(db.Tasks.Count() == 10);
         }
     }
 }
+
 ```
