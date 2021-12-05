@@ -364,6 +364,9 @@ Erweitere das Übungsmodell über die Abgabenverwaltung aus den vorigen Kapiteln
   - *ReviewHandIn()* aktualisiert die übergebene Abgabe und erzeugt ein *ReviewedHandIn*.
   - *CalculateAveragePoints()* kann als Property ausgeführt werden und berechnet die
     durchschnittlichen Punkte der Abgaben. Berücksichtige nur Abgaben vom Typ *ReviewedHandIn*.
+  - Überlege, ob durch einen direkten Datenbankzugriff (= Zugriff über eine Instanz
+    des DbContext) eine Abgabe (HandIn) ohne Kontrolle eingefügt werden kann. Wie kann
+    dies vermieden werden?
 
 Erstelle für die Klasse Task eine Testklasse *TaskTests* im Unittest Projekt. Prüfe danach deine
 Implementierung durch jeweils einen Success-Test pro Methode.
