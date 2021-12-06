@@ -71,9 +71,9 @@ Klassen als Assoziationen umgesetzt. Betrachten wir das folgende Modell. Es setz
 Bestellsystem wie z. B. Geizhals um. Produkte werden in verschiedenen Stores zu unterschiedlichen
 Preisen angeboten (offer).
 
-![](klassenmodell20211203.svg)  
+![](klassenmodell20211206.svg)  
 <sup>
-https://www.plantuml.com/plantuml/uml/ZOzDQiGm38NtFeNtPIuGXkd0T1Q1qXRQ7i3OIcBmJx2LHIYvUvN8oS8KEjd4-gJtddJDg19Eted16f3WHvob1noYoK8xbRFyn9X0_WX9trDhP2DjGAxUb0UgCoORUh68edZlEaX_ApvID9D6Glmgc3CQpjedhLwH0MszSWnVLSRlqIXSEo_q-x8Urc2EZAVJXJqAE1CuaifsfRoHkezfVkIo0zt30P_5KZdkJdSL_h6gLsZgfNXiko5Jjxr5vq2ZZU6ymGk55maVNUkl4CpatIy0
+https://www.plantuml.com/plantuml/uml/ZP51oi8m48NtEKNsFxr05xy5xK8G5TG3X6JQ1fga9DD5aTxTb6cA146xQUQRp7jlI1LGU1nDppgjW8CPSE86i7CgCDcB4FWDdGV-P3n-VqV5IwujKdKM1c8Tq6lRifcj4vUc0VzvukgT6YL6j9u8aqT9NkccbWjI8BKHFS6J2FWObC2bSuY_kpQm69EbAuf_qdW7oOdIfN8Vfrldfryssr1jDxXZSwQOb6fXlqZb4SeyLDHU2QsGjokmAZxQ2m00
 </sup>
 
 Nun wollen wir dieses Klassenmodell speichern, also *persistieren*. Dafür stehen uns mehrere
