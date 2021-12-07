@@ -360,7 +360,8 @@ aufgelistet.
 ## Ansehen der Datenbank in DBeaver
 
 Nachdem der Unittest ausgeführt wurde, findet sich im Ordner *CodeFirstDemo.Test\bin\Debug\net6.0*
-die Datei *Stores.db*. Öffnen wir mit DBeaver die Datenbank und klicken doppelt auf *Tables*,
+die Datei *Stores.db*. Zum Betrachten der Datenbank kann z. B. DBeaver (https://dbeaver.io/)
+verwendet werden. Öffnen wir mit DBeaver die Datenbank und klicken doppelt auf *Tables*,
 kann das ER Diagramm der erstellen Datenbank angezeigt werden:
 
 ![](ermodell20211207.png)
