@@ -19,6 +19,16 @@ namespace CodeFirstDemo.Application.Infrastructure
         {
             modelBuilder.Entity<Offer>().Property(o => o.Price).HasPrecision(9, 4);
             modelBuilder.Entity<Offer>().HasIndex(o => new { o.StoreId, o.ProductEan }).IsUnique();
+
+            // Convert naming convention from PropertyName to T_Property (useless, but good for demonstration)
+            //foreach (var entity in modelBuilder.Model.GetEntityTypes())
+            //{
+            //    foreach (var property in entity.GetProperties())
+            //    {
+            //        property.SetColumnName($"{entity.GetTableName()?.Substring(0, 1)}_{property.Name}");
+            //    }
+            //    entity.SetTableName(entity.GetTableName()?.ToUpper());
+            //}
         }
     }
 }

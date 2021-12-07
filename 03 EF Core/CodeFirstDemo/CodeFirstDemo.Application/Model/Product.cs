@@ -8,7 +8,7 @@ namespace CodeFirstDemo.Application.Model
     {
         public Product(int ean, string name, ProductCategory productCategory)
         {
-            Ean = Ean;
+            Ean = ean;
             Name = name;
             ProductCategoryId = productCategory.Id;
             ProductCategory = productCategory;
