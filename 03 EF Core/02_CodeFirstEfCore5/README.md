@@ -48,8 +48,8 @@ Option *TreatWarningsAsErrors* ein.
 	</PropertyGroup>
 ```
 
-Im Ordner CodeFirstDemo[../CodeFirstDemo] des Kapitels *03 EF Core* befindet sich eine fertige
-Applikation, die eine fertige Implementierung beinhaltet.
+**Im Ordner [CodeFirstDemo](../CodeFirstDemo) des Kapitels *03 EF Core* befindet sich eine fertige
+Applikation, die eine fertige Implementierung beinhaltet.**
 
 ### Nullable reference types und EF Core
 
