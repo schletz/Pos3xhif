@@ -48,8 +48,8 @@ Option *TreatWarningsAsErrors* ein.
 	</PropertyGroup>
 ```
 
-Im Ordner *CodeFirstDemo* des Kapitels *03 EF Core* befindet sich eine fertige Applikation, die
-eine fertige Implementierung beinhaltet.
+Im Ordner CodeFirstDemo[../CodeFirstDemo] des Kapitels *03 EF Core* befindet sich eine fertige
+Applikation, die eine fertige Implementierung beinhaltet.
 
 ### Nullable reference types und EF Core
 
@@ -363,7 +363,7 @@ Nachdem der Unittest ausgeführt wurde, findet sich im Ordner *CodeFirstDemo.Tes
 die Datei *Stores.db*. Öffnen wir mit DBeaver die Datenbank und klicken doppelt auf *Tables*,
 kann das ER Diagramm der erstellen Datenbank angezeigt werden:
 
-![](ermodell20211202.png)
+![](ermodell20211207.png)
 
 Die Fremdschlüssel wurden also korrekt gesetzt. Sehen wir uns die DDL Statements der Tabelle
 *Stores* an, findet sich ein klassisches *CREATE TABLE* Statement, wie es auch von Hand
