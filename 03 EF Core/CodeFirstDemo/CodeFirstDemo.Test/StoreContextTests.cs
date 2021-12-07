@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using CodeFirstDemo.Application.Infrastructure;
 using Bogus;
 using CodeFirstDemo.Application.Model;
+using System.Diagnostics;
 
 namespace CodeFirstDemo.Test
 {
@@ -20,15 +21,21 @@ namespace CodeFirstDemo.Test
         {
             //var opt = new DbContextOptionsBuilder()
             //    .UseMySql(@"server=localhost;database=Stores;user=root",
-            //    new MariaDbServerVersion(new Version(10, 4, 22)))
+            //      new MariaDbServerVersion(new Version(10, 4, 22)))
+            //    .LogTo(message => Debug.WriteLine(message), Microsoft.Extensions.Logging.LogLevel.Information)
+            //    .EnableSensitiveDataLogging()
             //    .Options;
 
             //var opt = new DbContextOptionsBuilder()
             //    .UseSqlServer(@"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=Stores")
+            //    .LogTo(message => Debug.WriteLine(message), Microsoft.Extensions.Logging.LogLevel.Information)
+            //    .EnableSensitiveDataLogging()
             //    .Options;
 
             var opt = new DbContextOptionsBuilder()
                 .UseSqlite(@"Data Source=Stores.db")
+                .LogTo(message => Debug.WriteLine(message), Microsoft.Extensions.Logging.LogLevel.Information)
+                .EnableSensitiveDataLogging()
                 .Options;
 
             using var db = new StoreContext(opt);
@@ -41,6 +48,8 @@ namespace CodeFirstDemo.Test
         {
             var opt = new DbContextOptionsBuilder()
                 .UseSqlite(@"Data Source=Stores.db")
+                .LogTo(message => Debug.WriteLine(message), Microsoft.Extensions.Logging.LogLevel.Information)
+                .EnableSensitiveDataLogging()
                 .Options;
 
             using var db = new StoreContext(opt);
