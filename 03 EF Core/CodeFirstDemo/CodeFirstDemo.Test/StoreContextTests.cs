@@ -16,9 +16,19 @@ namespace CodeFirstDemo.Test
         [Fact]
         public void CreateDatabaseTest()
         {
+            //var opt = new DbContextOptionsBuilder()
+            //    .UseMySql(@"server=localhost;database=Stores;user=root",
+            //    new MariaDbServerVersion(new Version(10, 4, 22)))
+            //    .Options;
+
+            //var opt = new DbContextOptionsBuilder()
+            //    .UseSqlServer(@"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=Stores")
+            //    .Options;
+
             var opt = new DbContextOptionsBuilder()
-                .UseSqlite("Data Source=Stores.db")
+                .UseSqlite(@"Data Source=Stores.db")
                 .Options;
+
             using var db = new StoreContext(opt);
             db.Database.EnsureDeleted();
             db.Database.EnsureCreated();
