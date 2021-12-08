@@ -1,78 +1,24 @@
-# Initialisierung des Projektes und erstes Service
+# Open CV Demo
 
-## Anlegen des Projektes
+Lade die Solution in der Datei *OpenCvDemo.sln* und öffne die sln Datei
+in Visual Studio 2022. Die C# Projekte benötigen .NET 6.
 
-```text
-rd /S /Q OpenCvDemo
-md OpenCvDemo
-cd OpenCvDemo
-md OpenCvDemo.Application
-cd OpenCvDemo.Application
-dotnet new classlib
-dotnet add package OpenCvSharp4
-dotnet add package OpenCvSharp4.runtime.win
-cd ..
-md OpenCvDemo.Test
-cd OpenCvDemo.Test
-dotnet new xunit
-dotnet add reference ..\OpenCvDemo.Application
-cd ..
-dotnet new sln
-dotnet sln add OpenCvDemo.Application
-dotnet sln add OpenCvDemo.Test
-start OpenCvDemo.sln
+Führe danach die Unittests aus:
 
-```
+- **DetectPhotosSuccessTest** erkennt einzelne Bilder, die gemeinsam eingestannt wurden. Die
+  Bilder werden in die Dateien *extract_(date)_(nr).jpg* im Ausgabeordner 
+  (*OpenCvDemo.Test/bin/Debug/net6.0*) geschrieben. Schließe alle OpenCV Fenster, damit der
+  Test beendet wird.
+- **DetectPhotosInTextSuccessTest** erkennt Bilder im Text. Die
+  Bilder werden in die Dateien *extract_(date)_(nr).jpg* im Ausgabeordner 
+  (*OpenCvDemo.Test/bin/Debug/net6.0*) geschrieben. Schließe alle OpenCV Fenster, damit der
+  Test beendet wird.
+- **GetTextSuccessTest** erkennt Text auf einer Seite und liefert ihn zurück. Der Text
+  ist in der Datei *content.txt* im Ausgabeverzeichnis.
 
-## Anlegen des ersten Services
+![](demo_fotos.png)
 
-Füge im Projekt *OpenCvDemo.Backend* den Ordner *Services* hinzu. Lege darin die folgende
-Klasse *ImageProcessingService* an:
-
-```c#
-// Füge 
-// using OpenCvSharp;
-// am Beginn der Datei hinzu.
-public class ImageProcessingService
-{
-    public void EdgeDetection(string filename)
-    {
-        if (!File.Exists(filename))
-        {
-            throw new ArgumentException("Die Datei existiert nicht.");
-        }
-        using var src = new Mat(filename, ImreadModes.Grayscale);
-        using var dst = new Mat();
-
-        Cv2.Canny(src, dst, 50, 200);
-        using (new Window("src image", src))
-        using (new Window("dst image", dst))
-        {
-            Cv2.WaitKey();
-        }
-    }
-}
-```
-
-## Anlegen des ersten Unittests
-
-- Kopiere die Datei *lena.png* in den Ordner *OpenCvDemo.Test*. Sie befindet sich
-  auf http://optipng.sourceforge.net/pngtech/img/lena.html
-- Stelle in den Eigenschaften in Visual Studio bei dieser Datei die Option *Copy always* ein.
-- Lege eine Klasse *ImageProcessingServiceTests* an und teste die oben beschriebene Methode.
-- Es sollten sich 2 Fenster öffnen. Durch Tastendruck wird das Fenster geschlossen.
-
-```c#
-public class ImageProcessingServiceTests
-{
-    [Fact]
-    public void EdgeDetectionSuccessTest()
-    {
-        var service = new ImageProcessingService();
-        service.EdgeDetection("lena.png");
-    }
-}
-```
+![](demo_textseite.png)
 
 ## Weitere Infos
 
@@ -80,4 +26,3 @@ public class ImageProcessingServiceTests
 - Projektseite: [https://github.com/shimat/opencvsharp](https://github.com/shimat/opencvsharp)
 - Samples auf [https://github.com/shimat/opencvsharp_samples/](https://github.com/shimat/opencvsharp_samples/) und
   [https://github.com/shimat/opencvsharp/wiki](https://github.com/shimat/opencvsharp/wiki)
-- PdfSharp [https://www.nuget.org/packages/PdfSharp/1.50.5147](https://www.nuget.org/packages/PdfSharp/1.50.5147)

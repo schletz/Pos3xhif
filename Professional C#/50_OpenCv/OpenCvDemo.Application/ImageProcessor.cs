@@ -61,7 +61,8 @@ namespace OpenCvDemo.Application
                 if (sharpen)
                     filteredImage = filteredImage.Filter2D(-1, kernel, new Point(-1, -1), 0, BorderTypes.Default);
                 // Bild in Datei schreiben: 
-                filteredImage.ImWrite($"cropped{found}.jpg");
+                var date = DateTime.UtcNow.ToString("yyyyMMddHHmmss");
+                filteredImage.ImWrite($"extract_{date}_{found}.jpg");
             }
             return found;
         }
