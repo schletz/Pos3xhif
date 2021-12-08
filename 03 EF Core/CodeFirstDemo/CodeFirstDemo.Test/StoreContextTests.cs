@@ -19,20 +19,13 @@ namespace CodeFirstDemo.Test
         [Fact]
         public void CreateDatabaseTest()
         {
-            //var opt = new DbContextOptionsBuilder()
-            //    .UseMySql(@"server=localhost;database=Stores;user=root",
-            //      new MariaDbServerVersion(new Version(10, 4, 22)))
-            //    .LogTo(message => Debug.WriteLine(message), Microsoft.Extensions.Logging.LogLevel.Information)
-            //    .EnableSensitiveDataLogging()
-            //    .Options;
-
-            //var opt = new DbContextOptionsBuilder()
-            //    .UseSqlServer(@"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=Stores")
-            //    .LogTo(message => Debug.WriteLine(message), Microsoft.Extensions.Logging.LogLevel.Information)
-            //    .EnableSensitiveDataLogging()
-            //    .Options;
-
             var opt = new DbContextOptionsBuilder()
+                // For MySQL (requires NuGet Pomelo.EntityFrameworkCore.MySql):
+                //    .UseMySql(@"server=localhost;database=Stores;user=root",
+                //        new MariaDbServerVersion(new Version(10, 4, 22)))
+                // For SQL Server (LocalDB) (requires NuGet Microsoft.EntityFrameworkCore.SqlServer):
+                //    .UseSqlServer(@"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=Stores")
+                // For SQLite (requires NuGet Microsoft.EntityFrameworkCore.Sqlite):
                 .UseSqlite(@"Data Source=Stores.db")
                 .LogTo(message => Debug.WriteLine(message), Microsoft.Extensions.Logging.LogLevel.Information)
                 .EnableSensitiveDataLogging()
@@ -47,6 +40,12 @@ namespace CodeFirstDemo.Test
         public void SeedTest()
         {
             var opt = new DbContextOptionsBuilder()
+                // For MySQL (requires NuGet Pomelo.EntityFrameworkCore.MySql):
+                //    .UseMySql(@"server=localhost;database=Stores;user=root",
+                //        new MariaDbServerVersion(new Version(10, 4, 22)))
+                // For SQL Server (LocalDB) (requires NuGet Microsoft.EntityFrameworkCore.SqlServer):
+                //    .UseSqlServer(@"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=Stores")
+                // For SQLite (requires NuGet Microsoft.EntityFrameworkCore.Sqlite):
                 .UseSqlite(@"Data Source=Stores.db")
                 .LogTo(message => Debug.WriteLine(message), Microsoft.Extensions.Logging.LogLevel.Information)
                 .EnableSensitiveDataLogging()
@@ -66,6 +65,7 @@ namespace CodeFirstDemo.Test
                 .ToList();
             db.ProductCategories.AddRange(productCategories);
             db.SaveChanges();
+
             var products = new Faker<Product>("de")
                 .CustomInstantiator(f => new Product(
                     ean: f.Random.Int(1000, 9999),
@@ -98,9 +98,6 @@ namespace CodeFirstDemo.Test
                 .ToList();
             db.Offers.AddRange(offers);
             db.SaveChanges();
-
-
         }
-
     }
 }

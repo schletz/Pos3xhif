@@ -20,10 +20,11 @@ namespace CodeFirstDemo.Application.Model
         // for the next property (ean)
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int Ean { get; private set; }
+        public int Ean { get; private set; }                  // private set, EF Core does not support changing the PK.
         public string Name { get; set; }
         public int ProductCategoryId { get; set; }            // Value of the FK
         public ProductCategory ProductCategory { get; set; }  // Navigation property
-        public ICollection<Offer> Offers { get; } = new List<Offer>();
+        // Navigation to the offers of the product. Read-only (get) because this is not a mapped property for the database.
+        public ICollection<Offer> Offers { get; } = new List<Offer>(); 
     }
 }

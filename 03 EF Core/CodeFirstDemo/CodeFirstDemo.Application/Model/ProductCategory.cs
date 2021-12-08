@@ -14,6 +14,6 @@ namespace CodeFirstDemo.Application.Model
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public int Id { get; private set; }
         public string Name { get; set; }
-        public string? NameEn { get; set; }
+        public string? NameEn { get; set; }       // Optional (nullable reference types). Can be set by initializor.
     }
 }
