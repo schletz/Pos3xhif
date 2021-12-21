@@ -49,6 +49,28 @@ Nun steht durch die Extension *Markdown Preview Enhanced* ein Icon bereit, welch
 Endung *.md* Verfügbar.
 ![](preview_vscode.png)
 
+Zum Testen kann nun eine neue Datei *Modell.md* mit folgendem Inhalt erstellt werden:
+
+````
+# Ein Klassenmodell
+
+Das ist die Beschreibung.
+```plantuml
+@startuml
+
+class Schoolclass {
+   +Name : String
+}
+
+class Student {
+   +Firstname : String
+   +Schoolclass : Schoolclass
+}
+
+Student *--> Schoolclass
+@enduml
+```
+````
 ## Weiterführende Unterlagen:
 
 - YouTube Channels: [dotNET](https://www.youtube.com/channel/UCvtT19MZW8dq5Wwfu6B0oxw),
