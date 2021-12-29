@@ -17,13 +17,13 @@ Logdateien sind für gewöhnlich sehr groß (mehrere GB). Unsere Datei hat folge
 ```
 
 Sie beinhaltet einen Zeitstempel, die IP Adresse des Clients, die HTTP Methode und die URL. Als
-IP Adresse werden nur 0.0.0.1, 0.0.0.2, 0.0.0.3, 0.0.0.4 verwendet, um bei einer Suche die
+IP Adressen werden nur 0.0.0.1, 0.0.0.2, 0.0.0.3, 0.0.0.4 verwendet, um bei einer Suche die
 Anzahl der Ergebnisse abschätzen zu können.
 
-Es soll nun eine Methode geschrieben werden, die eine Bestimmte IP aus der Datei sucht die gefundenen
-Daten als Liste von LogEntries zurückgeben.
+Es soll nun eine Methode geschrieben werden, die eine bestimmte IP aus der Datei sucht die gefundenen
+Daten als Liste von LogEntries zurückgibt.
 
-LogEntry ist eine normale POCO Klasse, die die einzelnen Datenfelder beinhaltet:
+*LogEntry* ist eine normale POCO Klasse, die die einzelnen Datenfelder beinhaltet:
 
 ```c#
 public record LogEntry(
@@ -67,13 +67,13 @@ LogAnalyzer.sln
 
 ## Diskussion der Ergebnisse
 
-Die Implementierungen liefern natürlich immer das gleiche Ergebnis. Allerdings ist der
+Die Implementierungen liefern natürlich immer die gleiche Ergebnisliste. Allerdings ist der
 Speicherbedarf sehr unterschiedlich:
 
 ![](results.png)
 
 Zur Erklärung von Gen 0, Gen 1 und Gen 2: Füllt sich der Speicher am Heap, prüft der Garbage Collector
-die Objekte dahingehend, ob noch darauf referenziert wird. Wenn nein, wird das Objekt gelöscht. Dies
+die Objekte dahingehend, ob darauf referenziert wird. Wenn nein, wird das Objekt gelöscht. Dies
 ist allerdings ein zeitaufwändiger Vorgang. Deswegen gibt es ein dreistufiges Konzept:
 - Die Objekte werden geprüft. Verwendete Objekte werden in Gen 1 verschoben.
 - Füllt sich der Speicher wiederum, werden nur die neuen (Gen 0) Objekte geprüft. Wird durch das
@@ -81,7 +81,7 @@ ist allerdings ein zeitaufwändiger Vorgang. Deswegen gibt es ein dreistufiges K
 - Reicht das Entfernen der unbenutzten Objekte nicht, wird Gen 1 geprüft. Benutzte Objekte werden
   von Gen 1 nach Gen 2 verschoben.
 
-Über Gen 0, Gen 1 und Gen 2 kann also abgelesen, wie viele kurzlebige Objekte (Gen 0) und wie viele
+Über Gen 0, Gen 1 und Gen 2 kann also abgelesen werden, wie viele kurzlebige Objekte (Gen 0) und wie viele
 langlebige Objekte (Gen 2) am Heap existieren. Dieses Konzept macht Sinn, denn oft wird innerhalb von
 Schleifen eine Variable deklariert. Diese Objekte sind sehr kurzlebig und können eher entfernt
 werden als Objekte außerhalb der Schleife.
@@ -100,7 +100,7 @@ analysieren zu können.
 
 Gerade Anfänger würden diese Problemstellung so implementieren:
 - Den Inhalt in den Speicher lesen
-- Aus jeder Zeile ein LogEntry Objekt mit Split() erstellen
+- Aus jeder Zeile ein *LogEntry* Objekt mit *Split()* erstellen
 - Danach werden die passenden Daten zurückgegeben.
 
 ```c#
@@ -126,7 +126,7 @@ Hier wird allerdings sehr viel Speicher am Heap allokiert:
   gar nicht gebraucht wird.
 
 Bei 1&puncsp;000&puncsp;000 Datensätzen entsprechen ca. 250&puncsp;000 dem Suchfilter. Notwendig
-sind also 250&puncsp;000 Instanzen von LogEntry in einer Liste, die zurückgegeben werden soll.
+sind also 250&puncsp;000 Instanzen von *LogEntry* in einer Liste, die zurückgegeben werden soll.
 Das Array mit dem gesamten Dateiinhalt und die Teilstrings für nicht benutzte Zeilen aus *Split()*
 können vom Garbage Collector direkt nach Beendigung der Methode wieder entfernt werden. Wir haben
 den Heap also "zugemüllt".
@@ -139,8 +139,9 @@ Zeile in der Datei einen String, der Unterschied zur vorigen Implementierung ist
 Es wird nur ein LogEntry erstellt, wenn die IP Adresse auch passt.
 
 Die Differenz im Speicherbedarf (441 MB vs. 499 MB) ist aber nicht sehr groß, da wie gesagt zwar
-zeilenweise gelesen wird, aber im Endeffekt jede Zeile als String auf den Heap kommt und *Split()*
-auch für jede Zeile durchgeführt wird.
+zeilenweise gelesen wird, im Endeffekt trotzdem jede Zeile als String auf den Heap kommt und *Split()*
+auch für jede Zeile durchgeführt wird. Der Speicher muss allerdings nicht auf einmal vorhanden sein,
+deswegen können auch große Dateien mit z. B. 100 GB gelesen werden.
 
 ```c#
 public List<LogEntry> FindIpStream(string ip)
@@ -220,7 +221,7 @@ public List<LogEntry> FindIpSpan(string searchIp)
 
 Der Vorteil ist allerdings deutlich messbar: Statt 499 MB benötigen wir nur mehr *210 MB*.
 
-### Variante 1: Blockweise vom Stream lesen und Parsen als Span
+### Variante 4: Blockweise vom Stream lesen und Parsen als Span
 
 Nun wollen wir die letzten Strings, die beim Lesen der Datei am Heap angelegt werden, auch noch
 entfernen. Zuvor haben wir mit *ReadLine()* bequem eine einzelne Zeile abrufen können. Dadurch
