@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogAnalyzer.Benchmark", "LogAnalyzer.Benchmark\LogAnalyzer.Benchmark.csproj", "{8B73EDDF-3DC7-4224-9A42-6D1F669D7A58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogAnalyzer.Application", "LogAnalyzer.Application\LogAnalyzer.Application.csproj", "{BE27293F-251B-450E-BEA0-038650B15DA5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8B73EDDF-3DC7-4224-9A42-6D1F669D7A58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B73EDDF-3DC7-4224-9A42-6D1F669D7A58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B73EDDF-3DC7-4224-9A42-6D1F669D7A58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B73EDDF-3DC7-4224-9A42-6D1F669D7A58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE27293F-251B-450E-BEA0-038650B15DA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE27293F-251B-450E-BEA0-038650B15DA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE27293F-251B-450E-BEA0-038650B15DA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE27293F-251B-450E-BEA0-038650B15DA5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
