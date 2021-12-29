@@ -241,7 +241,6 @@ public List<LogEntry> FindIpSpanBlock(string searchIp)
     {
         int count = streamReader.Read(buffer.Slice(remaining));
         if (count == 0) { break; }
-        //buffer = buffer.Slice(0, count + remaining);
         ReadOnlySpan<char> lineBuffer = buffer.Slice(0, count + remaining);
         while (true)
         {
