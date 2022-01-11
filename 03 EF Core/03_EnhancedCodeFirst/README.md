@@ -181,5 +181,10 @@ definiere folgende Einstellungen:
 - Alle anderen string Properties (Name, Mail) sollen maximal 255 Stellen lang sein.
 - Stelle mit einem Unique Index sicher, dass ein Student pro Task nur eine Abgabe einreichen kann.
 
+> **Achtung:** Die Musterdaten generieren mehrere HandIns pro Student und Task. Ändere daher
+> die Seed Methode in der Contextklasse, sodass nur ein HandIn pro Student und Task erstellt wird.
+> Dies kann man nach *Generate(20).GroupBy(h=>new {h.Task.Id, h.Student.Id}).Select(g=>g.First())*
+> sicherstellen.
+
 Hinweis: In SQLite gibt es für Strings nur den Datentyp *TEXT*. Daher ist die Einstellung
 der Länge in DBeaver nicht sichtbar.
