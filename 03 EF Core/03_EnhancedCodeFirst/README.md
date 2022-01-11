@@ -183,7 +183,7 @@ definiere folgende Einstellungen:
 
 > **Achtung:** Die Musterdaten generieren mehrere HandIns pro Student und Task. Ändere daher
 > die Seed Methode in der Contextklasse, sodass nur ein HandIn pro Student und Task erstellt wird.
-> Dies kann man nach *Generate(20).GroupBy(h=>new {h.Task.Id, h.Student.Id}).Select(g=>g.First())*
+> Dies kann man nach *Generate(40).GroupBy(h=>new {h.TaskId, h.StudentId}).Select(g=>g.First()).Take(20)*
 > sicherstellen.
 
 Hinweis: In SQLite gibt es für Strings nur den Datentyp *TEXT*. Daher ist die Einstellung
