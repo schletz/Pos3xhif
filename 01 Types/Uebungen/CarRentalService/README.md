@@ -4,58 +4,11 @@ A car rental company rents motorcycles and cars. A daily price is charged for mo
 For cars, the kilometers driven are also charged. The following class model shows a simple
 implementation.
 
-```plantuml
-@startuml
+![](klassenmodell.svg)
+<sup>
+https://www.plantuml.com/plantuml/uml/fLF1JW8n4BtlL_G8aVu08IiHz08c18sUn-u46jikjhCIWloxNSeik4GJS8_lTUQzUJCx30IUAckoJ1a8GRpWKYk3OZ20jq0U5EMvs6OYVZTJhT0fd1aW57qHQUqMYPfv7GdqOzX4fa2bBPW3LQxHHr0xIi2ME-_473ygxR4OU_qPUoM1LcyfPQexMEiaJfWJDpsM5AkZaLujALQrVFTCUGH6LNNftdcdVbd09gIQTsrAYuG-TBCT9_DOKkdL9ZhWF2vop-N_6e0VNU3-nBQiLl8hvnNpN2FmF11lSMBRItn5lLZI4RqYWAXppUJd_CGcUhttT7qoMNJqMoPLeFYo2UP1-q0ERFlifz26ctEPeoCmtE29mDVnZO7mMLjCQ2FJRnH_dBheix44Jnh_TxZGBlrKRUhU5OcuvIKvmYA66XZcjVmLt3wWmmnIves_Kuoz3T4LbJNV
+</sup>
 
-class Vehicle <<abstract>> {
-    +LicencePlate : string
-    +PricePerDay : decimal
-    +Power : int
-    +{abstract} RequiredDrivingLicence : string
-    ---
-    +Vehicle(string licencePlate, decimal pricePerDay, int power)
-    +{abstract} CalculatePrice(int days, int kilometers)
-}
-
-class Motorcycle {
-    +RequiredDrivingLicence : string
-    ---
-    +Motorcycle(string licencePlate, decimal pricePerDay, int power)
-    +decimal CalculatePrice(int days, int kilometers)
-}
-Motorcycle -up-|> Vehicle
-
-class Car {
-    +PricePerKm : decimal
-    +Weight : decimal
-    +RequiredDrivingLicence : string
-    ---
-    +Car(string licencePlate, decimal pricePerDay, int power, decimal pricePerKm, int weight)
-    +decimal CalculatePrice(int days, int kilometers)
-}
-
-Car -up-|> Vehicle
-
-class Customer {
-    +Firstname : string
-    +Lastname : string
-}
-
-class Rental {
-    +Start : DateTime
-    +Customer : Customer
-    +Vehicle : Vehicle
-    +KilometersBegin : int
-    +KilometersEnd : int?
-    +RentedDays : int?
-    ---
-    +decimal CalculatePrice()
-}
-
-Rental --> Customer
-Rental --> Vehicle
-@enduml
-```
 
 ## Description of each class
 
