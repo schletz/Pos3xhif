@@ -21,10 +21,11 @@ if len(sys.argv) < 2:
 
 filename = re.search("^(?P<name>.*)\.md$", sys.argv[1])
 if filename is None:
-    raise TypeError("Usage: python md2html.py filename")
+    raise TypeError("Only md files are supported. Usage: python md2html.py filename")
 
 mdFilename = filename.group()
 htmlFilename = f'{filename.group("name")}.html'
+title = filename.group("name")
 
 # CSS aus dem Template lesen
 req = requests.get("https://raw.githubusercontent.com/microsoft/vscode/main/extensions/markdown-language-features/media/markdown.css")
@@ -48,12 +49,12 @@ htmlString = md.markdown(mdString,
 )
 
 # Bilder durch Base64 Content ersetzen.
-images = list(map(lambda x: (
+images = map(lambda x: (
     {
         'element': x.group(),
         'file': x.group('filename'),
         'content': encodeFile(x.group('filename'))
-    }), re.finditer("\<img [^\>]*src=\"(?P<filename>[^\"]+)\"[^\>]*\>", htmlString)))
+    }), re.finditer("\<img [^\>]*src=\"(?P<filename>[^\"]+)\"[^\>]*\>", htmlString))
 
 for image in images:
     htmlString = htmlString.replace(image["element"], f'<img src=\"{image["content"]}\">')
@@ -66,15 +67,35 @@ with open(htmlFilename, "w", encoding="utf-8", errors="xmlcharrefreplace") as ou
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{mdFilename}</title>
+    <title>{title}</title>
     <style type="text/css">
         {cssString}
+        @media screen and (min-width: 105em) {{
+            main {{
+                columns:50em 12;
+                column-gap:5em;
+            }}
+        }}
+        @media screen and (max-width: 104.999em) and (min-width: 55.001px) {{
+            main {{
+                margin-left:auto;
+                margin-right:auto;
+                max-width:50em;
+            }}
+        }}        
+        @media screen and (max-width: 55em) {{
+            html,body {{
+                padding:0;
+            }}
+        }}                
     </style>
 </head>    
 <body>
+    <main>
     """)
     output_file.write(htmlString)
     output_file.write("""
+    </main>
 </body>
 </html>    
     """)
