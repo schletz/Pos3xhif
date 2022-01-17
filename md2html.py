@@ -30,9 +30,10 @@ title = filename.group("name")
 # CSS aus dem Template lesen
 # cssUrl = "https://gist.githubusercontent.com/tuzz/3331384/raw/fc0160dd7ea0b4a861533c4d6c232f56291796a3/github.css"
 # cssUrl = "https://gist.githubusercontent.com/tuzz/3331384/raw/fc0160dd7ea0b4a861533c4d6c232f56291796a3/github.css"
-cssUrl = "https://raw.githubusercontent.com/pxlrbt/markdown-css/master/markdown.css"
+# cssUrl = "https://raw.githubusercontent.com/pxlrbt/markdown-css/master/markdown.css"
+cssUrl = "https://latex.vercel.app/style.min.css"
 req = requests.get(cssUrl)
-cssString = req.text
+cssString = req.text.replace("./fonts", "https://latex.vercel.app/fonts")
 
 with open(mdFilename, "r", encoding="utf-8") as input_file:
     mdString = input_file.read()
@@ -87,7 +88,7 @@ with open(htmlFilename, "w", encoding="utf-8", errors="xmlcharrefreplace") as ou
         em {{
             font-weight:500;
         }}
-        @media screen and (min-width: 105em) {{
+        @media screen and (min-width: 110em) {{
             body {{
                 columns:50em 12;
                 column-gap:5em;
@@ -95,7 +96,7 @@ with open(htmlFilename, "w", encoding="utf-8", errors="xmlcharrefreplace") as ou
                 margin-right:2em;
             }}
         }}
-        @media screen and (max-width: 104.999em) and (min-width: 55.001px) {{
+        @media screen and (max-width: 109.999em) and (min-width: 55.001px) {{
             body {{
                 margin-left:auto;
                 margin-right:auto;
