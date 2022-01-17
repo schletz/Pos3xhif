@@ -4,6 +4,7 @@
 
 Um ein Klassenmodell umsetzen zu können, legen wir eine kleine Solution an. Wir nutzen nun
 *2 Projekte* und keine Konsolenapplikation:
+
 - **CodeFirstDemo.Application** beinhaltet die Modelklassen und die Logik für den Datenbankzugriff.
   Mit *dotnet add package* können wir die NuGet Pakete für EF Core und Bogus (Musterdaten Generator)
   hinzufügen.
@@ -78,6 +79,7 @@ https://www.plantuml.com/plantuml/uml/ZP51oi8m48NtEKNsFxr05xy5xK8G5TG3X6JQ1fga9D
 
 Nun wollen wir dieses Klassenmodell speichern, also *persistieren*. Dafür stehen uns mehrere
 Techniken zur Verfügung:
+
 - Dateien (Serialisierung)
 - NoSQL Datenbanken
 - Relationale Datenbanken
@@ -298,6 +300,7 @@ public class StoreContext : DbContext
 ```
 
 Wir erkennen 2 Dinge:
+
 - Es gibt einen Konstruktor, der eine Konfiguration verlangt. Diese Konfiguration gibt an, welche
   Datenbank verwendet werden soll.
 - Jede Tabelle wird als *DbSet\<T\>* definiert. Sie geben einfach mit der *Set()* Methode die
@@ -346,6 +349,7 @@ Datenbank erzeugen. Der Provider abstrahiert datenbankspezifische Anweisungen wi
 von Autoincrement Werten und die Definition der SQL Datentypen.
 
 3 Dinge sind zudem noch wichtig:
+
 - Die Testklasse und die Testmethode muss public sein.
 - Über jeder Testmethode muss die Annotation *[Fact]* aus dem Namespace *Xunit* geschrieben werden.
 - Tests werden normalerweise parallel ausgeführt. Da wir die Filedatenbank jedoch immer löschen
@@ -422,6 +426,7 @@ mit Musterdaten füllt.
 
 Erstelle danach eine Testklasse im Unittest Projekt mit dem Namen *TeamsContextTests*. Kopiere
 den Code weiter unten in diese Testklasse. Sie beinhaltet 2 Tests:
+
 - *CreateDatabaseSuccessTest()* versucht, eine leere Datenbank anzulegen.
 - *SeedDatabaseTest()* versucht, Musterdaten zu generieren und die Datenbank zu befüllen.
 

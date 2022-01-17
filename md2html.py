@@ -28,11 +28,17 @@ htmlFilename = f'{filename.group("name")}.html'
 title = filename.group("name")
 
 # CSS aus dem Template lesen
-req = requests.get("https://raw.githubusercontent.com/microsoft/vscode/main/extensions/markdown-language-features/media/markdown.css")
+# cssUrl = "https://gist.githubusercontent.com/tuzz/3331384/raw/fc0160dd7ea0b4a861533c4d6c232f56291796a3/github.css"
+# cssUrl = "https://gist.githubusercontent.com/tuzz/3331384/raw/fc0160dd7ea0b4a861533c4d6c232f56291796a3/github.css"
+cssUrl = "https://raw.githubusercontent.com/pxlrbt/markdown-css/master/markdown.css"
+req = requests.get(cssUrl)
 cssString = req.text
 
 with open(mdFilename, "r", encoding="utf-8") as input_file:
     mdString = input_file.read()
+
+mdString = mdString.replace("\\<", "&lt;").replace("\\>", "&gt;")
+
 
 htmlString = md.markdown(mdString,
     output_format="html5",
@@ -70,14 +76,27 @@ with open(htmlFilename, "w", encoding="utf-8", errors="xmlcharrefreplace") as ou
     <title>{title}</title>
     <style type="text/css">
         {cssString}
+        sup {{
+            word-break: break-all;
+            font-size:80%;
+        }}
+        body {{
+            max-width:inherit;
+            padding:0;
+        }}
+        em {{
+            font-weight:500;
+        }}
         @media screen and (min-width: 105em) {{
-            main {{
+            body {{
                 columns:50em 12;
                 column-gap:5em;
+                margin-left:2em;
+                margin-right:2em;
             }}
         }}
         @media screen and (max-width: 104.999em) and (min-width: 55.001px) {{
-            main {{
+            body {{
                 margin-left:auto;
                 margin-right:auto;
                 max-width:50em;
