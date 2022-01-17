@@ -29,11 +29,12 @@ title = filename.group("name")
 
 # CSS aus dem Template lesen
 # cssUrl = "https://gist.githubusercontent.com/tuzz/3331384/raw/fc0160dd7ea0b4a861533c4d6c232f56291796a3/github.css"
-# cssUrl = "https://gist.githubusercontent.com/tuzz/3331384/raw/fc0160dd7ea0b4a861533c4d6c232f56291796a3/github.css"
-# cssUrl = "https://raw.githubusercontent.com/pxlrbt/markdown-css/master/markdown.css"
-cssUrl = "https://latex.vercel.app/style.min.css"
+#cssUrl = "https://raw.githubusercontent.com/pxlrbt/markdown-css/master/markdown.css"
+cssUrl = "https://gist.githubusercontent.com/tuzz/3331384/raw/fc0160dd7ea0b4a861533c4d6c232f56291796a3/github.css"
+# cssUrl = "https://latex.vercel.app/style.min.css"
 req = requests.get(cssUrl)
-cssString = req.text.replace("./fonts", "https://latex.vercel.app/fonts")
+cssString = req.text
+#cssString = cssString.replace("./fonts", "https://latex.vercel.app/fonts")
 
 with open(mdFilename, "r", encoding="utf-8") as input_file:
     mdString = input_file.read()
