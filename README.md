@@ -15,7 +15,7 @@ Schule eine Lizenz von Visual Studio Enterprise zur Verfügung.
 > **Hinweis:** Der Workload *.NET desktop development* wird nur für den 3. Jahrgang der HIF benötigt.
 > Für Kollegs und Aufbaulehrgänge ist nur *ASP.NET and web development* erforderlich.
 
-![](vs_workloads_20211204_1.png)
+![](vs_workloads_2.png)
 
 ### Alternativ: Verwenden von JetBrains Rider
 
