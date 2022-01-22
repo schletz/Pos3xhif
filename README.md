@@ -20,12 +20,12 @@ Schule eine Lizenz von Visual Studio Enterprise zur Verfügung.
 ### Alternativ: Verwenden von JetBrains Rider
 
 Eine andere weit verbreitete Entwicklungsumgebung - gerade unter macOS - ist Rider von JetBrains.
+Ab der Version 2021.3 unterstützt Rider auch .NET 6.
 Wer mit IntelliJ gut arbeiten konnte, kann auch mit der Schullizenz Rider beziehen. Logge dich dafür
 auf https://account.jetbrains.com/login ein. Wer noch keinen Zugang hat, kann mit der Schul Mailadresse
-eine Lizenz gratis beziehen. Nach dem Login steht Rider als Download zur Verfügung
+eine Lizenz gratis beziehen. Nach dem Login steht Rider als Download zur Verfügung.
 
-![](resharper_download_3.png)
-
+![](resharper_download_4.png)
 
 ### PlantUML und VS Code als Modellierungswerkzeug
 
@@ -33,7 +33,9 @@ In der Konzeptionierungsphase ist ein grafisches Tool zum Erzeugen von Klassenmo
 In diesen Kurs werden immer wieder UML Klassendiagramme hergezeigt. Sie können mit VS Code und
 PlantUML erzeugt werden:
 
-1. Prüfe, ob Java installiert und im PATH eingetragen ist. Der Befehl *java -version* muss erkannt werden.
+1. Prüfe, ob Java installiert und im PATH eingetragen ist. Der Befehl *java -version* muss erkannt
+   werden. Falls nicht, lade von https://openjdk.java.net/ die neuste Version von OpenJDK und
+   füge den Pfad von java.exe im bin Verzeichnis der PATH Variable hinzu.
 1. Installiere [Visual Studio Code](https://code.visualstudio.com). Achtung: Aktiviere beim Setup
    die Option "In den Explorer integrieren", damit Sie im Kontextmenü VS Code starten können.
 1. Installiere die folgenden Extensions:
@@ -44,12 +46,14 @@ PlantUML erzeugt werden:
    und füge folgende Zeilen hinzu:
 
 ```javascript
-    "markdown-pdf.plantumlOpenMarker": "```plantuml\n",
+    "markdown-pdf.plantumlOpenMarker": "```plantuml",
     "markdown-pdf.plantumlCloseMarker": "```"   
 ```
 
-Nun steht durch die Extension *Markdown Preview Enhanced* ein Icon bereit, welches eine Vorschau mit dem gerenderten Diagramm bietet. Beachte: Dies ist nur bei Dokumenten mit der 
+Nun steht durch die Extension *Markdown Preview Enhanced* ein Icon bereit, welches eine Vorschau
+mit dem gerenderten Diagramm bietet. Beachte: Dies ist nur bei Dokumenten mit der 
 Endung *.md* Verfügbar.
+
 ![](preview_vscode.png)
 
 Zum Testen kann nun eine neue Datei *Modell.md* mit folgendem Inhalt erstellt werden:
