@@ -12,6 +12,9 @@ Schule eine Lizenz von Visual Studio Enterprise zur Verfügung.
 - Installiere die nachfolgenden Workloads und achte bei den Sprachpaketen darauf, nur *Englisch* auszuwählen.
 - Der Key wird im Unterricht ausgegeben.
 
+> **Hinweis:** Der Workload *.NET desktop development* wird nur für den 3. Jahrgang der HIF benötigt.
+> Für Kollegs und Aufbaulehrgänge ist nur *ASP.NET and web development* erforderlich.
+
 ![](vs_workloads_20211204_1.png)
 
 ### Alternativ: Verwenden von JetBrains Rider
