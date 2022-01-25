@@ -29,7 +29,7 @@ Der Standard Adminuser unter MySql ist *root* (ohne Passwort). Bei SQL Server is
 | Provider   |  Package Reference  | Connection String |
 | ---------  | ------------------- | ----------------- |
 | Oracle     | `<PackageReference Include="Oracle.EntityFrameworkCore" Version="6.*" />`               | `UseOracle($"User Id=Sportfest;Password=oracle;Data Source=localhost:1521/XEPDB1")` |
-| MySQL      | `<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.*" />`         | `UseMySql(@"server=localhost;database=Stores;user=Sportfest;password=oracle", new MariaDbServerVersion(new Version(10, 4, 22)))` |
+| MySQL      | `<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.*" />`         | `UseMySql(@"server=localhost;database=Sportfest;user=Sportfest;password=oracle", new MariaDbServerVersion(new Version(10, 4, 22)))` |
 | SQL Server | `<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.*" />`  | `UseSqlServer(@"UseSqlServer(@"Server=127.0.0.1,1433;Initial Catalog=Sportfest;User Id=Sportfest;Password=oracle")")` |
 | SQL Server (LocalDB) | `<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.*" />`  | `UseSqlServer(@"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=Stores")` |
 
