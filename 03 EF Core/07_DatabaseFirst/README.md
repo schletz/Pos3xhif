@@ -130,23 +130,10 @@ Contextklasse im Application Projekt an:
 
 **Bewerb.cs**
 ```c#
-[Keyless]
-[Table("VBEWERBE")]     // using System.ComponentModel.DataAnnotations.Schema oder STRG + . in VS
-public class Bewerb
-{
-    public Bewerb(string name, int count)
-    {
-        Name = name;
-        Count = count;
-    }
-    #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    protected Bewerb() { }
-    #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    [Column("B_NAME")]
-    public string Name { get; protected set; }
-    [Column("B_COUNT")]
-    public int Count { get; protected set; }
-}
+public record Bewerb(
+    [property: Column("B_NAME")] string Name,   // Oracle: uppercase
+    [property: Column("B_COUNT")] int Count);
+
 ```
 
 **SportfestContext.cs**
@@ -154,20 +141,37 @@ public class Bewerb
 public class SportfestContext : DbContext
 {
     public SportfestContext(DbContextOptions opt) : base(opt) { }
-    public DbSet<Bewerb> Bewerbe => Set<Bewerb>();
+    public IQueryable<Bewerb> Bewerbe => Set<Bewerb>();  // read-only access. No .Add() or .Remove() method.
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Bewerb>()
+            .HasNoKey()
+            .ToView("VBEWERBE");   // Oracle: uppercase
+    }
 }
 ```
 
 Es fallen folgende Dinge auf:
 
-- **Keyless** ist eine Annotation über der Modelkalsse die angibt, dass die darunterliegende
-  "Tabelle" keinen Primary Key besitzt. Das ist bei Views der Fall.
-- **Table("NAME")** gibt den Namen der Tabelle an, da dieser vom Namen des DbSets abweicht.
-  Für Oracle müssen wir den Namen in Großbuchstaben schreiben.
-- **Column("NAME")** verweist auf die Spaltennamen, da diese von den Namen der Properties
-  abweichen. Auch hier muss die Großschreibung verwendet werden.
-- **Protected setter** werden für alle Properties definiert, da es nicht Sinn macht, diese
-  Werte im Programm ändern zu können.
+- **Positional record:** Ein positional record in C# 9 erstellt eine Klasse mit read-only
+  Properties, die den Argumenten im Konstruktor entsprechen. Da wir in einer View die Daten
+  nicht ändern können, eignet sich dieses Feature sehr gut für die Definition unserer Modelklasse.
+- **Column annotations:** Die generierten Properties können mit Annotations versehen werden.
+  Wir verwenden die Column Annotation, um die Argumente auf die Felder der View zu mappen.
+  Oracle verlangt die Großschreibung, deswegen werden die Feldnamen hier großgeschrieben.
+- **OnModelCreating:** Da unsere View keine Datenbanktabelle ist, besitzt sie auch keinen primary
+  key. Mit *HasNoKey()* müssen wir dies definieren. Zudem mappen wir mit *ToView()* unsere
+  Klasse zur View in der Datenbank.
+- **IQueryable:** Ein DbSet unterstützt auch Einfüge- und Löschoperationen. Da wir dies bei einer
+  View nicht brauchen, geben wir lediglich das Abfrageinterface *IQueryable* zurück.
+
+> Hinweis: Views können durch INSTEAD OF Trigger auch Änderungen sowie Einfüge- und Löschoperationen
+> unterstützen. In diesem Fall kann auch eine normale Klasse mit public set Properties und ein DbSet
+> verwendet werden.
+
+Da im record keine komplexen Typen verwendet werden, kann EF Core auch ohne Default Konstruktor
+mit dieser Klasse arbeiten.
 
 Um den Zugriff zu testen, legen wir im Test Projekt eine Klasse *SportfestContextTests* an.
 
@@ -189,14 +193,14 @@ public class SportfestContextTests
 }
 ```
 
-Hier sehen Sie den *Verbindungsstring* zur Oracle Datenbank. Er hat einen ähnlichen Aufbau
+Hier sehen wir den *Verbindungsstring* zur Oracle Datenbank. Er hat einen ähnlichen Aufbau
 wie die Strings für SQL Server.
 
 > **Hinweis:** Bei Oracle 12 ist der Service Name *XEPDB1* durch *ORCL* zu ersetzen.
 
 ## Zugreifen auf Stored Procedures
 
-Legen Sie in der Sportfestdatenbank eine Prozedur mit dem Namen *get_results* an. Diese
+Lege in der Sportfestdatenbank eine Prozedur mit dem Namen *get_results* an. Diese
 Prozedur liest Werte aus der Datenbank in einen Cursor. Dieser Cursor wird als*OUT* Parameter
 an unsere Applikation geliefert.
 
@@ -243,55 +247,42 @@ abbildet.
 
 **Ergebnis.cs**
 ```c#
-[Keyless]
-public class Ergebnis
-{
-    public Ergebnis(int ergebnisNr, int schuelerNr, string zuname, string abteilung, string klasse, string bewerb, decimal zeit)
-    {
-        ErgebnisNr = ergebnisNr;
-        SchuelerNr = schuelerNr;
-        Zuname = zuname;
-        Abteilung = abteilung;
-        Klasse = klasse;
-        Bewerb = bewerb;
-        Zeit = zeit;
-    }
-
-    #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    protected Ergebnis() { }
-    #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    [Column("E_ID")]
-    public int ErgebnisNr { get; protected set; }
-    [Column("S_ID")]
-    public int SchuelerNr { get; protected set; }
-    [Column("S_ZUNAME")]
-    public string Zuname { get; protected set; }
-    [Column("S_ABTEILUNG")]
-    public string Abteilung { get; protected set; }
-    [Column("S_KLASSE")]
-    public string Klasse { get; protected set; }
-    [Column("E_BEWERB")]
-    public string Bewerb { get; protected set; }
-    [Column("E_ZEIT")]
-    public decimal Zeit { get; protected set; }
-}
+public record Ergebnis(
+    [property: Column("E_ID")] int ErgebnisNr,
+    [property: Column("S_ID")] int SchuelerNr,
+    [property: Column("S_ZUNAME")] string Zuname,
+    [property: Column("S_ABTEILUNG")] string Abteilung,
+    [property: Column("S_KLASSE")] string Klasse,
+    [property: Column("E_BEWERB")] string Bewerb,
+    [property: Column("E_ZEIT")] decimal Zeit
+);
 ```
 
 Unseren Datenbankcontext müssen wir jetzt mit 2 Dingen erweitern: Einerseits muss die Modelklasse
-als Set registriert werden. Andererseits ist eine Prozedur ja eine Methode, die Parameter verarbeitet.
-Diese müssen wir aus unserem C# Programm mitgeben. Daher legen wir auch eine *Methode* mit dem
+In *OnModelCreating()* wieder als keyless Entity konfiguriert werden. Andererseits ist eine Prozedur
+ja eine Methode, die Parameter verarbeitet.
+Diese müssen wir aus unserem C# Programm mitgeben. Daher legen wir auch eine Methode mit dem
 Namen *GetResults()* an. Sie bekommt die Argumente für die Prozedur und reicht diese weiter.
 
 ```c#
 public class SportfestContext : DbContext
 {
     public SportfestContext(DbContextOptions opt) : base(opt) { }
-    public DbSet<Bewerb> Bewerbe => Set<Bewerb>();
+    public IQueryable<Bewerb> Bewerbe => Set<Bewerb>();  // read-only access. No .Add() or .Remove() method.
     public IQueryable<Ergebnis> GetResults(string bewerb) =>
         Set<Ergebnis>().FromSqlRaw("BEGIN get_results(:bewerb, :result); END;",
                             new OracleParameter("bewerb", bewerb),
                             new OracleParameter("result", OracleDbType.RefCursor, ParameterDirection.Output));
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Bewerb>()
+            .HasNoKey()
+            .ToView("VBEWERBE");   // Oracle: uppercase
+
+        modelBuilder.Entity<Ergebnis>()
+            .HasNoKey();
+    }
 }
 ```
 
