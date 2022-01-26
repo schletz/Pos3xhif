@@ -589,3 +589,14 @@ namespace TeamsManager.Test
 }
 
 ```
+
+### Ausführen der Tests
+
+Gehe zur Kontrolle in der Konsole in das Verzeichnis des Testprojektes. Mit
+
+```text
+dotnet test -l "console;verbosity=normal"
+```
+
+können von der Kommandozeile aus alle Tests ausgeführt werden. Die Ergebnisse werden über den
+Logger auf die Konsole geschrieben. Dieser Befehl funktioniert in dieser Form ab .NET 6.
