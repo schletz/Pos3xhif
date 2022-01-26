@@ -128,3 +128,13 @@ Beispiel *SqlServer2019*. Der Benutzer ist *sa*. Das Passwort muss folgender Ric
 ```text
 docker run -d -p 1433:1433  --name sqlserver2019 -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=SqlServer2019" mcr.microsoft.com/mssql/server:2019-latest      
 ```
+
+## Ubuntu unter Windows nutzen
+
+Durch das Windows-Subsystem für Linux (WSL) kann auch Ubuntu sehr leicht installiert und
+gestartet werden. Öffne im Startmenü den Store und gib als Suchbegriff Ubuntu ein. Klicke
+in der Ergebnisliste auf die neueste Version (derzeit Ubuntu 20.04 LTS). Nach der Installation
+wird eine kleine Einrichtung gestartet, wo das root Kennwort eingestellt wird.
+
+Danach kann Ubuntu einfach über das Startmenü geöffnet werden. Die Windows Verzeichnisse sind
+automatisch in */mnt* gemappt.
