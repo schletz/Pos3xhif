@@ -9,6 +9,7 @@ using CodeFirstDemo.Application.Infrastructure;
 using Bogus;
 using CodeFirstDemo.Application.Model;
 using System.Diagnostics;
+using Microsoft.Data.Sqlite;
 
 namespace CodeFirstDemo.Test
 {
@@ -16,9 +17,11 @@ namespace CodeFirstDemo.Test
     [Collection("Sequential")]
     public class StoreContextTests
     {
-        [Fact]
-        public void CreateDatabaseTest()
+        private StoreContext GetContext()
         {
+            var keepAliveConnection = new SqliteConnection("DataSource=:memory:");
+            keepAliveConnection.Open();
+
             var opt = new DbContextOptionsBuilder()
                 // For MySQL (requires NuGet Pomelo.EntityFrameworkCore.MySql):
                 //    .UseMySql(@"server=localhost;database=Stores;user=root",
@@ -26,34 +29,27 @@ namespace CodeFirstDemo.Test
                 // For SQL Server (LocalDB) (requires NuGet Microsoft.EntityFrameworkCore.SqlServer):
                 //    .UseSqlServer(@"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=Stores")
                 // For SQLite (requires NuGet Microsoft.EntityFrameworkCore.Sqlite):
-                .UseSqlite(@"Data Source=Stores.db")
+                //    .UseSqlite("Data Source=mydb.db")
+                .UseSqlite(keepAliveConnection)  // Keep connection open (only needed with SQLite in memory db)
                 .LogTo(message => Debug.WriteLine(message), Microsoft.Extensions.Logging.LogLevel.Information)
                 .EnableSensitiveDataLogging()
                 .Options;
 
-            using var db = new StoreContext(opt);
+            var db = new StoreContext(opt);
             db.Database.EnsureDeleted();
             db.Database.EnsureCreated();
+            return db;
+        }
+        [Fact]
+        public void CreateDatabaseTest()
+        {
+            using var db = GetContext();
         }
 
         [Fact]
         public void SeedTest()
         {
-            var opt = new DbContextOptionsBuilder()
-                // For MySQL (requires NuGet Pomelo.EntityFrameworkCore.MySql):
-                //    .UseMySql(@"server=localhost;database=Stores;user=root",
-                //        new MariaDbServerVersion(new Version(10, 4, 22)))
-                // For SQL Server (LocalDB) (requires NuGet Microsoft.EntityFrameworkCore.SqlServer):
-                //    .UseSqlServer(@"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=Stores")
-                // For SQLite (requires NuGet Microsoft.EntityFrameworkCore.Sqlite):
-                .UseSqlite(@"Data Source=Stores.db")
-                .LogTo(message => Debug.WriteLine(message), Microsoft.Extensions.Logging.LogLevel.Information)
-                .EnableSensitiveDataLogging()
-                .Options;
-
-            using var db = new StoreContext(opt);
-            db.Database.EnsureDeleted();
-            db.Database.EnsureCreated();
+            using var db = GetContext();
 
             Randomizer.Seed = new Random(1335);
             var productCategories = new Faker<ProductCategory>("de")
@@ -98,6 +94,13 @@ namespace CodeFirstDemo.Test
                 .ToList();
             db.Offers.AddRange(offers);
             db.SaveChanges();
+
+            // Clear all objects in memory, forces reading the database.
+            db.ChangeTracker.Clear();  
+            Assert.True(db.ProductCategories.ToList().Count > 0);
+            Assert.True(db.Products.ToList().Count > 0);
+            Assert.True(db.Stores.ToList().Count > 0);
+            Assert.True(db.Offers.ToList().Count > 0);
         }
     }
 }
