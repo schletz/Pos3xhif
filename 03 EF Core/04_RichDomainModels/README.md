@@ -1,5 +1,7 @@
 # Rich Domain Models mit EF Core
 
+> Im Ordner [RichDomainModelDemo](../RichDomainModelDemo) ist ein lauffähiges Beispiel dieser Erklärungen.
+
 **Erweiterter Lehrplaninhalt für 3. JG, verpflichtend für 4. JG**
 
 ## Was ist ein "Rich Domain Model"?
@@ -284,16 +286,33 @@ andere Tabellen verweisen, als *virtual* gekennzeichnet.
 > zu finden.
 
 Um das Feature zu aktivieren, muss in den Optionen *UseLazyLoadingProxies()* aktiviert
-werden. In den Unittests erledigt dies die Methode *TestHelpers.GetDbContext()*:
+werden. In den Unittests erledigt dies die Basisklasse für unsere Unittests
+[DatabaseTest.cs](../RichDomainModelDemo/RichDomainModelDemo.Test/DatabaseTest.cs)
 
 ```c#
-public static StoreContext GetDbContext(bool deleteDB = false)
+public class DatabaseTest : IDisposable
 {
-    /* ... */
-    return new StoreContext(opt
-        .UseLazyLoadingProxies()
-        .LogTo((message) => Debug.WriteLine(message), Microsoft.Extensions.Logging.LogLevel.Information)
-        .Options);
+    private readonly SqliteConnection _connection;
+    protected readonly StoreContext _db;
+
+    public DatabaseTest()
+    {
+        _connection = new SqliteConnection("DataSource=:memory:");
+        _connection.Open();
+        var opt = new DbContextOptionsBuilder()
+            .UseSqlite(_connection)  // Keep connection open (only needed with SQLite in memory db)
+            .UseLazyLoadingProxies()
+            .LogTo(message => Debug.WriteLine(message), Microsoft.Extensions.Logging.LogLevel.Information)
+            .EnableSensitiveDataLogging()
+            .Options;
+
+        _db = new StoreContext(opt);
+    }
+    public void Dispose()
+    {
+        _db.Dispose();
+        _connection.Dispose();
+    }
 }
 ```
 

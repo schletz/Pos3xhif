@@ -1,5 +1,7 @@
 # Klassenmodelle persistieren mit EF Core
 
+> Im Ordner [CodeFirstDemo](../CodeFirstDemo) ist ein lauffähiges Beispiel dieser Erklärungen.
+
 ## Anlegen des Musterprojektes (.NET 6)
 
 Um ein Klassenmodell umsetzen zu können, legen wir eine kleine Solution an. Wir nutzen nun
@@ -317,26 +319,44 @@ Unittests sind dafür da, Code aufzurufen und das Ergebnis mit einem erwarteten 
 Zu Beginn haben wir bereits ein Projekt *CodeFirstDemo.Test* angelegt. Nun legen wir eine Klasse
 *StoreContextTests* darin an. Die Namensgebung sollte immer *zu testende Klasse* + *Tests* sein.
 
-```c#
-/*
-using Xunit;
-using Microsoft.EntityFrameworkCore;
-using CodeFirstDemo.Application.Infrastructure;
-*/
+Die Logik zur Erstellung der Datenbankverbindung geben wir in eine gemeinsame Basisklasse *DatabaseTest*.
+Sie erstellt im Konstruktor eine SQLite Datenbank. Damit nach dem Unittest alle Ressourcen
+geschlossen werden, implementiert diese Klasse das Interface *IDisposeable*.
 
-// A file database does not support parallel test execution.
-[Collection("Sequential")] 
-public class StoreContextTests
+**DatabaseTest.cs**
+```c#
+public class DatabaseTest : IDisposable
 {
-    [Fact]
-    public void CreateDatabaseTest()
+    protected readonly StoreContext _db;
+
+    public DatabaseTest()
     {
         var opt = new DbContextOptionsBuilder()
             .UseSqlite("Data Source=Stores.db")
             .Options;
-        using var db = new StoreContext(opt);
-        db.Database.EnsureDeleted();
-        db.Database.EnsureCreated();
+
+        _db = new StoreContext(opt);
+    }
+    public void Dispose()
+    {
+        _db.Dispose();
+    }
+}
+```
+
+Nun implementieren wir die eigentliche Testklasse *StoreContextTests*. Sie erbt von *DatabaseTest*,
+daher steht die Membervariable *_db* zur Verfügung. Dieser Test prüft nur, ob die Anweisung ohne
+Exception ausgeführt werden kann.
+
+**StoreContextTests.cs**
+```c#
+[Collection("Sequential")] // A file database does not support parallel test execution.
+public class StoreContextTests : DatabaseTest
+{
+    [Fact]
+    public void CreateDatabaseTest()
+    {
+        _db.Database.EnsureCreated();
     }
 }
 ```
@@ -360,6 +380,19 @@ Klicken wir mit der rechten Maustaste in Visual Studio auf die Testmethode *Crea
 finden wir im Kontextmenü den Punkt *Run Tests*. Nach erfolgreicher Ausführung erscheint ein
 grünes Häkchen. Im Text Explorer (Menü *Test* - *Test Explorer*) ist der Test ebenfalls
 aufgelistet.
+
+### Nutzen einer in-memory SQLite Datenbank
+
+SQLite Datenbanken können auch vollständig im Speicher gehalten werden. Gerade für Unittests
+ergeben sich mehrere Vorteile:
+
+- Das Erstellen und befüllen der Datenbank ist natürlich viel schneller.
+- Die Datenbank wird immer "frisch", also leer bei einer neuen Verbindung erstellt. Dadurch
+  beeinflussen sich die Tests nicht.
+
+Im Programm [CodeFirstDemo](../CodeFirstDemo/CodeFirstDemo.Test) werden die Unittests mit einer
+in-memory durchgeführt. Hier sind auch Infos über den Connectionstring und die Besonderheiten
+im Code abgebildet.
 
 ## Ansehen der Datenbank in DBeaver
 

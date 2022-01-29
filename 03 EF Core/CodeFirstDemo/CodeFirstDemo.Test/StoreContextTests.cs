@@ -9,7 +9,6 @@ using CodeFirstDemo.Application.Model;
 
 namespace CodeFirstDemo.Test
 {
-    // A file database does not support parallel test execution.
     public class StoreContextTests : DatabaseTest
     {
         [Fact]
