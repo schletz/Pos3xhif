@@ -92,6 +92,24 @@ public class StoreContextTests : DatabaseTest
     {
         _db.Database.EnsureCreated();
     }
+
+    [Fact]
+    public void AddCustomerSuccessTest()
+    {
+        { // Limit scope of variables
+            _db.Database.EnsureCreated();
+            var customer = new Customer(firstname: "fn", lastname: "ln", address: new Address(Street: "street", Zip: "Zip", City: "City"));
+            _db.Customers.Add(customer);
+            // Clear navigations and objects in memory
+            _db.ChangeTracker.Clear();
+        }
+        {
+            // ToList produces a SELECT * FROM Customers query. If we write only
+            // .Count() we are producing a SELCT COUNT(*) FROM Customers query,
+            // so we cannot test the correct mapping.
+            Assert.True(_db.Customers.ToList().Count() == 1);
+        }
+    }    
 }
 
 ```
