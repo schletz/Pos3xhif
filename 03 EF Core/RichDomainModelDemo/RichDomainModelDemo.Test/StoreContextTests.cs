@@ -7,21 +7,14 @@ using Xunit;
 using Microsoft.EntityFrameworkCore;
 using RichDomainModelDemo.Application.Infrastructure;
 
-namespace CodeFRichDomainModelDemoirstDemo.Test
+namespace RichDomainModelDemo.Test
 {
-    // A file database does not support parallel test execution.
-    [Collection("Sequential")] 
-    public class StoreContextTests
+    public class StoreContextTests : DatabaseTest
     {
         [Fact]
         public void CreateDatabaseTest()
         {
-            var opt = new DbContextOptionsBuilder()
-                .UseSqlite("Data Source=Stores.db")
-                .Options;
-            using var db = new StoreContext(opt);
-            db.Database.EnsureDeleted();
-            db.Database.EnsureCreated();
+            _db.Database.EnsureCreated();
         }
     }
 }

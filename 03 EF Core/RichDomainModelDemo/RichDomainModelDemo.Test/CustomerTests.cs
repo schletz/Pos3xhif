@@ -5,49 +5,43 @@ using Xunit;
 
 namespace RichDomainModelDemo.Test
 {
-    [Collection("Sequential")]
-
-    public class CustomerTests
+    public class CustomerTests : DatabaseTest
     {
-        private void PrepareDatabase()
+        /// <summary>
+        /// Constructor. Called before each test.
+        /// </summary>
+        public CustomerTests()
         {
-            using (var db = TestHelpers.GetDbContext(deleteDB: true))
-            {
-                var customer = new Customer(firstname: "fn", lastname: "ln", address: new Address(Street: "street", Zip: "Zip", City: "City"));
-                db.Customers.Add(customer);
-                var order = new Order(
-                    date: new DateTime(2021, 1, 1),
-                    shippingAddress: new Address(Street: "street", Zip: "Zip", City: "City")); 
-                customer.AddOrder(order);
-                db.SaveChanges();
-            }
+            _db.Database.EnsureCreated();
+            var customer = new Customer(firstname: "fn", lastname: "ln", address: new Address(Street: "street", Zip: "Zip", City: "City"));
+            _db.Customers.Add(customer);
+            var order = new Order(
+                date: new DateTime(2021, 1, 1),
+                shippingAddress: new Address(Street: "street", Zip: "Zip", City: "City"));
+            customer.AddOrder(order);
+            _db.SaveChanges();
         }
         [Fact]
         public void AddOrderSuccessTest()
         {
-            PrepareDatabase();
-            using (var db = TestHelpers.GetDbContext())
-            {
-                Assert.True(db.Customers.Count() == 1);
-                Assert.True(db.Customers.First().Orders.Count == 1);
-            }
+            // ToList produces a SELECT * FROM Customers query. If we write only
+            // .Count() we are producing a SELCT COUNT(*) FROM Customers query,
+            // so we cannot test the correct mapping.
+            Assert.True(_db.Customers.ToList().Count() == 1);
+            Assert.True(_db.Customers.ToList().First().Orders.Count == 1);
         }
         [Fact]
         public void ConfirmOrderSuccessTest()
         {
-            PrepareDatabase();
-            using (var db = TestHelpers.GetDbContext())
-            {
-                var customer = db.Customers.First();
-                customer.ConfirmOrder(customer.Orders.First());
-                db.SaveChanges();
-            }
+            var customer = _db.Customers.First();
+            customer.ConfirmOrder(customer.Orders.First());
+            _db.SaveChanges();
 
-            using (var db = TestHelpers.GetDbContext())
-            {
-                var customer = db.Customers.First();
-                Assert.True(customer.Orders.OfType<ConfirmedOrder>().Count() == 1);
-            }
+            // Clear navigations and objects in memory
+            _db.ChangeTracker.Clear();
+            // Re-read customer, because the existing customer has an order in memory
+            customer = _db.Customers.First();
+            Assert.True(customer.Orders.OfType<ConfirmedOrder>().Count() == 1);
         }
     }
 }

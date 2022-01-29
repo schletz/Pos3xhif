@@ -8,85 +8,79 @@ using Xunit;
 
 namespace RichDomainModelDemo.Test
 {
-    public class OrderTests
+    public class OrderTests : DatabaseTest
     {
-        private void PrepareDatabase()
+        public OrderTests()
         {
-            using (var db = TestHelpers.GetDbContext(deleteDB: true))
-            {
-                var product = new Product(ean: 1001, name: "name", productCategory: new ProductCategory(name: "name"));
-                db.Products.Add(product);
+            _db.Database.EnsureCreated();
+            var product = new Product(
+                ean: 1001, name: "name",
+                productCategory: new ProductCategory(name: "name"));
+            _db.Products.Add(product);
 
-                var store = new Store(name: "name");
-                db.Stores.Add(store);
+            var store = new Store(name: "name");
+            _db.Stores.Add(store);
 
-                var customer = new Customer(
-                        firstname: "firstname",
-                        lastname: "lastname",
-                        address: new Address(Street: "Street", Zip: "Zip", City: "City"));
-                db.Customers.Add(customer);
+            var customer = new Customer(
+                    firstname: "firstname",
+                    lastname: "lastname",
+                    address: new Address(Street: "Street", Zip: "Zip", City: "City"));
+            _db.Customers.Add(customer);
 
-                var offer = new Offer(
-                    product: product,
-                    store: store,
-                    price: 1000,
-                    lastUpdate: new DateTime(2021, 2, 1));
-                db.Offers.Add(offer);
+            var offer = new Offer(
+                product: product,
+                store: store,
+                price: 1000,
+                lastUpdate: new DateTime(2021, 2, 1));
+            _db.Offers.Add(offer);
 
-                var order = new Order(
-                    date: new DateTime(2021, 1, 1),
-                    shippingAddress: new Address(Street: "Street", Zip: "Zip", City: "City"));
-                customer.AddOrder(order);
-                db.SaveChanges();
-            }
+            var order = new Order(
+                date: new DateTime(2021, 1, 1),
+                shippingAddress: new Address(Street: "Street", Zip: "Zip", City: "City"));
+            customer.AddOrder(order);
+            _db.SaveChanges();
+
         }
         [Fact]
         public void AddOrderItemNewOfferSuccessTest()
         {
-            PrepareDatabase();
-            using (var db = TestHelpers.GetDbContext())
-            {
-                var order = db.Orders.First();
-                var orderItem = new OrderItem(
-                    offer: db.Offers.First(),
-                    price: 950, quantity: 1);
+            {   // Set scope of variables
+                var order = _db.Orders.First();
+                var orderItem = new OrderItem(offer: _db.Offers.First(), price: 950, quantity: 1);
                 order.AddOrderItem(orderItem);
-                db.SaveChanges();
+                _db.SaveChanges();
+                _db.ChangeTracker.Clear();
             }
-            using (var db = TestHelpers.GetDbContext())
             {
-                var order = db.Orders.First();
+                var order = _db.Orders.First();
                 Assert.True(order.OrderItems.Count == 1);
             }
         }
         [Fact]
         public void AddOrderItemExistingOfferSuccessTest()
         {
-            PrepareDatabase();
-            using (var db = TestHelpers.GetDbContext())
             {
-                var order = db.Orders.First();
+                var order = _db.Orders.First();
                 var orderItem = new OrderItem(
-                    offer: db.Offers.First(),
+                    offer: _db.Offers.First(),
                     price: 950, quantity: 1);
                 order.AddOrderItem(orderItem);
-                db.SaveChanges();
+                _db.SaveChanges();
+                _db.ChangeTracker.Clear();
             }
-            using (var db = TestHelpers.GetDbContext())
             {
-                var order = db.Orders.First();
+                var order = _db.Orders.First();
                 var orderItem = new OrderItem(
-                    offer: db.Offers.First(),
+                    offer: _db.Offers.First(),
                     price: 950, quantity: 2);
                 order.AddOrderItem(orderItem);
-                db.SaveChanges();
+                _db.SaveChanges();
+                _db.ChangeTracker.Clear();
             }
-            using (var db = TestHelpers.GetDbContext())
             {
-                var order = db.Orders.First();
+                var order = _db.Orders.First();
                 Assert.True(order.OrderItems.First().Quantity == 3);
             }
-
         }
     }
 }
