@@ -4,52 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using Microsoft.EntityFrameworkCore;
-using CodeFirstDemo.Application.Infrastructure;
 using Bogus;
 using CodeFirstDemo.Application.Model;
-using System.Diagnostics;
-using Microsoft.Data.Sqlite;
 
 namespace CodeFirstDemo.Test
 {
     // A file database does not support parallel test execution.
-    [Collection("Sequential")]
-    public class StoreContextTests
+    public class StoreContextTests : DatabaseTest
     {
-        private StoreContext GetContext()
-        {
-            var keepAliveConnection = new SqliteConnection("DataSource=:memory:");
-            keepAliveConnection.Open();
-
-            var opt = new DbContextOptionsBuilder()
-                // For MySQL (requires NuGet Pomelo.EntityFrameworkCore.MySql):
-                //    .UseMySql(@"server=localhost;database=Stores;user=root",
-                //        new MariaDbServerVersion(new Version(10, 4, 22)))
-                // For SQL Server (LocalDB) (requires NuGet Microsoft.EntityFrameworkCore.SqlServer):
-                //    .UseSqlServer(@"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=Stores")
-                // For SQLite (requires NuGet Microsoft.EntityFrameworkCore.Sqlite):
-                //    .UseSqlite("Data Source=mydb.db")
-                .UseSqlite(keepAliveConnection)  // Keep connection open (only needed with SQLite in memory db)
-                .LogTo(message => Debug.WriteLine(message), Microsoft.Extensions.Logging.LogLevel.Information)
-                .EnableSensitiveDataLogging()
-                .Options;
-
-            var db = new StoreContext(opt);
-            db.Database.EnsureDeleted();
-            db.Database.EnsureCreated();
-            return db;
-        }
         [Fact]
         public void CreateDatabaseTest()
         {
-            using var db = GetContext();
+            _db.Database.EnsureCreated();
         }
 
         [Fact]
         public void SeedTest()
         {
-            using var db = GetContext();
+            _db.Database.EnsureCreated();
 
             Randomizer.Seed = new Random(1335);
             var productCategories = new Faker<ProductCategory>("de")
@@ -59,8 +31,8 @@ namespace CodeFirstDemo.Test
                 })
                 .Generate(5)
                 .ToList();
-            db.ProductCategories.AddRange(productCategories);
-            db.SaveChanges();
+            _db.ProductCategories.AddRange(productCategories);
+            _db.SaveChanges();
 
             var products = new Faker<Product>("de")
                 .CustomInstantiator(f => new Product(
@@ -71,16 +43,16 @@ namespace CodeFirstDemo.Test
                 .GroupBy(p => p.Ean)
                 .Select(g => g.First())
                 .ToList();
-            db.Products.AddRange(products);
-            db.SaveChanges();
+            _db.Products.AddRange(products);
+            _db.SaveChanges();
 
             var stores = new Faker<Store>("de")
                 .CustomInstantiator(f => new Store(
                     name: f.Company.CompanyName()))
                 .Generate(5)
                 .ToList();
-            db.Stores.AddRange(stores);
-            db.SaveChanges();
+            _db.Stores.AddRange(stores);
+            _db.SaveChanges();
 
             var offers = new Faker<Offer>("de")
                 .CustomInstantiator(f => new Offer(
@@ -92,15 +64,15 @@ namespace CodeFirstDemo.Test
                 .GroupBy(o => new { o.StoreId, o.ProductEan })
                 .Select(g => g.First())
                 .ToList();
-            db.Offers.AddRange(offers);
-            db.SaveChanges();
+            _db.Offers.AddRange(offers);
+            _db.SaveChanges();
 
             // Clear all objects in memory, forces reading the database.
-            db.ChangeTracker.Clear();  
-            Assert.True(db.ProductCategories.ToList().Count > 0);
-            Assert.True(db.Products.ToList().Count > 0);
-            Assert.True(db.Stores.ToList().Count > 0);
-            Assert.True(db.Offers.ToList().Count > 0);
+            _db.ChangeTracker.Clear();
+            Assert.True(_db.ProductCategories.ToList().Count > 0);
+            Assert.True(_db.Products.ToList().Count > 0);
+            Assert.True(_db.Stores.ToList().Count > 0);
+            Assert.True(_db.Offers.ToList().Count > 0);
         }
     }
 }
