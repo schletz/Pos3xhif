@@ -132,9 +132,52 @@ docker run -d -p 1433:1433  --name sqlserver2019 -e "ACCEPT_EULA=Y" -e "SA_PASSW
 ## Ubuntu unter Windows nutzen
 
 Durch das Windows-Subsystem für Linux (WSL) kann auch Ubuntu sehr leicht installiert und
-gestartet werden. Öffne im Startmenü den Store und gib als Suchbegriff Ubuntu ein. Klicke
-in der Ergebnisliste auf die neueste Version (derzeit Ubuntu 20.04 LTS). Nach der Installation
+gestartet werden. Zuerst stellen wir die Standardversion von WSL auf WSL 2 um. Dafür
+
+- gib im Startmenü Powershell ein.
+- klicke mit der rechten Maustaste auf *Windows PowerShell* und wähle *Run as Administrator*.
+- Der Befehl `wsl --set-default-version 2` aktiviert WSL 2 standardmäßig für neu installierte Images.
+  
+Öffne danach im Startmenü den Store und gib als Suchbegriff *Ubuntu* ein. Klicke
+in der Ergebnisliste auf die neueste Version (derzeit *Ubuntu 20.04 LTS*). Nach der Installation
 wird eine kleine Einrichtung gestartet, wo das root Kennwort eingestellt wird.
 
 Danach kann Ubuntu einfach über das Startmenü geöffnet werden. Die Windows Verzeichnisse sind
 automatisch in */mnt* gemappt.
+
+### Umstellen einer bestehenden Distribution
+
+Falls du schon Ubuntu über den Store installiert hast, kannst du auch nachträglich die WSL Version
+für ein Image setzen. Dafür öffne wieder PowerShell als Administrator. Mit dem ersten Befehl
+(*--list*) werden alle Distributionen angezeigt. Mit dem zweiten Befehl wird die Version gesetzt.
+Der Name *Ubuntu-20.04* ist die verwendete Distribution, prüfe in der Liste ob sie auch so heißt.
+
+```
+wsl --list --verbose
+wsl --set-version Ubuntu-20.04 2
+```
+
+### Integration in Docker Desktop
+
+Damit in der Ubuntu Installation auch Docker genutzt werden kann, öffne in Windows Docker Desktop.
+Unter *Settings - Resources - WSL Integration* kann dann die installierte Ubuntu Version aktiviert
+werden. Nun ist es möglich, auch in Ubuntu den *docker run* Befehl auszuführen, wenn Docker dort
+installiert wurde. Das folgende Beispiel startet den Docker Container von SQL Server aus Ubuntu
+heraus. Die Installation von Docker muss natürlich nur 1x gemacht werden.
+
+
+```
+sudo apt-get update && sudo apt-get install docker
+sudo docker run -d -p 1433:1433  --name sqlserver2019 -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=SqlServer2019" mcr.microsoft.com/mssql/server:2019-latest      
+```
+
+### Setzen der Default Distribution in Docker Desktop
+
+Ubuntu kann als Default Distribution in Docker Desktop konfiguriert werden. Dafür wird wieder
+in der PowerShell als Administrator z. B. *Ubuntu-20.04* als Standard konfiguriert. Prüfe aber,
+ob die Distribution auch so heißt (mit *wsl --list*).
+
+```
+wsl --list --verbose
+wsl --set-default Ubuntu-20.04
+```
