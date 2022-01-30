@@ -173,6 +173,27 @@ bei Bedarf gesetzt werden:
 var cat = new ProductCategory(name: "Spielzeug") {NameEn = "Toys"};
 ```
 
+Es ist auch möglich, ein *Argument mit default value* zu dafür zu definieren. Diese Form hat den Vorteil, dass
+das zusätzliche Property *nameEn* in IntelliSense erscheint. Durch den default value muss kein
+Wert angegeben werden, d. h. der Konstruktor von ProductCategory kann auch mit einem Argument
+aufgerufen werden.
+
+```c#
+  public class ProductCategory
+  {
+      public ProductCategory(string name, string? nameEn = null)
+      {
+          Name = name;
+          NameEn = nameEn;
+      }
+
+      public int Id { get; private set; }      // ID by convention, AutoIncrement by convention
+      public string Name { get; set; }        
+      public string? NameEn { get; set; }      // nullable
+  }
+```
+
+
 ### Navigationen
 
 Das Produkt (Klasse *Product*) verwendet die Klasse *ProductCategory*. Dies ist im Klassenmodell
