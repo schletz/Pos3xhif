@@ -44,10 +44,13 @@ Der Standard Adminuser unter MySql ist *root* (ohne Passwort). Bei SQL Server is
 | -------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | Oracle               | `<PackageReference Include="Oracle.EntityFrameworkCore" Version="6.*" />`              | `UseOracle($"User Id=MeinUser;Password=MeinPasswort;Data Source=localhost:1521/XEPDB1")`                                               |
 | MySQL                | `<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.*" />`        | `UseMySql(@"server=localhost;database=MeineDb;user=MeinUser;password=MeinPasswort", new MariaDbServerVersion(new Version(10, 4, 22)))` |
-| SQL Server           | `<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.*" />` | `UseSqlServer(@"UseSqlServer(@"Server=127.0.0.1,1433;Initial Catalog=MeineDb;User Id=MeinUser;Password=MeinPasswort")")`               |
+| SQL Server           | `<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.*" />` | `UseSqlServer(@"Server=127.0.0.1,1433;Initial Catalog=MeineDb;User Id=MeinUser;Password=MeinPasswort")`               |
 | SQL Server (LocalDB) | `<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.*" />` | `UseSqlServer(@"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=MeineDb")`                                                          |
 | SQLite               | `<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.*" />`    | `UseSqlite(@"Data Source=MeineDb.db")`                                                                                                 |
 | SQLite (in-memory)   | `<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.*" />`    | `UseSqlite(@"Data Source=:memory:")`                                                                                                   |
+
+Im Artikel [zu Docker](07_DatabaseFirst/Docker.md) ist beschrieben, wie du zu Docker Images der
+oben genannten Datenbanksysteme kommst.
 
 ### SQLite in-memory Datenbank für Unittests
 
