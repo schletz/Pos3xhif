@@ -143,6 +143,7 @@ GO
 ALTER ROLE db_owner ADD MEMBER Store; 
 GO
 ```
+
 ## Ubuntu unter Windows nutzen
 
 Durch das Windows-Subsystem für Linux (WSL) kann auch Ubuntu sehr leicht installiert und
