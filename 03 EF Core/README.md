@@ -52,6 +52,26 @@ Der Standard Adminuser unter MySql ist *root* (ohne Passwort). Bei SQL Server is
 Im Artikel [zu Docker](07_DatabaseFirst/Docker.md) ist beschrieben, wie du zu Docker Images der
 oben genannten Datenbanksysteme kommst.
 
+### Anlegen einer Datenbank
+
+Am Beispiel von SQLite wird hier die Datenbank *stores.db* gelöscht, neu erzeugt und ein CREATE
+TABLE Skript in die Datei *create.sql* geschrieben. Damit werden Änderungen am Model beim
+Erzeugen immer Berücksichtigt.
+
+```c#
+var opt = new DbContextOptionsBuilder()
+    .UseSqlite(@"Data Source=stores.db")
+    .Options;
+using (var db = new StoreContext(opt))
+{
+    db.Database.EnsureDeleted();
+    db.Database.EnsureCreated();
+    // Optional:
+    File.WriteAllText("create.sql", db.Database.GenerateCreateScript());
+    // Optional: Seed Methode, z. B. db.Seed();
+}
+```
+
 ### SQLite in-memory Datenbank für Unittests
 
 Die in-memory Datenbank von SQLite ist für Unittests geeignet. Die Verbindung muss allerdings
