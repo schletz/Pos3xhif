@@ -128,7 +128,21 @@ Beispiel *SqlServer2019*. Der Benutzer ist *sa*. Das Passwort muss folgender Ric
 ```text
 docker run -d -p 1433:1433  --name sqlserver2019 -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=SqlServer2019" mcr.microsoft.com/mssql/server:2019-latest      
 ```
+Mit den folgenden SQL Befehlen kann ein User *Store* und eine Datenbank *Stores* angelegt werden.
+Der User hat dann das owner Recht auf die erstellte Datenbank:
 
+```sql
+CREATE LOGIN Store WITH PASSWORD = 'StoreUser2022'; 
+GO
+CREATE DATABASE Stores; 
+GO
+USE Stores; 
+GO
+CREATE USER Store FOR LOGIN Store; 
+GO
+ALTER ROLE db_owner ADD MEMBER Store; 
+GO
+```
 ## Ubuntu unter Windows nutzen
 
 Durch das Windows-Subsystem für Linux (WSL) kann auch Ubuntu sehr leicht installiert und
