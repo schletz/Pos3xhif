@@ -15,15 +15,11 @@ namespace CodeFirstDemo.Test
         {
             _connection = new SqliteConnection("DataSource=:memory:");
             _connection.Open();
-            // For MySQL (requires NuGet Pomelo.EntityFrameworkCore.MySql):
-            //    .UseMySql(@"server=localhost;database=Stores;user=root",
-            //        new MariaDbServerVersion(new Version(10, 4, 22)))
-            // For SQL Server (LocalDB) (requires NuGet Microsoft.EntityFrameworkCore.SqlServer):
-            //    .UseSqlServer(@"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=Stores")
-            // For SQLite (requires NuGet Microsoft.EntityFrameworkCore.Sqlite):
-            //    .UseSqlite("Data Source=mydb.db")
 
+            // Enable Data Source=stores.db instead of UseSqlite(_connection)
+            // if you want to open the database in DBeaver.
             var opt = new DbContextOptionsBuilder()
+                //.UseSqlite("Data Source=stores.db") 
                 .UseSqlite(_connection)  // Keep connection open (only needed with SQLite in memory db)
                 .LogTo(message => Debug.WriteLine(message), Microsoft.Extensions.Logging.LogLevel.Information)
                 .EnableSensitiveDataLogging()

@@ -20,6 +20,7 @@ namespace CodeFirstDemo.Test
         [Fact]
         public void SeedTest()
         {
+            _db.Database.EnsureDeleted();
             _db.Database.EnsureCreated();
 
             Randomizer.Seed = new Random(1335);
@@ -53,6 +54,18 @@ namespace CodeFirstDemo.Test
             _db.Stores.AddRange(stores);
             _db.SaveChanges();
 
+            var users = new Faker<User>("de")
+                .CustomInstantiator(f => new User(
+                    username: f.Internet.UserName(),
+                    salt: Convert.ToBase64String(f.Random.Bytes(32)),
+                    passwordHash: Convert.ToBase64String(f.Random.Bytes(64)),
+                    store: f.Random.ListItem(stores)))
+                .Generate(5)
+                .GroupBy(u => u.Store.Id).Select(u => u.First())
+                .ToList();
+            _db.Users.AddRange(users);
+            _db.SaveChanges();
+
             var offers = new Faker<Offer>("de")
                 .CustomInstantiator(f => new Offer(
                     product: f.Random.ListItem(products),
@@ -71,6 +84,7 @@ namespace CodeFirstDemo.Test
             Assert.True(_db.ProductCategories.ToList().Count > 0);
             Assert.True(_db.Products.ToList().Count > 0);
             Assert.True(_db.Stores.ToList().Count > 0);
+            Assert.True(_db.Users.ToList().Count > 0);
             Assert.True(_db.Offers.ToList().Count > 0);
         }
     }

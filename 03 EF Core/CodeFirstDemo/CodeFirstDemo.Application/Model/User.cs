@@ -8,23 +8,28 @@ using System.Threading.Tasks;
 
 namespace CodeFirstDemo.Application.Model
 {
-    [Table("Store")]
-    public class Store
+    [Table("User")]
+    public class User
     {
-        public Store(string name, User? manager = null)
+        public User(string username, string salt, string passwordHash, Store store)
         {
-            Name = name;
-            Manager = manager;
-            Guid = Guid.NewGuid();   // Optional. ValueGeneratedOnAdd() in OnModelCreating would do this job.
+            Username = username;
+            Salt = salt;
+            PasswordHash = passwordHash;
+            Store = store;
         }
+
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        protected Store() { }
+        protected User() { }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+
         public int Id { get; private set; }
-        public Guid Guid { get; private set; }
-        [MaxLength(255)]      // Produces NVARCHAR(255) in SQL Server
-        public string Name { get; set; }
-        public int? ManagerId { get; set; }
-        public User? Manager { get; set; }
+        [MaxLength(255)]
+        public string Username { get; set; }
+        [MaxLength(44)]  // 256 bit Hash as base64
+        public string Salt { get; set; }
+        [MaxLength(88)]  // 512 bit SHA512 Hash as base64
+        public string PasswordHash { get; set; }
+        public Store Store { get; set; }
     }
 }
