@@ -304,45 +304,93 @@ dabei folgende Überlegungen
 - Am Besten ist es, dass die Methode *ToOrderedList()* eine private Methode *TraverseTree(list)*
   mit einer leeren Liste aufruft. Die Methode *TraverseTree(list)* hängt dann die Elemente in der
   richtige Reihenfolge rekursiv ein. Die Methode kommt mit 2 if Statements und 3 Anweisungen aus.
+- Schreibe eine Methode *Exists(value)*, die Überprüft ob ein Wert im Binary Tree vorhanden ist.
 
-Füge die Klasse *NodeTests* ein und prüfe, ob alle Tests erfolgreich durchlaufen.
+Füge zur Kontrolle die untenstehende Klasse *NodeTests* ein und prüfe, ob alle Tests erfolgreich durchlaufen.
+
+### Ergänzung: Benchmark der Add Methode
+
+Im Artikel [Benchmark](../70_Benchmark/README.md) werden Benchmarktests durchgeführt. Ermittle
+die Laufzeit, wie lange es braucht, COUNT Zahlen in den Baum einzuhängen. COUNT ist dabei ein
+Parameter. Erstelle dafür mit *dotnet new console* eine Konsolenapplikation und kopiere deine
+*Node* Klasse hinein.
+
+Schreibe 3 Benchmark Methoden in der Klasse *NodeBenchmarks*:
+
+- **UnorderedListBenchmark:** Fügt mit einer Schleife COUNT Zahlen ein, die zufällig sind. Erzeuge
+  aber vorab ein Array mit Zufallszahlen im Konstruktor von *NodeBenchmarks*, sonst wird die
+  Zeitdauer des Zufallszahlengenerators mitgemessen. Achte auf ein fixes Seed bei der
+  Instanzierung von Random, indem du z. B: *new Random(2050)* schreibst. Mit der *Next()* Methode
+  von Random kann eine zufällige Integer Zahl generiert werden.
+
+- **AscendingListBenchmark:** Füge in einer Schleife COUNT Zahlen ein, die aufsteigend sortiert
+  sind (also 1, 2, ..., COUNT).
+
+- **DescendingListBenchmark:** Füge in einer Schleife COUNT Zahlen ein, die absteigend sortiert
+  sind (also COUNT, COUNT-1, ..., 1).
+
+Was fällt dir beim Vergleich der 3 Zeiten auf? Wie ist das zu erklären?
+
+### Testklasse
 
 ```c#
 public class NodeTests
 {
     [Fact]
-    public void CheckOrderedListCount()
+    public void CheckOrderedListCountTest()
     {
         var root = new Node<int>(4);
         root.Add(6);
         root.Add(1);
         root.Add(8);
-        root.Add(2);
-        var result = root.ToOrderedList();
+        root.Add(4);
+        List<int> result = root.ToOrderedList();
         Assert.True(result.Count == 5);
     }
 
     [Fact]
-    public void CheckOrderedListSort()
+    public void CheckOrderedListSortTest()
     {
         var root = new Node<int>(4);
         root.Add(6);
         root.Add(1);
         root.Add(8);
-        root.Add(2);
-        var result = root.ToOrderedList();
-        Assert.True(System.Text.Json.JsonSerializer.Serialize(result) == "[1,2,4,6,8]");
+        root.Add(4);
+        List<int> result = root.ToOrderedList();
+        Assert.True(System.Text.Json.JsonSerializer.Serialize(result) == "[1,4,4,6,8]");
     }
 
     [Fact]
-    public void CheckOrderedStringListSort()
+    public void CheckExistsWithExistingValueTest()
+    {
+        var root = new Node<int>(4);
+        root.Add(6);
+        root.Add(1);
+        root.Add(8);
+        root.Add(4);
+        Assert.True(root.Exists(8));
+    }
+
+    [Fact]
+    public void CheckExistsWithNonExistingValueTest()
+    {
+        var root = new Node<int>(4);
+        root.Add(6);
+        root.Add(1);
+        root.Add(8);
+        root.Add(4);
+        Assert.False(root.Exists(7));
+    }
+
+    [Fact]
+    public void CheckOrderedStringListSortTest()
     {
         var root = new Node<string>("A");
         root.Add("S");
         root.Add("D");
         root.Add("F");
         root.Add("G");
-        var result = root.ToOrderedList();
+        List<string> result = root.ToOrderedList();
         Assert.True(System.Text.Json.JsonSerializer.Serialize(result) == @"[""A"",""D"",""F"",""G"",""S""]");
     }
 }
