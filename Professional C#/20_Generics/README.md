@@ -278,7 +278,3 @@ konkreten Methoden des Typs aufrufen können, schränkt das die Verwendungsögli
 ein. Wir können den parametrisierten Typ aber
 - in Speicherstrukturen speichern (Listen, Graphen, Blockchains, unser Cache, ...).
 - durch Reflection instanzieren und befüllen (Entity Framework, JSON Parser, ...).
-
-Ein Beispiel für den zweiten Punkt ist die Klasse 
-[TypedReader](https://github.com/schletz/Pos3xhif/blob/master/Special/FileReader/FileReader/TypedReader.cs)
-hier im Repository.
