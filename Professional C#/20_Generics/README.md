@@ -296,7 +296,7 @@ dabei folgende Überlegungen
 
 - Die Klasse hat ein private readonly Feld *_value*.
 - Die Klasse hat zwei private Felder vom Typ Node: *_left* und *_right*.
-- Der zu verwaltende Wert soll generisch sein, muss aber mit CompareTo vergleichen werden. Überlege
+- Der zu verwaltende Wert soll generisch sein, muss aber mit *CompareTo()* vergleichen werden. Überlege
   daher ein type constraint.
 - Es gibt eine Methode *Add()*, die den übergebenen Wert zum Rootknoten gemäß der Animation hinzufügt.
 - Es gibt eine Methode *ToOrderedList()*, die eine Liste mit den aufsteigend sortierten Elementen
