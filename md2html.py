@@ -48,7 +48,6 @@ html, body {
           font-weight: 500;
 
         }
-
         h1 {
           line-height: 1.3em;
           border-bottom: 1px solid gray;
@@ -61,6 +60,9 @@ html, body {
         }
         blockquote {
           border-left:2px solid black;
+        }
+        blockquote p {
+            margin-left:0.5rem;
         }
         sup {
             display: block;
