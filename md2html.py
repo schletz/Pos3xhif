@@ -29,13 +29,67 @@ title = filename.group("name")
 
 # CSS aus dem Template lesen
 # cssUrl = "https://gist.githubusercontent.com/tuzz/3331384/raw/fc0160dd7ea0b4a861533c4d6c232f56291796a3/github.css"
-#cssUrl = "https://raw.githubusercontent.com/pxlrbt/markdown-css/master/markdown.css"
-cssUrl = "https://gist.githubusercontent.com/tuzz/3331384/raw/fc0160dd7ea0b4a861533c4d6c232f56291796a3/github.css"
+# cssUrl = "https://raw.githubusercontent.com/pxlrbt/markdown-css/master/markdown.css"
+# cssUrl = "https://gist.githubusercontent.com/tuzz/3331384/raw/fc0160dd7ea0b4a861533c4d6c232f56291796a3/github.css"
 # cssUrl = "https://latex.vercel.app/style.min.css"
-req = requests.get(cssUrl)
-cssString = req.text
-#cssString = cssString.replace("./fonts", "https://latex.vercel.app/fonts")
+# req = requests.get(cssUrl)
+# cssString = req.text
+# cssString = cssString.replace("./fonts", "https://latex.vercel.app/fonts")
+cssString = """
+html, body {
+            font-size:16px;
+            padding:0;
+            margin:0;
+            font-family: 'Corbel', 'Segoe UI', sans-serif;
+            line-height: 1.2em;
+        }
+        h1, h2, h3, h4, h5, h6 {
+          font-family: 'Segoe UI', sans-serif;
+          font-weight: 500;
 
+        }
+
+        h1 {
+          line-height: 1.3em;
+          border-bottom: 1px solid gray;
+        }
+        .codehilite {
+          margin-left:2rem;
+        }
+        p, ul, h3, h4, h5, h6 {
+          margin-left:2rem;
+        }
+        blockquote {
+          border-left:2px solid black;
+        }
+        sup {
+            display: block;
+            word-break: break-all;
+            font-size:80%;
+        }
+        em {
+            font-weight:500;
+        }
+        @media screen and (min-width: 110em) {
+            body {
+                columns: 2;
+                column-gap:5em;
+                margin: 0rem 2rem;
+            }
+        }
+        @media screen and (max-width: 109.999em) and (min-width: 55.001px) {
+            body {
+                margin-left:auto;
+                margin-right:auto;
+                max-width:50em;
+            }
+        }        
+        @media screen and (max-width: 55em) {
+            html,body {
+                padding:0;
+            }
+        }            
+"""
 with open(mdFilename, "r", encoding="utf-8") as input_file:
     mdString = input_file.read()
 
@@ -78,37 +132,6 @@ with open(htmlFilename, "w", encoding="utf-8", errors="xmlcharrefreplace") as ou
     <title>{title}</title>
     <style type="text/css">
         {cssString}
-        sup {{
-            word-break: break-all;
-            font-size:80%;
-        }}
-        body {{
-            max-width:inherit;
-            padding:0;
-        }}
-        em {{
-            font-weight:500;
-        }}
-        @media screen and (min-width: 110em) {{
-            body {{
-                columns:50em 12;
-                column-gap:5em;
-                margin-left:2em;
-                margin-right:2em;
-            }}
-        }}
-        @media screen and (max-width: 109.999em) and (min-width: 55.001px) {{
-            body {{
-                margin-left:auto;
-                margin-right:auto;
-                max-width:50em;
-            }}
-        }}        
-        @media screen and (max-width: 55em) {{
-            html,body {{
-                padding:0;
-            }}
-        }}                
     </style>
 </head>    
 <body>
