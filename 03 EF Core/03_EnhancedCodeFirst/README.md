@@ -304,6 +304,27 @@ In der Klasse *Store* wird im Konstruktor trotzdem eine neue GUID zugewiesen, da
 Standpunkt des Domain Modellings nicht warten wollen, bis EF Core durch SaveChanges() diese
 ID geniert.
 
+Es ist auch möglich, die Properties mit dem Namen *Guid* in *allen Entity Klassen* mit der
+oben beschriebenen Konfiguration zu versehen:
+
+```c#
+protected override void OnModelCreating(ModelBuilder modelBuilder)
+{
+    /* ... */
+    // Exclude inherited properties
+    var searchFlag = System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.DeclaredOnly;
+    foreach (var entity in modelBuilder.Model.GetEntityTypes())
+    {
+        var type = entity.ClrType;
+        if (type.GetProperty("Guid", searchFlag) is not null)
+        {
+            modelBuilder.Entity(type).HasAlternateKey("Guid");
+            modelBuilder.Entity(type).Property("Guid").ValueGeneratedOnAdd();
+        }
+    }
+}
+```
+
 ## Übung
 
 Verwende die Übung des letzten Kapitels (*Klassenmodelle persistieren mit EF Core*) und
