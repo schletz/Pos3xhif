@@ -21,7 +21,7 @@ namespace ViewModelDemoApp.ViewModels
         /// <summary>
         /// Wird aufgerufen, wenn das Binding aktualisiert werden soll. Das muss beim Schreiben
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         /// <summary>
         /// Binding Property für alle Felder, die Daten der aktuellen Person ausgeben. Wichtig ist
         /// das Aufrufen von PropertyChanged im setter, da sonst die Bindings nicht aktualisiert
@@ -46,12 +46,12 @@ namespace ViewModelDemoApp.ViewModels
         /// <summary>
         /// Aktuell angezeigte Person. Ist das Bindingfeld für die View.
         /// </summary>
-        private Person currentPerson;
+        private Person? currentPerson;
 
         /// <summary>
         /// Liste der gefundenen Personen aus der Datenbank.
         /// </summary>
-        private List<Person> persons;
+        private List<Person> persons = new();
         public List<Person> Persons
         {
             get => persons;
@@ -63,7 +63,7 @@ namespace ViewModelDemoApp.ViewModels
                 CurrentIndex = 0;
             }
         }
-        public Person CurrentPerson
+        public Person? CurrentPerson
         {
             get => currentPerson;
             private set

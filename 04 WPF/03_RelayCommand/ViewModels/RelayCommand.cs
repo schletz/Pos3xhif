@@ -38,7 +38,7 @@ namespace ViewModelDemoApp.ViewModels
         /// Damit die Enabled Eigenschaft automatisch aktualisiert wird, wenn CanExecute aufgerufen
         /// wird.
         /// </summary>
-        public event EventHandler CanExecuteChanged
+        public event EventHandler? CanExecuteChanged
         {
             add { CommandManager.RequerySuggested += value; }
             remove { CommandManager.RequerySuggested -= value; }
@@ -49,18 +49,18 @@ namespace ViewModelDemoApp.ViewModels
         /// </summary>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        public bool CanExecute(object parameter)
+        public bool CanExecute(object? parameter)
         {
-            return canExecute?.Invoke(parameter) ?? true;
+            return canExecute?.Invoke(parameter!) ?? true;
         }
 
         /// <summary>
         /// Funktion, die beim Klicken ausgeführt werden soll.
         /// </summary>
         /// <param name="parameter">Wird in XAML über CommandParameter übergeben.</param>
-        public void Execute(object parameter)
+        public void Execute(object? parameter)
         {
-            execute?.Invoke(parameter);
+            execute?.Invoke(parameter!);
         }
     }
 }

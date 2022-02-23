@@ -14,7 +14,7 @@ namespace ViewModelDemoApp.Model
         /// <summary>
         /// Tabelle mit den Personendaten.
         /// </summary>
-        public ICollection<Person> Persons { get; private set; }
+        public ICollection<Person> Persons { get; private set; } = new List<Person>();
         /// <summary>
         /// Verhindert eine direkte Instanzierung mit einer null Liste.
         /// </summary>
@@ -28,11 +28,11 @@ namespace ViewModelDemoApp.Model
             PersonDb personDb = new PersonDb();
             personDb.Persons = new List<Person>();
 
-            personDb.Persons.Add(new Person { Firstname = "Vorname1", Lastname = "Nachname1", DateOfBirth = new DateTime(2000, 1, 21), Sex = Sex.Male });
-            personDb.Persons.Add(new Person { Firstname = "Vorname2", Lastname = "Nachname2", DateOfBirth = new DateTime(2001, 1, 22), Sex = Sex.Male });
-            personDb.Persons.Add(new Person { Firstname = "Vorname3", Lastname = "Nachname3", DateOfBirth = new DateTime(2002, 1, 23), Sex = Sex.Female });
-            personDb.Persons.Add(new Person { Firstname = "Vorname4", Lastname = "PersonNachname4", DateOfBirth = new DateTime(2003, 1, 24), Sex = Sex.Male });
-            personDb.Persons.Add(new Person { Firstname = "Vorname5", Lastname = "PersonNachname5", DateOfBirth = new DateTime(2004, 1, 25), Sex = Sex.Female });
+            personDb.Persons.Add(new Person(firstname: "Vorname1", lastname: "Nachname1", dateOfBirth: new DateTime(2000, 1, 21), sex: Sex.Male));
+            personDb.Persons.Add(new Person(firstname: "Vorname2", lastname: "Nachname2", dateOfBirth: new DateTime(2001, 1, 22), sex: Sex.Male));
+            personDb.Persons.Add(new Person(firstname: "Vorname3", lastname: "Nachname3", dateOfBirth: new DateTime(2002, 1, 23), sex: Sex.Female));
+            personDb.Persons.Add(new Person(firstname: "Vorname4", lastname: "PersonNachname4", dateOfBirth: new DateTime(2003, 1, 24), sex: Sex.Male));
+            personDb.Persons.Add(new Person(firstname: "Vorname5", lastname: "PersonNachname5", dateOfBirth: new DateTime(2004, 1, 25), sex: Sex.Female));
             return personDb;
         }
     }

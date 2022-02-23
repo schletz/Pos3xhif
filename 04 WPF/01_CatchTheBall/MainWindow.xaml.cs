@@ -50,7 +50,7 @@ namespace CatchTheBall
         /// <param name="e"></param>
         private void Ellipse_MouseEnter(object sender, MouseEventArgs e)
         {
-            Ellipse ellipse = sender as Ellipse;
+            Ellipse ellipse = sender as Ellipse ?? throw new ArgumentException("Not an Ellipse", nameof(sender));
             ellipse.Fill = new SolidColorBrush(Color.FromRgb(0, 255, 0));
         }
 
@@ -89,7 +89,7 @@ namespace CatchTheBall
         /// </summary>
         private void Ellipse_MouseLeave(object sender, MouseEventArgs e)
         {
-            Ellipse ellipse = e.Source as Ellipse;
+            Ellipse ellipse = e.Source as Ellipse ?? throw new ArgumentException("Not an Ellipse", nameof(sender));
             ellipse.Fill = new SolidColorBrush(Color.FromRgb(255, 255, 255));
         }
 
