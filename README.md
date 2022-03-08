@@ -27,57 +27,10 @@ eine Lizenz gratis beziehen. Nach dem Login steht Rider als Download zur Verfüg
 
 ![](resharper_download_4.png)
 
-### PlantUML und VS Code als Modellierungswerkzeug
+## PlantUML und Markdown
 
-In der Konzeptionierungsphase ist ein grafisches Tool zum Erzeugen von Klassenmodellen sehr wichtig.
-In diesen Kurs werden immer wieder UML Klassendiagramme hergezeigt. Sie können mit VS Code und
-PlantUML erzeugt werden:
+Siehe Dokument [plantuml.md](plantuml.md)
 
-1. Prüfe, ob Java installiert und im PATH eingetragen ist. Der Befehl *java -version* muss erkannt
-   werden. Falls nicht, lade von https://openjdk.java.net/ die neuste Version von OpenJDK und
-   füge den Pfad von java.exe im bin Verzeichnis der PATH Variable hinzu.
-1. Installiere [Visual Studio Code](https://code.visualstudio.com). Achtung: Aktiviere beim Setup
-   die Option "In den Explorer integrieren", damit Sie im Kontextmenü VS Code starten können.
-1. Installiere die folgenden Extensions:
-   - Markdown PDF
-   - Markdown Preview Enhanced
-   - PlantUML
-1. Öffne die VS Code Konfiguration (*F1* - "*settings*" eingeben - "*Preferences: Open Settings (JSON)*" wählen)
-   und füge folgende Zeilen hinzu:
-
-```javascript
-    "markdown-pdf.plantumlOpenMarker": "```plantuml",
-    "markdown-pdf.plantumlCloseMarker": "```"   
-```
-
-Nun steht durch die Extension *Markdown Preview Enhanced* ein Icon bereit, welches eine Vorschau
-mit dem gerenderten Diagramm bietet. Beachte: Dies ist nur bei Dokumenten mit der 
-Endung *.md* Verfügbar.
-
-![](preview_vscode.png)
-
-Zum Testen kann nun eine neue Datei *Modell.md* mit folgendem Inhalt erstellt werden:
-
-````
-# Ein Klassenmodell
-
-Das ist die Beschreibung.
-```plantuml
-@startuml
-
-class Schoolclass {
-   +Name : String
-}
-
-class Student {
-   +Firstname : String
-   +Schoolclass : Schoolclass
-}
-
-Student *--> Schoolclass
-@enduml
-```
-````
 ## Weiterführende Unterlagen:
 
 - YouTube Channels: [dotNET](https://www.youtube.com/channel/UCvtT19MZW8dq5Wwfu6B0oxw),
