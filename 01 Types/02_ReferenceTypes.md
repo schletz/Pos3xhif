@@ -114,7 +114,7 @@ Compilerfehler:
 string myStr = null; // error CS8600: Converting null literal or possible null value to non-nullable type. 
 ```
 
-Mit den nullable reference types müssen wir bei der deklaration von Variablen, die einen
+Mit aktivierten nullable reference types müssen wir bei der deklaration von Variablen, die einen
 Referenztyp verwenden, nun unterscheiden:
 
 ```c#
