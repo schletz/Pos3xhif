@@ -36,61 +36,99 @@ title = filename.group("name")
 # cssString = req.text
 # cssString = cssString.replace("./fonts", "https://latex.vercel.app/fonts")
 cssString = """
-html, body {
-            font-size:16px;
-            padding:0;
-            margin:0;
-            font-family: 'Corbel', 'Segoe UI', sans-serif;
-            line-height: 1.2em;
-        }
-        h1, h2, h3, h4, h5, h6 {
-          font-family: 'Segoe UI', sans-serif;
-          font-weight: 500;
+    @page  
+    { 
+        size: auto;
+        margin: 20mm 25mm !important;  
+    } 
+    html, body {
+        font-size:16px;
+        padding:0;
+        margin:0;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;      
+        line-height: 1.3em;
+    }
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Segoe UI', sans-serif;
+        font-weight: 500;
+        break-after:avoid;
+    }
+    h1 {
+        column-span: all;
+        line-height: 1.3em;
+        border-bottom: 1px solid gray;
+    }
+    h2 {
+        column-span: all;
+        background-color:#eee;
+        padding:0.5rem;
+        margin-left:-0.5rem;
+    }
+    p {
+        widows:4;
+        orphans: 4;
+    }
+    .codehilite {
+        padding-left:0.5rem;
+        overflow-x:auto;
+        break-inside: avoid;
+    }
+    blockquote {
+        border-left:2px solid black;
+        margin-left:1rem;
+        background-color:#EEE;
+        padding:0.25rem;
 
-        }
-        h1 {
-          line-height: 1.3em;
-          border-bottom: 1px solid gray;
-        }
-        .codehilite {
-          margin-left:2rem;
-        }
-        p, ul, h3, h4, h5, h6 {
-          margin-left:2rem;
-        }
-        blockquote {
-          border-left:2px solid black;
-        }
-        blockquote p {
-            margin-left:0.5rem;
-        }
-        sup {
-            display: block;
-            word-break: break-all;
-            font-size:80%;
-        }
-        em {
-            font-weight:500;
-        }
-        @media screen and (min-width: 110em) {
-            body {
-                columns: 2;
-                column-gap:5em;
-                margin: 0rem 2rem;
-            }
-        }
-        @media screen and (max-width: 109.999em) and (min-width: 55.001px) {
-            body {
-                margin-left:auto;
-                margin-right:auto;
-                max-width:50em;
-            }
-        }        
-        @media screen and (max-width: 55em) {
-            html,body {
-                padding:0;
-            }
+    }
+    blockquote p {
+        margin-left:0.5rem;
+    }
+    sup {
+        display: block;
+        word-break: break-all;
+        font-size:80%;
+    }
+    em {
+        font-weight:500;
+    }
+    ul {
+        padding-inline-start: 1rem;
+    }
+    table {
+        border-collapse: collapse;
+        min-width:70%;
+    }
+    th {
+        text-align:left;
+    }
+    th, td {
+        border-top:1px solid black;
+        border-bottom:1px solid black;
+        padding:0.25rem 0.5rem;
+    }
+    th {
+        border-top:2px solid black;
+        border-bottom:2px solid black;
+    }
+    @media screen and (min-width: 110em) {
+        body {
+            columns: 2;
+            column-gap:5em;
+            margin: 0rem 2rem;                
         }            
+    }
+    @media screen and (max-width: 109.999em) and (min-width: 55.001px) {
+        body {
+            margin-left:auto;
+            margin-right:auto;
+            max-width:50em;
+        }
+    }        
+    @media screen and (max-width: 55em) {
+        html,body {
+            padding:0;
+        }
+    }            
 """
 with open(mdFilename, "r", encoding="utf-8") as input_file:
     mdString = input_file.read()
@@ -126,13 +164,13 @@ for image in images:
 with open(htmlFilename, "w", encoding="utf-8", errors="xmlcharrefreplace") as output_file:
     output_file.write(f"""
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{title}</title>
-    <style type="text/css">
+    <style>
         {cssString}
     </style>
 </head>    
