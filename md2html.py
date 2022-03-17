@@ -2,6 +2,9 @@
 # pip install markdown
 # pip install pygments
 
+# AUFRUF
+# python md2html.py (mdfile)
+
 import markdown as md
 import sys, re, requests, base64
 
@@ -27,14 +30,8 @@ mdFilename = filename.group()
 htmlFilename = f'{filename.group("name")}.html'
 title = filename.group("name")
 
-# CSS aus dem Template lesen
-# cssUrl = "https://gist.githubusercontent.com/tuzz/3331384/raw/fc0160dd7ea0b4a861533c4d6c232f56291796a3/github.css"
-# cssUrl = "https://raw.githubusercontent.com/pxlrbt/markdown-css/master/markdown.css"
-# cssUrl = "https://gist.githubusercontent.com/tuzz/3331384/raw/fc0160dd7ea0b4a861533c4d6c232f56291796a3/github.css"
-# cssUrl = "https://latex.vercel.app/style.min.css"
-# req = requests.get(cssUrl)
-# cssString = req.text
-# cssString = cssString.replace("./fonts", "https://latex.vercel.app/fonts")
+# CSS zur Darstellung des umgewandelten Codes. Zeigt auf großen Schirmen zweispaltig an,
+# auf kleineren Schirmen einspaltig.
 cssString = """
     @page  
     { 
@@ -135,7 +132,8 @@ with open(mdFilename, "r", encoding="utf-8") as input_file:
 
 mdString = mdString.replace("\\<", "&lt;").replace("\\>", "&gt;")
 
-
+# Hier können weitere Optionen des Paketes fenced_code oder codehilite
+# eingestellt werden.
 htmlString = md.markdown(mdString,
     output_format="html5",
     encoding='utf8',
@@ -150,7 +148,8 @@ htmlString = md.markdown(mdString,
     }
 )
 
-# Bilder durch Base64 Content ersetzen.
+# Bilder durch Base64 Content ersetzen. Sucht nach <img src="...">, liest die Datei ein und
+# wandlet sie mit encodeFile in einen Base64 String für den Browser um.
 images = map(lambda x: (
     {
         'element': x.group(),
