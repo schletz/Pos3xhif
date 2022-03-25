@@ -58,6 +58,7 @@ namespace ListDemo.ViewModels
                     Pupils.Clear();
                     return;
                 }
+                // Wir lesen alle Students der Klasse (der Name ist der PK) und sortieren nach dem Namen.
                 var students = _db.Pupils.Where(p => p.Schoolclass.Name == _currentClass.Name).OrderBy(p => p.Lastname).ThenBy(p => p.Firstname);
                 // Wir verwenden Automapper (Konfiguration in App.xaml.cs), um aus der Liste der Students
                 // eine Liste von StudentDTO Klassen zu erstellen.
@@ -100,43 +101,41 @@ namespace ListDemo.ViewModels
             NewPupilCommand = new RelayCommand(
                 () =>
                 {
+                    // Wir weisen den neuen Schüler gleich die gewählte Klasse zu.
                     CurrentStudent = new StudentDto()
                     {
                         Schoolclass = _currentClass
                     };
-                });
+                }, () => CurrentStudent is not null);
             SavePupilCommand = new RelayCommand(
                 () =>
                 {
                     if (CurrentStudent is null) { return; }
-                    if (string.IsNullOrEmpty(CurrentStudent.Firstname))
+                    try
                     {
-                        MessageBox.Show("Der Vorname ist leer.", "Ungültige Daten", MessageBoxButton.OK, MessageBoxImage.Error); return;
+                        // Wir wollen den editieren Schüler in die DB einfügen. Deswegen versuchen
+                        // wir, über Automapper eine Instanz von Student zu erzeugen.
+                        var student = App.Mapper.Map<Student>(CurrentStudent);
+                        // Gibt es den Schüler schon? Wenn ja, löschen wir ihn einmal raus...
+                        var existing = _db.Pupils.FirstOrDefault(p => p.Id == student.Id);
+                        if (existing is not null)
+                        {
+                            _db.Pupils.Remove(existing);
+                        }
+                        // ...und fügen ihn neu ein. Durch den Automapper haben wir eine neue
+                        // Instanz bekommen, die eingefügt werden muss.
+                        _db.Pupils.Add(student);
+                        // Wir sorgen wieder für eine konsistente Darstellung, indem wir die Klasse neu "einlesen".
+                        var students = _db.Pupils.Where(p => p.Schoolclass.Name == _currentClass?.Name).OrderBy(p => p.Lastname).ThenBy(p => p.Firstname);
+                        Pupils.ReplaceAll(App.Mapper.Map<IEnumerable<StudentDto>>(students));
+                        // Die Felder für die Schülerbearbeitung werden wieder geleert.
+                        CurrentStudent = null;
                     }
-                    if (string.IsNullOrEmpty(CurrentStudent.Lastname))
+                    catch (ApplicationException e)
                     {
-                        MessageBox.Show("Der Nachname ist leer.", "Ungültige Daten", MessageBoxButton.OK, MessageBoxImage.Error); return;
+                        MessageBox.Show(e.Message, "Fehler", MessageBoxButton.OK, MessageBoxImage.Error); return;
                     }
-                    if (CurrentStudent.Gender is null)
-                    {
-                        MessageBox.Show("Das Geschlecht ist leer.", "Ungültige Daten", MessageBoxButton.OK, MessageBoxImage.Error); return;
-                    }
-                    if (CurrentStudent.Schoolclass is null)
-                    {
-                        MessageBox.Show("Die Klasse leer.", "Ungültige Daten", MessageBoxButton.OK, MessageBoxImage.Error); return;
-                    }
-                    var student = App.Mapper.Map<Student>(CurrentStudent);
-                    var existing = _db.Pupils.FirstOrDefault(p => p.Id == student.Id);
-                    if (existing is not null)
-                    {
-                        _db.Pupils.Remove(existing);
-                    }
-                    _db.Pupils.Add(student);
-                    // Wir sorgen wieder für eine konsistente Darstellung, indem wir die Klasse neu "einlesen".
-                    var students = _db.Pupils.Where(p => p.Schoolclass.Name == _currentClass?.Name).OrderBy(p => p.Lastname).ThenBy(p => p.Firstname);
-                    Pupils.ReplaceAll(App.Mapper.Map<IEnumerable<StudentDto>>(students));
-                    CurrentStudent = null;
-                });
+                }, () => CurrentStudent is not null);
         }
     }
 }

@@ -9,15 +9,18 @@ namespace ListDemo.Model
     /// </summary>
     public class Exam
     {
+        private static int lastId = 0;
+
         public Exam(string subject, DateTime date, Teacher examiner, Student student, int? grade = null)
         {
+            Id = ++lastId;
             Subject = subject;
             Date = date;
             Examiner = examiner;
             Grade = grade;
             Student = student;
         }
-
+        public int Id { get; set; }
         /// <summary>
         /// Gegenstand
         /// </summary>

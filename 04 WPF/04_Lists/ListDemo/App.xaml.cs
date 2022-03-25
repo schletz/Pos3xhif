@@ -16,10 +16,10 @@ namespace ListDemo
     /// </summary>
     public partial class App : Application
     {
-        public static readonly IMapper Mapper = new MapperConfiguration(cfg =>
-        {
-            cfg.CreateMap<Student, StudentDto>();
-            cfg.CreateMap<StudentDto, Student>();
-        }).CreateMapper();
+        // Registriert die in der Klasse DtoMappingProfile angeleten
+        // Automapper Profile. Zugriff über App.Mapper.
+        public static readonly IMapper Mapper = 
+            new MapperConfiguration(cfg => cfg.AddMaps(typeof(DtoMappingProfile)))
+            .CreateMapper();
     }
 }

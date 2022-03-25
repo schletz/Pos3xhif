@@ -21,7 +21,164 @@ Für die Darstellung von Listen gibt es in WPF mehrere Controls:
 Zur Demonstration werden Musterdaten generiert, die Schulklassen samt Schüler und Prüfungen
 beinhalten:
 
-![](classdiagram.png)
+![](classdiagram3.png)
+
+## Warum DTO Klassen?
+
+Da wir schon mit dem *nullable reference types* von C# 8 arbeiten, haben unsere Modelklassen
+alle Konstruktoren:
+
+```c#
+public class Student
+{
+    public Student(string firstname, string lastname,  Gender gender, Schoolclass schoolclass, DateTime? dateOfBirth = null)
+    {
+        Id = ++lastId;
+        Firstname = firstname;
+        Lastname = lastname;
+        DateOfBirth = dateOfBirth;
+        Gender = gender;
+        Schoolclass = schoolclass;
+    }
+
+    public int Id { get; set; }
+    public string Firstname { get; set; }
+    // ...
+}
+```
+
+Beim Anlegen eines *neuen Schülers* ergibt sich im Zusammenspiel mit dem Binding
+Mechanismus ein Problem: Unsere Eingabefelder für Vorname, Nachname, ... binden sich an eine
+Instanz eines Schülers. Aber wie erzeugen wir diese Instanz? Werte haben wir ja noch keine.
+Daher müssen wir im Code *new Student()* schreiben, was allerdings nicht möglich ist.
+
+Um das Problem zu lösen, erstellen wir einen Ordner *Dto* und schreiben eine Klasse
+*StudentDto*:
+
+```c#
+public class StudentDto
+{
+    public int? Id { get; set; }  // Default Wert 0
+    public string? Firstname { get; set; }
+    public string? Lastname { get; set; }
+    public DateTime? DateOfBirth { get; set; }
+    public Gender? Gender { get; set; }
+    public Schoolclass? Schoolclass { get; set; }
+}
+```
+
+Dies ist eine sogenannte POCO (plain old clr object) Klasse. Alle Felder sind *nullable*,
+das bedeutet wir können mit *new StudentDto()* einen leeren Student für das Binding
+erstellen.
+
+### Mappings
+
+Da wir die DTO Klasse für die Anzeige der Schüler verwenden, müssen wir zuerst aus einer
+Instanz von *Student* eine Instanz von *StudentDto* erstellen. Das kann natürlich händisch
+erfolgen, indem wir folgenden Code schreiben:
+
+```c#
+new StudentDto() 
+{
+    Firstname = student.Firstname;
+    Lastname = student.Lastname;
+    // ...
+}
+```
+
+Das ist natürlich mühsam. Außerdem ist der Code sehr mechanisch: Er weist einfach Properties
+mit dem selben Namen 1:1 zu. Abhilfe gibt es in NuGet. Das Paket 
+**[Automapper](https://www.nuget.org/packages/AutoMapper/)** ist eines der bekanntesten
+Pakete im .NET Bereich. Für können es über die Paketverwaltung (*Manage NuGet Pakates* im
+Kontextmenü des Projektes) oder direkt durch Editieren der Projektdatei
+[ListDemo.csproj](ListDemo/ListDemo.csproj) installieren:
+
+```xml
+<ItemGroup>
+    <PackageReference Include="AutoMapper" Version="11.*" />
+</ItemGroup>
+```
+
+#### Konfigurieren von Automapper
+
+Nun erstellen wir eine Klasse *DtoMappingProfile* im Ordner *Dto*. Diese Klasse muss
+sich von der Klasse *Profile* (im Automapper Paket enthalten) ableiten.
+
+```c#
+internal class DtoMappingProfile : Profile
+{
+    public DtoMappingProfile()
+    {
+        CreateMap<Student, StudentDto>();
+        CreateMap<StudentDto, Student>()
+            .BeforeMap((src, dst) =>
+            {
+                if (string.IsNullOrEmpty(src.Firstname)) { throw new ApplicationException("Invalid firstname."); }
+                if (string.IsNullOrEmpty(src.Lastname)) { throw new ApplicationException("Invalid larstname."); }
+                if (src.Gender is null) { throw new ApplicationException("Invalid gender."); }
+                if (src.Schoolclass is null) { throw new ApplicationException("Invalid schoolclass."); }
+            });
+    }
+}
+```
+
+Im Konstruktor definieren wir die gewünschten Mapping mit *CreateMap*. Die Typparameter
+haben den Aufbau *\<source, destination\>*. So bedeutet
+*CreateMap\<Student, StudentDto\>()* dass wir aus einer *Student* Klasse eine *StudentDto*
+Klasse erstellen können. In der Standardkonfiguration weist Automapper einfach Properties
+mit dem gleichen Namen zu.
+
+Der umgekehrte Weg (von StudentDto zu Student) ist komplizierter. Schließlich dürfen in
+der Klasse Student einige Felder nicht *null* sein. Daher müssen wir dies mit der Methode
+*BeforeMap* prüfen. Hier kann jeder beliebige Code hineingeschrieben werden, es sollte
+allerdings keine Businesslogik dort untergebracht werden.
+
+In unserem Fall werden für eine *ApplicationException*, wenn die Daten unpassend sind. Diese
+Exception kann dann im Code abgefangen werden.
+
+> *Hinweis:* Strenggenommen wird hier eine *Validierung* durchgeführt. Heutige Frameworks
+> wie ASP.NET Core setzen dafür ausgereiftere Konzepte um. Für WPF ist diese Methode
+> ausreichend.
+
+#### Registrieren des Mappers
+
+Wenn unser Programm startet, müssen wir eine Instanz von Automapper erstellen. Dafür
+verwenden wir die Klasse *App*, da sie gleich zu Beginn geladen wird.
+
+```c#
+public partial class App : Application
+{
+    public static readonly IMapper Mapper = 
+        new MapperConfiguration(cfg => cfg.AddMaps(typeof(DtoMappingProfile)))
+        .CreateMapper();
+}
+```
+
+Wir sehen eine etwas eigenartige Vorgehensweise: Wir definieren ein *statisches Feld*
+(kein Property!) dafür. Die Ursache ist folgende: Statische Felder werden nur 1x
+beim Start des Programmes initialisiert. Automapper muss über Reflection zuerst die
+Properties der zu mappenden Typen auslesen. Das kostet recht viel Zeit und darf daher
+nicht bei jedem Mapping gemacht werden. Durch das statische Feld wird die Zuordnungstabelle
+gespeichert und kann schnell (ohne Reflection) abgerufen werden.
+
+#### Die Map Methode
+
+Der eigentliche Mappingvorgang ist recht einfach. Mit der Methode *Map\<DestType\>(src)*
+wird das übergebene Objekt in den Typ, der als Typparameter angegeben wird, umgewandelt.
+
+Die folgende Codezeile erstellt aus *CurrentStudent* (eine Instanz von *StudentDto*) eine
+Instanz von *Student*:
+
+```c#
+var student = App.Mapper.Map<Student>(CurrentStudent);
+```
+
+Möchten wir eine ganze Liste umwandeln, können wir mit *IEnumerable* auch eine Liste
+des Zieltyps erzeugen:
+
+```c#
+var studentDtos = App.Mapper.Map<IEnumerable<StudentDto>>(students)
+```
 
 ## Die Combo Box (Dropdownliste)
 
@@ -65,14 +222,20 @@ angezeigten Schüler.
 ```c#
 public List<Schoolclass> Classes => _db.Classes;
 
-private Schoolclass _currentClass;
-public Schoolclass CurrentClass
+private Schoolclass? _currentClass;
+public Schoolclass? CurrentClass
 {
     get => _currentClass;
     set
     {
         _currentClass = value;
-        Pupils.ReplaceAll(_currentClass?.Pupils);
+        if (_currentClass is null)
+        {
+            Pupils.Clear();
+            return;
+        }
+        var students = _db.Pupils.Where(p => p.Schoolclass.Name == _currentClass.Name).OrderBy(p => p.Lastname).ThenBy(p => p.Firstname);
+        Pupils.ReplaceAll(App.Mapper.Map<IEnumerable<StudentDto>>(students));
     }
 }
 ```
@@ -154,18 +317,23 @@ In [MainViewModel](ListDemo/ViewModels/MainViewModel.cs) werden die Properties *
 ```c#
 using System.Collections.ObjectModel;
 using ListDemo.Extensions;
-
 ...
 
-public ObservableCollection<Pupil> Pupils { get; } = new ObservableCollection<Pupil>();
-private Schoolclass _currentClass;
-public Schoolclass CurrentClass
+public ObservableCollection<StudentDto> Pupils { get; } = new ObservableCollection<StudentDto>();
+private Schoolclass? _currentClass;
+public Schoolclass? CurrentClass
 {
     get => _currentClass;
     set
     {
         _currentClass = value;
-        Pupils.ReplaceAll(_currentClass?.Pupils);
+        if (_currentClass is null)
+        {
+            Pupils.Clear();
+            return;
+        }
+        var students = _db.Pupils.Where(p => p.Schoolclass.Name == _currentClass.Name).OrderBy(p => p.Lastname).ThenBy(p => p.Firstname);
+        Pupils.ReplaceAll(App.Mapper.Map<IEnumerable<StudentDto>>(students));
     }
 }
 ```
@@ -187,7 +355,10 @@ Erweitere die bestehende Solution [ListDemo](ListDemo/ListDemo.sln) um die folge
 3. In XAML Code haben die Prüfungen noch statische Werte zur Demonstration. Gestalte die ListBox
    so, dass der Prüfungsgegenstand, das Datum der Prüfung, das Lehrerkürzel und die Note nett
    aufbereitet ausgegeben werden.
-4. Der Bereich *Neue Prüfung* besteht im Moment noch aus Textboxen ohne Binding. Erzeuge die
+4. Der Bereich *Neue Prüfung* besteht im Moment noch aus Textboxen ohne Binding. Um eine
+   Prüfung anlegen zu können, muss eine DTO Klasse *ExamDto* definiert werden. Vergiss nicht,
+   das Mappingprofil zu definieren. Die Liste der Prüfungen bindet sich dann an eine Collection
+   vom Typ *ExamDto*. Erzeuge die
    entsprechenden Bindings und die benötigten Properties im ViewModel.
 
    (a) Der Prüfer soll aus einer Liste von Lehrern gewählt werden, die über die Datenbank
