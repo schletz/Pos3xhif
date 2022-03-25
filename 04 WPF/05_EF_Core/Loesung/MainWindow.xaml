@@ -1,0 +1,171 @@
+﻿<!--
+XAML CODE FÜR DIE LIST DEMO
+    
+-) xmlns:vm="clr-namespace:ListDemo.ViewModels" 
+   wird für den Zugriff auf das ViewModel benötigt, da dieses in einem Ordner 
+   und daher in einem eigenen Namespace ist 
+-) Alle Icons sind von https://www.flaticon.com/
+    
+-->
+<Window x:Class="ListDemo.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ListDemo"
+        xmlns:vm="clr-namespace:ListDemo.ViewModels"
+        x:Name="MainWindowPage"
+        mc:Ignorable="d"
+        Title="Personenverwaltung mit Viewmodel" Height="600" Width="600"
+        Icon="Icons\person.png">
+    <!-- Instanziert das ViewModel und legt den DataContext fest. Bindings ohne ElementName greifen
+         daher auf das MainViewModel zu. -->
+    <Window.DataContext>
+        <vm:MainViewModel />
+    </Window.DataContext>
+    <!-- Definition der Converter als statische Resource. -->
+    <Window.Resources>
+        <local:GenderIconVisibilityConverter x:Key="VisiblityConverterKey"/>
+    </Window.Resources>
+    <!-- Margin arbeitet in der Reihenfolge left, top, right, bottom. Nicht mit top beginnend wie in CSS. -->
+    <DockPanel Margin="5 5 5 5">
+        <!-- ANZEIGE DER SCHÜLERLISTE -->
+        <DockPanel DockPanel.Dock="Left">
+            <!-- Die Auswahllist der Klassen bindet sich an die Liste Classes im VM. Wird eine Klasse
+                 ausgewählt, so wird diese in CurrentClass im VM geschrieben. Da die Klasse ein komplexer
+                 Typ ist, wird mit DisplayMemberPath das Property angegeben, das angezeigt werden soll.
+            -->
+            <ComboBox x:Name="Classlist" SelectedIndex="0" DockPanel.Dock="Top"
+                      SelectedValue="{Binding CurrentClass}" ItemsSource="{Binding Classes}"
+                      DisplayMemberPath="ClassNr"/>
+            <!-- Eine ListBox kann eine Liste von Elementen anzeigen. ItemSource verweist auf eine Liste
+                 der Schüler der ausgewählten Klasse im ViewModel. In SelectedItem wird der aktuell
+                 ausgewählte Schüler zurückgeschrieben.
+            -->
+            <ListBox MinWidth="140" ItemsSource="{Binding Pupils}" SelectedValue="{Binding CurrentPupil}">
+                <!-- Da Person ein komplexer Typ ist, wird ohne ein DataTemplate nur die ToString() Repräsentation
+                     angezeigt. Damit wir die einzelnen Properties von Person anzeigen können, wird hier die
+                     Darstellung einer Zelle gestaltet. -->
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel Margin="5 5 5 5">
+                            <!-- Da ItemSource eine Personenliste ist, verweisen alle Bindings auf die gewählte
+                                 Person. Daher muss nicht CurrentPerson.Lastname geschrieben werden. -->
+                            <!-- Das Male Bild nur anzeigen, wenn Sex = Male ist. -->
+                            <Image DockPanel.Dock="Left" Width="32" Source="Icons/boy.png" Visibility="{Binding Gender, Converter={StaticResource VisiblityConverterKey}, ConverterParameter=Male}" />
+                            <!-- Das Female Bild nur anzeigen, wenn Sex = Female ist. -->
+                            <Image DockPanel.Dock="Left" Width="32" Source="Icons/girl.png" Visibility="{Binding Gender, Converter={StaticResource VisiblityConverterKey}, ConverterParameter=Female}" />
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Firstname}" Margin="0 0 5 0"/>
+                                    <TextBlock FontWeight="Bold" Text="{Binding Lastname}" />
+                                </StackPanel>
+                                <TextBlock Text="{Binding Schoolclass.KV.TeacherNr}" />
+                            </StackPanel>
+                        </DockPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
+
+        <!-- ANZEIGE DER SCHÜLERDATEN -->
+        <GroupBox DockPanel.Dock="Top" Header="Schülerdaten">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+
+                <!-- Zeile mit Vorname. -->
+                <Label Content="Vorname:" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center"/>
+                <TextBox Margin="0 0 0 0" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center"
+                     Text="{Binding CurrentPupil.Firstname}" />
+
+                <!-- 2. Zeile mit Nachname. -->
+                <Label Content="Nachname:" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center"/>
+                <TextBox Margin="0 5 0 5" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center"
+                     Text="{Binding CurrentPupil.Lastname}" />
+
+                <!-- 3. Zeile mit Geschlecht -->
+                <Label Content="Geschlecht:" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center"/>
+                <!-- Die ComboBox holt sich die Werte aus der Liste Genders im VM. Sie ist eine
+                     Liste von Gender Objekten. Mit SelectedValue geben wir an, in welches Property
+                     das ausgewählte Geschlecht geschrieben wird. Hier schreiben wir gleich in das
+                     CurrentPupil Objekt. Mit DisplayMemberPath wird angegeben, welches Property
+                     in der Liste angezeigt wird. Bei SelectedValue wird jedoch das ganze Gender
+                     Objekt geschrieben. -->
+                <ComboBox Margin="0 5 0 5" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center"
+                     ItemsSource="{Binding Genders}" SelectedValue="{Binding CurrentPupil.Gender}" DisplayMemberPath="Name" />
+
+                <!-- 4. Zeile mit Geburtsdatum.  -->
+                <Label Content="Geburtsdatum:" Grid.Column="0" Grid.Row="3" VerticalAlignment="Center"/>
+                <TextBox Margin="0 5 0 5" Grid.Column="1" Grid.Row="3" VerticalAlignment="Center"
+                     Text="{Binding CurrentPupil.DateOfBirth}" />
+
+                <!-- 5. Zeile mit den Buttons. -->
+                <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="4">
+                    <Button  Margin="0 0 30 0" Content="Neuer Schüler" Command="{Binding NewPupilCommand}"/>
+                    <Button  Margin="0 0 30 0" Content="Schüler speichern" Command="{Binding SavePupilCommand}"/>
+                    <Button Content="Schüler löschen" Command="{Binding DeletePupilCommand}"/>
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+
+        <!-- ANZEIGE DER LISTE DER SEMESTERPRÜFUNGEN -->
+        <GroupBox DockPanel.Dock="Top" Header="Prüfungen">
+            <ListBox ItemsSource="{Binding Exams}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Subject}" Width="25" Margin="0 0 5 0"/>
+                            <TextBlock Text="{Binding Date}" Width="130"  Margin="0 0 5 0"/>
+                            <TextBlock Text="{Binding Examiner.TeacherNr}"  Width="60" Margin="0 0 5 0"/>
+                            <TextBlock Text="{Binding Grade}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </GroupBox>
+
+        <!-- ANZEIGE DER FELDER FÜR DIE ERFASSUNG EINER NEUEN PRÜFUNG. -->
+        <!-- Diese Felder sind nicht synchronisiert mit der Prüfungsliste, werden also nicht
+             mit dem Auswählen einer Semesterprüfung oben befüllt. 
+        -->
+        <GroupBox Header="Neue Prüfung">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+                <Label Content="Gegenstand:" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center"/>
+                <TextBox Margin="0 5 0 5" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Text="{Binding NewExam.Subject}" />
+                <Label Content="Datum:" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center"/>
+                <TextBox Margin="0 5 0 5" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Text="{Binding NewExam.Date}" />
+                <Label Content="Prüfer:" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center"/>
+                <ComboBox Margin="0 5 0 5" Grid.Column="1" Grid.Row="2"
+                      SelectedValue="{Binding NewExam.Examiner}" ItemsSource="{Binding Teachers}"
+                      DisplayMemberPath="TeacherNr"/>
+                <Label Content="Note:" Grid.Column="0" Grid.Row="3" VerticalAlignment="Center"/>
+                <TextBox Margin="0 5 0 5" Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" Text="{Binding NewExam.Grade}" />
+                <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="4">
+                    <Button  Margin="0 0 30 0" Content="Prüfung speichern" Command="{Binding SaveExamCommand}" />
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+
+    </DockPanel>
+</Window>
