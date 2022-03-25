@@ -23,7 +23,7 @@ beinhalten:
 
 ![](classdiagram3.png)
 
-## Warum DTO Klassen?
+## Warum DTO (data transfer object) Klassen?
 
 Da wir schon mit dem *nullable reference types* von C# 8 arbeiten, haben unsere Modelklassen
 alle Konstruktoren:
@@ -58,7 +58,7 @@ Um das Problem zu lösen, erstellen wir einen Ordner *Dto* und schreiben eine Kl
 ```c#
 public class StudentDto
 {
-    public int? Id { get; set; }  // Default Wert 0
+    public int? Id { get; set; }
     public string? Firstname { get; set; }
     public string? Lastname { get; set; }
     public DateTime? DateOfBirth { get; set; }
@@ -89,7 +89,7 @@ new StudentDto()
 Das ist natürlich mühsam. Außerdem ist der Code sehr mechanisch: Er weist einfach Properties
 mit dem selben Namen 1:1 zu. Abhilfe gibt es in NuGet. Das Paket 
 **[Automapper](https://www.nuget.org/packages/AutoMapper/)** ist eines der bekanntesten
-Pakete im .NET Bereich. Für können es über die Paketverwaltung (*Manage NuGet Pakates* im
+Pakete im .NET Bereich. Wir können es über die Paketverwaltung (*Manage NuGet Pakates* im
 Kontextmenü des Projektes) oder direkt durch Editieren der Projektdatei
 [ListDemo.csproj](ListDemo/ListDemo.csproj) installieren:
 
@@ -133,12 +133,12 @@ der Klasse Student einige Felder nicht *null* sein. Daher müssen wir dies mit d
 *BeforeMap* prüfen. Hier kann jeder beliebige Code hineingeschrieben werden, es sollte
 allerdings keine Businesslogik dort untergebracht werden.
 
-In unserem Fall werden für eine *ApplicationException*, wenn die Daten unpassend sind. Diese
+In unserem Fall werfen wir eine *ApplicationException*, wenn die Daten unpassend sind. Diese
 Exception kann dann im Code abgefangen werden.
 
 > *Hinweis:* Strenggenommen wird hier eine *Validierung* durchgeführt. Heutige Frameworks
 > wie ASP.NET Core setzen dafür ausgereiftere Konzepte um. Für WPF ist diese Methode
-> ausreichend.
+> aber ausreichend.
 
 #### Registrieren des Mappers
 
@@ -166,11 +166,11 @@ gespeichert und kann schnell (ohne Reflection) abgerufen werden.
 Der eigentliche Mappingvorgang ist recht einfach. Mit der Methode *Map\<DestType\>(src)*
 wird das übergebene Objekt in den Typ, der als Typparameter angegeben wird, umgewandelt.
 
-Die folgende Codezeile erstellt aus *CurrentStudent* (eine Instanz von *StudentDto*) eine
+Die folgende Codezeile erstellt aus *studentDto* (eine Instanz von *StudentDto*) eine
 Instanz von *Student*:
 
 ```c#
-var student = App.Mapper.Map<Student>(CurrentStudent);
+var student = App.Mapper.Map<Student>(studentDto);
 ```
 
 Möchten wir eine ganze Liste umwandeln, können wir mit *IEnumerable* auch eine Liste
