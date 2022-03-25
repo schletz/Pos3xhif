@@ -9,7 +9,6 @@ namespace ListDemo.Extensions
     {
         public static void AddRange<TSource>(this ObservableCollection<TSource> source, IEnumerable<TSource> items)
         {
-            if (items == null) { return; }
             foreach (var item in items)
             {
                 source.Add(item);

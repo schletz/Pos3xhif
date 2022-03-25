@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using ListDemo.Model;
 using ListDemo.Extensions;
+using ListDemo.Dto;
+using System.Windows;
 
 namespace ListDemo.ViewModels
 {
@@ -23,12 +25,15 @@ namespace ListDemo.ViewModels
         /// <summary>
         /// Wird aufgerufen, wenn das Binding aktualisiert werden soll. Das muss beim Schreiben
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         /// <summary>
         /// Binding Property für alle Felder, die Daten der aktuellen Person ausgeben. Wichtig ist
         /// das Aufrufen von PropertyChanged im setter, da sonst die Bindings nicht aktualisiert
         /// werden!
         /// </summary>
+
+        public ICommand NewPupilCommand { get; }
+        public ICommand SavePupilCommand { get; }
 
         public List<Schoolclass> Classes => _db.Classes;
         public List<Gender> Genders => _db.Genders;
@@ -36,10 +41,10 @@ namespace ListDemo.ViewModels
         /// Binding für die Listview. Ist eine ObservableCollection, damit die Liste automatisch
         /// beim Hinzufügen oder Löschen aktualisiert wird.
         /// </summary>
-        public ObservableCollection<Pupil> Pupils { get; } = new ObservableCollection<Pupil>();
+        public ObservableCollection<StudentDto> Pupils { get; } = new ObservableCollection<StudentDto>();
 
-        private Schoolclass _currentClass;
-        public Schoolclass CurrentClass
+        private Schoolclass? _currentClass;
+        public Schoolclass? CurrentClass
         {
             get => _currentClass;
             set
@@ -48,7 +53,15 @@ namespace ListDemo.ViewModels
                 // Entfernt alle alten Einträge aus der Pupils Collection und fügt die Schüler
                 // der gewählten Klasse hinzu. Achtung: Pupils ist eine ObservableCollection, damit
                 // die Anzeige aktualisiert wird darf sie nicht einfach neu gesetzt werden.
-                Pupils.ReplaceAll(_currentClass?.Pupils);
+                if (_currentClass is null)
+                {
+                    Pupils.Clear();
+                    return;
+                }
+                var students = _db.Pupils.Where(p => p.Schoolclass.Name == _currentClass.Name).OrderBy(p => p.Lastname).ThenBy(p => p.Firstname);
+                // Wir verwenden Automapper (Konfiguration in App.xaml.cs), um aus der Liste der Students
+                // eine Liste von StudentDTO Klassen zu erstellen.
+                Pupils.ReplaceAll(App.Mapper.Map<IEnumerable<StudentDto>>(students));
             }
         }
 
@@ -56,19 +69,19 @@ namespace ListDemo.ViewModels
         /// <summary>
         /// Aktuell angezeigte Person. Ist das Bindingfeld für die View.
         /// </summary>
-        private Pupil _currentPupil;
-        public Pupil CurrentPupil
+        private StudentDto? _currentStudent;
+        public StudentDto? CurrentStudent
         {
-            get => _currentPupil;
+            get => _currentStudent;
             set
             {
                 // Nur die Bindings aktualisieren, wenn sich etwas ändert.
-                if (value != _currentPupil)
+                if (value != _currentStudent)
                 {
-                    _currentPupil = value;
+                    _currentStudent = value;
                     // Achtung: PropertyChanged ist am Anfang NULL. Bei Initialisierungen im Konstruktor
                     // würde sonst eine Exception beim einfachen Aufruf geworfen.
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentPupil)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentStudent)));
                 }
             }
         }
@@ -84,20 +97,47 @@ namespace ListDemo.ViewModels
         /// </summary>
         public MainViewModel()
         {
-            Pupils.AddRange(_db.Pupils);
             NewPupilCommand = new RelayCommand(
                 () =>
                 {
-                    CurrentPupil = new Pupil
+                    CurrentStudent = new StudentDto()
                     {
-                        Schoolclass = CurrentClass
+                        Schoolclass = _currentClass
                     };
-                    _db.Pupils.Add(CurrentPupil);
-                    CurrentClass.Pupils.Add(CurrentPupil);
-                    Pupils.Add(CurrentPupil);
+                });
+            SavePupilCommand = new RelayCommand(
+                () =>
+                {
+                    if (CurrentStudent is null) { return; }
+                    if (string.IsNullOrEmpty(CurrentStudent.Firstname))
+                    {
+                        MessageBox.Show("Der Vorname ist leer.", "Ungültige Daten", MessageBoxButton.OK, MessageBoxImage.Error); return;
+                    }
+                    if (string.IsNullOrEmpty(CurrentStudent.Lastname))
+                    {
+                        MessageBox.Show("Der Nachname ist leer.", "Ungültige Daten", MessageBoxButton.OK, MessageBoxImage.Error); return;
+                    }
+                    if (CurrentStudent.Gender is null)
+                    {
+                        MessageBox.Show("Das Geschlecht ist leer.", "Ungültige Daten", MessageBoxButton.OK, MessageBoxImage.Error); return;
+                    }
+                    if (CurrentStudent.Schoolclass is null)
+                    {
+                        MessageBox.Show("Die Klasse leer.", "Ungültige Daten", MessageBoxButton.OK, MessageBoxImage.Error); return;
+                    }
+                    var student = App.Mapper.Map<Student>(CurrentStudent);
+                    var existing = _db.Pupils.FirstOrDefault(p => p.Id == student.Id);
+                    if (existing is not null)
+                    {
+                        _db.Pupils.Remove(existing);
+                    }
+                    _db.Pupils.Add(student);
+                    // Wir sorgen wieder für eine konsistente Darstellung, indem wir die Klasse neu "einlesen".
+                    var students = _db.Pupils.Where(p => p.Schoolclass.Name == _currentClass?.Name).OrderBy(p => p.Lastname).ThenBy(p => p.Firstname);
+                    Pupils.ReplaceAll(App.Mapper.Map<IEnumerable<StudentDto>>(students));
+                    CurrentStudent = null;
                 });
         }
-        public ICommand NewPupilCommand { get; }
     }
 }
 

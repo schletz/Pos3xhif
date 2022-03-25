@@ -1,31 +1,36 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
-    <UseWPF>true</UseWPF>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<Nullable>enable</Nullable>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Icons\boy.png" />
-    <None Remove="Icons\delete.png" />
-    <None Remove="Icons\girl.png" />
-    <None Remove="Icons\left-arrow.png" />
-    <None Remove="Icons\person.png" />
-    <None Remove="Icons\right-arrow.png" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="11.0.1" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Remove="Icons\boy.png" />
+		<None Remove="Icons\delete.png" />
+		<None Remove="Icons\girl.png" />
+		<None Remove="Icons\left-arrow.png" />
+		<None Remove="Icons\person.png" />
+		<None Remove="Icons\right-arrow.png" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Bogus" Version="*" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Bogus" Version="*" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Resource Include="Icons\boy.png" />
-    <Resource Include="Icons\delete.png" />
-    <Resource Include="Icons\girl.png" />
-    <Resource Include="Icons\left-arrow.png" />
-    <Resource Include="Icons\person.png" />
-    <Resource Include="Icons\right-arrow.png" />
-  </ItemGroup>
+	<ItemGroup>
+		<Resource Include="Icons\boy.png" />
+		<Resource Include="Icons\delete.png" />
+		<Resource Include="Icons\girl.png" />
+		<Resource Include="Icons\left-arrow.png" />
+		<Resource Include="Icons\person.png" />
+		<Resource Include="Icons\right-arrow.png" />
+	</ItemGroup>
 
 </Project>

@@ -8,14 +8,14 @@ namespace ListDemo.ViewModels
     /// </summary>
     class RelayCommand : ICommand
     {
-        private readonly Func<object, bool> canExecute;
-        private readonly Action<object> execute;
+        private readonly Func<object?, bool> canExecute;
+        private readonly Action<object?> execute;
         /// <summary>
         /// Konstruktor für Funktionen, die einen Paramter von CommandParameter in XAML bekommen.
         /// </summary>
         /// <param name="execute">Funktion, die ausgeführt wird, wenn der Button gedrückt wird.</param>
         /// <param name="canExecute">Funktion, die bestimmt, ob der Button aktiv ist.</param>
-        public RelayCommand(Action<object> execute, Func<object, bool> canExecute)
+        public RelayCommand(Action<object?> execute, Func<object?, bool> canExecute)
         {
             this.execute = execute;
             this.canExecute = canExecute;
@@ -28,7 +28,7 @@ namespace ListDemo.ViewModels
         public RelayCommand(Action execute, Func<bool> canExecute) : this((param) => execute(), (param) => canExecute())
         { }
 
-        public RelayCommand(Action<object> execute) : this(execute, (param) => true)
+        public RelayCommand(Action<object?> execute) : this(execute, (param) => true)
         { }
 
         public RelayCommand(Action execute) : this((param) => execute(), (param) => true)
@@ -38,7 +38,7 @@ namespace ListDemo.ViewModels
         /// Damit die Enabled Eigenschaft automatisch aktualisiert wird, wenn CanExecute aufgerufen
         /// wird.
         /// </summary>
-        public event EventHandler CanExecuteChanged
+        public event EventHandler? CanExecuteChanged
         {
             add { CommandManager.RequerySuggested += value; }
             remove { CommandManager.RequerySuggested -= value; }
@@ -49,7 +49,7 @@ namespace ListDemo.ViewModels
         /// </summary>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        public bool CanExecute(object parameter)
+        public bool CanExecute(object? parameter)
         {
             return canExecute?.Invoke(parameter) ?? true;
         }
@@ -58,7 +58,7 @@ namespace ListDemo.ViewModels
         /// Funktion, die beim Klicken ausgeführt werden soll.
         /// </summary>
         /// <param name="parameter">Wird in XAML über CommandParameter übergeben.</param>
-        public void Execute(object parameter)
+        public void Execute(object? parameter)
         {
             execute?.Invoke(parameter);
         }

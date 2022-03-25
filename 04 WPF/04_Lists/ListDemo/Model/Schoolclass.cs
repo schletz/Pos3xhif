@@ -9,6 +9,13 @@ namespace ListDemo.Model
     /// </summary>
     public class Schoolclass
     {
+        public Schoolclass(string name, string room, Teacher kV)
+        {
+            Name = name;
+            Room = room;
+            KV = kV;
+        }
+
         /// <summary>
         /// Bezeichnung (1AHIF, ...)
         /// </summary>
@@ -21,6 +28,5 @@ namespace ListDemo.Model
         /// Klassenvorstand.
         /// </summary>
         public Teacher KV { get; set; }
-        public List<Pupil> Pupils { get; set; }
     }
 }

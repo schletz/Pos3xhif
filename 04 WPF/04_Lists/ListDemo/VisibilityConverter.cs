@@ -17,7 +17,7 @@ namespace ListDemo
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            Gender actualValue = value as Gender ?? new Gender();
+            Gender actualValue = value as Gender ?? throw new ArgumentException("Invalid gender");
             string visibleValue = parameter?.ToString() ?? "";
             return actualValue.Name == visibleValue ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         }

@@ -9,6 +9,15 @@ namespace ListDemo.Model
     /// </summary>
     public class Exam
     {
+        public Exam(string subject, DateTime date, Teacher examiner, Student student, int? grade = null)
+        {
+            Subject = subject;
+            Date = date;
+            Examiner = examiner;
+            Grade = grade;
+            Student = student;
+        }
+
         /// <summary>
         /// Gegenstand
         /// </summary>
@@ -28,6 +37,6 @@ namespace ListDemo.Model
         /// <summary>
         /// Geprüfter Schüler.
         /// </summary>
-        public Pupil Pupil { get; set; }
+        public Student Student { get; set; }
     }
 }

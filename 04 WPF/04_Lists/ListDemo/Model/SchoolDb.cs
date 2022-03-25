@@ -14,18 +14,19 @@ namespace ListDemo.Model
     /// </summary>
     public class SchoolDb
     {
-        private SchoolDb(List<Pupil> pupils, List<Schoolclass> classes, List<Teacher> teachers, List<Gender> genders)
+        private SchoolDb(List<Student> pupils, List<Schoolclass> classes, List<Teacher> teachers, List<Gender> genders, List<Exam> exams)
         {
-            Pupils = pupils ?? throw new ArgumentNullException(nameof(pupils));
-            Classes = classes ?? throw new ArgumentNullException(nameof(classes));
-            Teachers = teachers ?? throw new ArgumentNullException(nameof(teachers));
-            Genders = genders ?? throw new ArgumentNullException(nameof(genders));
+            Pupils = pupils;
+            Classes = classes;
+            Teachers = teachers;
+            Genders = genders;
+            Exams = exams;
         }
 
         /// <summary>
         /// Liste aller Schüler.
         /// </summary>
-        public List<Pupil> Pupils { get; }
+        public List<Student> Pupils { get; }
         /// <summary>
         /// Liste aller Klassen.
         /// </summary>
@@ -39,8 +40,11 @@ namespace ListDemo.Model
         /// </summary>
         public List<Gender> Genders { get; }
         /// <summary>
-        /// Verhindert eine direkte Instanzierung mit einer null Liste.
+        /// Liste aller Exams
         /// </summary>
+        public List<Exam> Exams { get; }
+
+
 
         /// <summary>
         /// Erstellt eine Datenbank mit Musterdaten und gibt sie zurück.
@@ -50,66 +54,74 @@ namespace ListDemo.Model
         {
 
             Randomizer.Seed = new Random(16030829);
-            Randomizer rnd = new Randomizer();
+            var faker = new Faker();
 
-            var genders = new List<Gender>
+            var genders = new List<Gender>(2)
             {
-                new Gender {GenderId = 1, Name = "Male"},
-                new Gender {GenderId = 2, Name = "Female"},
+                new Gender (genderId: 1, name: "Male"),
+                new Gender (genderId: 2, name: "Female")
             };
 
             // 20 Lehrer erzeugen.
             int teacherNr = 1000;
-            var teachers = new Faker<Teacher>()
-                .RuleFor(t => t.Firstname, f => f.Name.FirstName())
-                .RuleFor(t => t.Lastname, f => f.Name.LastName())
-                .RuleFor(t => t.TeacherNr, (f, t) => $"{t.Lastname.Substring(0, 3).ToUpper()}{teacherNr++}")
-                .RuleFor(t => t.Email, (f, t) => t.TeacherNr.ToLower() + "@spengergasse.at")
-                .Generate(20);
+            var teachers = new Faker<Teacher>().CustomInstantiator(f =>
+            {
+                var fistname = f.Name.FirstName();
+                var lastname = f.Name.LastName();
+                var teacherShortname = $"{lastname.Substring(0, 3).ToUpper()}{teacherNr++}";
+                return new Teacher(
+                    teacherNr: teacherShortname,
+                    firstname: f.Name.FirstName(),
+                    lastname: f.Name.LastName(),
+                    email: teacherShortname.ToLower() + "@spengergasse.at"
+                );
+            })
+            .Generate(20)
+            .ToList();
 
             // Die Klassen 1AHIF - 5AHIF erzeugen.
             var classes = Enumerable.Range(1, 5)
-                .Select(i => new Schoolclass
-                {
-                    Name = i.ToString() + "AHIF",
-                    Room = $"{rnd.String2(1, "ABC")}{rnd.String2(1, "1234")}.{rnd.String2(1, "01")}{rnd.String2(1, "123456789")}",
-                    KV = rnd.ListItem(teachers)
+                .Select(i => new Schoolclass(
+                    name: $"{i}AHIF",
+                    room: $"{faker.Random.String2(1, "ABC")}{faker.Random.String2(1, "1234")}.{faker.Random.String2(1, "01")}{faker.Random.String2(1, "123456789")}",
+                    kV: faker.Random.ListItem(teachers)
+                ))
+                .ToList();
 
-                }).ToList();
+            var subjects = new string[] { "AM", "D", "E", "POS", "DBI" };
 
             // Schüler erzeugen und in die Klasse setzen.
-            var pupils = new Faker<Pupil>()
-                .RuleFor(p => p.Gender, f => f.Random.ListItem(genders))
-                .RuleFor(p => p.Lastname, f => f.Name.LastName())
-                .RuleFor(p => p.Firstname, (f, p) => f.Name.FirstName((Bogus.DataSets.Name.Gender)(p.Gender.GenderId - 1)))
-                .RuleFor(p => p.Schoolclass, f => f.Random.ListItem(classes))
-                .RuleFor(p => p.DateOfBirth, (f, p) =>
-                      f.Date.Between(
-                          new DateTime(2006 - int.Parse(p.Schoolclass.Name.Substring(0, 1)), 9, 1),
-                          new DateTime(2007 - int.Parse(p.Schoolclass.Name.Substring(0, 1)), 9, 1)))
-                .Generate(50);
-
-            // Generator für Prüfungen erzeugen.
-            var examFaker = new Faker<Exam>()
-                .RuleFor(e => e.Subject, f => f.Random.ListItem(new string[] { "AM", "D", "E", "POS", "DBI" }))
-                .RuleFor(e => e.Date, f => f.Date.Between(new DateTime(2019, 9, 1), new DateTime(2020, 7, 1)).Date)
-                .RuleFor(e => e.Examiner, f => f.Random.ListItem(teachers))
-                .RuleFor(e => e.Grade, f => f.Random.Int(1, 5).OrNull(f, 0.2f));
-
-            // 3 - 5 Prüfungen für jeden Schüler erzeugen und die Liste der Prüfungen des Schülers
-            // setzen.
-            foreach (var p in pupils)
+            var pupils = new Faker<Student>().CustomInstantiator(f =>
             {
-                int examCount = rnd.Int(3, 5);
-                var exams = examFaker.RuleFor(e => e.Pupil, f => p).Generate(examCount);
-                p.Exams = exams;
-            }
-            // Die Liste der Schüler pro Klasse erzeugen.
-            foreach (var c in classes)
-            {
-                c.Pupils = pupils.Where(p => p.Schoolclass == c).ToList();
-            }
-            return new SchoolDb(pupils, classes, teachers, genders);
+                var gender = f.Random.ListItem(genders);
+                var schoolclass = f.Random.ListItem(classes);
+                return new Student(
+                    firstname: f.Name.FirstName((Bogus.DataSets.Name.Gender)(gender.GenderId - 1)),
+                    lastname: f.Name.LastName(),
+                    gender: gender,
+                    schoolclass: f.Random.ListItem(classes),
+                    dateOfBirth: f.Date.Between(
+                                  new DateTime(2006 - int.Parse(schoolclass.Name.Substring(0, 1)), 9, 1),
+                                  new DateTime(2007 - int.Parse(schoolclass.Name.Substring(0, 1)), 9, 1)));
+                
+            })
+            .Generate(100);
+
+
+            // Jedem Student 1-3 Exams zuweisen. Da wir eine Liste von Listen erhalten,
+            // verwenden wir SelectMany. Dies erzeugt uns eine flache Liste von Exams.
+            var exams = pupils
+                .SelectMany(p => new Faker<Exam>().CustomInstantiator(f =>
+                        new Exam(
+                            subject: f.Random.ListItem(subjects),
+                            date: f.Date.Between(new DateTime(2019, 9, 1), new DateTime(2020, 7, 1)).Date,
+                            examiner: f.Random.ListItem(teachers),
+                            student: p,
+                            grade: f.Random.Int(1, 5).OrNull(f, 0.2f))
+                    )
+                .Generate(faker.Random.Int(1, 3)))
+                .ToList();
+            return new SchoolDb(pupils, classes, teachers, genders, exams);
         }
     }
 }

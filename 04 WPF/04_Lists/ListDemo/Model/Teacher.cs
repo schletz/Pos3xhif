@@ -9,6 +9,14 @@ namespace ListDemo.Model
     /// </summary>
     public class Teacher
     {
+        public Teacher(string teacherNr, string firstname, string lastname, string email)
+        {
+            TeacherNr = teacherNr;
+            Firstname = firstname;
+            Lastname = lastname;
+            Email = email;
+        }
+
         /// <summary>
         /// Lehrer ID (z. B. ABC9999)
         /// </summary>
