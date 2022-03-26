@@ -113,7 +113,7 @@ Collections bereitstellt, können wir sie mit gewohnten Mitteln nutzen.
 > sicher, dass alle Daten im Speicher sind. Dadurch erspart man sich einige Probleme mit dem Binding
 > und eventuell geschlossenen Datenbankcontexten.
 
-### Einfügen und Editieren mit Automapper und EF Core
+### Einfügen und Editieren von Daten mit Automapper und EF Core
 
 Im letzten Beispiel haben wir Automapper kennengelernt. Da wir nicht direkt die Modelklassen
 editieren, müssen wir vor dem Einfügen in die Datenbank auf Basis der *StudentDto* Klasse zuerst
