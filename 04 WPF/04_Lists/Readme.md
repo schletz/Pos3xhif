@@ -21,7 +21,11 @@ Für die Darstellung von Listen gibt es in WPF mehrere Controls:
 Zur Demonstration werden Musterdaten generiert, die Schulklassen samt Schüler und Prüfungen
 beinhalten:
 
-![](classdiagram3.png)
+![](classdiagram.svg)
+
+<small>
+http://www.plantuml.com/plantuml/uml/fL7BJkim4DtdAqRTNdLnjr4LAcX1YAeWw0-uoRGPv4TnnWXKyU_4s76jDc93LvrpdFEOcNSiB3ib2uax1ZPWQTyoD6InPZAwQAb1G7NWJr38hMcwegYbw3guGzsWXMC1_UzVcEuRA84qmspcDBqvhAf0huN2dkhOajuNNuF61aNTdaJYkBRfALmetPBjMETo0L-9KNYf1CaHvvUwDKQ6_yUHZ1U-pyQeC-s7ToY72buvrpJJQGMJ_vE1Jxxi6jGyUAQ5_RLdl4OPpnB0F52PLmxqGZ0-xgx9SjlJVjgGmYjV9SPCDVAFByde6IikFuJwjLyoprnZOBTznPhFkWr-vR2z07iVqcYp8uHLMD5WiFtfujzbHQ94GaUlLBTEBhP3YniFej_XYZgUPRkeJb4IxOSglqfYmXYv9tSWcQWOAt8nJcBZNFLrvhs6K_8R
+</small>
 
 ## Warum DTO (data transfer object) Klassen?
 
