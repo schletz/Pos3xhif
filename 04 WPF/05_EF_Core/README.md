@@ -219,9 +219,14 @@ Tabellen.
 ![](angabe.png)
 
 1. Zeige in der Liste nicht nur den Schülernamen, sondern auch den Namen des Klassenvorstandes an.
+   Achte dabei auf notwendige *Include()* Anweisungen für EF Core.
 2. Der Button *Schüler löschen* ist noch ohne Funktion. Beim Drücken darauf soll der aktuelle Schüler
    entfernt werden. Achte darauf, dass er aus der ListBox, aus der *Pupils* Collection der Datenbank
    und der *Pupils* Collection der aktuellen Klassen entfernt wird.
+   Überlege, warum EF Core Schüler mit Prüfungen überhaupt löschen kann. Schließlich bestehen in der
+   *Exams* Tabelle Referenzen auf Schüler. Lies dafür die Seite
+   [Cascade Delete](https://docs.microsoft.com/en-us/ef/core/saving/cascade-delete)
+   auf Microsoft Docs durch.
 3. In XAML Code haben die Prüfungen noch statische Werte zur Demonstration. Gestalte die ListBox
    so, dass der Prüfungsgegenstand, das Datum der Prüfung, das Lehrerkürzel und die Note nett
    aufbereitet ausgegeben werden.
@@ -235,3 +240,6 @@ Tabellen.
    bereitgestellt wird.
 5. Beim Klicken auf Prüfung speichern soll die Prüfung zur Liste der Prüfungen des Schülers
    hinzugefügt werden. Achte auch darauf, dass sich die Liste der Prüfungen sofort aktualisiert.
+   Um die Datensicherheit zu erhöhen, lege ein *Check Constraint* in EF Core an. Dies wird
+   bei [Check constraints](https://docs.microsoft.com/en-us/ef/core/modeling/indexes?tabs=data-annotations#check-constraints)
+   auf Microsoft Docs beschrieben.
