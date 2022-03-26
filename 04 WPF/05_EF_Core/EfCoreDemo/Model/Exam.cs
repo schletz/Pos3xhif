@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace ListDemo.Model
@@ -9,10 +10,25 @@ namespace ListDemo.Model
     /// </summary>
     public class Exam
     {
-        public int ExamId { get; set; }
+        private static int lastId = 0;
+
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        protected Exam() { }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        public Exam(string subject, DateTime date, Teacher examiner, Student student, int? grade = null)
+        {
+            Id = ++lastId;
+            Subject = subject;
+            Date = date;
+            Examiner = examiner;
+            Grade = grade;
+            Student = student;
+        }
+        public int Id { get; set; }
         /// <summary>
         /// Gegenstand
         /// </summary>
+        [MaxLength(8)]
         public string Subject { get; set; }
         /// <summary>
         /// Datum der Prüfung
@@ -29,6 +45,6 @@ namespace ListDemo.Model
         /// <summary>
         /// Geprüfter Schüler.
         /// </summary>
-        public Pupil Pupil { get; set; }
+        public Student Student { get; set; }
     }
 }

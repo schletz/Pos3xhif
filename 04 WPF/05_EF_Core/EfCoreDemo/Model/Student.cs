@@ -1,37 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ListDemo.Model
 {
     /// <summary>
-    /// Entity Klasse für einen Lehrer.
+    /// Entity Klasse für Schüler.
     /// </summary>
-    public class Teacher
+    public class Student
     {
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        protected Teacher() { }
+        protected Student() { }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public Teacher(string teacherNr, string firstname, string lastname, string email)
+        public Student(string firstname, string lastname, Gender gender, Schoolclass schoolclass, DateTime? dateOfBirth = null)
         {
-            TeacherNr = teacherNr;
             Firstname = firstname;
             Lastname = lastname;
-            Email = email;
+            DateOfBirth = dateOfBirth;
+            Gender = gender;
+            Schoolclass = schoolclass;
         }
 
-        /// <summary>
-        /// Lehrer ID (z. B. ABC9999)
-        /// </summary>
-        [Key]
-        [MaxLength(8)]
-        public string TeacherNr { get; set; }
+        public int Id { get; set; }
         [MaxLength(255)]
         public string Firstname { get; set; }
         [MaxLength(255)]
         public string Lastname { get; set; }
-        [MaxLength(255)]
-        public string Email { get; set; }
+        public DateTime? DateOfBirth { get; set; }
+        public Gender Gender { get; set; }
+        public Schoolclass Schoolclass { get; set; }
     }
 }

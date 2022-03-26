@@ -101,12 +101,12 @@ namespace ListDemo.ViewModels
             NewPupilCommand = new RelayCommand(
                 () =>
                 {
-                    // Wir weisen den neuen Schüler gleich die gewählte Klasse zu.
+                    // Wir weisen dem neuen Schüler gleich die gewählte Klasse zu.
                     CurrentStudent = new StudentDto()
                     {
                         Schoolclass = _currentClass
                     };
-                }, () => CurrentStudent is not null);
+                });
             SavePupilCommand = new RelayCommand(
                 () =>
                 {

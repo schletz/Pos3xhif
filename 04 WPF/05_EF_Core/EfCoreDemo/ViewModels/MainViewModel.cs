@@ -8,7 +8,10 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using ListDemo.Model;
 using ListDemo.Extensions;
+using ListDemo.Dto;
 using System.Windows;
+using Microsoft.EntityFrameworkCore;
+using AutoMapper.QueryableExtensions;
 
 namespace ListDemo.ViewModels
 {
@@ -24,23 +27,26 @@ namespace ListDemo.ViewModels
         /// <summary>
         /// Wird aufgerufen, wenn das Binding aktualisiert werden soll. Das muss beim Schreiben
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         /// <summary>
         /// Binding Property für alle Felder, die Daten der aktuellen Person ausgeben. Wichtig ist
         /// das Aufrufen von PropertyChanged im setter, da sonst die Bindings nicht aktualisiert
         /// werden!
         /// </summary>
 
-        public List<Schoolclass> Classes => _db.Classes.OrderBy(c => c.ClassNr).ToList();
-        public List<Gender> Genders => _db.Genders.OrderBy(g => g.Name).ToList();
+        public ICommand NewPupilCommand { get; }
+        public ICommand SavePupilCommand { get; }
+
+        public List<Schoolclass> Classes => _db.Classes.ToList();
+        public List<Gender> Genders => _db.Genders.ToList();
         /// <summary>
         /// Binding für die Listview. Ist eine ObservableCollection, damit die Liste automatisch
         /// beim Hinzufügen oder Löschen aktualisiert wird.
         /// </summary>
-        public ObservableCollection<Pupil> Pupils { get; } = new ObservableCollection<Pupil>();
+        public ObservableCollection<StudentDto> Pupils { get; } = new ObservableCollection<StudentDto>();
 
-        private Schoolclass _currentClass;
-        public Schoolclass CurrentClass
+        private Schoolclass? _currentClass;
+        public Schoolclass? CurrentClass
         {
             get => _currentClass;
             set
@@ -49,31 +55,34 @@ namespace ListDemo.ViewModels
                 // Entfernt alle alten Einträge aus der Pupils Collection und fügt die Schüler
                 // der gewählten Klasse hinzu. Achtung: Pupils ist eine ObservableCollection, damit
                 // die Anzeige aktualisiert wird darf sie nicht einfach neu gesetzt werden.
-                Pupils.ReplaceAll(_currentClass?.Pupils);
+                if (_currentClass is null)
+                {
+                    Pupils.Clear();
+                    return;
+                }
+                ReadStudents();
             }
         }
-
 
         /// <summary>
         /// Aktuell angezeigte Person. Ist das Bindingfeld für die View.
         /// </summary>
-        private Pupil _currentPupil;
-        public Pupil CurrentPupil
+        private StudentDto? _currentStudent;
+        public StudentDto? CurrentStudent
         {
-            get => _currentPupil;
+            get => _currentStudent;
             set
             {
                 // Nur die Bindings aktualisieren, wenn sich etwas ändert.
-                if (value != _currentPupil)
+                if (value != _currentStudent)
                 {
-                    _currentPupil = value;
+                    _currentStudent = value;
                     // Achtung: PropertyChanged ist am Anfang NULL. Bei Initialisierungen im Konstruktor
                     // würde sonst eine Exception beim einfachen Aufruf geworfen.
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentPupil)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentStudent)));
                 }
             }
         }
-
         /// <summary>
         /// Konstruktor mit Initialisierungen.
         /// Initialisiert die Command Properties für die Buttons. Hier kann die Action, die durchgeführt
@@ -86,87 +95,70 @@ namespace ListDemo.ViewModels
         /// </summary>
         public MainViewModel()
         {
-            Pupils.AddRange(_db.Pupils);
             NewPupilCommand = new RelayCommand(
                 () =>
                 {
-                    CurrentPupil = new Pupil
+                    // Wir weisen den neuen Schüler gleich die gewählte Klasse zu.
+                    CurrentStudent = new StudentDto()
                     {
-                        Schoolclass = CurrentClass
+                        Schoolclass = _currentClass
                     };
                 });
-
             SavePupilCommand = new RelayCommand(
                 () =>
                 {
-                    using (var transaction = _db.Database.BeginTransaction())
+                    if (CurrentStudent is null) { return; }
+                    try
                     {
-                        try
+                        // Gibt es den Schüler schon?
+                        var studentDb = _db.Pupils.FirstOrDefault(p => p.Id == CurrentStudent.Id);
+                        // Wenn nein, machen wir ein INSERT.
+                        if (studentDb is null)
                         {
-                            // Wurde ein neuer Schüler angelegt, der daher nicht getrackt ist?
-                            // Dann setzen wir den State auf Added, da wir ihn hinzufügen wollen.
-                            if (_db.Entry(CurrentPupil).State == Microsoft.EntityFrameworkCore.EntityState.Detached)
-                            {
-                                _db.Entry(CurrentPupil).State = Microsoft.EntityFrameworkCore.EntityState.Added;
-                            }
-
-                            // Hat der Schüler den State Added? Dann speichern wir ihn und fügen ihn
-                            // zur ObservableCollection hinzu. Dies ist vom oberen Code getrennt, da
-                            // beim Erfassen auch eine Exception auftreten kann. Dann soll der Schüler
-                            // nach der Korrektur der Daten trotzdem gespeichert werden.
-                            if (_db.Entry(CurrentPupil).State == Microsoft.EntityFrameworkCore.EntityState.Added)
-                            {
-                                _db.SaveChanges();
-                                Pupils.Add(CurrentPupil);
-                            }
-
-                            // Wird der Schüler getrackt, dann speichern wir nur den Datensatz
-                            // (also ein UPDATE)
-                            else if(_db.Entry(CurrentPupil).State == Microsoft.EntityFrameworkCore.EntityState.Modified)
-                            {
-                                _db.SaveChanges();
-                            }
-                            transaction.Commit();
+                            var student = App.Mapper.Map<Student>(CurrentStudent);
+                            _db.Pupils.Add(student);
                         }
-                        catch (Exception e)
+                        // Ansonsten ein UPDATE
+                        else
                         {
-                            transaction.Rollback();
-                            _db.Entry(CurrentPupil).Reload();
-                            MessageBox.Show("Der Schüler konnte nicht gespeichert werden." + e?.InnerException, "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                            // Automapper kann eine existierende Instanz (studentDb) ergänzen.
+                            App.Mapper.Map(CurrentStudent, studentDb);
                         }
+                        _db.SaveChanges();
+                        ReadStudents();
+                        // Die Felder für die Schülerbearbeitung werden wieder geleert.
+                        CurrentStudent = null;
                     }
-                },
-                () => CurrentPupil != null);
-
-            DeletePupilCommand = new RelayCommand(
-                () =>
-                {
-                    using (var transaction = _db.Database.BeginTransaction())
+                    catch (ApplicationException e)
                     {
-                        try
-                        {
-                            _db.Pupils.Remove(CurrentPupil);
-                            // TODO: Was passiert, wenn der Schüler Semesterprüfungen hat?
-                            _db.SaveChanges();
-                            Pupils.Remove(CurrentPupil);
-                            transaction.Commit();
-                        }
-                        catch (Exception e)
-                        {
-                            // Da wir den Schüler schon aus unserer lokalen Collection gelöscht haben,
-                            // müssen wir ihn wieder herstellen. Sonst wird beim nächsten SaveChanges()
-                            // die Löschoperation nochmals versucht.
-                            transaction.Rollback();
-                            _db.Entry(CurrentPupil).Reload();
-                            MessageBox.Show("Der Schüler konnte nicht gelöscht werden." + e?.InnerException, "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
-                        }
+                        MessageBox.Show(e.Message, "Fehler", MessageBoxButton.OK, MessageBoxImage.Error); return;
                     }
-                },
-                () => CurrentPupil != null);
+                    catch (DbUpdateException e)
+                    {
+                        MessageBox.Show(e.Message, "Fehler", MessageBoxButton.OK, MessageBoxImage.Error); return;
+                    }
+                }, () => CurrentStudent is not null);
         }
-        public ICommand NewPupilCommand { get; }
-        public ICommand SavePupilCommand { get; }
-        public ICommand DeletePupilCommand { get; }
+
+        /// <summary>
+        /// Liest alle Schüler einer Klasse in die ObservableCollection
+        /// </summary>
+        private void ReadStudents()
+        {
+            if (CurrentClass is null)
+            {
+                Pupils.Clear();
+                return;
+            }
+            // Wir lesen alle Students der Klasse (der Name ist der PK) und sortieren nach dem Namen.
+            var students = _db.Pupils
+                .Include(p => p.Gender)
+                .Where(p => p.Schoolclass.Name == CurrentClass.Name)
+                .OrderBy(p => p.Lastname).ThenBy(p => p.Firstname);
+            // Wir verwenden Automapper (Konfiguration in App.xaml.cs), um aus der Liste der Students
+            // eine Liste von StudentDTO Klassen zu erstellen.
+            Pupils.ReplaceAll(students.ProjectTo<StudentDto>(App.Mapper.ConfigurationProvider));
+        }
     }
 }
 

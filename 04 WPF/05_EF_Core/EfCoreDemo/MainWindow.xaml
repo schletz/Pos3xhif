@@ -16,7 +16,7 @@ XAML CODE FÜR DIE LIST DEMO
         xmlns:vm="clr-namespace:ListDemo.ViewModels"
         x:Name="MainWindowPage"
         mc:Ignorable="d"
-        Title="Personenverwaltung mit Viewmodel" Height="600" Width="600"
+        Title="Personenverwaltung mit Viewmodel" Height="600" Width="700"
         Icon="Icons\person.png">
     <!-- Instanziert das ViewModel und legt den DataContext fest. Bindings ohne ElementName greifen
          daher auf das MainViewModel zu. -->
@@ -37,12 +37,12 @@ XAML CODE FÜR DIE LIST DEMO
             -->
             <ComboBox x:Name="Classlist" SelectedIndex="0" DockPanel.Dock="Top"
                       SelectedValue="{Binding CurrentClass}" ItemsSource="{Binding Classes}"
-                      DisplayMemberPath="ClassNr"/>
+                      DisplayMemberPath="Name"/>
             <!-- Eine ListBox kann eine Liste von Elementen anzeigen. ItemSource verweist auf eine Liste
                  der Schüler der ausgewählten Klasse im ViewModel. In SelectedItem wird der aktuell
                  ausgewählte Schüler zurückgeschrieben.
             -->
-            <ListBox MinWidth="140" ItemsSource="{Binding Pupils}" SelectedValue="{Binding CurrentPupil}">
+            <ListBox MinWidth="140" ItemsSource="{Binding Pupils}" SelectedValue="{Binding CurrentStudent}">
                 <!-- Da Person ein komplexer Typ ist, wird ohne ein DataTemplate nur die ToString() Repräsentation
                      angezeigt. Damit wir die einzelnen Properties von Person anzeigen können, wird hier die
                      Darstellung einer Zelle gestaltet. -->
@@ -83,12 +83,12 @@ XAML CODE FÜR DIE LIST DEMO
                 <!-- Zeile mit Vorname. -->
                 <Label Content="Vorname:" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center"/>
                 <TextBox Margin="0 0 0 0" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center"
-                     Text="{Binding CurrentPupil.Firstname}" />
+                     Text="{Binding CurrentStudent.Firstname}" />
 
                 <!-- 2. Zeile mit Nachname. -->
                 <Label Content="Nachname:" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center"/>
                 <TextBox Margin="0 5 0 5" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center"
-                     Text="{Binding CurrentPupil.Lastname}" />
+                     Text="{Binding CurrentStudent.Lastname}" />
 
                 <!-- 3. Zeile mit Geschlecht -->
                 <Label Content="Geschlecht:" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center"/>
@@ -99,17 +99,17 @@ XAML CODE FÜR DIE LIST DEMO
                      in der Liste angezeigt wird. Bei SelectedValue wird jedoch das ganze Gender
                      Objekt geschrieben. -->
                 <ComboBox Margin="0 5 0 5" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center"
-                     ItemsSource="{Binding Genders}" SelectedValue="{Binding CurrentPupil.Gender}" DisplayMemberPath="Name" />
+                     ItemsSource="{Binding Genders}" SelectedValue="{Binding CurrentStudent.Gender}" DisplayMemberPath="Name" />
 
                 <!-- 4. Zeile mit Geburtsdatum.  -->
                 <Label Content="Geburtsdatum:" Grid.Column="0" Grid.Row="3" VerticalAlignment="Center"/>
                 <TextBox Margin="0 5 0 5" Grid.Column="1" Grid.Row="3" VerticalAlignment="Center"
-                     Text="{Binding CurrentPupil.DateOfBirth}" />
+                     Text="{Binding CurrentStudent.DateOfBirth}" />
 
                 <!-- 5. Zeile mit den Buttons. -->
                 <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="4">
                     <Button  Margin="0 0 30 0" Content="Neuer Schüler" Command="{Binding NewPupilCommand}"/>
-                    <Button  Margin="0 0 30 0" Content="Schüler speichern" Command="{Binding SavePupilCommand}"/>
+                    <Button  Margin="0 0 30 0" Content="Änderung speichern" Command="{Binding SavePupilCommand}"/>
                     <Button Content="Schüler löschen" Command="{Binding DeletePupilCommand}"/>
                 </StackPanel>
             </Grid>
