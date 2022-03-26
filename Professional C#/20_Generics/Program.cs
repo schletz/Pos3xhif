@@ -1,24 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 // https://blogs.msdn.microsoft.com/joelpob/2004/11/17/clr-generics-and-code-sharing/
 // https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/generics/differences-between-cpp-templates-and-csharp-generics
 
-namespace _09_Generics
+namespace GenericsDemo
 {
-    class Pupil
+    record Pupil(int Id, string Firstname, string Lastname)
     {
-        public int Id { get; set; }
-        public string Firstname { get; set; }
-        public string Lastname { get; set; }
         public override string ToString() => $"{Id}: {Firstname} {Lastname}";
     }
 
+    /// <summary>
+    /// Nicht generische History. So wird es heute nicht mehr gemacht,
+    /// da der Wert als object gespeichert wird.
+    /// </summary>
     class History
     {
-        private object _value;
-        public object OldValue { get; private set; }
-        public object Value
+        private object? _value;
+        public object? OldValue { get; private set; }
+        public object? Value
         {
             get => _value;
             set
@@ -34,11 +36,14 @@ namespace _09_Generics
         }
     }
 
+    /// <summary>
+    /// Generische History Klasse
+    /// </summary>
     class History<T>
     {
-        private T _value;
-        public T OldValue { get; private set; }
-        public T Value
+        private T? _value;
+        public T? OldValue { get; private set; }
+        public T? Value
         {
             get => _value;
             set
@@ -57,13 +62,13 @@ namespace _09_Generics
     class Cached<T>
     {
         // Der aktuelle Stand (der "Cache")
-        private T _value;
+        private T? _value;
         // Eine Function, die das Objekt liefert. Kann z. B. ein Webrequest sein, der die Collection
         // liefert.
         private readonly Func<T> _objectBuilder;
         // Wann wurde das Objekt zum letzten Mal geladen?
         private DateTime _generated = DateTime.MinValue;
-        public T Value
+        public T? Value
         {
             get
             {
@@ -87,7 +92,7 @@ namespace _09_Generics
     }
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             History objectHistory = new History();
             objectHistory.Value = "Erster!";
@@ -107,22 +112,16 @@ namespace _09_Generics
             Console.WriteLine(Min<int>(3, 4));
             Console.WriteLine(Min<DateTime>(new DateTime(2000, 1, 1), new DateTime(2001, 1, 1)));
 
+            var rnd = new Random(1223);
+            Cached<Pupil> pupilCache = new Cached<Pupil>(TimeSpan.FromSeconds(2), () => new Pupil(rnd.Next(), "Firstname", "Lastname"));
 
-            Cached<Pupil> myPupil = new Cached<Pupil>(TimeSpan.FromSeconds(2), () => new Pupil());
-            Pupil p;
+            Console.WriteLine($"Lese Pupil Objekt: {pupilCache.Value}");
+            Console.WriteLine($"Lese ein weiteres Mal das Pupil Objekt: {pupilCache.Value}");
+            await Task.Delay(3000);
+            Console.WriteLine($"Lese ein weiteres Mal das Pupil Objekt: {pupilCache.Value}");
 
-            Console.WriteLine("Lese Pupil Objekt:");
-            p = myPupil.Value;               // Ausgabe: Generiere neues Objekt. 
-            Console.WriteLine("Lese ein weiteres Mal das Pupil Objekt:");
-            p = myPupil.Value;               // Keine Ausgabe, da im Cache
-            System.Threading.Thread.Sleep(3000);
-            Console.WriteLine("Lese ein weiteres Mal das Pupil Objekt:");
-            p = myPupil.Value;               // Ausgabe: Generiere neues Objekt. 
-
-            Console.WriteLine(stringHistory.GetType());  // _09_Generics.History`1[System.String]
-            Console.WriteLine(intHistory.GetType());     // _09_Generics.History`1[System.Int32]
-
-
+            Console.WriteLine(stringHistory.GetType());  // GenericsDemo.History`1[System.String]
+            Console.WriteLine(intHistory.GetType());     // GenericsDemo.History`1[System.Int32]
         }
 
         static T Min<T>(T val1, T val2) where T : IComparable
