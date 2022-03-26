@@ -240,6 +240,7 @@ Tabellen.
    bereitgestellt wird.
 5. Beim Klicken auf Prüfung speichern soll die Prüfung zur Liste der Prüfungen des Schülers
    hinzugefügt werden. Achte auch darauf, dass sich die Liste der Prüfungen sofort aktualisiert.
-   Um die Datensicherheit zu erhöhen, lege ein *Check Constraint* in EF Core an. Dies wird
+   Um die Datensicherheit zu erhöhen, lege ein *Check Constraint* in EF Core an. Es soll
+   sicherstellen, dass die Note (*Grade*) NULL ist oder einen Wert von 1-5 hat. Dies wird
    bei [Check constraints](https://docs.microsoft.com/en-us/ef/core/modeling/indexes?tabs=data-annotations#check-constraints)
    auf Microsoft Docs beschrieben.
