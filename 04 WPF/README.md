@@ -1,4 +1,4 @@
-# WPF unter .NET Core 3
+# WPF unter .NET 6
 
 ![](wpf_net_core.png)
 
@@ -18,7 +18,7 @@ geachtet werden, dass eine .NET Core WPF Anwendung erzeugt wird. Der weitere Cod
 1:1 übernommen werden, in den Toturials werden sehr selten .NET Framework spezifische Funktionen
 verwendet.
 
-Alle Beispiele in diesem Repository basieren auf .NET Core 3.1.
+Alle Beispiele in diesem Repository basieren auf .NET 6.
 
 ## Erstellen einer neuen WPF Anwendung für .NET Core
 
