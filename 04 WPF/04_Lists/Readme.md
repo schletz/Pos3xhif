@@ -36,9 +36,7 @@ public class Student
         Id = ++lastId;
         Firstname = firstname;
         Lastname = lastname;
-        DateOfBirth = dateOfBirth;
-        Gender = gender;
-        Schoolclass = schoolclass;
+        // ...
     }
 
     public int Id { get; set; }
@@ -71,6 +69,11 @@ Dies ist eine sogenannte POCO (plain old clr object) Klasse. Alle Felder sind *n
 das bedeutet wir können mit *new StudentDto()* einen leeren Student für das Binding
 erstellen.
 
+> *Hinweis:* Gerade in der Webentwicklung sind DTO Klassen sehr wichtig. Sie dienen dazu,
+> Formulardaten über einen POST Request zu serialisieren. Dafür wird nie das Model selbst
+> verwendet, damit Felder, die nicht gesetzt werden dürfen (z. B. interne Rollen, ...) auch
+> nie vom User überschrieben werden können.
+
 ### Mappings
 
 Da wir die DTO Klasse für die Anzeige der Schüler verwenden, müssen wir zuerst aus einer
@@ -80,8 +83,8 @@ erfolgen, indem wir folgenden Code schreiben:
 ```c#
 new StudentDto() 
 {
-    Firstname = student.Firstname;
-    Lastname = student.Lastname;
+    Firstname = student.Firstname,
+    Lastname = student.Lastname,
     // ...
 }
 ```
@@ -105,7 +108,7 @@ Nun erstellen wir eine Klasse *DtoMappingProfile* im Ordner *Dto*. Diese Klasse 
 sich von der Klasse *Profile* (im Automapper Paket enthalten) ableiten.
 
 ```c#
-internal class DtoMappingProfile : Profile
+class DtoMappingProfile : Profile
 {
     public DtoMappingProfile()
     {
@@ -114,7 +117,7 @@ internal class DtoMappingProfile : Profile
             .BeforeMap((src, dst) =>
             {
                 if (string.IsNullOrEmpty(src.Firstname)) { throw new ApplicationException("Invalid firstname."); }
-                if (string.IsNullOrEmpty(src.Lastname)) { throw new ApplicationException("Invalid larstname."); }
+                if (string.IsNullOrEmpty(src.Lastname)) { throw new ApplicationException("Invalid lastname."); }
                 if (src.Gender is null) { throw new ApplicationException("Invalid gender."); }
                 if (src.Schoolclass is null) { throw new ApplicationException("Invalid schoolclass."); }
             });
@@ -188,7 +191,7 @@ der beim Starten der Applikation gesetzt wird.
 ### Binding mit *ItemsSource* und *SelectedValue*
 
 Die Combobox bezieht ihre Werte über die Eigenschaft *ItemsSource*. Sie verweist auf eine Liste im
-ViewModel. Dort muss diese Liste als public Property vom Typ *IEnumerable&lt;T&gt;* (oder ein
+ViewModel. Dort muss diese Liste als public Property vom Typ *IEnumerable\<T\>* (oder ein
 abgeleiteter Typ wie *ICollection* oder *List*) definiert sein. Da meist komplexe Datentypen
 verwendet werden
 (Entityklassen wie *Pupil*, *Taecher*, ...) muss mit der Eigenschaft *DisplayMemberPath* festgelegt
@@ -214,7 +217,11 @@ so definiert:
           DisplayMemberPath="Name"/>
 ```
 
-In [MainViewModel](ListDemo/ViewModels/MainViewModel.cs) wird das Property Classes vom Typ
+Da *Schoolclass* ein komplexer Typ ist, bestimmen wir mit dem Attribut *DisplayMemberPath* welches
+Property zur Anzeige verwendet wird. Sonst würde die *ToString()* Methode verwendet werden,
+die einfach den Typnamen anzeigt.
+
+In [MainViewModel](ListDemo/ViewModels/MainViewModel.cs) wird das Property *Classes* vom Typ
 `List<Schoolclass>` definiert. Das Property *CurrentClass* hat dementsprechend den Typ *Schoolclass*,
 damit es das gewählte Listenelement aufnehmen kann. Der setter regelt dann die Aktualisierung der
 angezeigten Schüler.
@@ -257,7 +264,7 @@ und *SelectedValue*. Ihre Bedeutung ist wie bei der ComboBox.
 ### Definition in XAML mit Data Templates
 
 Eine Liste wird in der Regel für die Anzeige von Collections komplexer Typen (Entities) verwendet.
-Da die Liste selbst nicht weiß, wie sie z. B. die Klasse *Pupil* darstellen soll, wird ohne unser
+Da die Liste selbst nicht weiß, wie sie z. B. die Klasse *Student* darstellen soll, wird ohne unser
 Zutun die *ToString()* Methode aufgerufen. Die liefert allerdings nur den Typnamen, was wenig sinnvoll
 ist.
 
@@ -285,7 +292,7 @@ Beachte, dass innerhalb des Data Templates direkt auf die Properties von *Pupil*
 kann. Es wirkt quasi wie eine *foreach* Schleife, die durch die einzelnen Elemente iteriert und das
 aktuelle Element in einer Variablen bereitstellt.
 
-**Zusatzinfo: Buttons in Listen**
+#### Zusatzinfo: Buttons in Listen
 
 Soll ein Button in eine Liste eingebaut werden, der ein Command des ViewModels aufruft,
 muss zuerst dem Window mit *x:Name* ein Name gegeben werden (z. B. *MainWindowPage*). Dann kann im Data
