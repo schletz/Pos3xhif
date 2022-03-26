@@ -1,6 +1,6 @@
 # Datenbankzugriff mit EF Core
 
-> **Hinweis:** Die Inhalte aus dem Kapitel [EF Core](../../03%20EF%20Core/) sind für das
+> **Hinweis:** Die Inhalte aus dem Kapitel [EF Core](../../03%20EF%20Core) sind für das
 > Verständnis nötig.
 
 ## Installation der NuGet Pakete
@@ -35,18 +35,20 @@ Zuerst erstellen wir eine neue Datei mit dem Namen *app.config*. Es ist eine XML
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
 	<connectionStrings>
-		<add name="ExamDatabase"
-			 connectionString="Data Source=Exams.db" />
+		<add name="ExamDatabase" connectionString="Data Source=Exams.db" />
 	</connectionStrings>
 </configuration>
 ```
 
 ### Anpassen der Klasse SchulDb
 
-Unsere Klasse *SchoolDb* wird jetzt von DbContext abgeleitet und registriert die nötigen
+Unsere Klasse *SchoolDb* wird jetzt von *DbContext* abgeleitet und registriert die nötigen
 Tabellen. Die Methode *OnConfiguring()* holt sich über den Configuration Manager den Connection
 String aus der Datei *app.config*. Die Methode *OnConfiguring()* wird zur Konfiguration verwendet,
 da wir die Optionen nicht im Konstruktor übergeben.
+
+Unsere Modelklassen wurden mit Annotations und Konstruktoren versehen, damit EF Core daraus eine
+Datenbank erzeugen kann. Die Details werden im Kapitel [EFCore](../../03%20EF%20Core) erklärt.
 
 ```c#
 public class SchoolDb : DbContext
@@ -91,7 +93,7 @@ public partial class App : Application
 
 ### Zugriff auf die Datenbank mit dem ViewModel
 
-In [MainViewModel](EfCoreDemo/ViewModels/MainViewModel.cs) wird eine private variable definiert,
+In [MainViewModel](EfCoreDemo/ViewModels/MainViewModel.cs) wird eine private Variable definiert,
 die die Instanz des Datenbankkontextes speichert:
 
 ```c#
@@ -200,9 +202,10 @@ im aktuellen Kapitel, die schon eine SQLite Datenbank samt Musterdaten erzeugt.
 Starte zuerst das Musterprogamm und analysiere es mit dem Debugger. Arbeite dabei auch mit
 falschen Eingaben (z. B. Schüler wird erzeugt, danach wird gleich auf Speichern geklickt).
 
-Betrachte außerdem die erzeugte SQLite Datenbank mit DBeaver oder einem anderen SQL Editor.
-Die Datenbank liegt im Ausgabeverzeichnis des Programmes (*bin/Debug/net6.0-windows/Exams.db*).
-Betrachte durch *SELECT* Anweisungen den Inhalt der Tabellen.
+Betrachte außerdem die erzeugte SQLite Datenbank mit [DBeaver](https://dbeaver.io/) oder einem 
+anderen SQL Editor. Die Datenbank liegt im Ausgabeverzeichnis des Programmes
+(*bin/Debug/net6.0-windows/Exams.db*). Betrachte durch *SELECT* Anweisungen den Inhalt der 
+Tabellen.
 
 ### Das Programm erweitern
 
