@@ -95,7 +95,7 @@ namespace AwaitAsyncDemo
             return Task.Run(() =>
             {
                 Console.WriteLine($"        Starte HeavyWork Thread in Thread ID {Thread.CurrentThread.ManagedThreadId}");
-                RNGCryptoServiceProvider rnd = new RNGCryptoServiceProvider();
+                var rnd = RandomNumberGenerator.Create();
                 byte[] values = new byte[1];
                 double result = 0;
 

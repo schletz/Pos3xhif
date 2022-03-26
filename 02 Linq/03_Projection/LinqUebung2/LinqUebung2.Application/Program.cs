@@ -108,25 +108,25 @@ namespace LinqUebung2.Application
             
             // 1. Drucke eine Liste aller Fächer. Hinweis: Verwende Distinct, um doppelte Einträge
             //    zu entfernen. Speichere das Ergebnis in IEnumerable<string>.
-            object result1 = null;
+            object result1 = null!;
             Console.WriteLine("Die Prüfungsfächer sind " + string.Join(",", result1));
 
             // 2. Ermittle die schlechteste Prüfungsnote in E. Dabei verwende allerdings die Max
             //    Funktion ohne Parameter, indem vorher eine Liste von int Werten erzeugt wird.
-            object result2 = null;
+            object result2 = null!;
             Console.WriteLine($"Die schlechteste E Note ist {result2}");
 
             // 3. Liefere eine Liste mit Klasse, Name, Vorname und der Anzahl der Prüfungen
             //    (soll Anzahl heißen) der 3CHIF. Sortiere die Liste nach Klasse und Name.
             //    Hinweis: Verwende OrderBy und dann ThenBy.
-            object result3 = null;
+            object result3 = null!;
             Console.WriteLine("Beispiel 3");
             result3.ToList().ForEach(s => { Console.WriteLine($"   {s.Schoolclass}: {s.Lastname} {s.Firstname} hat {s.ExamsCount} Prüfungen."); });
 
             // 4. Liefere eine Liste der Schüler (Klasse, Name, Vorname) der 3BHIF mit ihren Prüfungsfächern.
             //    Die Fächer sollen als Stringliste (IEnumerable<string> ohne doppelte Einträge
             //    in das Property Subjects gespeichert werden.
-            object result4 = null;
+            object result4 = null!;
             Console.WriteLine("Beispiel 4");
             result4.ToList().ForEach(s => { Console.WriteLine($"   {s.Schoolclass}: {s.Lastname} {s.Firstname} hat {string.Join(",", s.Subjects)}"); });
 
@@ -135,7 +135,7 @@ namespace LinqUebung2.Application
             //    ein neues Objekt mit Datum und Fach aller negativen Prüfungen (Note = 5)
             //    erzeugt werden. Es sind natürlich 2 new Anweisungen nötig.
             //    Außerdem sollen nur Schüler der 3AHIF berücksichtigt werden.
-            object result5 = null;
+            object result5 = null!;
             Console.WriteLine("Beispiel 5");
             foreach (var student in result5)
             {
@@ -153,7 +153,7 @@ namespace LinqUebung2.Application
             //    BesteNote und SchlechtesteNote werden wieder von allen Prüfungen mit entsprechdem
             //    Where Filter berechnet.
             //    Später werden wir dieses Problem mit Group by lösen.
-            object result6 = null;
+            object result6 = null!;
             Console.WriteLine("Beispiel 6");
             result6.ToList().ForEach(e => { Console.WriteLine($"   {e.Examinator} gibt Noten von {e.BestGrade} bis {e.WorstGrade}"); });
             
