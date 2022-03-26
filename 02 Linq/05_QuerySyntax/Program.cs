@@ -11,7 +11,7 @@ namespace QuerySyntax
     {
         static void Main(string[] args)
         {
-            TestsData data = TestsData.FromFile("../db/tests.json");
+            TestsData data = TestsData.FromFile("db/tests.json");
 
             // *************************************************************************************
             // DEMO 1: Zeige alle Schüler der 3BHIF

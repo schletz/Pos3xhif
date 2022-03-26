@@ -16,7 +16,7 @@ namespace Grouping
     {
         static void Main(string[] args)
         {
-            TestsData data = TestsData.FromFile("../db/tests.json");
+            TestsData data = TestsData.FromFile("db/tests.json");
 
             // *************************************************************************************
             // Schreibe in den nachfolgenden Übungen statt der Zeile

@@ -10,9 +10,6 @@ namespace Grouping.Model
     [JsonObject(MemberSerialization.OptIn)]
     public partial class TestsContext : DbContext
     {
-        public static readonly ILoggerFactory MyLoggerFactory
-        = LoggerFactory.Create(builder => { builder.AddConsole(); });
-
         public TestsContext()
         {
         }
@@ -38,8 +35,8 @@ namespace Grouping.Model
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseLoggerFactory(MyLoggerFactory);
-                optionsBuilder.UseSqlite("DataSource=../db/Tests.db");
+                optionsBuilder.LogTo(Console.WriteLine);
+                optionsBuilder.UseSqlite("DataSource=db/Tests.db");
             }
         }
 
@@ -50,16 +47,16 @@ namespace Grouping.Model
                 entity.HasKey(e => e.L_ID);
 
                 entity.HasIndex(e => e.L_Class)
-                    .HasName("SchoolclassLesson");
+                    .HasDatabaseName("SchoolclassLesson");
 
                 entity.HasIndex(e => e.L_Hour)
-                    .HasName("PeriodLesson");
+                    .HasDatabaseName("PeriodLesson");
 
                 entity.HasIndex(e => e.L_Teacher)
-                    .HasName("TeacherLesson");
+                    .HasDatabaseName("TeacherLesson");
 
                 entity.HasIndex(e => e.L_Untis_ID)
-                    .HasName("idx_L_Untis_ID");
+                    .HasDatabaseName("idx_L_Untis_ID");
 
                 entity.Property(e => e.L_ID).ValueGeneratedOnAdd();
 
@@ -114,11 +111,11 @@ namespace Grouping.Model
                 entity.HasKey(e => e.P_ID);
 
                 entity.HasIndex(e => e.P_Account)
-                    .HasName("idx_P_Account")
+                    .HasDatabaseName("idx_P_Account")
                     .IsUnique();
 
                 entity.HasIndex(e => e.P_Class)
-                    .HasName("SchoolclassPupil");
+                    .HasDatabaseName("SchoolclassPupil");
 
                 entity.Property(e => e.P_ID).ValueGeneratedOnAdd();
 
@@ -149,7 +146,7 @@ namespace Grouping.Model
                 entity.HasKey(e => e.C_ID);
 
                 entity.HasIndex(e => e.C_ClassTeacher)
-                    .HasName("TeacherSchoolclass");
+                    .HasDatabaseName("TeacherSchoolclass");
 
                 entity.Property(e => e.C_ID).HasColumnType("VARCHAR(8)");
 
@@ -169,7 +166,7 @@ namespace Grouping.Model
                 entity.HasKey(e => e.T_ID);
 
                 entity.HasIndex(e => e.T_Account)
-                    .HasName("idx_T_Account")
+                    .HasDatabaseName("idx_T_Account")
                     .IsUnique();
 
                 entity.Property(e => e.T_ID).HasColumnType("VARCHAR(8)");
@@ -194,13 +191,13 @@ namespace Grouping.Model
                 entity.HasKey(e => e.TE_ID);
 
                 entity.HasIndex(e => e.TE_Class)
-                    .HasName("SchoolclassTest");
+                    .HasDatabaseName("SchoolclassTest");
 
                 entity.HasIndex(e => e.TE_Lesson)
-                    .HasName("PeriodTest");
+                    .HasDatabaseName("PeriodTest");
 
                 entity.HasIndex(e => e.TE_Teacher)
-                    .HasName("TeacherTest");
+                    .HasDatabaseName("TeacherTest");
 
                 entity.Property(e => e.TE_ID).ValueGeneratedOnAdd();
 
