@@ -40,13 +40,13 @@
   -  [Await und async](05%20TPL/02%20AwaitAsyncDemo/Readme.md)
   -  [IO und TPL: der file writer](05%20TPL/03%20FileWriterApp)
 - **Erweiterungskapitel: Professional C#**
-  - [Extension methods](Professional%20C#/10_ExtensionMethods/README.md)
-  - [Generics](Professional%20C#/20_Generics/README.md)
-  - [Fluent APIs](Professional%20C#/30_FluentApi/README.md)
-  - [ML.NET Demo](Professional%20C#/40_LocationDemo/README.md)
-  - [Bildverarbeitung mit OpenCV](Professional%20C#/50_OpenCv/README.md)
-  - [Performanceoptimierung und Speichermanagement](Professional%20C#/60_LogAnalyzer/README.md)
-  - [Benchmarking](Professional%20C#/70_Benchmark/README.md)
+  - [Extension methods](Professional%20C%23/10_ExtensionMethods/README.md)
+  - [Generics](Professional%20C%23/20_Generics/README.md)
+  - [Fluent APIs](Professional%20C%23/30_FluentApi/README.md)
+  - [ML.NET Demo](Professional%20C%23/40_LocationDemo/README.md)
+  - [Bildverarbeitung mit OpenCV](Professional%20C%23/50_OpenCv/README.md)
+  - [Performanceoptimierung und Speichermanagement](Professional%20C%23/60_LogAnalyzer/README.md)
+  - [Benchmarking](Professional%20C%23/70_Benchmark/README.md)
 
 ## Wichtiges zum Start
 
