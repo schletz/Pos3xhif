@@ -41,7 +41,7 @@
   -  [IO und TPL: der file writer](05%20TPL/03%20FileWriterApp)
 - **Erweiterungskapitel: Professional C#**
   - [Extension methods](Professional%20C#/10_ExtensionMethods/README.md)
-  - [Generics](Professional%20C#/20_Generics/README.md
+  - [Generics](Professional%20C#/20_Generics/README.md)
   - [Fluent APIs](Professional%20C#/30_FluentApi/README.md)
   - [ML.NET Demo](Professional%20C#/40_LocationDemo/README.md)
   - [Bildverarbeitung mit OpenCV](Professional%20C#/50_OpenCv/README.md)
