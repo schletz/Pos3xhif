@@ -34,7 +34,7 @@
   -  [Relay Command](04%20WPF/03_RelayCommand/Readme.md)
   -  [Lists](04%20WPF/04_Lists/Readme.md)
   -  [EF Core und WPF](04%20WPF/05_EF_Core/README.md)
-  -  [Validations](04%20WPF/06_Validation/Readme.md)
+  -  [Validations](04%20WPF/06_Validation/README.md)
 - **TPL - Task Parallel Library**
   -  [CPU bound work](05%20TPL/01%20CpuBoundWork/README.md)
   -  [Await und async](05%20TPL/02%20AwaitAsyncDemo/Readme.md)
