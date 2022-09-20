@@ -37,8 +37,8 @@
   -  [Validations](04%20WPF/06_Validation/Readme.md)
 - **TPL - Task Parallel Library**
   -  [CPU bound work](05%20TPL/01%20CpuBoundWork/README.md)
-  -  [Await und async](05%20TPL/02%20AwaitAsyncDemo/README.md)
-  -  [IO und TPL: der file writer](05%20TPL/03%20FileWriterApp/README.md)
+  -  [Await und async](05%20TPL/02%20AwaitAsyncDemo/Readme.md)
+  -  [IO und TPL: der file writer](05%20TPL/03%20FileWriterApp)
 
 
 ## Wichtiges zum Start
