@@ -1,5 +1,46 @@
 # POS im III. Jahrgang / 5. Semester Kolleg der HTL Spengergasse
 
+## Lehrinhalte
+
+- **Types in C#**
+  - [Value Types](01%20Types/01_ValueTypes.md)
+  - [Reference Types](01%20Types/02_ReferenceTypes.md)
+  - [Properties](01%20Types/03_Properties.md)
+  - [Collections](01%20Types/04_Collections.md)
+  - [Vererbung](01%20Types/05_Vererbung.md)
+  - [Interfaces](01%20Types/06_Interfaces.md)
+  - [Equality](01%20Types/07_Equality.md)
+  - [Dependency Injection](01%20Types/08_DependencyInjection.md)
+  - *[Übungsaufgaben](01%20Types/Uebungen/README.md)*
+- **LINQ - Language Integrated Query**
+  - [Lambda Expressions](02%20Linq/01_Lambdas/README.md)
+  - [Filterausdrücke](02%20Linq/../02%20Linq/02_Filterung/README.md)
+  - [Projektionen](02%20Linq/03_Projection/README.md)
+  - [Gruppierung](02%20Linq/04_GroupBy/README.md)
+  - [Query Syntax](02%20Linq/05_QuerySyntax/README.md)
+  - [Joins](02%20Linq/06_Join_Grouping/README.md)
+- **Der OR Mapper EF Core**
+  - [Warum OR Mapping?](03%20EF%20Core/01_WhyORMapping/README.md)
+  - [Code first](03%20EF%20Core/02_CodeFirstEfCore5/README.md)
+  - [Enhanced code first](03%20EF%20Core/03_EnhancedCodeFirst/README.md)
+  - [Rich domain models](03%20EF%20Core/04_RichDomainModels/README.md)
+  - [Queries](03%20EF%20Core/05_Queries/README.md)
+  - [CRUD Operationen](03%20EF%20Core/06_Crud/README.md)
+  - [Database first](03%20EF%20Core/07_DatabaseFirst/README.md)
+  - [Migrations](03%20EF%20Core/08_Migrations/README.md)
+- **WPF - Windows Presentation Foundation (nur HIF)**
+  -  [Intro - Catch the ball](04%20WPF/01_CatchTheBall/Readme.md)
+  -  [ViewModels](04%20WPF/02_ViewModelDemoApp/Readme.md)
+  -  [Relay Command](04%20WPF/03_RelayCommand/Readme.md)
+  -  [Lists](04%20WPF/04_Lists/Readme.md)
+  -  [EF Core und WPF](04%20WPF/05_EF_Core/Readme.md)
+  -  [Validations](04%20WPF/06_Validation/Readme.md)
+- **TPL - Task Parallel Library**
+  -  [CPU bound work](05%20TPL/01%20CpuBoundWork/README.md)
+  -  [Await und async](05%20TPL/02%20AwaitAsyncDemo/README.md)
+  -  [IO und TPL: der file writer](05%20TPL/03%20FileWriterApp/README.md)
+
+
 ## Wichtiges zum Start
 
 ### Installation der IDE Visual Studio 2022
