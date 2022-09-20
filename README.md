@@ -11,7 +11,7 @@
   - [Interfaces](01%20Types/06_Interfaces.md)
   - [Equality](01%20Types/07_Equality.md)
   - [Dependency Injection](01%20Types/08_DependencyInjection.md)
-  - *[Übungsaufgaben](01%20Types/Uebungen/README.md)*
+  - *[Übungsaufgaben](01%20Types/Uebungen)*
 - **LINQ - Language Integrated Query**
   - [Lambda Expressions](02%20Linq/01_Lambdas/README.md)
   - [Filterausdrücke](02%20Linq/../02%20Linq/02_Filterung/README.md)
