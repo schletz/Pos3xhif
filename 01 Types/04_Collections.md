@@ -597,7 +597,7 @@ Daher verfolgen wir folgende Idee: Der Tipp könnte auch als *Bitmaske* gespeich
 speichern. Ein *long* Wert in C# hat 64 Bits. Daher kann ein ganzer Tipp mit einem Wert vom Typ *long*
 gespeichert werden:
 
-![](lotto_bitwise.png)
+![](lotto_bitwise.svg)
 
 Implementiere nun deine Klasse so, dass sie als interne Struktur eine Liste von long Werten
 zum Speichern der Tipps verwendet. Die Funktionsparameter der public Methoden dürfen natürlich
