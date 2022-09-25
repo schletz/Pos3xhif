@@ -588,11 +588,13 @@ Tipp 985 945 hat 5 Richtige: 16 8 2 4 32 14
 
 Die Tipps werden in einer Liste von int Arrays verwaltet. Ein einzelner Tipp wird als int
 Array gespeichert und benötigt daher 6x4 = 24 Bytes am Heap. Zudem muss beim Generieren das
-Array auf schon vorhandene Zahlen geprüft werden. Daher verfolgen wir folgende Idee: Der Tipp
-könnte auch als *Bitmaske* gespeichert werden. 1 bedeutet, dass die Zahl gezogen wurde. Somit
-können wir mit 45 Bits ebenfalls einen Lottotipp speichern.
+Array auf schon vorhandene Zahlen geprüft werden. Beim Prüfen, wie viele Zahlen "richtig" (also im
+übergebenen Array vorkommen), müssen wir immer durch das Array iterieren und prüfen, ob die Zahl
+im Array des Tipps vorkommt.
 
-Ein *long* Wert in C# hat 64 Bits. Daher kann ein ganzer Tipp mit einem Wert vom Typ *long*
+Daher verfolgen wir folgende Idee: Der Tipp könnte auch als *Bitmaske* gespeichert werden.
+1 bedeutet, dass die Zahl gezogen wurde. Somit können wir mit 45 Bits ebenfalls einen Lottotipp
+speichern. Ein *long* Wert in C# hat 64 Bits. Daher kann ein ganzer Tipp mit einem Wert vom Typ *long*
 gespeichert werden:
 
 ![](lotto_bitwise.png)
