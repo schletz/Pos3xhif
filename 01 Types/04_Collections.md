@@ -441,6 +441,7 @@ im Array vorhanden ist. Wenn ja, wird einfach eine neue nächste Zahl generiert.
 ```c#
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 
@@ -481,11 +482,14 @@ using System.Linq;
 }
 
 {
+    Console.WriteLine($"Generiere 1 000 000 Tipps und zähle die 6er, 5er, ...");
+    var usedMemory = GC.GetTotalMemory(forceFullCollection: true);
     var lottoTipp = new LottoTipp();
-    Console.WriteLine($"Generiere 1 000 000 und zähle die 6er und 5er.");
     lottoTipp = new LottoTipp();
     lottoTipp.AddQuicktipps(1_000_000);
     var drawnNumbers = new int[] { 4, 2, 1, 8, 32, 16 };
+    var stopwatch = new Stopwatch();
+    stopwatch.Start();
     for (int i = 0; i < 1_000_000; i++)
     {
         var rightNumbers = lottoTipp.CheckTipp(i, drawnNumbers);
@@ -496,6 +500,9 @@ using System.Linq;
 
         }
     }
+    stopwatch.Stop();
+    Console.WriteLine($"Berechnung nach {stopwatch.ElapsedMilliseconds} ms beendet.");
+    Console.WriteLine($"{(GC.GetTotalMemory(forceFullCollection: true) - usedMemory)/1048576M:0.00} MBytes belegt.");
 }
 
 // TODO: Implementiere die Klasse. Füge notwendige Properties und interne Listen hinzu.
@@ -554,7 +561,7 @@ Tipp 1: 39 44 3 17 35 36
 Tipp 2: 21 37 8 39 32 33
 Tipp 3: 10 6 9 5 25 23
 Tipp 4: 12 40 3 36 34 30
-Generiere 1 000 000 und zähle die 6er und 5er.
+Generiere 1 000 000 Tipps und zähle die 6er und 5er.
 Tipp 000 094 hat 5 Richtige: 2 4 27 16 8 32
 Tipp 017 533 hat 5 Richtige: 8 41 4 1 2 16
 Tipp 065 810 hat 5 Richtige: 2 18 16 4 32 1
@@ -582,6 +589,8 @@ Tipp 916 819 hat 5 Richtige: 8 10 16 32 1 2
 Tipp 924 592 hat 5 Richtige: 8 4 1 38 2 32
 Tipp 942 173 hat 5 Richtige: 1 2 8 32 16 12
 Tipp 985 945 hat 5 Richtige: 16 8 2 4 32 14
+Berechnung nach 81 ms beendet.
+53,78 MBytes belegt.
 ```
 
 ### Für echte Profis
