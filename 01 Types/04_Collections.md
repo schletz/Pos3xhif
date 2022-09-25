@@ -602,7 +602,8 @@ gespeichert werden:
 Implementiere nun deine Klasse so, dass sie als interne Struktur eine Liste von long Werten
 zum Speichern der Tipps verwendet. Die Funktionsparameter der public Methoden dürfen natürlich
 nicht verändert werden, d. h. das Musterprogramm muss weiterhin funktionieren. Je nach Generierung
-können die generierten Zufallszahlen allerdings abweichen. Überlege dabei folgendes:
-
-Die Bestimmung, wie viele Zahlen "richtig" (also im übergebenen Array sind) kann bitweise,
-also auch performanter, ermittelt werden.
+können die generierten Zufallszahlen allerdings abweichen. Überlege dabei auch folgendes: Die
+Bestimmung, wie viele Zahlen "richtig" (also im übergebenen Array sind) kann bitweise,
+also auch performanter, ermittelt werden. Verwende geeignete Operationen und
+[Brian Kernighan's Algorithm](https://iq.opengenus.org/brian-kernighan-algorithm/#:~:text=The%20main%20idea%20behind%20this,binary%20representation%20of%20these%20numbers.)
+zum Zählen der gesetzten Bits.
