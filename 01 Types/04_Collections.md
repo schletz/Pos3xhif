@@ -616,3 +616,9 @@ Bestimmung, wie viele Zahlen "richtig" (also im übergebenen Array sind) kann bi
 also auch performanter, ermittelt werden. Verwende geeignete Operationen und
 [Brian Kernighan's Algorithm](https://iq.opengenus.org/brian-kernighan-algorithm/#:~:text=The%20main%20idea%20behind%20this,binary%20representation%20of%20these%20numbers.)
 zum Zählen der gesetzten Bits.
+
+> Beachte, dass bei Bitshifts, die einen Wert vom Typ *long* als Ergebnis haben, das Literal **1L** statt
+> 1 geschrieben werden muss. Sonst würde ein Wert vom Typ *int* entstehen, der abgeschnitten wird.
+> Achte zudem auf die Rangfolge der Operatoren. Der Vergleich wird ohne entsprechende Klammerung
+> vor bitweisem UND bzw. ODER ausgeführt.
+
