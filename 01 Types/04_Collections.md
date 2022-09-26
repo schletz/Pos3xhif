@@ -521,7 +521,7 @@ class LottoTipp
     public int[] GetTipp(int number)
     {
         // TODO: Implementierung    }
-
+    }
     /// <summary>
     /// Generiert 6 zufällige Zahlen zwischen 1 und 45 ohne Kollision.
     /// </summary>
