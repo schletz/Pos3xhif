@@ -5,6 +5,7 @@
 See https://khalilstemmler.com/articles/uml-cheatsheet/,
 https://www.guru99.com/association-aggregation-composition-difference.html
 
+![](timePlannerModel_2009.svg)
 
 ```plantuml
 @startuml
