@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpgTimePlanner.Application", "SpgTimePlanner.Application\SpgTimePlanner.Application.csproj", "{ABFD7EAF-1720-4A8F-B06D-CF2EADC31042}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpgTimePlanner.Test", "SpgTimePlanner.Test\SpgTimePlanner.Test.csproj", "{1A744217-85B2-483F-9244-18B9EC16606B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ABFD7EAF-1720-4A8F-B06D-CF2EADC31042}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABFD7EAF-1720-4A8F-B06D-CF2EADC31042}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABFD7EAF-1720-4A8F-B06D-CF2EADC31042}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABFD7EAF-1720-4A8F-B06D-CF2EADC31042}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A744217-85B2-483F-9244-18B9EC16606B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A744217-85B2-483F-9244-18B9EC16606B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A744217-85B2-483F-9244-18B9EC16606B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A744217-85B2-483F-9244-18B9EC16606B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
