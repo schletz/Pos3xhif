@@ -5,7 +5,7 @@
 See https://khalilstemmler.com/articles/uml-cheatsheet/,
 https://www.guru99.com/association-aggregation-composition-difference.html
 
-![](timePlannerModel_2009.svg)
+![](timePlannerModel_2011.svg)
 
 ```plantuml
 @startuml
@@ -59,7 +59,7 @@ class Meeting {
 Calendar "1" o-- "1" User
 Calendar "1" *--> "*" Meeting
 Meeting "*" --> "*" User
-Meeting "*" *--> "1" MeetingState
+Meeting "1" *--> "1" MeetingState
 @enduml
 
 ```
