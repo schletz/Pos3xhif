@@ -5,58 +5,10 @@ ein Buch oder eine Zeitschrift reservieren. Nach einer bestimmten Frist muss das
 zurückgegeben werden. Werden Fristen versäumt, sollen Kunden benachrichtigt werden. 1 Kunde
 kann nur 1 Werk gleichzeitig entleihen.
 
-```plantuml
-@startuml
-hide empty fields
+![](modell_2003.svg)
 
-class ReservationManager {
-    +Reservations : IReadOnlyList<PublicationReservation> 
-    ---
-    +bool TryAddReservation(PublicationReservation reservation)
-    +IReadOnlyList<PublicationReservation> GetPendingReservations(DateTime date)
-}
-ReservationManager --> PublicationReservation
+<sup>https://www.plantuml.com/plantuml/uml/ZL91pzem3BtdL_ZuVKBz0nFgO4DCbM13YCkEfZ4GBKrHaaxhMF_xqeH2A1bQJuxVi_tyt9cng6rJINOId82gistX84XomrWfqHZOaY7z4wserHeL7ad3XO7x9X5Yu0CKMqB-JSbs9OoTRfgz5AK78ruElZJBij1YNzSIThgTSnwntjB5eE_nUwZ_lvbVo6v8SQ6EiUIt1LhQYOg0k-2TTIonQfRba6ux-9D6lKUJpusnTKNQkJE4VJegSKZqOe-kBdLTES9DPu1jerMVYf2F7bhZhoGAC9sMACj6kWJFUsfX0fEuu_aZZ2dXHE50XNcsxzczj17UmM7vLvm0nTRUogvcekP5hrSesx-NGXkhiEfNDLOxUNrsXUDannZkNOobXQUJkRq7CC_378-Q4-c7lfU1ra6mRdwmf1VOcgkYRb3zgQv_X4uxOUMZkk-4-hx1lnhv3bbppluaRLdZ4NyBHM78rx43KSNeHtWrSsYQd3iZnPjA_WK0</sup>
 
-class PublicationReservation {
-  +Customer : Customer
-  +Publication : Publication
-  +ReservationFrom : DateTime 
-  +ReturnDate : DateTime? 
-  +MaxReturnDate : DateTime  <<calculated>
-  +IsReturned : bool <<calculated>
-  ---
-  +bool IsPendingReservation(DateTime date)
-}
-PublicationReservation --> Customer
-PublicationReservation --> Publication
-
-class Customer {
-  +CardId : int
-  +Firstname : string
-  +Lastname : string
-}
-
-abstract class Publication <<abstract>> {
-  +Publisher : string
-  +{abstract} ReturnAfterDays : int
-}
-
-class Book {
-  +Title : string
-  +Year : int
-  +ReturnAfterDays : int
-}
-Book -up-|> Publication
-
-class Magazine {
-  +Name : string
-  +PublicationDate : DateTime
-  +ReturnAfterDays : int
-}
-Magazine -up-|> Publication
-
-@enduml
-```
 
 ## Klassenbeschreibung
 
