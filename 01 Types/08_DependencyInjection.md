@@ -163,8 +163,8 @@ Dabei wird der Logger in der Klasse *MyTracker* als Property definiert und von a
 1. Schreibe ein Interface *ILogger*, welches die Methode *Log(string)* beinhaltet.
 1. Implementiere die Klasse *ConsoleLogger*, die den übergebenen String in der *Log()* Methode einfach in
    der Konsole ausgibt.
-1. Implementieren die Klasse *FileLogger*, die den Übergeben String einfach in den beim Instanzieren gewählten
-   Dateinamen schreibt. Hinweis: Mit *System.IO.File.AppendAllText(pfad, inhalt)* kann Text zu einer Datei
+1. Implementiere die Klasse *FileLogger*, die den übergeben String einfach in den beim Instanzieren gewählten
+   Dateinamen schreibt. Hinweis: Mit *System.IO.File.AppendAllText(filename, inhalt)* kann Text zu einer Datei
    hinzugefügt werden.
 1. Ergänze das Property Logger in der Klasse *MyTracker* mit dem korrekten Datentyp.
 
@@ -183,7 +183,7 @@ class MyTracker
         while ((DateTime.Now - start).TotalSeconds < seconds)
         {
             Point position = locator.GetLocation();
-            Logger?.Log($"Lat: {position.Lat:0.00}°, Lng: {position.Lat:0.00}°");
+            Logger?.Log($"Lat: {position.Lat:0.00}°, Lng: {position.Lng:0.00}°");
             System.Threading.Thread.Sleep(1000);
         }
     }
