@@ -99,3 +99,4 @@ git clone https://github.com/schletz/Pos3xhif.git
 Soll der neueste Stand vom Server geladen werden, führe die Datei *resetGit.cmd* aus. Achtung:
 alle lokalen Änderungen werden dabei zurückgesetzt.
 
+Sehr gut
