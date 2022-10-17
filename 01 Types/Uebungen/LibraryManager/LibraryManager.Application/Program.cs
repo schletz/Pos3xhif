@@ -54,8 +54,8 @@ namespace LibraryManager.Application
                 var bookReservation = new PublicationReservation(customer, (Publication)book, new DateTime(2000, 1, 1));
                 var magazineReservation = new PublicationReservation(customer, (Publication)magazine, new DateTime(2000, 1, 1));
                 CheckAndWrite(() => bookReservation.ReturnDate is null, "PublicationReservation.ReturnDate is null on a pending reservation.", 1);
-                CheckAndWrite(() => bookReservation.MaxReturnDate == new DateTime(2000,1,15), "PublicationReservation.IsReturned is correct for books.", 2);
-                CheckAndWrite(() => magazineReservation.MaxReturnDate == new DateTime(2000,1,8), "PublicationReservation.IsReturned is correct for magazines.", 2);
+                CheckAndWrite(() => bookReservation.MaxReturnDate == new DateTime(2000,1,15), "PublicationReservation.MaxReturnDate is correct for books.", 2);
+                CheckAndWrite(() => magazineReservation.MaxReturnDate == new DateTime(2000,1,8), "PublicationReservation.MaxReturnDate is correct for magazines.", 2);
                 CheckAndWrite(() => bookReservation.IsReturned == false, "PublicationReservation.IsReturned is false if ReturnDate is null");
                 CheckAndWrite(() => bookReservation.IsPendingReservation(new DateTime(2000, 1, 14)) == false, "PublicationReservation.IsPendingReservation returns false if date is not too late.", 2);
                 CheckAndWrite(() => bookReservation.IsPendingReservation(new DateTime(2000, 1, 16)) == true, "PublicationReservation.IsPendingReservation returns true if date is too late.", 2);
@@ -66,7 +66,7 @@ namespace LibraryManager.Application
             }
 
             {
-                Console.WriteLine("Checking ReservatrionManager");
+                Console.WriteLine("Checking ReservationManager");
                 var customer1 = new Customer(cardId: 1, firstname: "Firstname", lastname: "Lastname");
                 var customer2 = new Customer(cardId: 2, firstname: "Firstname", lastname: "Lastname");
 
