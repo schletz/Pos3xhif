@@ -8,7 +8,7 @@ wurde (Serviceklasse).
 
 ## Generieren eines Kalenderfiles
 
-Soll eine Textdatei mit allen Tagen zwischen dem 1.1.2000 und 31.12.2400 generiert werden, kannst
+Soll eine Textdatei mit allen Tagen zwischen dem 1.1.2000 und 31.12.2399 generiert werden, kannst
 du den Test direkt im Verzeichnis der *csproj* Datei von der Konsole starten:
 
 ```
