@@ -56,9 +56,7 @@ public class CalendarYearTests
     [Fact]
     public void WriteFileTest()
     {
-        var weekdayNames = new string[] { "SO", "MO", "DI", "MI", "DO", "FR", "SA" };
-
-        using var stream = new StreamWriter(File.Create("days.txt"), new System.Text.UTF8Encoding(false));
+        using var stream = new StreamWriter(File.Create("../../../calendar.txt"), new System.Text.UTF8Encoding(false));
         stream.WriteLine(
             "DATE\tDATE2000\tYEAR\tMONTH\tDAY\tDAYS_FROM_MARCH1\t" +
             "WEEKDAY_NR\tWEEKDAY_STR\tWORINGDAY_MO_FR\tWORKINGDAY_MO_SA\tSCHOOLDAY\t" +
