@@ -47,6 +47,7 @@
   - [Bildverarbeitung mit OpenCV](Professional%20C%23/50_OpenCv/README.md)
   - [Performanceoptimierung und Speichermanagement](Professional%20C%23/60_LogAnalyzer/README.md)
   - [Benchmarking](Professional%20C%23/70_Benchmark/README.md)
+  - [HolidayCalendar - Feiertage und Ferien ermitteln](HolidayCalendar/README.md)
 
 ## Wichtiges zum Start
 
