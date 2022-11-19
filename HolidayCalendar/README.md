@@ -97,7 +97,7 @@ docker run -d -p 1433:1433 --name sqlserver2019 -v C:/Temp/sql-home:/home -e "AC
 DROP TABLE IF EXISTS CalendarDay;
 GO
 CREATE TABLE CalendarDay (
-    Date   DATE  NOT NULL,
+    Date     DATE  NOT NULL,
     Date2000 DATE NOT NULL,
     Year  SMALLINT NOT NULL,
     Month TINYINT NOT NULL,
