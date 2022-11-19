@@ -45,6 +45,11 @@ nach diesem Zyklus wieder auf den selben Wochentag fallen. Der 14.11.2022 hat al
 Tag wie der 14.11.2422 oder der 14.11.1622. Für Berechnungen des Mittelwertes wird diese volle
 Periode herangezogen.
 
+Feiertage sind nicht kollisionsfrei, wenn der Ostersonntag auf den 23.3. fällt, so fällt
+Christi Himmelfahrt (39 Tage nach dem Ostersonntag) auf den 1. Mai. Dieser Tag ist in Österreich
+der Staatsfeiertag. Dieser "Doppelfeiertag" kommt in den Jahren 2000 - 2400 aber nur 4x vor
+(2008, 2160, 2228 und 2380).
+
 ## Die Felder des Kalenderfiles
 
 ```
