@@ -116,14 +116,14 @@ CREATE TABLE CalendarDay (
 GO
 BULK INSERT CalendarDay FROM '/home/calendar.txt' WITH (    
     FIRSTROW = 2,
-	DATAFILETYPE = 'widechar',
-	ROWTERMINATOR =  '\r\n',
+    DATAFILETYPE = 'widechar',
+    ROWTERMINATOR =  '\r\n',
     FIELDTERMINATOR = '\t'
 );    
 GO
 SELECT Year,
-	SUM(Workingday) AS WorkingDays,
-	SUM(Schoolday) AS SchoolDays
+    SUM(Workingday) AS WorkingDays,
+    SUM(Schoolday) AS SchoolDays
 FROM CalendarDay
 WHERE Year < 2100
 GROUP BY Year
