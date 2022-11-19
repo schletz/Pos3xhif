@@ -6,6 +6,31 @@ sie in den Bundesländern Wien und Niederösterreich gelten.
 Die Applikation ist ein xUnit Test, da die Klasse zur Verwendung in anderen Programmen entwickelt
 wurde (Serviceklasse).
 
+Die beweglichen Feiertage sind an Ostern gebunden. Das Osterdatum wird mit der Formel nach
+Spencer (https://de.wikipedia.org/wiki/Spencers_Osterformel) berechnet.
+
+```c#
+public DateTime CalcEasterSunday(int year)
+{
+    int a = year % 19;
+    int b = year / 100;
+    int c = year % 100;
+    int d = b / 4;
+    int e = b % 4;
+    int f = (b + 8) / 25;
+    int g = (b - f + 1) / 3;
+    int h = (19 * a + b - d - g + 15) % 30;
+    int i = c / 4;
+    int k = c % 4;
+    int l = (32 + 2 * e + 2 * i - h - k) % 7;
+    int m = (a + 11 * h + 22 * l) / 451;
+    int x = h + l - 7 * m + 114;
+    int n = x / 31;
+    int p = x % 31;
+    return new DateTime(year, n, p + 1);
+}
+```
+
 ## Generieren eines Kalenderfiles
 
 Soll eine Textdatei mit allen Tagen zwischen dem 1.1.2000 und 31.12.2399 generiert werden, kannst
@@ -19,3 +44,87 @@ dotnet test --filter CalendarCalculator.CalendarYearTests.WriteFileTest
 nach diesem Zyklus wieder auf den selben Wochentag fallen. Der 14.11.2022 hat also den selben
 Tag wie der 14.11.2422 oder der 14.11.1622. Für Berechnungen des Mittelwertes wird diese volle
 Periode herangezogen.
+
+## Die Felder des Kalenderfiles
+
+Die Datei *calendar.txt* ist Unicode codiert (16bit), hat *CR+LF* als Trennzeichen und *TAB* als
+Trennzeichen für Spalten. Strings sind nicht unter Anführungszeichen.
+
+- **DATE** Der Datumswert des Tages.
+- **DATE2000** Der Datumswert im Jahr 2000 mit dem Monat und Tag von *DATE*. Das ist für
+  Gruppieringen nützlich, wenn z. B. der Mittelwert aller Werte vom 1.1. ermittelt werden soll.
+  Da 2000 ein Schaltjahr ist, wird der 29.2. auch als Gruppe ausgegeben.
+- **YEAR** Die Jahreskomponente als ganze Zahl.
+- **MONTH** Die Monatskomponente als ganze Zahl.
+- **DAY** Die Tageskomponente als ganze Zahl.
+- **WEEKDAY_NR** 1 = MO, 2 = DI, ... 6 = SA, 7 = SO. Ermöglicht eine Ermittlung des Wochentages
+  unabhängig von der verwendeten LOCALE Einstellung der Session.
+- **WEEKDAY_STR** Der String des deutschen Wochentages (MO, DI, MI, DO, FR, SA, SO)
+- **WORKINGDAY** 1 wenn der Tag ein Arbeitstag ist (MO - FR), 0 wenn der Tag kein Arbeitstag ist.
+  SA und SO haben immer den Wert 0,
+- **WORKINGDAY_COUNTER** Durchgängiger Zähler, der an jedem Arbeitstag um 1 hochgezählt wird.
+  So können z. B. das Datum, das 5 Arbeitstage in der Zukunft liegt, exakt ermittelt werden.
+- **SCHOOLDAY** 1 wenn der Tag ein Schultag ist (MO - FR), 0 wenn der Tag kein Schultag ist.
+  SA und SO haben immer den Wert 0,
+- **SCHOOLDAY_COUNTER** Durchgängiger Zähler, der an jedem Schultag um 1 hochgezählt wird.
+  So können z. B. das Datum, das 5 Schultage in der Zukunft liegt, exakt ermittelt werden.
+- **PUBLIC_HOLIDAY** 1 wenn der Tag ein Feiertag nach dem Arbeitsruhegesetz ist, sonst 0. Samstag
+  und Sonntag sind - wenn nicht ein Feiertag darauf fällt - keine Feiertage (0).
+- **SCHOOL_HOLIDAY** 1 wenn der Tag ein schulfreier Tag nach dem Schulzeitgesetz ist, sonst 0. Samstag
+  und Sonntag sind - wenn nicht ein Ferientag darauf fällt - keine Ferientage (0).
+- **PUBLIC_HOLIDAY_NAME** Name des Feiertages.
+- **SCHOOL_HOLIDAY_NAME** Name der Ferien.
+
+
+## Import in SQL Server
+
+In SQL Server kann die Datei z. B. über BULK INSERT eingespielt werden. Dafür sollte eine Tabelle
+mit spezifischen Datentypen erstellt werden, um den Speicherbedarf zu verringern. Daher wird auch
+*DATE* (nur Tag), *TINYINT*, ... statt *DATETIME* oder *INTEGER* verwendet. *BIT* wird nicht
+verwendet, da die Spalte auch über *SUM()* problemlos aufsummiert werden soll.
+
+Für *BULK INSERT* muss die Datei lokal - also im Docker Container von SQL Server - vorliegen.
+Wir können das */home* Verzeichnis z. B. auf *C:/Temp/sql-home* mappen und die Datei unter Windows
+dorthin kopieren.
+
+```
+docker run -d -p 1433:1433 --name sqlserver2019 -v C:/Temp/sql-home:/home -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=SqlServer2019" mcr.microsoft.com/mssql/server:2019-latest      
+```
+
+```sql
+DROP TABLE IF EXISTS CalendarDay;
+GO
+CREATE TABLE CalendarDay (
+    Date   DATE  NOT NULL,
+    Date2000 DATE NOT NULL,
+    Year  SMALLINT NOT NULL,
+    Month TINYINT NOT NULL,
+    Day   TINYINT NOT NULL,
+    WeekdayNr  INTEGER NOT NULL,
+    WeekdayStr CHAR(2) NOT NULL,
+    Workingday         TINYINT NOT NULL,
+    WorkingdayCounter  INTEGER NOT NULL,
+    Schoolday          TINYINT NOT NULL,
+    SchooldayCounter   INTEGER NOT NULL,
+    PublicHoliday TINYINT NOT NULL,
+    SchoolHoliday TINYINT NOT NULL,
+    PublicHolidayName VARCHAR(20) NOT NULL,
+    SchoolHolidayName VARCHAR(20) NOT NULL
+);
+GO
+BULK INSERT CalendarDay FROM '/home/calendar.txt' WITH (    
+    FIRSTROW = 2,
+	DATAFILETYPE = 'widechar',
+	ROWTERMINATOR =  '\r\n',
+    FIELDTERMINATOR = '\t'
+);    
+GO
+SELECT Year,
+	SUM(Workingday) AS WorkingDays,
+	SUM(Schoolday) AS SchoolDays
+FROM CalendarDay
+WHERE Year < 2100
+GROUP BY Year
+ORDER BY Year;
+```
+

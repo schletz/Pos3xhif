@@ -6,6 +6,7 @@ namespace CalendarCalculator
     {
         private static readonly string[] _weekdayNames
             = new string[] { "SO", "MO", "DI", "MI", "DO", "FR", "SA" };
+        private static readonly long _jsEpoch = new DateTime(1970, 1, 1).Ticks;
 
         public CalendarDay(DateTime dateTime) : this(dateTime, false, false, null, null) { }
 
@@ -27,9 +28,7 @@ namespace CalendarCalculator
         public string? SchoolHolidayName { get; }
         public bool IsSchoolHoliday { get; }
         public DateTime Date2000 => new DateTime(2000, DateTime.Month, DateTime.Day);
-        public int DayOfYearSinceMarch =>
-            (int)((DateTime.Ticks - new DateTime(DateTime.Month < 3 ? DateTime.Year - 1 : DateTime.Year, 3, 1).Ticks)
-            / TimeSpan.TicksPerDay);
+        public long JsTimestamp => (DateTime.Ticks - _jsEpoch) / TimeSpan.TicksPerMillisecond;
         public int WeekdayNr => DateTime.DayOfWeek == DayOfWeek.Sunday ? 7 : (int)DateTime.DayOfWeek;
         public string WeekdayName => _weekdayNames[(int)DateTime.DayOfWeek];
         public bool IsWorkingDayMoFr =>
