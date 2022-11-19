@@ -47,6 +47,22 @@ Periode herangezogen.
 
 ## Die Felder des Kalenderfiles
 
+```
+| DATE       | DATE2000   | YEAR | MONTH | DAY | WEEKDAY_NR | WEEKDAY_STR | WORKINGDAY | WORKINGDAY_COUNTER | SCHOOLDAY | SCHOOLDAY_COUNTER | PUBLIC_HOLIDAY | SCHOOL_HOLIDAY | PUBLIC_HOLIDAY_NAME | SCHOOL_HOLIDAY_NAME |
+| ---------- | ---------- | ---- | ----- | --- | ---------- | ----------- | ---------- | ------------------ | --------- | ----------------- | -------------- | -------------- | ------------------- | ------------------- |
+| 01.01.2022 | 01.01.2000 | 2022 | 1     | 1   | 6          | SA          | 0          | 5511               | 0         | 4078              | 1              | 1              | Neujahr             | Weihnachtsferien    |
+| 02.01.2022 | 02.01.2000 | 2022 | 1     | 2   | 7          | SO          | 0          | 5511               | 0         | 4078              | 0              | 1              |                     | Weihnachtsferien    |
+| 03.01.2022 | 03.01.2000 | 2022 | 1     | 3   | 1          | MO          | 1          | 5512               | 0         | 4078              | 0              | 1              |                     | Weihnachtsferien    |
+| 04.01.2022 | 04.01.2000 | 2022 | 1     | 4   | 2          | DI          | 1          | 5513               | 0         | 4078              | 0              | 1              |                     | Weihnachtsferien    |
+| 05.01.2022 | 05.01.2000 | 2022 | 1     | 5   | 3          | MI          | 1          | 5514               | 0         | 4078              | 0              | 1              |                     | Weihnachtsferien    |
+| 06.01.2022 | 06.01.2000 | 2022 | 1     | 6   | 4          | DO          | 0          | 5514               | 0         | 4078              | 1              | 1              | Heilige 3 Könige    | Weihnachtsferien    |
+| 07.01.2022 | 07.01.2000 | 2022 | 1     | 7   | 5          | FR          | 1          | 5515               | 1         | 4079              | 0              | 0              |                     |                     |
+| 08.01.2022 | 08.01.2000 | 2022 | 1     | 8   | 6          | SA          | 0          | 5515               | 0         | 4079              | 0              | 0              |                     |                     |
+| 09.01.2022 | 09.01.2000 | 2022 | 1     | 9   | 7          | SO          | 0          | 5515               | 0         | 4079              | 0              | 0              |                     |                     |
+| 10.01.2022 | 10.01.2000 | 2022 | 1     | 10  | 1          | MO          | 1          | 5516               | 1         | 4080              | 0              | 0              |                     |                     |
+| 11.01.2022 | 11.01.2000 | 2022 | 1     | 11  | 2          | DI          | 1          | 5517               | 1         | 4081              | 0              | 0              |                     |                     |
+```
+
 Eine bereits generierte Datei ist bz2 komprimiert als [calendar.txt.bz2](calendar.txt.bz2)
 hier verfügbar.
 Die Datei *calendar.txt* ist Unicode codiert (16bit), hat *CR+LF* als Trennzeichen und *TAB* als
