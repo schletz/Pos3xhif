@@ -47,6 +47,8 @@ Periode herangezogen.
 
 ## Die Felder des Kalenderfiles
 
+Eine bereits generierte Datei ist bz2 komprimiert als [calendar.txt.bz2](calendar.txt.bz2)
+hier verfügbar.
 Die Datei *calendar.txt* ist Unicode codiert (16bit), hat *CR+LF* als Trennzeichen und *TAB* als
 Trennzeichen für Spalten. Strings sind nicht unter Anführungszeichen.
 
