@@ -93,6 +93,23 @@ Trennzeichen für Spalten. Strings sind nicht unter Anführungszeichen.
 - **PUBLIC_HOLIDAY_NAME** Name des Feiertages.
 - **SCHOOL_HOLIDAY_NAME** Name der Ferien.
 
+## Warum die Tage als Tabelle speichern?
+
+Die Speicherung jedes Tages von 2000 - 2400 klingt einmal verschwenderisch. Es müssen 146.097
+Zeilen in der Tabelle gespeichert werden. Für eine Datenbank ist das jedoch keine große Menge,
+und die Tabelle benötigt (in SQL Server) gerade einmal 6.3 MB. Die Vorteile, die sich daraus
+ergeben, beschleunigen sogar unsere Abfragen:
+
+- Statt komplizierter Datumsarithmetik (z. B. Anzahl der Arbeitstage zwischen 2 Werten) genügt
+  ein einfacher JOIN und eine einfache Subtraktion. Den kann die Datenbank sehr schnell bearbeiten.
+  Komplexere Funktionen sind für die Datenbank und die Optimierung schwieriger zu bearbeiten.
+- Gerade die beweglichen Feiertage, die an Ostern gebunden sind, erfordern viel Ablauflogik
+  (Berechnung des Osterdatums). SQL (und relationale Datenbanken) sind mengenorientiert.
+  Implementierung von Ablauflogik ist schwieriger, die prozeduralen Erweiterungen und Funktionen in
+  SQL sind weit weg von der Eleganz und den Möglichkeiten gängiger Programmiersprachen wie C# oder Java.
+- Feiertage oder Ferien können sich in der Zukunft ändern. So wurden z. B. 2020 die Herbstferien
+  eingeführt, dafür ist der DI nach Ostern und Pfingsten nicht mehr schulfrei. Um korrekte Werte
+  auch aus der Vergangenheit ermitteln zu können, brauchen wir eine Tabellierung.
 
 ## Import in SQL Server
 
