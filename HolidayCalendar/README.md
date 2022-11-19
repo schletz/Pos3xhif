@@ -65,11 +65,11 @@ Trennzeichen für Spalten. Strings sind nicht unter Anführungszeichen.
 - **WORKINGDAY** 1 wenn der Tag ein Arbeitstag ist (MO - FR), 0 wenn der Tag kein Arbeitstag ist.
   SA und SO haben immer den Wert 0,
 - **WORKINGDAY_COUNTER** Durchgängiger Zähler, der an jedem Arbeitstag um 1 hochgezählt wird.
-  So können z. B. das Datum, das 5 Arbeitstage in der Zukunft liegt, exakt ermittelt werden.
+  So kann z. B. das Datum, das 5 Arbeitstage in der Zukunft liegt, exakt ermittelt werden.
 - **SCHOOLDAY** 1 wenn der Tag ein Schultag ist (MO - FR), 0 wenn der Tag kein Schultag ist.
   SA und SO haben immer den Wert 0,
 - **SCHOOLDAY_COUNTER** Durchgängiger Zähler, der an jedem Schultag um 1 hochgezählt wird.
-  So können z. B. das Datum, das 5 Schultage in der Zukunft liegt, exakt ermittelt werden.
+  So kann z. B. das Datum, das 5 Schultage in der Zukunft liegt, exakt ermittelt werden.
 - **PUBLIC_HOLIDAY** 1 wenn der Tag ein Feiertag nach dem Arbeitsruhegesetz ist, sonst 0. Samstag
   und Sonntag sind - wenn nicht ein Feiertag darauf fällt - keine Feiertage (0).
 - **SCHOOL_HOLIDAY** 1 wenn der Tag ein schulfreier Tag nach dem Schulzeitgesetz ist, sonst 0. Samstag
