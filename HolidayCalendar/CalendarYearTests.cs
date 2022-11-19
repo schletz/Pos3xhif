@@ -47,7 +47,7 @@ public class CalendarYearTests
         foreach (var easterSunday in easterSundays)
         {
             var year = new CalendarYear(easterSunday.Key);
-            var easter = year.GetCalendarDays().First(d => d.HolidayName == "Ostersonntag");
+            var easter = year.GetCalendarDays().First(d => d.PublicHolidayName == "Ostersonntag");
             if (easter.DateTime != easterSunday.Value) { success = false; continue; }
         }
         Assert.True(success);
@@ -60,7 +60,7 @@ public class CalendarYearTests
         stream.WriteLine(
             "DATE\tDATE2000\tYEAR\tMONTH\tDAY\tDAYS_FROM_MARCH1\t" +
             "WEEKDAY_NR\tWEEKDAY_STR\tWORINGDAY_MO_FR\tWORKINGDAY_MO_SA\tSCHOOLDAY\t" +
-            "PUBLIC_HOLIDAY\tSCHOOL_HOLIDAY\tHOLIDAY_NAME");
+            "PUBLIC_HOLIDAY\tSCHOOL_HOLIDAY\tPUBLIC_HOLIDAY_NAME\tSCHOOL_HOLIDAY_NAME");
         for (int year = 2000; year < 2400; year++)
         {
             var calendarYear = new CalendarYear(year);
@@ -71,7 +71,7 @@ public class CalendarYearTests
                     $"{day.DateTime:yyyy-MM-dd}\t{day.Date2000:yyyy-MM-dd}\t{day.DateTime.Year}\t{day.DateTime.Month}\t{day.DateTime.Day}\t{day.DayOfYearSinceMarch}\t" +
                     $"{day.WeekdayNr}\t{day.WeekdayName}\t" +
                     $"{(day.IsWorkingDayMoFr ? 1 : 0)}\t{(day.IsWorkingDayMoSa ? 1 : 0)}\t{(day.IsSchoolDayMoFr ? 1 : 0)}\t" +
-                    $"{(day.IsPublicHoliday ? 1 : 0)}\t{(day.IsSchoolHoliday ? 1 : 0)}\t{day.HolidayName}");
+                    $"{(day.IsPublicHoliday ? 1 : 0)}\t{(day.IsSchoolHoliday ? 1 : 0)}\t{day.PublicHolidayName}\t{day.SchoolHolidayName}");
             }
         }
     }

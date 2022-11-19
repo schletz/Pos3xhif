@@ -48,39 +48,52 @@ namespace CalendarCalculator
             var days = new CalendarDay[new DateTime(_year, 12, 31).DayOfYear];
 
             // Gesetzliche Feiertage
-            AddDays(days, GetDate(1, 1), d => new CalendarDay(d, true, "Neujahr"));
-            AddDays(days, GetDate(1, 6), d => new CalendarDay(d, true, "Heilige 3 Könige"));
-            AddDays(days, easterSunday.AddDays(1), d => new CalendarDay(d, true, "Ostermontag"));
-            AddDays(days, GetDate(5, 1), d => new CalendarDay(d, true, "Staatsfeiertag"));
-            AddDays(days, easterSunday.AddDays(39), d => new CalendarDay(d, true, "Christi Himmelfahrt"));
-            AddDays(days, easterSunday.AddDays(50), d => new CalendarDay(d, true, "Pfingstmontag"));
-            AddDays(days, easterSunday.AddDays(60), d => new CalendarDay(d, true, "Fronleichnam"));
-            AddDays(days, GetDate(8, 15), d => new CalendarDay(d, true, "Mariä Himmelfahrt"));
-            AddDays(days, GetDate(10, 26), d => new CalendarDay(d, true, "Nationalfeiertag"));
-            AddDays(days, GetDate(11, 1), d => new CalendarDay(d, true, "Allerheiligen"));
-            AddDays(days, GetDate(12, 8), d => new CalendarDay(d, true, "Mariä Empfängnis"));
-            AddDays(days, GetDate(12, 25), d => new CalendarDay(d, true, "Weihnachten"));
-            AddDays(days, GetDate(12, 26), d => new CalendarDay(d, true, "Stephanstag"));
+            AddDays(days, GetDate(1, 1), d => new CalendarDay(d, true, true, "Neujahr", "Weihnachtsferien"));
+            AddDays(days, GetDate(1, 6), d => new CalendarDay(d, true, true, "Heilige 3 Könige", "Weihnachtsferien"));
+            AddDays(days, easterSunday.AddDays(1), d => new CalendarDay(d, true, true, "Ostermontag", "Osterferien"));
+            AddDays(days, GetDate(5, 1), d => new CalendarDay(d, true, true, "Staatsfeiertag", "Staatsfeiertag"));
+            AddDays(days, easterSunday.AddDays(39), d => new CalendarDay(d, true, true, "Christi Himmelfahrt", "Christi Himmelfahrt"));
+            AddDays(days, easterSunday.AddDays(50), d => new CalendarDay(d, true, true, "Pfingstmontag", "Pfingstferien"));
+            AddDays(days, easterSunday.AddDays(60), d => new CalendarDay(d, true, true, "Fronleichnam", "Fronleichnam"));
+            AddDays(days, GetDate(8, 15), d => new CalendarDay(d, true, true, "Mariä Himmelfahrt", "Sommerferien"));
+            AddDays(days, GetDate(10, 26), d => new CalendarDay(d, true, true, "Nationalfeiertag", "Nationalfeiertag"));
+            AddDays(days, GetDate(11, 1), d => new CalendarDay(d, true, true, "Allerheiligen", "Allerheiligen"));
+            AddDays(days, GetDate(12, 8), d => new CalendarDay(d, true, true, "Mariä Empfängnis", "Mariä Empfängnis"));
+            AddDays(days, GetDate(12, 25), d => new CalendarDay(d, true, true, "Weihnachten", "Weihnachtsferien"));
+            AddDays(days, GetDate(12, 26), d => new CalendarDay(d, true, true, "Stephanstag", "Weihnachtsferien"));
 
             // Immer frei, aber mit einem Text versehen
-            AddDays(days, easterSunday, d => new CalendarDay(d, false, "Ostersonntag"));
-            AddDays(days, easterSunday.AddDays(49), d => new CalendarDay(d, false, "Pfingstsonntag"));
+            AddDays(days, easterSunday.AddDays(-7), d => new CalendarDay(d, false, true, "Palmsonntag", "Osterferien"));
+            AddDays(days, easterSunday.AddDays(-3), d => new CalendarDay(d, false, true, "Gründonnerstag", "Osterferien"));
+            AddDays(days, easterSunday.AddDays(-2), d => new CalendarDay(d, false, true, "Karfreitag", "Osterferien"));
+            AddDays(days, easterSunday.AddDays(-1), d => new CalendarDay(d, false, true, "Karsamstag", "Osterferien"));
+            AddDays(days, easterSunday, d => new CalendarDay(d, false, true, "Ostersonntag", "Osterferien"));
+            AddDays(days, easterSunday.AddDays(49), d => new CalendarDay(d, false, true, "Pfingstsonntag", "Pfingstferien"));
 
-            // Zusätzlich schulfreie Tage nach § 2 Schulzeitgesetz, https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=10009575
-            AddDays(days, GetDate(1, 2), GetDate(1, 6), d => new CalendarDay(d, false, "Weihnachtsferien"));
-            AddDays(days, semesterHolidayBegin, semesterHolidayBegin.AddDays(6), d => new CalendarDay(d, false, "Semesterferien"));
+            // Zusätzlich schulfreie Tage nach § 2 Schulzeitgesetz, die nicht frei nach dem Arbeitsruhegesetz sind
+            // Vgl. SchZG: https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=10009575
+            // Tage, die schon angelegt wurden, werden im Array nicht überschrieben.
+            AddDays(days, GetDate(1, 2), GetDate(1, 6), d => new CalendarDay(d, false, true, null, "Weihnachtsferien"));
+            AddDays(days, semesterHolidayBegin, semesterHolidayBegin.AddDays(7), d => new CalendarDay(d, false, true, null, "Semesterferien"));
             // Novelle BGBl. I Nr. 49/2019: DI nach Ostern und Pfingsten ist ab 2020 nicht mehr frei.
-            AddDays(days, easterSunday.AddDays(-8), easterSunday.AddDays(_year < 2020 ? 3 : 2), d => new CalendarDay(d, false, "Osterferien"));
-            AddDays(days, easterSunday.AddDays(48), easterSunday.AddDays(_year < 2020 ? 52 : 51), d => new CalendarDay(d, false, "Pfingstferien"));
-            AddDays(days, mainHolidayBegin, schoolyearBegin, d => new CalendarDay(d, false, "Sommerferien"));
-            AddDays(days, GetDate(11, 2), d => new CalendarDay(d, false, "Allerseelen"));
-            AddDays(days, GetDate(11, 15), d => new CalendarDay(d, false, "Heiliger Lepopld"));
-            AddDays(days, xmaxHolidayBegin, GetDate(12, 31).AddDays(1), d => new CalendarDay(d, false, "Weihnachtsferien"));
+            AddDays(days, easterSunday.AddDays(-8), easterSunday.AddDays(_year < 2020 ? 3 : 2), d => new CalendarDay(d, false, true, null, "Osterferien"));
+            AddDays(days, easterSunday.AddDays(48), easterSunday.AddDays(_year < 2020 ? 52 : 51), d => new CalendarDay(d, false, true, null, "Pfingstferien"));
+            AddDays(days, mainHolidayBegin, schoolyearBegin, d => new CalendarDay(d, false, true, null, "Sommerferien"));
+            AddDays(days, GetDate(11, 2), d => new CalendarDay(d, false, true, "Allerseelen", "Allerseelen"));
+            AddDays(days, GetDate(11, 15), d => new CalendarDay(d, false, true, "Heiliger Lepopld", "Heiliger Lepopld"));
+            AddDays(days, xmaxHolidayBegin, GetDate(12, 31).AddDays(1), d => new CalendarDay(d, false, true, null, "Weihnachtsferien"));
             // Novelle BGBl. I Nr. 49/2019: Herbstferien vom 27.10. bis 31.10.
             if (_year >= 2020)
             {
-                AddDays(days, GetDate(10, 27), GetDate(11, 1), d => new CalendarDay(d, false, "Herbstferien"));
+                AddDays(days, GetDate(10, 27), GetDate(11, 1), d => new CalendarDay(d, false, true, null, "Herbstferien"));
             }
+
+            // Zu bestimmten Tagen Infos angeben
+            var firstAdvent = CalcDateOnNextWeekday(GetDate(11, 27), DayOfWeek.Sunday);
+            AddDays(days, firstAdvent, d => new CalendarDay(d, false, false, "1. Advent", null));
+            AddDays(days, firstAdvent.AddDays(7), d => new CalendarDay(d, false, false, "2. Advent", null));
+            AddDays(days, firstAdvent.AddDays(14), d => new CalendarDay(d, false, false, "3. Advent", null));
+            AddDays(days, firstAdvent.AddDays(21), d => new CalendarDay(d, false, false, "4. Advent", null));
 
             // Alle anderen Tage sind normale Arbeitstage
             AddDays(days, GetDate(1, 1), GetDate(12, 31).AddDays(1));
