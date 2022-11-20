@@ -70,15 +70,13 @@ public class CalendarYearTests
         for (int year = 1999; year <= 2400; year++)
         {
             var calendarYear = new CalendarYear(year);
-            var schoolyearBegin = calendarYear.SchoolyearBegin;
             foreach (var day in calendarYear.GetCalendarDays())
             {
                 if (day.IsWorkingDayMoFr) { workingdayCounter++; }
                 if (day.IsSchoolDayMoFr) { schooldayCounter++; }
                 var dateTime = day.DateTime;
-                int schoolyear = dateTime >= schoolyearBegin ? dateTime.Year : dateTime.Year - 1;
                 stream.WriteLine(
-                    $"{day.DateTime:yyyy-MM-dd}\t{day.Date2000:yyyy-MM-dd}\t{day.DateTime.Year}\t{day.DateTime.Month}\t{day.DateTime.Day}\t{schoolyear}\t" +
+                    $"{day.DateTime:yyyy-MM-dd}\t{day.Date2000:yyyy-MM-dd}\t{day.DateTime.Year}\t{day.DateTime.Month}\t{day.DateTime.Day}\t{day.Schoolyear}\t" +
                     $"{day.WeekdayNr}\t{day.WeekdayName}\t" +
                     $"{(day.IsWorkingDayMoFr ? 1 : 0)}\t{workingdayCounter}\t{(day.IsSchoolDayMoFr ? 1 : 0)}\t{schooldayCounter}\t" +
                     $"{(day.IsPublicHoliday ? 1 : 0)}\t{(day.IsSchoolHoliday ? 1 : 0)}\t{day.PublicHolidayName}\t{day.SchoolHolidayName}");

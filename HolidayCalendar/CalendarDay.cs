@@ -23,10 +23,21 @@ namespace CalendarCalculator
         }
 
         public DateTime DateTime { get; }
+
         public bool IsPublicHoliday { get; }
         public string? PublicHolidayName { get; }
         public string? SchoolHolidayName { get; }
         public bool IsSchoolHoliday { get; }
+        public int Schoolyear
+        {
+            get
+            {
+                DateTime schoolyearBegin = new DateTime(DateTime.Year, 9, 1);
+                // Ersten MO im September ermitteln.
+                schoolyearBegin = schoolyearBegin.AddDays((7 - (int)schoolyearBegin.DayOfWeek + 1) % 7);
+                return DateTime < schoolyearBegin ? DateTime.Year - 1 : DateTime.Year;
+            }
+        }
         public DateTime Date2000 => new DateTime(2000, DateTime.Month, DateTime.Day);
         public long JsTimestamp => (DateTime.Ticks - _jsEpoch) / TimeSpan.TicksPerMillisecond;
         public int WeekdayNr => DateTime.DayOfWeek == DayOfWeek.Sunday ? 7 : (int)DateTime.DayOfWeek;
