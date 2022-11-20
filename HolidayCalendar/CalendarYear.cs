@@ -76,21 +76,8 @@ namespace CalendarCalculator
             AddDays(days, easterSunday, d => new CalendarDay(d, false, true, "Ostersonntag", "Osterferien"));
             AddDays(days, easterSunday.AddDays(49), d => new CalendarDay(d, false, true, "Pfingstsonntag", "Pfingstferien"));
 
-            // Zu Tagen, die in die Ferien fallen können, Infos angeben. Da Einträge nicht mehr überschrieben werden,
-            // müssen wir das vorher ermitteln.
-            if (easterSunday.AddDays(-47) >= semesterHolidayBegin && easterSunday.AddDays(-47) < semesterHolidayBegin.AddDays(7))
-                AddDays(days, easterSunday.AddDays(-47), d => new CalendarDay(d, false, true, "Faschingsdienstag", "Semesterferien"));
-            else
-                AddDays(days, easterSunday.AddDays(-47), d => new CalendarDay(d, false, false, "Faschingsdienstag", null));
-
-            if (easterSunday.AddDays(-46) >= semesterHolidayBegin && easterSunday.AddDays(-46) < semesterHolidayBegin.AddDays(7))
-                AddDays(days, easterSunday.AddDays(-46), d => new CalendarDay(d, false, true, "Aschermittwoch", "Semesterferien"));
-            else
-                AddDays(days, easterSunday.AddDays(-46), d => new CalendarDay(d, false, false, "Aschermittwoch", null));
-
             // Schulfreie Tage nach § 2 Schulzeitgesetz, die nicht frei nach dem Arbeitsruhegesetz sind
             // Vgl. SchZG: https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=10009575
-            // Tage, die schon angelegt wurden, werden im Array nicht überschrieben.
             AddDays(days, GetDate(1, 2), GetDate(1, 6), d => new CalendarDay(d, false, true, null, "Weihnachtsferien"));
             AddDays(days, semesterHolidayBegin, semesterHolidayBegin.AddDays(7), d => new CalendarDay(d, false, true, null, "Semesterferien"));
             // Novelle BGBl. I Nr. 49/2019: DI nach Ostern und Pfingsten ist ab 2020 nicht mehr frei.
@@ -107,6 +94,9 @@ namespace CalendarCalculator
             }
 
             // Zu bestimmten Tagen Infos angeben
+            AddDays(days, GetDate(12, 24), d => new CalendarDay(d, true, true, "Heiliger Abend", "Weihnachtsferien"));
+            AddDays(days, easterSunday.AddDays(-47), d => new CalendarDay(d, false, false, "Faschingsdienstag", null));
+            AddDays(days, easterSunday.AddDays(-46), d => new CalendarDay(d, false, false, "Aschermittwoch", null));
             var firstAdvent = CalcDateOnNextWeekday(GetDate(11, 27), DayOfWeek.Sunday);
             AddDays(days, firstAdvent, d => new CalendarDay(d, false, false, "1. Advent", null));
             AddDays(days, firstAdvent.AddDays(7), d => new CalendarDay(d, false, false, "2. Advent", null));
@@ -114,13 +104,12 @@ namespace CalendarCalculator
             AddDays(days, firstAdvent.AddDays(21), d => new CalendarDay(d, false, false, "4. Advent", null));
 
             // Alle anderen Tage sind normale Arbeitstage
-            AddDays(days, GetDate(1, 1), GetDate(12, 31).AddDays(1));
-
-            // Den fortlaufenden Zähler nachträglich setzen.
             int workingdayCounter = _workingdayCounterStarts[_year - 2000];
             int schooldayCounter = _schooldayCounterStarts[_year - 2000];
-            foreach (var day in days)
+            for (int i = 0; i < days.Length; i++)
             {
+                var day = days[i];
+                if (day is null) { days[i] = day = new CalendarDay(new DateTime(_year, 1, 1).AddDays(i)); }
                 if (day.IsWorkingDayMoFr) { workingdayCounter++; }
                 if (day.IsSchoolDayMoFr) { schooldayCounter++; }
                 day.WorkingdayCounter = workingdayCounter;
@@ -136,18 +125,8 @@ namespace CalendarCalculator
         /// <summary>
         /// Fügt einen einzelnen Tag in ein Array von Jahrestagen ein, wenn noch kein Tag eingefügt wurde.
         /// </summary>
-        private void AddDays(CalendarDay[] days, DateTime day, Func<DateTime, CalendarDay> converter)
-        {
-            int dayOfYear = day.DayOfYear - 1;
-            if (days[dayOfYear] is null)
-                days[dayOfYear] = converter(day);
-        }
-        /// <summary>
-        /// Fügt eine Range von Tagen (begin bis exklusive end) in ein Array von Jahrestagen ein,
-        /// wenn noch kein Tag eingefügt wurde.
-        /// </summary>
-        private void AddDays(CalendarDay[] days, DateTime begin, DateTime end)
-            => AddDays(days, begin, end, d => new CalendarDay(d));
+        private void AddDays(CalendarDay[] days, DateTime date, Func<DateTime, CalendarDay> converter) =>
+            AddDays(days, date, date.AddDays(1), converter);
         /// <summary>
         /// Fügt eine Range von Tagen (begin bis exklusive end) in ein Array von Jahrestagen ein,
         /// wenn noch kein Tag eingefügt wurde.
@@ -157,8 +136,15 @@ namespace CalendarCalculator
             for (; begin < end; begin = begin.AddDays(1))
             {
                 int dayOfYear = begin.DayOfYear - 1;
-                if (days[dayOfYear] is null)
-                    days[dayOfYear] = converter(begin);
+                var newDay = converter(begin);
+                var day = days[dayOfYear];
+                if (day is null)
+                    days[dayOfYear] = newDay;
+                else
+                {
+                    day.PublicHolidayName = day.PublicHolidayName ?? newDay.PublicHolidayName;
+                    day.SchoolHolidayName = day.SchoolHolidayName ?? newDay.SchoolHolidayName;
+                }
             }
         }
         /// <summary>

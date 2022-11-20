@@ -19,36 +19,34 @@ namespace CalendarCalculator
             IsSchoolHoliday = isSchoolHoliday;
             PublicHolidayName = publicHolidayName;
             SchoolHolidayName = schoolHolidayName;
+            DateTime schoolyearBegin = new DateTime(DateTime.Year, 9, 1);
+            // Ersten MO im September ermitteln.
+            schoolyearBegin = schoolyearBegin.AddDays((7 - (int)schoolyearBegin.DayOfWeek + 1) % 7);
+            Schoolyear = DateTime < schoolyearBegin ? DateTime.Year - 1 : DateTime.Year;
+            Date2000 = new DateTime(2000, DateTime.Month, DateTime.Day);
+            JsTimestamp = (DateTime.Ticks - _jsEpoch) / TimeSpan.TicksPerMillisecond;
+            WeekdayNr = DateTime.DayOfWeek == DayOfWeek.Sunday ? 7 : (int)DateTime.DayOfWeek;
+            WeekdayName = _weekdayNames[(int)DateTime.DayOfWeek];
+            IsWorkingDayMoFr = DateTime.DayOfWeek != DayOfWeek.Saturday && DateTime.DayOfWeek != DayOfWeek.Sunday && !IsPublicHoliday;
+            IsWorkingDayMoSa = DateTime.DayOfWeek != DayOfWeek.Sunday && !IsPublicHoliday;
+            IsSchoolDayMoFr = DateTime.DayOfWeek != DayOfWeek.Saturday && DateTime.DayOfWeek != DayOfWeek.Sunday && !IsSchoolHoliday;
         }
 
+        public long JsTimestamp { get; }
         public DateTime DateTime { get; }
-
+        public DateTime Date2000 { get; }
+        public int Schoolyear { get; }
+        public int WeekdayNr { get; }
+        public string WeekdayName { get; }
+        public bool IsWorkingDayMoFr { get; }
+        public bool IsWorkingDayMoSa { get; }
+        public bool IsSchoolDayMoFr { get; }
         public bool IsPublicHoliday { get; }
-        public string? PublicHolidayName { get; }
-        public string? SchoolHolidayName { get; }
         public bool IsSchoolHoliday { get; }
-        public int Schoolyear
-        {
-            get
-            {
-                DateTime schoolyearBegin = new DateTime(DateTime.Year, 9, 1);
-                // Ersten MO im September ermitteln.
-                schoolyearBegin = schoolyearBegin.AddDays((7 - (int)schoolyearBegin.DayOfWeek + 1) % 7);
-                return DateTime < schoolyearBegin ? DateTime.Year - 1 : DateTime.Year;
-            }
-        }
-        public DateTime Date2000 => new DateTime(2000, DateTime.Month, DateTime.Day);
+        public string? PublicHolidayName { get; set; }
+        public string? SchoolHolidayName { get; set; }
         public int WorkingdayCounter { get; set; }
         public int SchooldayCounter { get; set; }
-        public long JsTimestamp => (DateTime.Ticks - _jsEpoch) / TimeSpan.TicksPerMillisecond;
-        public int WeekdayNr => DateTime.DayOfWeek == DayOfWeek.Sunday ? 7 : (int)DateTime.DayOfWeek;
-        public string WeekdayName => _weekdayNames[(int)DateTime.DayOfWeek];
-        public bool IsWorkingDayMoFr =>
-            DateTime.DayOfWeek != DayOfWeek.Saturday && DateTime.DayOfWeek != DayOfWeek.Sunday && !IsPublicHoliday;
-        public bool IsWorkingDayMoSa =>
-            DateTime.DayOfWeek != DayOfWeek.Sunday && !IsPublicHoliday;
-        public bool IsSchoolDayMoFr =>
-            DateTime.DayOfWeek != DayOfWeek.Saturday && DateTime.DayOfWeek != DayOfWeek.Sunday && !IsSchoolHoliday;
 
         public int CompareTo(CalendarDay? other) => DateTime.CompareTo(other?.DateTime);
         public bool Equals(CalendarDay? other) => DateTime.Equals(other?.DateTime);
