@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Xunit;
 
 namespace HolidayCalendar;
@@ -15,7 +16,7 @@ public class CalendarServiceTests
     public void CalendarDaysAscendingTest()
     {
         var days = new CalendarService(2000, 2400).CalendarDays;
-        var start = new System.DateTime(2000, 1, 1);
+        var start = new DateTime(2000, 1, 1);
         for (int i = 0; i < days.Count; i++)
         {
             if (days[i].DateTime != start.AddDays(i))
@@ -25,6 +26,20 @@ public class CalendarServiceTests
             }
         }
         Assert.True(true);
+    }
+    [Fact]
+    public void GetDaysOfYearTest()
+    {
+        var service = new CalendarService(2000, 2400);
+        var dayOfYear = service.GetDaysOfYear(2100);
+        Assert.True(dayOfYear.First().DateTime == new DateTime(2100, 1, 1) && dayOfYear.Last().DateTime == new DateTime(2100, 12, 31));
+    }
+    [Fact]
+    public void GetDaysOfMonthTest()
+    {
+        var service = new CalendarService(2000, 2400);
+        var dayOfYear = service.GetDaysOfMonth(2000, 2);
+        Assert.True(dayOfYear.First().DateTime == new DateTime(2000, 2, 1) && dayOfYear.Last().DateTime == new DateTime(2000, 2, 29));
     }
     [Fact]
     public void CalendarDaysWorkingCounterTest()

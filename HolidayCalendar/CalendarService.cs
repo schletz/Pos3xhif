@@ -26,16 +26,41 @@ class CalendarService
         for (int year = yearFrom; year < yearToExclusive; year++)
         {
             var calendarYear = new CalendarYear(year);
-            i += calendarYear.GetCalendarDays(daysSpan.Slice(i, new DateTime(year, 12, 31).DayOfYear));
+            i += calendarYear.GetCalendarDays(daysSpan.Slice(i, DaysOfYear(year)));
         }
         _calendarDays = days;
     }
 
     public IReadOnlyList<CalendarDay> CalendarDays => _calendarDays;
+    public int DaysOfYear(int year) => 365 + (year % 400 == 0 ? 1 : year % 100 == 0 ? 0 : year % 4 == 0 ? 1 : 0);
     /// <summary>
     /// Gibt die Position des Tages im internen Array zurück.
     /// </summary>
     public int CalcDayNumber(DateTime date) => (int)((date.Date.Ticks - _day0.Ticks) / TimeSpan.TicksPerDay);
+    /// <summary>
+    /// Liefert einen Enumerator, der alle Tage eines Jahres aufzählt.
+    /// </summary>
+    public IEnumerable<CalendarDay> GetDaysOfYear(int year)
+    {
+        var i = CalcDayNumber(new DateTime(year, 1, 1));
+        var last = i + DaysOfYear(year);
+        while (i < last)
+        {
+            yield return _calendarDays[i++];
+        }
+    }
+    /// <summary>
+    /// Liefert einen Enumerator, der alle Tage eines Monats aufzählt.
+    /// </summary>
+    public IEnumerable<CalendarDay> GetDaysOfMonth(int year, int month)
+    {
+        var i = CalcDayNumber(new DateTime(year, month, 1));
+        var last = CalcDayNumber(new DateTime(year, month + 1, 1));
+        while (i < last)
+        {
+            yield return _calendarDays[i++];
+        }
+    }
     /// <summary>
     /// Bestimmt die Anzahl der Arbeitstage zwischen 2 Datumswerten.
     /// </summary>
