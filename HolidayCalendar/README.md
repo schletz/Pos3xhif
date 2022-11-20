@@ -42,8 +42,8 @@ public DateTime CalcEasterSunday(int year)
 
 Aus dem Osterdatum leiten sich dann alle beweglichen Feiertage ab:
 
-> *Christi Himmelfahrt*: 39 Tage nach dem Ostersonntag, *Pfingstmontag*: 50 Tage nach dem Ostersonntag,
-> *Fronleichnam*: 60 Tage nach dem Ostersonntag.  
+> *Ostermontag*: 1 Tag nach dem Ostersonntag, *Christi Himmelfahrt*: 39 Tage nach dem Ostersonntag,
+> *Pfingstmontag*: 50 Tage nach dem Ostersonntag, *Fronleichnam*: 60 Tage nach dem Ostersonntag.  
 > <sup>https://www.ptb.de/cms/ptb/fachabteilungen/abt4/fb-44/ag-441/darstellung-der-gesetzlichen-zeit/wann-ist-ostern.html</sup>
 
 Die Schulferien sind im Schulzeitgesetz geregelt (Auszug, Fassung vom 20.11.2022):  
