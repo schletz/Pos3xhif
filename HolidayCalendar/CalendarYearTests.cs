@@ -5,8 +5,7 @@ using System.Linq;
 using System.Text;
 using Xunit;
 
-namespace CalendarCalculator;
-
+namespace HolidayCalendar;
 public class CalendarYearTests
 {
     [Fact]
@@ -102,7 +101,7 @@ public class CalendarYearTests
     [Fact]
     public void WriteFileTest()
     {
-        using var stream = new StreamWriter(File.Create("../../../calendar.txt"), System.Text.Encoding.Unicode);
+        using var stream = new StreamWriter(File.Create("../../../calendar.txt"), Encoding.Unicode);
         stream.WriteLine(
             "DATE\tDATE2000\tYEAR\tMONTH\tDAY\tSCHOOLYEAR\t" +
             "WEEKDAY_NR\tWEEKDAY_STR\t" +

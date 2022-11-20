@@ -87,7 +87,7 @@ Soll eine Textdatei mit allen Tagen zwischen dem 1.1.2000 und 31.12.2399 generie
 du den Test direkt im Verzeichnis der *csproj* Datei von der Konsole starten:
 
 ```
-dotnet test --filter CalendarCalculator.CalendarYearTests.WriteFileTest
+dotnet test --filter HolidayCalendar.CalendarYearTests.WriteFileTest
 ```
 
 400 Jahre ist eine volle Periode im gregorianischen Kalender. Das bedeutet, dass die Tage
