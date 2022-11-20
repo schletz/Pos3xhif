@@ -1,13 +1,22 @@
 # Österreichische Feiertage und Schulferien
 
-Die Klasse *CalendarYear* berechnet alle österreichischen Feiertage sowie die Schulferien, wie
-sie in den Bundesländern Wien und Niederösterreich gelten.
+Die Klasse *CalendarYear* in der Datei [CalendarYear.cs](CalendarYear.cs) berechnet alle
+österreichischen Feiertage sowie die Schulferien, wie
+sie in den Bundesländern Wien und Niederösterreich gelten. Die Feiertage sind im Arbeitsruhegesetz
+definiert:
 
-Die Applikation ist ein xUnit Test, da die Klasse zur Verwendung in anderen Programmen entwickelt
-wurde (Serviceklasse).
+```
+(2) Feiertage im Sinne dieses Bundesgesetzes sind:
+    1. Jänner (Neujahr), 6. Jänner (Heilige Drei Könige), Ostermontag, 1. Mai (Staatsfeiertag),
+    Christi Himmelfahrt, Pfingstmontag, Fronleichnam, 15. August (Mariä Himmelfahrt),
+    26. Oktober (Nationalfeiertag), 1. November (Allerheiligen), 8. Dezember (Mariä Empfängnis),
+    25. Dezember (Weihnachten), 26. Dezember (Stephanstag).
+```
+<sup>https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=10008541</sup>
 
-Die beweglichen Feiertage sind an Ostern gebunden. Das Osterdatum wird mit der Formel nach
-Spencer (https://de.wikipedia.org/wiki/Spencers_Osterformel) berechnet.
+Die beweglichen Feiertage sind an Ostern gebunden. Das Osterdatum kann mit der Formel nach
+Spencer berechnet werden. Es gibt auch von Gauß eine Osterformel, die natürlich die selben Tage liefert.  
+<sup>https://de.wikipedia.org/wiki/Spencers_Osterformel</sup>
 
 ```c#
 public DateTime CalcEasterSunday(int year)
@@ -31,7 +40,48 @@ public DateTime CalcEasterSunday(int year)
 }
 ```
 
+Aus dem Osterdatum leiten sich dann alle beweglichen Feiertage ab:
+
+> *Christi Himmelfahrt*: 39 Tage nach dem Ostersonntag, *Pfingstmontag*: 50 Tage nach dem Ostersonntag,
+> *Fronleichnam*: 60 Tage nach dem Ostersonntag.  
+> <sup>https://www.ptb.de/cms/ptb/fachabteilungen/abt4/fb-44/ag-441/darstellung-der-gesetzlichen-zeit/wann-ist-ostern.html</sup>
+
+Die Schulferien sind im Schulzeitgesetz geregelt (Auszug, Fassung vom 20.11.2022):  
+
+> - Das **Schuljahr** beginnt in den Bundesländern Burgenland, Niederösterreich und Wien am ersten Montag,
+>   in den Bundesländern Kärnten, Oberösterreich, Salzburg, Steiermark, Tirol und Vorarlberg am zweiten
+>   Montag im September und dauert bis zum Beginn des nächsten Schuljahres.
+> - Die **Semesterferien** in der Dauer einer Woche, welche in den Bundesländern Niederösterreich und Wien
+>   am ersten Montag im Februar, in den Bundesländern Burgenland, Kärnten, Salzburg, Tirol und
+>   Vorarlberg am zweiten Montag im Februar und in den Bundesländern Oberösterreich und Steiermark am
+>   dritten Montag im Februar beginnen;
+> - Die **Hauptferien** beginnen in den Bundesländern Burgenland, Niederösterreich und Wien an dem Samstag,
+>   der frühestens auf den 28. Juni und spätestens auf den 4. Juli fällt, in den Bundesländern Kärnten,
+>   Oberösterreich, Salzburg, Steiermark, Tirol und Vorarlberg an dem Samstag, der frühestens auf
+>   den 5. Juli und spätestens auf den 11. Juli fällt; sie enden mit dem Beginn des nächsten Schuljahres.
+> - Schulfrei sind die folgenden Tage des Unterrichtsjahres:
+>   - die Sonntage und gesetzlichen Feiertage, der **Allerseelentag**, in jedem Bundesland
+      der **Festtag des Landespatrons** sowie der Landesfeiertag, wenn ein solcher in dem betreffenden 
+>     Bundesland arbeitsfrei begangen wird;
+>   - die Tage vom 24. Dezember bis einschließlich 6. Jänner (**Weihnachtsferien**); der 23. Dezember,
+       sofern er auf einen Montag fällt;
+>   - der einem gemäß Z 1 oder 2 schulfreien Freitag unmittelbar folgende Samstag;
+>   - die Tage vom Montag bis einschließlich Samstag der **Semesterferien** (Abs. 2);
+>   - die Tage vom Samstag vor dem Palmsonntag bis einschließlich Ostermontag (**Osterferien**);
+>   - die Tage vom Samstag vor dem Pfingstsonntag bis einschließlich Pfingstmontag (**Pfingstferien**);
+>   - die Tage vom 27. Oktober bis einschließlich 31. Oktober (**Herbstferien**).
+> - Aus Anlässen des schulischen oder sonstigen öffentlichen Lebens kann das Schulforum bzw. der Schulgemeinschaftsausschuss in jedem Unterrichtsjahr,
+>   - in dem der 26. Oktober auf einen Sonntag fällt, höchstens zwei Tage,
+>   - in dem der 26. Oktober auf einen Montag oder einen Samstag fällt, höchstens drei Tage und
+>   - in dem der 26. Oktober auf einen anderen als in Z 1 und 2 genannten Wochentag fällt, höchstens vier Tage
+>     schulfrei erklären.
+> 
+> <sup>https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=10009575</sup>
+
 ## Generieren eines Kalenderfiles
+
+Die Applikation ist ein xUnit Testprojekt, da die Klasse zur Verwendung in anderen Programmen entwickelt
+wurde (Serviceklasse).
 
 Soll eine Textdatei mit allen Tagen zwischen dem 1.1.2000 und 31.12.2399 generiert werden, kannst
 du den Test direkt im Verzeichnis der *csproj* Datei von der Konsole starten:
