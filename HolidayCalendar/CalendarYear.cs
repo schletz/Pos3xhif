@@ -150,12 +150,8 @@ namespace CalendarCalculator
         /// DI, 15.11.2022, gesucht ist der nächste DI  --> 15.11.2022
         /// MI, 16.11.2022, gesucht ist der nächste DI  --> 22.11.2022
         /// </summary>
-        private DateTime CalcDateOnNextWeekday(DateTime date, DayOfWeek dayOfWeek)
-        {
-            int dayOfWeekZeroBased = dayOfWeek == DayOfWeek.Sunday ? 6 : (int)dayOfWeek - 1;
-            int dateDayOfWeekZeroBased = date.DayOfWeek == DayOfWeek.Sunday ? 6 : (int)date.DayOfWeek - 1;
-            return date.AddDays((dayOfWeekZeroBased - dateDayOfWeekZeroBased + 7) % 7);
-        }
+        private DateTime CalcDateOnNextWeekday(DateTime date, DayOfWeek dayOfWeek) =>
+            date.AddDays((7 - (int)date.DayOfWeek + (int)dayOfWeek) % 7);
 
         /// <summary>
         /// Berechnet den Tag des Ostersonntags im Jahr des Objektes.
