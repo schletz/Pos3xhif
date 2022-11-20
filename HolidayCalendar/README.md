@@ -80,6 +80,7 @@ Trennzeichen für Spalten. Strings sind nicht unter Anführungszeichen.
 - **YEAR** Die Jahreskomponente als ganze Zahl.
 - **MONTH** Die Monatskomponente als ganze Zahl.
 - **DAY** Die Tageskomponente als ganze Zahl.
+- **SCHOOLYEAR** Das Schuljahr des Tages. 2000 für 2000/01, 2001 für 2001/02, usw.
 - **WEEKDAY_NR** 1 = MO, 2 = DI, ... 6 = SA, 7 = SO. Ermöglicht eine Ermittlung des Wochentages
   unabhängig von der verwendeten LOCALE Einstellung der Session.
 - **WEEKDAY_STR** Der String des deutschen Wochentages (MO, DI, MI, DO, FR, SA, SO)
@@ -102,7 +103,7 @@ Trennzeichen für Spalten. Strings sind nicht unter Anführungszeichen.
 
 Die Speicherung jedes Tages von 2000 - 2400 klingt einmal verschwenderisch. Es müssen 146.097
 Zeilen in der Tabelle gespeichert werden. Für eine Datenbank ist das jedoch keine große Menge,
-und die Tabelle benötigt (in SQL Server) gerade einmal 6.3 MB. Die Vorteile, die sich daraus
+und die Tabelle benötigt (in SQL Server) gerade einmal 6.2 MB. Die Vorteile, die sich daraus
 ergeben, beschleunigen sogar unsere Abfragen:
 
 - Statt komplizierter Datumsarithmetik (z. B. Anzahl der Arbeitstage zwischen 2 Werten) genügt
@@ -140,7 +141,8 @@ CREATE TABLE CalendarDay (
     Year  SMALLINT NOT NULL,
     Month TINYINT NOT NULL,
     Day   TINYINT NOT NULL,
-    WeekdayNr  INTEGER NOT NULL,
+    Schoolyear SMALLINT NOT NULL,
+    WeekdayNr  TINYINT NOT NULL,
     WeekdayStr CHAR(2) NOT NULL,
     Workingday         TINYINT NOT NULL,
     WorkingdayCounter  INTEGER NOT NULL,
@@ -163,7 +165,7 @@ SELECT Year,
     SUM(Workingday) AS WorkingDays,
     SUM(Schoolday) AS SchoolDays
 FROM CalendarDay
-WHERE Year < 2100
+WHERE Year >= 2020 AND Year < 2030
 GROUP BY Year
 ORDER BY Year;
 ```

@@ -70,7 +70,19 @@ namespace CalendarCalculator
             AddDays(days, easterSunday, d => new CalendarDay(d, false, true, "Ostersonntag", "Osterferien"));
             AddDays(days, easterSunday.AddDays(49), d => new CalendarDay(d, false, true, "Pfingstsonntag", "Pfingstferien"));
 
-            // Zusätzlich schulfreie Tage nach § 2 Schulzeitgesetz, die nicht frei nach dem Arbeitsruhegesetz sind
+            // Zu Tagen, die in die Ferien fallen können, Infos angeben. Da Einträge nicht mehr überschrieben werden,
+            // müssen wir das vorher ermitteln.
+            if (easterSunday.AddDays(-47) >= semesterHolidayBegin && easterSunday.AddDays(-47) < semesterHolidayBegin.AddDays(7))
+                AddDays(days, easterSunday.AddDays(-47), d => new CalendarDay(d, false, true, "Faschingsdienstag", "Semesterferien"));
+            else
+                AddDays(days, easterSunday.AddDays(-47), d => new CalendarDay(d, false, false, "Faschingsdienstag", null));
+
+            if (easterSunday.AddDays(-46) >= semesterHolidayBegin && easterSunday.AddDays(-46) < semesterHolidayBegin.AddDays(7))
+                AddDays(days, easterSunday.AddDays(-46), d => new CalendarDay(d, false, true, "Aschermittwoch", "Semesterferien"));
+            else
+                AddDays(days, easterSunday.AddDays(-46), d => new CalendarDay(d, false, false, "Aschermittwoch", null));
+
+            // Schulfreie Tage nach § 2 Schulzeitgesetz, die nicht frei nach dem Arbeitsruhegesetz sind
             // Vgl. SchZG: https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=10009575
             // Tage, die schon angelegt wurden, werden im Array nicht überschrieben.
             AddDays(days, GetDate(1, 2), GetDate(1, 6), d => new CalendarDay(d, false, true, null, "Weihnachtsferien"));

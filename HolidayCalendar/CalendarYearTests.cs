@@ -59,22 +59,26 @@ public class CalendarYearTests
     {
         using var stream = new StreamWriter(File.Create("../../../calendar.txt"), System.Text.Encoding.Unicode);
         stream.WriteLine(
-            "DATE\tDATE2000\tYEAR\tMONTH\tDAY\t" +
+            "DATE\tDATE2000\tYEAR\tMONTH\tDAY\tSCHOOLYEAR\t" +
             "WEEKDAY_NR\tWEEKDAY_STR\t" +
             "WORKINGDAY\tWORKINGDAY_COUNTER\tSCHOOLDAY\tSCHOOLDAY_COUNTER\t" +
             "PUBLIC_HOLIDAY\tSCHOOL_HOLIDAY\tPUBLIC_HOLIDAY_NAME\tSCHOOL_HOLIDAY_NAME");
         int workingdayCounter = 0;
         int schooldayCounter = 0;
-        for (int year = 2000; year < 2400; year++)
+        // Für die Schuljahre 2000 - 2399 die Jahre 1999 und 2400 auch generieren. Sonst werden
+        // sie am 1.1. abgeschnitten.
+        for (int year = 1999; year <= 2400; year++)
         {
             var calendarYear = new CalendarYear(year);
+            var schoolyearBegin = calendarYear.SchoolyearBegin;
             foreach (var day in calendarYear.GetCalendarDays())
             {
                 if (day.IsWorkingDayMoFr) { workingdayCounter++; }
                 if (day.IsSchoolDayMoFr) { schooldayCounter++; }
                 var dateTime = day.DateTime;
+                int schoolyear = dateTime >= schoolyearBegin ? dateTime.Year : dateTime.Year - 1;
                 stream.WriteLine(
-                    $"{day.DateTime:yyyy-MM-dd}\t{day.Date2000:yyyy-MM-dd}\t{day.DateTime.Year}\t{day.DateTime.Month}\t{day.DateTime.Day}\t" +
+                    $"{day.DateTime:yyyy-MM-dd}\t{day.Date2000:yyyy-MM-dd}\t{day.DateTime.Year}\t{day.DateTime.Month}\t{day.DateTime.Day}\t{schoolyear}\t" +
                     $"{day.WeekdayNr}\t{day.WeekdayName}\t" +
                     $"{(day.IsWorkingDayMoFr ? 1 : 0)}\t{workingdayCounter}\t{(day.IsSchoolDayMoFr ? 1 : 0)}\t{schooldayCounter}\t" +
                     $"{(day.IsPublicHoliday ? 1 : 0)}\t{(day.IsSchoolHoliday ? 1 : 0)}\t{day.PublicHolidayName}\t{day.SchoolHolidayName}");
