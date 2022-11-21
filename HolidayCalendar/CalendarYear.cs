@@ -56,7 +56,7 @@ class CalendarYear
         var easterSunday = EasterSunday;
         var mainHolidayBegin = MainHolidayBegin;
         var schoolyearBegin = SchoolyearBegin;
-        var xmaxHolidayBegin = GetDate(12, 23).DayOfWeek == DayOfWeek.Monday ? GetDate(12, 23) : GetDate(12, 24);
+        var xmasHolidayBegin = GetDate(12, 23).DayOfWeek == DayOfWeek.Monday ? GetDate(12, 23) : GetDate(12, 24);
 
         // Gesetzliche Feiertage
         AddDays(days, GetDate(1, 1), d => new CalendarDay(d, true, true, "Neujahr", "Weihnachtsferien"));
@@ -91,7 +91,7 @@ class CalendarYear
         AddDays(days, mainHolidayBegin, schoolyearBegin, d => new CalendarDay(d, false, true, null, "Sommerferien"));
         AddDays(days, GetDate(11, 2), d => new CalendarDay(d, false, true, "Allerseelen", "Allerseelen"));
         AddDays(days, GetDate(11, 15), d => new CalendarDay(d, false, true, "Heiliger Lepopld", "Heiliger Lepopld"));
-        AddDays(days, xmaxHolidayBegin, GetDate(12, 31).AddDays(1), d => new CalendarDay(d, false, true, null, "Weihnachtsferien"));
+        AddDays(days, xmasHolidayBegin, GetDate(12, 31).AddDays(1), d => new CalendarDay(d, false, true, null, "Weihnachtsferien"));
         // Novelle BGBl. I Nr. 49/2019: Herbstferien vom 27.10. bis 31.10.
         if (_year >= 2020)
         {
@@ -99,7 +99,7 @@ class CalendarYear
         }
 
         // Zu bestimmten Tagen Infos angeben
-        AddDays(days, GetDate(12, 24), d => new CalendarDay(d, true, true, "Heiliger Abend", "Weihnachtsferien"));
+        AddDays(days, GetDate(12, 24), d => new CalendarDay(d, false, true, "Heiliger Abend", "Weihnachtsferien"));
         AddDays(days, easterSunday.AddDays(-47), d => new CalendarDay(d, false, false, "Faschingsdienstag", null));
         AddDays(days, easterSunday.AddDays(-46), d => new CalendarDay(d, false, false, "Aschermittwoch", null));
         var firstAdvent = CalcDateOnNextWeekday(GetDate(11, 27), DayOfWeek.Sunday);
