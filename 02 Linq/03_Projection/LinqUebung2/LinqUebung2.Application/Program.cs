@@ -117,7 +117,7 @@ namespace LinqUebung2.Application
             Console.WriteLine($"Die schlechteste E Note ist {result2}");
 
             // 3. Liefere eine Liste mit Klasse, Name, Vorname und der Anzahl der Prüfungen
-            //    (soll Anzahl heißen) der 3CHIF. Sortiere die Liste nach Klasse und Name.
+            //    (soll ExamsCount heißen) der 3CHIF. Sortiere die Liste nach Klasse und Name.
             //    Hinweis: Verwende OrderBy und dann ThenBy.
             object result3 = null!;
             Console.WriteLine("Beispiel 3");
