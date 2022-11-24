@@ -1,0 +1,83 @@
+@startuml
+hide empty methods
+left to right direction
+
+class Period { 
+    + Nr : int
+    + From : DateTime
+    + To : DateTime
+    + Lessons : List<Lesson>
+    + Exams : List<Exam>
+}
+
+class Teacher { 
+    + Id : string
+    + Lastname : string
+    + Firstname : string
+    + Email : string
+    + Account : string
+    + Lessons : List<Lesson>
+    + Schoolclasses : List<Schoolclass>
+    + Exams : List<Exam>
+}
+
+
+class Schoolclass { 
+    + Id : string
+    + Department : string
+    + ClassTeacherId : string
+    + ClassTeacher : Teacher
+    + Lessons : List<Lesson>
+    + Pupils : List<Pupil>
+    + Exams : List<Exam>
+}
+
+Teacher <--> Schoolclass : "< Class Teacher\n> Schoolclasses"
+
+class Pupil { 
+    + Id : int
+    + Lastname : string
+    + Firstname : string
+    + Account : string
+    + SchoolclassId : string
+    + Schoolclass : Schoolclass
+}
+
+Pupil <--> Schoolclass : "< Pupils\n> Schoolclass"
+
+class Lesson { 
+    + Id : int
+    + UntisId : int
+    + SchoolclassId : string
+    + Schoolclass : Schoolclass    
+    + TeacherId : string
+    + Teacher : Teacher
+    + Subject : string
+    + Room : string?
+    + Day : int
+    + PeriodNr : int
+    + Period : Period
+}
+
+Lesson <--> Schoolclass : "< Lessons\n> Schoolclass"
+Lesson <--> Teacher : "< Lessons\n> Teacher"
+Lesson <--> Period : "< Lessons\n> Period"
+
+class Exam { 
+    + Id : int
+    + SchoolclassId : string
+    + Schoolclass : Schoolclass    
+    + TeacherId : string
+    + Teacher : Teacher
+    + Subject : string
+    + Date : DateTime
+    + PeriodNr : int
+    + Period : Period    
+}
+
+Exam o--> Schoolclass : "< Exams\n> Schoolclass"
+Exam o--> Teacher : "< Exams\n> Teacher"
+Exam o--> Period : "< Exams\n> Period"
+
+
+@enduml

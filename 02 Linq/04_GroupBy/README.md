@@ -1,7 +1,7 @@
-<!-- markdownlint-disable MD045 -->
 # Objektgraphen und Gruppierungen
 
 ## Datenbankmodell vs. Objektmodell
+
 Bereits zu Beginn der objektorientierten Programmierung wird jeder mit der Beziehung zwischen 2 
 Klassen konfrontiert. Es handelt sich meist um eine *Assotiation* und gibt an, dass eine Klasse
 eine Andere als Member verwendet.
@@ -10,42 +10,69 @@ In Datenbanken gibt es auch Beziehungen zwischen Tabellen. Hier ist es ein Prim�
 in anderen Tabellen als Fremdschlüssel verwendet wird, um auf einen Datensatz zu verweisen.
 
 ### Abbilden von Beziehungen: Navigations
+
 Diese Ideen sind oberflächlich betrachtet nicht unähnlich. Gerade die Beziehungen in einer relationalen
 Datenbank können leicht in der objektorientierten Programmierung nachgebildet werden. Folgendes
 Beispiel zeigt eine klassische 1:n Beziehung zwischen zwei Tabellen und eine Assotiation zwischen
 2 Klassen.
 
-![](er_vs_class.png)
+![](er_vs_class_1140.png)
 
-Die Klassen *Schoolclass* und *Pupil* haben nur datenhaltende Properties und werden als *POCO Klassen* 
-(Plain old CLR objects) bezeichnet. Analog gibt es in der Java Welt auch den Begriff *POJO*.
+Die Klassen *Period*, *Schoolclass*, *Pupil*, *Teacher*, *Lesson*, *Exam* haben nur datenhaltende
+Properties und werden als *POCO Klassen* (Plain old CLR objects) bezeichnet. Analog gibt es in der
+Java Welt auch den Begriff *POJO*.
 
-Beide Klassen haben ein *Navigation Property*. In der Klasse *Schoolclass* gibt es eine Collection von
-Schülern mit dem Namen *Pupils* (da eine Klasse n Schüler haben kann). Umgekehrt gibt es in der Klasse
-*Pupil* einen Verweis auf die Klasse mit dem Namen *P_ClassNavigation*. Da dies die andere Seite der
-Beziehung ist, ist das natürlich ein einzelnes Feld und keine Liste.
+Alle Klassen haben *Navigation Properties*. In der Klasse *Schoolclass* gibt es eine Collection von
+Pupils mit dem Namen *Pupils* (rot unterstrichen), da eine Klasse n Schüler haben kann. Umgekehrt
+gibt es in der Klasse *Pupil* zwei Properties, die die Beziehung abbilden:
 
-![](navigations.png)
+- Das Property *SchoolclassId* speichert den Wert des Fremdschlüssels. Es hat deshalb den Typ String
+  und wird von der Datenbank befüllt.
+- Das Property *Schoolclass* hat den Typ *Schoolclass*. Über dieses Property können wir zur zugehörigen
+  Klasse *navigieren*. Es wird vom OR Mapper aufgebaut.
+  Da dies die "1er" Seite der Beziehung ist, ist es natürlich ein einzelnes Feld und keine Liste.
+
+![](navigations_1243.png)
 
 
 ### Generierung der Modelklassen: Der OR Mapper
+
 Da die Abbildung eines Datenbankmodells in Klassen mechanische Tipparbeit ist, gibt es fertige
 Bibliotheken, die diese Klassen anhand einer gegebenen Datenbank generieren: Object-relational Mapper
 oder OR Mapper erlauben einen objektorientierten Zugriff auf eine Datenbank. In .NET heißt
 der verwendete OR Mapper *Entity Framework*.
 
-## Modell der Tests Datenbank
+> Hinweis: Bei den Übungen arbeitest du schon mit einem OR Mapper (Entity Framework Core) und einer Datenbank, 
+> ohne dass du es merkst. Die Klasse *ExamsDb* baut sich
+> aus CSV Daten eine SQLite Datenbank auf. Sie wird im Ordner *Grouping.Application* in *Exams.db*
+> geschrieben und bei jedem Programmstart neu erzeugt. Alle deine LINQ Abfragen werden daher
+> schon in SQL Abfragen übersetzt.
+
+## Modell der Exams Datenbank
+
 Die folgenden Beispiele basieren auf einer kleinen Datenbank, in der Lehrer ihre Tests, die sie in
 den Klassen haben, erfassen können. Die Schüler können dann darauf zugreifen. Das Modell sieht so
 aus:
 
-![](er_diagram2.png)
+![](https://www.plantuml.com/plantuml/svg/pLHDgzim4BpxLoovblo14DoKV40XXD2ajrvKUnkhM5AGrj1Gtdz_LhmHLkGOmxiydxmpksXcLcZbI5XgL9rLiaH0TQKRAAJAb2whyGy16R3oKX6Kqc91qkWiAshX71pHIbF2VyYW_Rx0mS82f2OkTzQe5jW8mhDKoEZPfDWUdJFQjSHUEbfsPSxazfzGWV95dhqz59nH51LQ21A-bssd8olrXP6zSAI5mcTy9-qmiLL2ri_Wjw8mZQO0Jn5-AYfZwhjG32qzSDmWE-prZxdSu5LOKfXANFjHpYcQIzYMuxyfxexDLTQ1krVZXXwdBEVpFBArWDaIrlrz_j9vdDwCu-XEVGf2Qfg-w_6rffjB8ukazojlijCtQ94JYxq5PnpsIsi_DKaNi8_8z3JtlBmMhsx4gVdz5uiahn_6g81zPN0ZRdsr_5eSx0082_xn4N8GmnbsP19YDCIIam76e-OW8EvbE2p7N-9aDPzk3VvLJHxNIRbxq6T_zsa6a_TKaZiF9AbpSq13Ovnuw0jvhr2NZQhV0G00)
+<sup>[PlantUML Source](https://www.plantuml.com/plantuml/uml/pLH1QiCm4Bpx5IBNaW-KuAOq2HH224rwwqMrjx6A9GLf3GsbVwyLhrrBSaneB_N9ExEBPcQ5vXQvmKgMII5oO22FU68IiD2vJKfuGuQQ6N4eaEN2G8P2goJ9Icujsu8HEcUVB67rTyCsXjqoeP3AbT6o1XOSOIya4BhNCRO6QxMoDR4M5cTDcHAv_E2oeroH9b-jWZtmh03p8-4nhpij6g4EXAovHSKbXFXAc65YARaeG_0-otIbC8H7XU-oGkloB1IwbXuuRf0Szlh7N2xWo0rAY2K-k57AAPppsPgZlslSRQkZA3lkN8qRQa-PJQTfpvPhdCmQ8UtvBohrqvjG7CsfGH12uMzt7Qyrt5mScIUzNpcJZRv1YvHOuArrHc5VjFQiKDWM-vDCHrFFnMjnwKRigjTtoAAydhIM7NP7u8AV-chfjTYO0R26cXyN8GKnd653HY5wGoGv6Y3SRoO1GI_1tNBS9VPNyn_Nu5vLxt6zEdS7kkpFFlLWyewASgS1BtMlcT2sCKpSeNxUoHnKNido6m00)</sup>
 
-Aus diesem Datenbankdiagramm wurde folgender Objektgraph erzeugt, der mittels Navigation Properties
-verbunden ist:
+Über die Klasse *[ExamsDb](Grouping.Application/Model/ExamsDb.cs)* kann auf die einzelnen
+Collections (und somit auf die Datenbanktabelle) zugegriffen werden.
 
-![](classdiagram.png)
+```c#
+class ExamsDb : DbContext
+{
+    public DbSet<Period> Periods => Set<Period>();
+    public DbSet<Teacher> Teachers => Set<Teacher>();
+    public DbSet<Schoolclass> Schoolclasss => Set<Schoolclass>();
+    public DbSet<Pupil> Pupils => Set<Pupil>();
+    public DbSet<Lesson> Lessons => Set<Lesson>();
+    public DbSet<Exam> Exams => Set<Exam>();
 
+    // ...
+}
+```
 ## Gruppierung in SQL
 
 In SQL gibt es mit der *GROUP BY* Klausel die Möglichkeit, die Daten in Gruppen zu unterteilen.
@@ -86,14 +113,15 @@ In diesem Property ist der Wert, nach dem gruppiert wird gespeichert. Ein konkre
 den Einsatz am Besten:
 
 ```c#
-data.Lesson
-    .GroupBy(l => l.L_Class)
+var result = db.Lessons
+    .GroupBy(l => l.SchoolclassId)
     .Select(g => new
     {
-        Class   = g.Key,
-        Count   = g.Count(),
-        MaxHour = g.Max(x => x.L_Hour)
-    });
+        Class = g.Key,
+        Count = g.Count(),
+        MaxHour = g.Max(x => x.PeriodNr)
+    })
+    .ToList();
 ```
 
 Verwirrend ist hier der Einsatz der Gruppierungsvariable *g*. Sie ist eine Instanz von *IGrouping* und
@@ -110,45 +138,144 @@ funktioniert der Zugriff auf *g.L_Teacher* so wie auf *data.Lessons.L_Teacher* s
 Möchte man nach mehreren Spalten gruppieren, wird mit *new* ein neuer Typ erzeugt:
 
 ```c#
-data.Lesson
-    .GroupBy(l => new { l.L_Class, l.L_Subject })
+var result = db.Lessons
+    .GroupBy(l => new { l.SchoolclassId, l.Subject })
     .Select(g => new
-		{
-			Class   = g.Key.L_Class,
-			Subject = g.Key.L_Subject,
-			Count   = g.Count(),
-			MaxHour = g.Max(x => x.L_Hour)
-		});
+    {
+        Class = g.Key.SchoolclassId,
+        Subject = g.Key.Subject,
+        Count = g.Count(),
+        MaxHour = g.Max(x => x.PeriodNr)
+    })
+    .ToList();
 ```
 
 Manchmal möchte man eine DISTINCT Abfrage erstellen, die nur einen Wert pro Gruppierung liefert.
 Das folgende Beispiel liefert nur einen Lehrer pro eingetragener Email Adresse:
 
 ```c#
-IEnumerable<Teacher> teachersUniqueMail = data.Teacher
-    .GroupBy(t => t.T_Email)
-    .Select(g => g.First());
+var teachersUniqueMail = db.Teachers
+    .GroupBy(t => t.Email)
+    .Select(g => g.First())
+    .ToList();
 ```
 
 ## Übungen
 
-Löse die Aufgaben in der Datei [Program.cs](Program.cs) und schreibe deine Abfragen statt `(object)null;`
-in die Variablen. Die korrekten Ausgaben sind unter dem Klassendiagramm aufgelistet.
-
-![](classdiagram.png)
+Öffne die Datei [Grouping.sln](Grouping.sln) und schreibe deine Abfragen
+statt `object result = null!;`
+in die Variablen. Verwende *var*, damit der Compiler den anonymen Typen speichern kann.
+Die korrekten Ausgaben sind folgende:
 
 ```text
 RESULT1
-[{"TeacherId":"AF","Subjects":["RISL"]},{"TeacherId":"AGU","Subjects":["AP4","WPT_4"]},{"TeacherId":"AH","Subjects":["NVS1","OPS"]},{"TeacherId":"AMA","Subjects":["AP4","ITPR","NVS1","NVS1x","NVS1y","NWT_1x","NWT_1y","NWT_4A","NWT1"]},{"TeacherId":"AT","Subjects":["D","Dx","RE"]},{"TeacherId":"BAE","Subjects":["EWD","KGKP","MTKG"]},{"TeacherId":"BAM","Subjects":["DBI1","POS1"]},{"TeacherId":"BAN","Subjects":["DBI1","DBI1y","DBI2x"]},{"TeacherId":"BAR","Subjects":["BMG2","FMGTK","SOPK"]},{"TeacherId":"BEC","Subjects":["MGAN","MPAN","SOPK"]}]
+[
+    {"TeacherId":"AF","Subjects":["RISL"]},{"TeacherId":"AGU","Subjects":["AP4","WPT_4"]},
+    {"TeacherId":"AH","Subjects":["NVS1","OPS"]},
+    {"TeacherId":"AMA","Subjects":["AP4","ITPR","NVS1","NVS1x","NVS1y","NWT_1x","NWT_1y","NWT_4A","NWT1"]},
+    {"TeacherId":"AT","Subjects":["D","Dx","RE"]},
+    {"TeacherId":"BAE","Subjects":["EWD","KGKP","MTKG"]},
+    {"TeacherId":"BAM","Subjects":["DBI1","POS1"]},
+    {"TeacherId":"BAN","Subjects":["DBI1","DBI1y","DBI2x"]},
+    {"TeacherId":"BAR","Subjects":["BMG2","FMGTK","SOPK"]},
+    {"TeacherId":"BEC","Subjects":["MGAN","MPAN","SOPK"]}
+]
 
 RESULT2
-[{"DisplayMonth":"2020-04","Tests":[{"Date":"2020-04-01T00:00:00","Teacher":"PC","Subject":"AMx"},{"Date":"2020-04-01T00:00:00","Teacher":"PC","Subject":"AMy"},{"Date":"2020-04-07T00:00:00","Teacher":"SH","Subject":"PRE"},{"Date":"2020-04-08T00:00:00","Teacher":"SO","Subject":"E1y"},{"Date":"2020-04-24T00:00:00","Teacher":"NAI","Subject":"Dy"},{"Date":"2020-04-30T00:00:00","Teacher":"AH","Subject":"OPS"}]},{"DisplayMonth":"2020-07","Tests":[{"Date":"2020-07-02T00:00:00","Teacher":"BH","Subject":"NVS1"}]},{"DisplayMonth":"2020-05","Tests":[{"Date":"2020-05-26T00:00:00","Teacher":"BH","Subject":"OPS"}]},{"DisplayMonth":"2020-01","Tests":[{"Date":"2020-01-01T00:00:00","Teacher":"SO","Subject":"E1x"},{"Date":"2020-01-08T00:00:00","Teacher":"GC","Subject":"BWM1"},{"Date":"2020-01-16T00:00:00","Teacher":"SWH","Subject":"NVS1"}]},{"DisplayMonth":"2019-09","Tests":[{"Date":"2019-09-05T00:00:00","Teacher":"GC","Subject":"BWM2"},{"Date":"2019-09-29T00:00:00","Teacher":"KSR","Subject":"GAD"},{"Date":"2019-09-30T00:00:00","Teacher":"KUE","Subject":"PRE"}]},{"DisplayMonth":"2020-06","Tests":[{"Date":"2020-06-14T00:00:00","Teacher":"GC","Subject":"BWM3"},{"Date":"2020-06-24T00:00:00","Teacher":"HAF","Subject":"BAP"}]},{"DisplayMonth":"2019-11","Tests":[{"Date":"2019-11-03T00:00:00","Teacher":"PUA","Subject":"IOT"},{"Date":"2019-11-11T00:00:00","Teacher":"GRJ","Subject":"BAP"},{"Date":"2019-11-24T00:00:00","Teacher":"NAI","Subject":"Dx"}]},{"DisplayMonth":"2020-02","Tests":[{"Date":"2020-02-15T00:00:00","Teacher":"GRJ","Subject":"POS1"},{"Date":"2020-02-15T00:00:00","Teacher":"HIK","Subject":"DBI1"},{"Date":"2020-02-22T00:00:00","Teacher":"SZ","Subject":"POS1"}]},{"DisplayMonth":"2019-12","Tests":[{"Date":"2019-12-04T00:00:00","Teacher":"SK","Subject":"GAD"},{"Date":"2019-12-13T00:00:00","Teacher":"HW","Subject":"IOT"},{"Date":"2019-12-21T00:00:00","Teacher":"TT","Subject":"PRE"},{"Date":"2019-12-26T00:00:00","Teacher":"RA","Subject":"DBI1"}]}]
+[
+{   "DisplayMonth":"2020-04",
+    "Exams":[
+        "Date":"2020-04-01T00:00:00","Teacher":"PC","Subject":"AMx"},
+        "Date":"2020-04-01T00:00:00","Teacher":"PC","Subject":"AMy"},
+        "Date":"2020-04-07T00:00:00","Teacher":"SH","Subject":"PRE"},
+        "Date":"2020-04-08T00:00:00","Teacher":"SO","Subject":"E1y"},
+        "Date":"2020-04-24T00:00:00","Teacher":"NAI","Subject":"Dy"},
+        "Date":"2020-04-30T00:00:00","Teacher":"AH","Subject":"OPS"}]},
+{   "DisplayMonth":"2020-07",
+    "Exams":[
+        "Date":"2020-07-02T00:00:00","Teacher":"BH","Subject":"NVS1"}]},
+{   "DisplayMonth":"2020-05",
+    "Exams":[
+        "Date":"2020-05-26T00:00:00","Teacher":"BH","Subject":"OPS"}]},
+{   "DisplayMonth":"2020-01",
+    "Exams":[
+        "Date":"2020-01-01T00:00:00","Teacher":"SO","Subject":"E1x"},
+        "Date":"2020-01-08T00:00:00","Teacher":"GC","Subject":"BWM1"},
+        "Date":"2020-01-16T00:00:00","Teacher":"SWH","Subject":"NVS1"}]},
+{   "DisplayMonth":"2019-09",
+    "Exams":[
+        "Date":"2019-09-05T00:00:00","Teacher":"GC","Subject":"BWM2"},
+        "Date":"2019-09-29T00:00:00","Teacher":"KSR","Subject":"GAD"},
+        "Date":"2019-09-30T00:00:00","Teacher":"KUE","Subject":"PRE"}]},
+{   "DisplayMonth":"2020-06",
+    "Exams":[
+        "Date":"2020-06-14T00:00:00","Teacher":"GC","Subject":"BWM3"},
+        "Date":"2020-06-24T00:00:00","Teacher":"HAF","Subject":"BAP"}]},
+{   "DisplayMonth":"2019-11",
+    "Exams":[
+        "Date":"2019-11-03T00:00:00","Teacher":"PUA","Subject":"IOT"},
+        "Date":"2019-11-11T00:00:00","Teacher":"GRJ","Subject":"BAP"},
+        "Date":"2019-11-24T00:00:00","Teacher":"NAI","Subject":"Dx"}]},
+{   "DisplayMonth":"2020-02",
+    "Exams":[
+        "Date":"2020-02-15T00:00:00","Teacher":"GRJ","Subject":"POS1"},
+        "Date":"2020-02-15T00:00:00","Teacher":"HIK","Subject":"DBI1"},
+        "Date":"2020-02-22T00:00:00","Teacher":"SZ","Subject":"POS1"}]},
+{   "DisplayMonth":"2019-12",
+    "Exams":[
+        "Date":"2019-12-04T00:00:00","Teacher":"SK","Subject":"GAD"},
+        "Date":"2019-12-13T00:00:00","Teacher":"HW","Subject":"IOT"},
+        "Date":"2019-12-21T00:00:00","Teacher":"TT","Subject":"PRE"},
+        "Date":"2019-12-26T00:00:00","Teacher":"RA","Subject":"DBI1"}]}]
 
 RESULT3
-[{"P_ID":3175,"P_Firstname":"Batuhan","P_Lastname":"Akcay","Tests":[{"Subject":"OPS","Termine":[{"TE_Teacher":"AH","TE_Date":"2020-04-30T00:00:00","TE_Lesson":1},{"TE_Teacher":"BH","TE_Date":"2020-05-26T00:00:00","TE_Lesson":9}]},{"Subject":"NVS1","Termine":[{"TE_Teacher":"BH","TE_Date":"2020-07-02T00:00:00","TE_Lesson":1},{"TE_Teacher":"SWH","TE_Date":"2020-01-16T00:00:00","TE_Lesson":3}]},{"Subject":"BWM1","Termine":[{"TE_Teacher":"GC","TE_Date":"2020-01-08T00:00:00","TE_Lesson":3}]},{"Subject":"BWM2","Termine":[{"TE_Teacher":"GC","TE_Date":"2019-09-05T00:00:00","TE_Lesson":2}]},{"Subject":"BWM3","Termine":[{"TE_Teacher":"GC","TE_Date":"2020-06-14T00:00:00","TE_Lesson":2}]},{"Subject":"BAP","Termine":[{"TE_Teacher":"GRJ","TE_Date":"2019-11-11T00:00:00","TE_Lesson":7},{"TE_Teacher":"HAF","TE_Date":"2020-06-24T00:00:00","TE_Lesson":2}]},{"Subject":"POS1","Termine":[{"TE_Teacher":"GRJ","TE_Date":"2020-02-15T00:00:00","TE_Lesson":7},{"TE_Teacher":"SZ","TE_Date":"2020-02-22T00:00:00","TE_Lesson":10}]},{"Subject":"DBI1","Termine":[{"TE_Teacher":"HIK","TE_Date":"2020-02-15T00:00:00","TE_Lesson":4},{"TE_Teacher":"RA","TE_Date":"2019-12-26T00:00:00","TE_Lesson":5}]},{"Subject":"IOT","Termine":[{"TE_Teacher":"HW","TE_Date":"2019-12-13T00:00:00","TE_Lesson":7},{"TE_Teacher":"PUA","TE_Date":"2019-11-03T00:00:00","TE_Lesson":10}]},{"Subject":"GAD","Termine":[{"TE_Teacher":"KSR","TE_Date":"2019-09-29T00:00:00","TE_Lesson":5},{"TE_Teacher":"SK","TE_Date":"2019-12-04T00:00:00","TE_Lesson":6}]},{"Subject":"PRE","Termine":[{"TE_Teacher":"KUE","TE_Date":"2019-09-30T00:00:00","TE_Lesson":8},{"TE_Teacher":"SH","TE_Date":"2020-04-07T00:00:00","TE_Lesson":3},{"TE_Teacher":"TT","TE_Date":"2019-12-21T00:00:00","TE_Lesson":3}]},{"Subject":"Dx","Termine":[{"TE_Teacher":"NAI","TE_Date":"2019-11-24T00:00:00","TE_Lesson":1}]},{"Subject":"Dy","Termine":[{"TE_Teacher":"NAI","TE_Date":"2020-04-24T00:00:00","TE_Lesson":3}]},{"Subject":"AMx","Termine":[{"TE_Teacher":"PC","TE_Date":"2020-04-01T00:00:00","TE_Lesson":9}]},{"Subject":"AMy","Termine":[{"TE_Teacher":"PC","TE_Date":"2020-04-01T00:00:00","TE_Lesson":9}]},{"Subject":"E1x","Termine":[{"TE_Teacher":"SO","TE_Date":"2020-01-01T00:00:00","TE_Lesson":3}]},{"Subject":"E1y","Termine":[{"TE_Teacher":"SO","TE_Date":"2020-04-08T00:00:00","TE_Lesson":4}]}]},{"P_ID":3176,"P_Firstname":"Teryilla","P_Lastname":"Amaichigh","Tests":[{"Subject":"OPS","Termine":[{"TE_Teacher":"AH","TE_Date":"2020-04-30T00:00:00","TE_Lesson":1},{"TE_Teacher":"BH","TE_Date":"2020-05-26T00:00:00","TE_Lesson":9}]},{"Subject":"NVS1","Termine":[{"TE_Teacher":"BH","TE_Date":"2020-07-02T00:00:00","TE_Lesson":1},{"TE_Teacher":"SWH","TE_Date":"2020-01-16T00:00:00","TE_Lesson":3}]},{"Subject":"BWM1","Termine":[{"TE_Teacher":"GC","TE_Date":"2020-01-08T00:00:00","TE_Lesson":3}]},{"Subject":"BWM2","Termine":[{"TE_Teacher":"GC","TE_Date":"2019-09-05T00:00:00","TE_Lesson":2}]},{"Subject":"BWM3","Termine":[{"TE_Teacher":"GC","TE_Date":"2020-06-14T00:00:00","TE_Lesson":2}]},{"Subject":"BAP","Termine":[{"TE_Teacher":"GRJ","TE_Date":"2019-11-11T00:00:00","TE_Lesson":7},{"TE_Teacher":"HAF","TE_Date":"2020-06-24T00:00:00","TE_Lesson":2}]},{"Subject":"POS1","Termine":[{"TE_Teacher":"GRJ","TE_Date":"2020-02-15T00:00:00","TE_Lesson":7},{"TE_Teacher":"SZ","TE_Date":"2020-02-22T00:00:00","TE_Lesson":10}]},{"Subject":"DBI1","Termine":[{"TE_Teacher":"HIK","TE_Date":"2020-02-15T00:00:00","TE_Lesson":4},{"TE_Teacher":"RA","TE_Date":"2019-12-26T00:00:00","TE_Lesson":5}]},{"Subject":"IOT","Termine":[{"TE_Teacher":"HW","TE_Date":"2019-12-13T00:00:00","TE_Lesson":7},{"TE_Teacher":"PUA","TE_Date":"2019-11-03T00:00:00","TE_Lesson":10}]},{"Subject":"GAD","Termine":[{"TE_Teacher":"KSR","TE_Date":"2019-09-29T00:00:00","TE_Lesson":5},{"TE_Teacher":"SK","TE_Date":"2019-12-04T00:00:00","TE_Lesson":6}]},{"Subject":"PRE","Termine":[{"TE_Teacher":"KUE","TE_Date":"2019-09-30T00:00:00","TE_Lesson":8},{"TE_Teacher":"SH","TE_Date":"2020-04-07T00:00:00","TE_Lesson":3},{"TE_Teacher":"TT","TE_Date":"2019-12-21T00:00:00","TE_Lesson":3}]},{"Subject":"Dx","Termine":[{"TE_Teacher":"NAI","TE_Date":"2019-11-24T00:00:00","TE_Lesson":1}]},{"Subject":"Dy","Termine":[{"TE_Teacher":"NAI","TE_Date":"2020-04-24T00:00:00","TE_Lesson":3}]},{"Subject":"AMx","Termine":[{"TE_Teacher":"PC","TE_Date":"2020-04-01T00:00:00","TE_Lesson":9}]},{"Subject":"AMy","Termine":[{"TE_Teacher":"PC","TE_Date":"2020-04-01T00:00:00","TE_Lesson":9}]},{"Subject":"E1x","Termine":[{"TE_Teacher":"SO","TE_Date":"2020-01-01T00:00:00","TE_Lesson":3}]},{"Subject":"E1y","Termine":[{"TE_Teacher":"SO","TE_Date":"2020-04-08T00:00:00","TE_Lesson":4}]}]}]
+[
+{
+    "PupilId":3175,"Firstname":"Batuhan","Lastname":"Akcay",
+    "Exams":[
+        "Subject":"OPS","Termine":[{"TeacherId":"AH","Date":"2020-04-30T00:00:00","PeriodNr":1},{"TeacherId":"BH","Date":"2020-05-26T00:00:00","PeriodNr":9}]},
+        "Subject":"NVS1","Termine":[{"TeacherId":"BH","Date":"2020-07-02T00:00:00","PeriodNr":1},{"TeacherId":"SWH","Date":"2020-01-16T00:00:00","PeriodNr":3}]},
+        "Subject":"BWM1","Termine":[{"TeacherId":"GC","Date":"2020-01-08T00:00:00","PeriodNr":3}]},
+        "Subject":"BWM2","Termine":[{"TeacherId":"GC","Date":"2019-09-05T00:00:00","PeriodNr":2}]},
+        "Subject":"BWM3","Termine":[{"TeacherId":"GC","Date":"2020-06-14T00:00:00","PeriodNr":2}]},
+        "Subject":"BAP","Termine":[{"TeacherId":"GRJ","Date":"2019-11-11T00:00:00","PeriodNr":7},{"TeacherId":"HAF","Date":"2020-06-24T00:00:00","PeriodNr":2}]},
+        "Subject":"POS1","Termine":[{"TeacherId":"GRJ","Date":"2020-02-15T00:00:00","PeriodNr":7},{"TeacherId":"SZ","Date":"2020-02-22T00:00:00","PeriodNr":10}]},
+        "Subject":"DBI1","Termine":[{"TeacherId":"HIK","Date":"2020-02-15T00:00:00","PeriodNr":4},{"TeacherId":"RA","Date":"2019-12-26T00:00:00","PeriodNr":5}]},
+        "Subject":"IOT","Termine":[{"TeacherId":"HW","Date":"2019-12-13T00:00:00","PeriodNr":7},{"TeacherId":"PUA","Date":"2019-11-03T00:00:00","PeriodNr":10}]},
+        "Subject":"GAD","Termine":[{"TeacherId":"KSR","Date":"2019-09-29T00:00:00","PeriodNr":5},{"TeacherId":"SK","Date":"2019-12-04T00:00:00","PeriodNr":6}]},
+        "Subject":"PRE","Termine":[{"TeacherId":"KUE","Date":"2019-09-30T00:00:00","PeriodNr":8},{"TeacherId":"SH","Date":"2020-04-07T00:00:00","PeriodNr":3},{"TeacherId":"TT","Date":"2019-12-21T00:00:00","PeriodNr":3}]},
+        "Subject":"Dx","Termine":[{"TeacherId":"NAI","Date":"2019-11-24T00:00:00","PeriodNr":1}]},
+        "Subject":"Dy","Termine":[{"TeacherId":"NAI","Date":"2020-04-24T00:00:00","PeriodNr":3}]},
+        "Subject":"AMx","Termine":[{"TeacherId":"PC","Date":"2020-04-01T00:00:00","PeriodNr":9}]},
+        "Subject":"AMy","Termine":[{"TeacherId":"PC","Date":"2020-04-01T00:00:00","PeriodNr":9}]},
+        "Subject":"E1x","Termine":[{"TeacherId":"SO","Date":"2020-01-01T00:00:00","PeriodNr":3}]},
+        "Subject":"E1y","Termine":[{"TeacherId":"SO","Date":"2020-04-08T00:00:00","PeriodNr":4}]}]},
+{
+    "PupilId":3176,"Firstname":"Teryilla","Lastname":"Amaichigh",
+    "Exams":[
+        "Subject":"OPS","Termine":[{"TeacherId":"AH","Date":"2020-04-30T00:00:00","PeriodNr":1},{"TeacherId":"BH","Date":"2020-05-26T00:00:00","PeriodNr":9}]},
+        "Subject":"NVS1","Termine":[{"TeacherId":"BH","Date":"2020-07-02T00:00:00","PeriodNr":1},{"TeacherId":"SWH","Date":"2020-01-16T00:00:00","PeriodNr":3}]},
+        "Subject":"BWM1","Termine":[{"TeacherId":"GC","Date":"2020-01-08T00:00:00","PeriodNr":3}]},
+        "Subject":"BWM2","Termine":[{"TeacherId":"GC","Date":"2019-09-05T00:00:00","PeriodNr":2}]},
+        "Subject":"BWM3","Termine":[{"TeacherId":"GC","Date":"2020-06-14T00:00:00","PeriodNr":2}]},
+        "Subject":"BAP","Termine":[{"TeacherId":"GRJ","Date":"2019-11-11T00:00:00","PeriodNr":7},{"TeacherId":"HAF","Date":"2020-06-24T00:00:00","PeriodNr":2}]},
+        "Subject":"POS1","Termine":[{"TeacherId":"GRJ","Date":"2020-02-15T00:00:00","PeriodNr":7},{"TeacherId":"SZ","Date":"2020-02-22T00:00:00","PeriodNr":10}]},
+        "Subject":"DBI1","Termine":[{"TeacherId":"HIK","Date":"2020-02-15T00:00:00","PeriodNr":4},{"TeacherId":"RA","Date":"2019-12-26T00:00:00","PeriodNr":5}]},
+        "Subject":"IOT","Termine":[{"TeacherId":"HW","Date":"2019-12-13T00:00:00","PeriodNr":7},{"TeacherId":"PUA","Date":"2019-11-03T00:00:00","PeriodNr":10}]},
+        "Subject":"GAD","Termine":[{"TeacherId":"KSR","Date":"2019-09-29T00:00:00","PeriodNr":5},{"TeacherId":"SK","Date":"2019-12-04T00:00:00","PeriodNr":6}]},
+        "Subject":"PRE","Termine":[{"TeacherId":"KUE","Date":"2019-09-30T00:00:00","PeriodNr":8},{"TeacherId":"SH","Date":"2020-04-07T00:00:00","PeriodNr":3},{"TeacherId":"TT","Date":"2019-12-21T00:00:00","PeriodNr":3}]},
+        "Subject":"Dx","Termine":[{"TeacherId":"NAI","Date":"2019-11-24T00:00:00","PeriodNr":1}]},
+        "Subject":"Dy","Termine":[{"TeacherId":"NAI","Date":"2020-04-24T00:00:00","PeriodNr":3}]},
+        "Subject":"AMx","Termine":[{"TeacherId":"PC","Date":"2020-04-01T00:00:00","PeriodNr":9}]},
+        "Subject":"AMy","Termine":[{"TeacherId":"PC","Date":"2020-04-01T00:00:00","PeriodNr":9}]},
+        "Subject":"E1x","Termine":[{"TeacherId":"SO","Date":"2020-01-01T00:00:00","PeriodNr":3}]},
+        "Subject":"E1y","Termine":[{"TeacherId":"SO","Date":"2020-04-08T00:00:00","PeriodNr":4}]}]}]
 
 RESULT4
-[{"Day":4,"Hour":3,"ClassCount":69},{"Day":2,"Hour":4,"ClassCount":68},{"Day":3,"Hour":3,"ClassCount":67},{"Day":4,"Hour":2,"ClassCount":67},{"Day":3,"Hour":4,"ClassCount":67}]
+[
+    {"Day":4,"Hour":3,"ClassCount":69},{"Day":2,"Hour":4,"ClassCount":68},{"Day":3,"Hour":3,"ClassCount":67},
+    {"Day":4,"Hour":2,"ClassCount":67},{"Day":3,"Hour":4,"ClassCount":67}
+]
 
 RESULT5
 [{"Department":"FIT","Count":7},
@@ -173,30 +300,32 @@ RESULT6
 {"Department":"AIF","Count":12}]
 
 RESULT7
-[{"Teacher":"AH","Subject":"OPS","LastTest":"2020-04-30T00:00:00"},
-{"Teacher":"BH","Subject":"NVS1","LastTest":"2020-07-02T00:00:00"},
-{"Teacher":"BH","Subject":"OPS","LastTest":"2020-05-26T00:00:00"},
-{"Teacher":"GC","Subject":"BWM1","LastTest":"2020-01-08T00:00:00"},
-{"Teacher":"GC","Subject":"BWM2","LastTest":"2019-09-05T00:00:00"},
-{"Teacher":"GC","Subject":"BWM3","LastTest":"2020-06-14T00:00:00"},
-{"Teacher":"GRJ","Subject":"BAP","LastTest":"2019-11-11T00:00:00"},
-{"Teacher":"GRJ","Subject":"POS1","LastTest":"2020-02-15T00:00:00"},
-{"Teacher":"HAF","Subject":"BAP","LastTest":"2020-06-24T00:00:00"},
-{"Teacher":"HIK","Subject":"DBI1","LastTest":"2020-02-15T00:00:00"},
-{"Teacher":"HW","Subject":"IOT","LastTest":"2019-12-13T00:00:00"},
-{"Teacher":"KSR","Subject":"GAD","LastTest":"2019-09-29T00:00:00"},
-{"Teacher":"KUE","Subject":"PRE","LastTest":"2019-09-30T00:00:00"},
-{"Teacher":"NAI","Subject":"Dx","LastTest":"2019-11-24T00:00:00"},
-{"Teacher":"NAI","Subject":"Dy","LastTest":"2020-04-24T00:00:00"},
-{"Teacher":"PC","Subject":"AMx","LastTest":"2020-04-01T00:00:00"},
-{"Teacher":"PC","Subject":"AMy","LastTest":"2020-04-01T00:00:00"},
-{"Teacher":"PUA","Subject":"IOT","LastTest":"2019-11-03T00:00:00"},
-{"Teacher":"RA","Subject":"DBI1","LastTest":"2019-12-26T00:00:00"},
-{"Teacher":"SH","Subject":"PRE","LastTest":"2020-04-07T00:00:00"},
-{"Teacher":"SK","Subject":"GAD","LastTest":"2019-12-04T00:00:00"},
-{"Teacher":"SO","Subject":"E1x","LastTest":"2020-01-01T00:00:00"},
-{"Teacher":"SO","Subject":"E1y","LastTest":"2020-04-08T00:00:00"},
-{"Teacher":"SWH","Subject":"NVS1","LastTest":"2020-01-16T00:00:00"},
-{"Teacher":"SZ","Subject":"POS1","LastTest":"2020-02-22T00:00:00"},
-{"Teacher":"TT","Subject":"PRE","LastTest":"2019-12-21T00:00:00"}]
+[
+    {"Teacher":"AH","Subject":"OPS","LastExam":"2020-04-30T00:00:00"},
+    {"Teacher":"BH","Subject":"NVS1","LastExam":"2020-07-02T00:00:00"},
+    {"Teacher":"BH","Subject":"OPS","LastExam":"2020-05-26T00:00:00"},
+    {"Teacher":"GC","Subject":"BWM1","LastExam":"2020-01-08T00:00:00"},
+    {"Teacher":"GC","Subject":"BWM2","LastExam":"2019-09-05T00:00:00"},
+    {"Teacher":"GC","Subject":"BWM3","LastExam":"2020-06-14T00:00:00"},
+    {"Teacher":"GRJ","Subject":"BAP","LastExam":"2019-11-11T00:00:00"},
+    {"Teacher":"GRJ","Subject":"POS1","LastExam":"2020-02-15T00:00:00"},
+    {"Teacher":"HAF","Subject":"BAP","LastExam":"2020-06-24T00:00:00"},
+    {"Teacher":"HIK","Subject":"DBI1","LastExam":"2020-02-15T00:00:00"},
+    {"Teacher":"HW","Subject":"IOT","LastExam":"2019-12-13T00:00:00"},
+    {"Teacher":"KSR","Subject":"GAD","LastExam":"2019-09-29T00:00:00"},
+    {"Teacher":"KUE","Subject":"PRE","LastExam":"2019-09-30T00:00:00"},
+    {"Teacher":"NAI","Subject":"Dx","LastExam":"2019-11-24T00:00:00"},
+    {"Teacher":"NAI","Subject":"Dy","LastExam":"2020-04-24T00:00:00"},
+    {"Teacher":"PC","Subject":"AMx","LastExam":"2020-04-01T00:00:00"},
+    {"Teacher":"PC","Subject":"AMy","LastExam":"2020-04-01T00:00:00"},
+    {"Teacher":"PUA","Subject":"IOT","LastExam":"2019-11-03T00:00:00"},
+    {"Teacher":"RA","Subject":"DBI1","LastExam":"2019-12-26T00:00:00"},
+    {"Teacher":"SH","Subject":"PRE","LastExam":"2020-04-07T00:00:00"},
+    {"Teacher":"SK","Subject":"GAD","LastExam":"2019-12-04T00:00:00"},
+    {"Teacher":"SO","Subject":"E1x","LastExam":"2020-01-01T00:00:00"},
+    {"Teacher":"SO","Subject":"E1y","LastExam":"2020-04-08T00:00:00"},
+    {"Teacher":"SWH","Subject":"NVS1","LastExam":"2020-01-16T00:00:00"},
+    {"Teacher":"SZ","Subject":"POS1","LastExam":"2020-02-22T00:00:00"},
+    {"Teacher":"TT","Subject":"PRE","LastExam":"2019-12-21T00:00:00"}
+]
 ```
