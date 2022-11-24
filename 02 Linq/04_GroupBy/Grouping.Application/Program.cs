@@ -8,6 +8,8 @@ namespace Grouping
 {
     class Program
     {
+        private static JsonSerializerOptions serializerOptions
+            = new JsonSerializerOptions { WriteIndented = false };
         static void Main(string[] args)
         {
 
@@ -16,14 +18,13 @@ namespace Grouping
             // object resultX = null!;
             // die korrekte LINQ Abfrage. Verwende den entsprechenden Datentyp statt object.
             // Du kannst eine "schöne" (also eingerückte) Ausgabe der JSON Daten erreichen, indem
-            // du die Variable WriteIndented auf true setzt.
+            // du die Variable WriteIndented in Zeile 12 auf true setzt.
             //
             // !!HINWEIS!!
             // Beende deine Abfrage immer mit ToList(), damit die Daten für die JSON Serialisierung
             // schon im Speicher sind.
             // *************************************************************************************
-            var WriteIndented = false;
-            var serializerOptions = new JsonSerializerOptions { WriteIndented = WriteIndented };
+
             ExamsDb db = ExamsDb.FromFiles("csv");
 
             {
@@ -39,7 +40,7 @@ namespace Grouping
                     .Take(3)
                     .ToList();
                 Console.WriteLine("MUSTER: Anzahl der Prüfungen pro Lehrer (erste 3 Lehrer).");
-                Console.WriteLine(JsonSerializer.Serialize(result, serializerOptions));
+                WriteJson(result);
             }
 
             // *************************************************************************************
@@ -50,9 +51,9 @@ namespace Grouping
             // liste der Unterrichtsgegenstände.
             // *************************************************************************************
             {
-                object result = null!;
+                List<object> result = null!;
                 Console.WriteLine("RESULT1");
-                Console.WriteLine(JsonSerializer.Serialize(result, serializerOptions));
+                WriteJson(result);
             }
 
             // *************************************************************************************
@@ -63,9 +64,9 @@ namespace Grouping
             //          erzeugt werden
             // *************************************************************************************
             {
-                object result = null!;
+                List<object> result = null!;
                 Console.WriteLine("RESULT2");
-                Console.WriteLine(JsonSerializer.Serialize(result, serializerOptions));
+                WriteJson(result);
             }
 
             // *************************************************************************************
@@ -89,9 +90,9 @@ namespace Grouping
             //                    +------ Lesson
             // *************************************************************************************
             {
-                object result = null!;
+                List<object> result = null!;
                 Console.WriteLine("RESULT3");
-                Console.WriteLine(JsonSerializer.Serialize(result, serializerOptions));
+                WriteJson(result);
             }
 
             // *************************************************************************************
@@ -103,18 +104,18 @@ namespace Grouping
             //          "stärksten" Stunden auszugeben.
             // *************************************************************************************
             {
-                object result = null!;
+                List<object> result = null!;
                 Console.WriteLine("RESULT4");
-                Console.WriteLine(JsonSerializer.Serialize(result, serializerOptions));
+                WriteJson(result);
             }
 
             // *************************************************************************************
             // ÜBUNG 5: Wie viele Klassen gibt es pro Abteilung?
             // *************************************************************************************
             {
-                object result = null!;
+                List<object> result = null!;
                 Console.WriteLine("RESULT5");
-                Console.WriteLine(JsonSerializer.Serialize(result, serializerOptions));
+                WriteJson(result);
             }
 
             // *************************************************************************************
@@ -124,19 +125,29 @@ namespace Grouping
             //                   und Count
             // *************************************************************************************
             {
-                object result = null!;
+                List<object> result = null!;
                 Console.WriteLine("RESULT6");
-                Console.WriteLine(JsonSerializer.Serialize(result, serializerOptions));
+                WriteJson(result);
             }
 
             // *************************************************************************************
             // ÜBUNG 7: Wann ist der letzte Test (Max von Exam.Date) pro Lehrer und Fach der 5AHIF
             //          in der Tabelle Exams?
             {
-                object result = null!;
+                List<object> result = null!;
                 Console.WriteLine("RESULT7");
-                Console.WriteLine(JsonSerializer.Serialize(result, serializerOptions));
+                WriteJson(result);
             }
+        }
+
+        public static void WriteJson<T>(List<T> result)
+        {
+            if (result is not null && typeof(T) == typeof(object))
+            {
+                Console.WriteLine("Warum erstellst du eine Liste von Elementen mit Typ object?");
+                return;
+            }
+            Console.WriteLine(JsonSerializer.Serialize(result, serializerOptions));
         }
     }
 }

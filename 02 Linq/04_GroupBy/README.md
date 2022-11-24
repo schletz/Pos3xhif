@@ -163,7 +163,7 @@ var teachersUniqueMail = db.Teachers
 ## Übungen
 
 Öffne die Datei [Grouping.sln](Grouping.sln) und schreibe deine Abfragen
-statt `object result = null!;`
+statt `List<object> result = null!`
 in die Variablen. Verwende *var*, damit der Compiler den anonymen Typen speichern kann.
 Die korrekten Ausgaben sind folgende:
 
