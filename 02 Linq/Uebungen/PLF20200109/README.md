@@ -26,7 +26,7 @@ Die Abfragen werden automatisch geprüft. Ist ein Beispiel falsch, so wird das g
 erwartete korrekte Ergebnis ausgegeben. Achte auf die Schreibweise und die Reihenfolge der Properties,
 denn es wird zur Überprüfung ein Stringvergleich durchgeführt.
 
-Die korrekten Ergebnisse für den Vergleich befinden sich in der Datei [results.json](results.json).
+Die korrekten Ergebnisse für den Vergleich befinden sich in der Datei [results.json](FlightMonitor/results.json).
 Bei der Korrektur wird die Datei mit den korrekten Vergleichsergebnissen erneut in den Ordner kopiert.
 Änderungen in dieser Datei sind also sinnlos.
 
