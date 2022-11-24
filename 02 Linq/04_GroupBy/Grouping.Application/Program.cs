@@ -15,14 +15,15 @@ namespace Grouping
 
             // *************************************************************************************
             // Schreibe in den nachfolgenden Übungen statt der Zeile
-            // object resultX = null!;
+            // List<object> result = null!;
             // die korrekte LINQ Abfrage. Verwende den entsprechenden Datentyp statt object.
             // Du kannst eine "schöne" (also eingerückte) Ausgabe der JSON Daten erreichen, indem
             // du die Variable WriteIndented in Zeile 12 auf true setzt.
             //
             // !!HINWEIS!!
             // Beende deine Abfrage immer mit ToList(), damit die Daten für die JSON Serialisierung
-            // schon im Speicher sind.
+            // schon im Speicher sind. Ansonsten würde es auch einen Compilerfehler geben, da
+            // WriteJson() eine Liste haben möchte.
             // *************************************************************************************
 
             ExamsDb db = ExamsDb.FromFiles("csv");
