@@ -1,6 +1,7 @@
 ﻿namespace FlightMonitor.Domain
 {
-    public partial class Codeshare
+#nullable disable
+    public class Codeshare
     {
         public string Fn { get; set; }
         public string Airline { get; set; }

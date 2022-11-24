@@ -24,7 +24,7 @@ Auch in anderen Sprachen gibt es solche Ansätze.
 4. [Gruppierungen mit GroupBy](04_GroupBy/README.md)
 5. [Die Query Syntax (optional)](05_QuerySyntax/README.md)
 6. [Join und Gruppierung (optional)](06_Join_Grouping/README.md)
-
+7. [Übungsaufgaben](Uebungen/README.md)
 
 ![](linq-architecture-diagram.png)
 

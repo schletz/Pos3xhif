@@ -3,7 +3,8 @@ using System.Collections.Generic;
 
 namespace FlightMonitor.Domain
 {
-    public partial class Departure
+#nullable disable
+    public class Departure
     {
         public long Idx { get; set; }
         public string Fn { get; set; }

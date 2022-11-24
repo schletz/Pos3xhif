@@ -16,22 +16,23 @@ namespace FlightMonitor
         public IEnumerable<Aircraft> Aircrafts => Departures.Select(d => d.Aircraft).Distinct(g => g.Description);
         public IEnumerable<Airline> Airlines => Departures.Select(d => d.Airline).Distinct(g => g.IataCode);
 
-        private FlightContext() { }
+        private FlightContext(IEnumerable<Departure> departures) 
+        {
+            Departures = departures;
+        }
         public static FlightContext FromFile(string filename)
         {
-            FlightContext flightContext = new FlightContext();
-
             using FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read);
             string content = JsonDocument.Parse(fs)
                 .RootElement
                 .GetProperty("monitor")
                 .GetProperty("departure")
                 .GetRawText();
-            IEnumerable<Departure> departures = JsonSerializer
+            var departures = JsonSerializer
                 .Deserialize<IEnumerable<Departure>>(content,
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            flightContext.Departures = departures;
-            return flightContext;
+            if (departures is null) { throw new Exception($"Cannot deserialize {filename}."); }
+            return new FlightContext(departures);
         }
     }
 
@@ -41,6 +42,6 @@ namespace FlightMonitor
     public static class FlightMonitorExtensions
     {
         public static IEnumerable<TSource> Distinct<TSource, TKey>(this IEnumerable<TSource> collection, Func<TSource, TKey> comparer) =>
-            collection.GroupBy(comparer).Select(g => g.FirstOrDefault());
+            collection.GroupBy(comparer).Select(g => g.First());
     }
 }

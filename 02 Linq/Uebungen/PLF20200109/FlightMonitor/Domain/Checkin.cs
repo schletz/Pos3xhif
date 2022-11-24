@@ -1,6 +1,7 @@
 ﻿namespace FlightMonitor.Domain
 {
-    public partial class Checkin
+#nullable disable
+    public class Checkin
     {
         public string Range { get; set; }
         public string Terminal { get; set; }

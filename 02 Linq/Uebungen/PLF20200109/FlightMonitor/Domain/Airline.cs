@@ -1,6 +1,7 @@
 ﻿namespace FlightMonitor.Domain
 {
-    public partial class Airline
+    #nullable disable
+    public class Airline
     {
         public string Name { get; set; }
         public string WebSite { get; set; }

@@ -19,6 +19,7 @@
   - [Gruppierung](02%20Linq/04_GroupBy/README.md)
   - [Query Syntax](02%20Linq/05_QuerySyntax/README.md)
   - [Joins](02%20Linq/06_Join_Grouping/README.md)
+  - *[Übungsaufgaben](02%20Linq/Uebungen/README.md)*
 - **Der OR Mapper EF Core**
   - [Warum OR Mapping?](03%20EF%20Core/01_WhyORMapping/README.md)
   - [Code first](03%20EF%20Core/02_CodeFirstEfCore5/README.md)
