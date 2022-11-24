@@ -13,7 +13,8 @@ eine Liste aller Abflüge an. Aus den JSON Daten wurde ein C# Objektmodell erzeu
 
 Die Rohdaten sind in der Datei [departure.json](departure.json) enthalten.
 
-In der Datei [Program.cs](Program.cs) sind 8 Beispiele für LINQ Abfragen, die auf diesem Objektmodell
+Öffne die Datei [FlightMonitor.sln](FlightMonitor/FlightMonitor.sln) im Ordner *FlightMonitor*.
+In der Datei [Program.cs](FlightMonitor/Program.cs) sind 8 Beispiele für LINQ Abfragen, die auf diesem Objektmodell
 basieren. Schreibe deine Lösung in die entsprechende Variable unter der Beispielangabe.
 
 Für jede gelöste Abfrage gibt es einen Punkt. Die erreichten Punkte und die Beurteilung werden
