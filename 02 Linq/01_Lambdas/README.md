@@ -88,11 +88,11 @@ daher haben wir mehrere Möglichkeiten:
   und Code kopieren ist bekanntlich das schlechteste Design.
 - Wir könnten den Propertynamen, den wir filtern möchten, auch übergeben. Über Reflection wäre das zwar
   möglich, aber sehr fehleranfällig falls einmal so ein Property nicht existiert.
-- **Wir übergeben keinen String, nach den wir filtern sollen, sondern eine Funktion, die für
+- **Wir übergeben keinen String, nach dem wir filtern sollen, sondern eine Funktion, die für
   jedes Element entscheidet, ob es ausgewählt wird.**
 
-Wir betrachten den letzten Punkt. Eine Funktion zu übergeben ist in C# möglich. Allerdings setzt C#
-static Typing um, das bedeutet, wir müssen dem Compiler einmal sagen, wie unsere Funktion aufgebaut
+Wir betrachten den letzten Punkt. Eine Funktion zu übergeben ist in C# möglich, allerdings setzt C#
+static Typing um. Das bedeutet, wir müssen dem Compiler einmal sagen, wie unsere Funktion aufgebaut
 ist.
 
 ## Lambdas im Detail      
