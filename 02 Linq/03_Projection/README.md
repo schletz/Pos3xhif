@@ -52,7 +52,7 @@ sehr intensiv *var* statt des expliziten Typs. In der MSDN gibt es zu
 [Implicitly Typed Local Variables](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/inside-a-program/coding-conventions#implicitly-typed-local-variables)
 Guidelines, an die sich ein guter C# Entwickler halten sollte. 
 
-Es gibt im Umgang mit *var* Fallstricke, wie die folgenden 2 Beispiele verdeutlichen sollen. Dies 
+Es gibt im Umgang mit *var* Fallstricke, wie die folgenden 2 Beispiele verdeutlichen sollen. Diese 
 beiden Fälle wurden durch die Verwendung des expliziten Typs gleich an der richtigen Stelle 
 auffallen, so führen sie erst später im Programm zu
 einem Syntaxfehler:
