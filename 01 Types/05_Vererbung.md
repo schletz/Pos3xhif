@@ -65,6 +65,7 @@ UML sieht Basistypen wie *String*, *Boolean*, ... vor, zur konkreteren Darstellu
 C# Datentypen verwendet.
 
 ![](vererbung_diagram.svg)
+
 <sup>https://www.plantuml.com/plantuml/uml/fLB1QW8n4BtdA-QerFq1aKMHMWGBWj9xt4qra4sMJTABzT-RxSpOB9NMKW-oUMyoyzxBp7sGNOYD4Sh61dRIn223TXR4MK3whLGZZPh0S_eN5o4FFdIo2b0PwJriLUTJxMp6U5dIlOULxdomib4mXSHfUqHy8s_2sUHf9WF9CxU_mAAgNBGtEXH5WSMeQOGKlBAC2H1Y90FPJ7_z76CNAdvIuR6Hseo6yDxXHu8lWa9mHL7coWL6j5UoEgcEOzcTN7VB_zgleZ6BOuyVd3E8_kwMsjzXbm7F2lxib2tjGgoL3Mnf6rjjrdKIg6r0QFbPnuhlzK9zx_6I9a6BSvd5bHp_fzLFrYbeA69Rl9Uq-OBc3D5hJjMfVydpuANwM3RQXncTou7WAqjdPe-I2HpnXVF5PHyklG5pFF8Rj_OlqkWQs-AwvG_H8x2ewxrB5IES22sby-Pq3TikzKeaPeD6q_sIrps7I646SKvpPUlOc0y0
 </sup>
 
@@ -262,6 +263,7 @@ Karte mit entsprechendem Guthaben.
 
 
 ![](uebung_vererbung_ordermanager.svg)
+	
 <small>
 https://www.plantuml.com/plantuml/uml/XL9BRi8m45tZKtWPL7o12aKWr0KI0jGR3FQ8MlKdScmaH7ltsawSb6J1Afh9-yoRyQRru7pGYd05RKlFpeh0FNcGnTi76FfEM--akSRo21h_rsSdUMe8v5A38Wl6M6vdXQh3KGIpwZdKWCPLmTCcyPVabn2uH01mJ_iPuAxH-2Xqam8TNQyBeAxpO0UffPyxJtXLCL89leo0YxKggGz_GDjWV9wXizuv5DBlm8biT0pwWcu8NOn6rBF763Jpaku8fImqxAUUfYF3uh41AGRhZhYOXnnnK_DIyaJDWMzM2hhx0dV5IUONwoWkh-S-kLGyniEtSLtxJmHnCkf-aArVzp_gYDcRE1B7RJQQNp2BLTFxDy_r46mhH7bi_PSs9LTCZVpR1b-bE5cNCbOFxxlhsDoQ1DkW4K6hFm00
 </small>
