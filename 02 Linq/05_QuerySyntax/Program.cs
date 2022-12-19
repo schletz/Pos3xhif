@@ -77,7 +77,7 @@ namespace QuerySyntax
             Console.WriteLine(JsonSerializer.Serialize(result4));
 
             // *************************************************************************************
-            // ÜBUNG 5: In welchen Fächern (TE_Subject) gab nach der 7. Stunde Tests? Betrachte 
+            // ÜBUNG 5: In welchen Fächern (TE_Subject) gab es nach der 7. Stunde Tests? Betrachte 
             //          nur Klassen, wo SZ Klassenvorstand ist. Beachte, dass ein KV auch
             //          von mehreren Klassen KV sein kann.
             //          Die Fächer sind nur 1x auszugeben, verwende dafür Distinct(). Sortiere
