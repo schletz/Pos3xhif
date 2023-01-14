@@ -97,31 +97,4 @@ public class CalendarYearTests
         }
         Assert.True(success);
     }
-
-    [Fact]
-    public void WriteFileTest()
-    {
-        using var stream = new StreamWriter(File.Create("../../../calendar.txt"), Encoding.Unicode);
-        stream.WriteLine(
-            "DATE\tDATE2000\tYEAR\tMONTH\tDAY\tSCHOOLYEAR\t" +
-            "WEEKDAY_NR\tWEEKDAY_STR\t" +
-            "WORKINGDAY\tWORKINGDAY_COUNTER\tSCHOOLDAY\tSCHOOLDAY_COUNTER\t" +
-            "PUBLIC_HOLIDAY\tSCHOOL_HOLIDAY\tPUBLIC_HOLIDAY_NAME\tSCHOOL_HOLIDAY_NAME");
-        // Für die Schuljahre 2000/2001 - 2399/2400 das Jahr 2400 auch generieren. Sonst wird
-        // 2399/2400 am 1.1. abgeschnitten.
-        for (int year = 2000; year <= 2400; year++)
-        {
-            var calendarYear = new CalendarYear(year);
-            foreach (var day in calendarYear.GetCalendarDays())
-            {
-                var dateTime = day.DateTime;
-                stream.WriteLine(
-                    $"{day.DateTime:yyyy-MM-dd}\t{day.Date2000:yyyy-MM-dd}\t{day.DateTime.Year}\t{day.DateTime.Month}\t{day.DateTime.Day}\t{day.Schoolyear}\t" +
-                    $"{day.WeekdayNr}\t{day.WeekdayName}\t" +
-                    $"{(day.IsWorkingDayMoFr ? 1 : 0)}\t{day.WorkingdayCounter}\t{(day.IsSchoolDayMoFr ? 1 : 0)}\t{day.SchooldayCounter}\t" +
-                    $"{(day.IsPublicHoliday ? 1 : 0)}\t{(day.IsSchoolHoliday ? 1 : 0)}\t{day.PublicHolidayName}\t{day.SchoolHolidayName}");
-            }
-        }
-        Assert.True(true);
-    }
 }

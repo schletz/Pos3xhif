@@ -28,14 +28,17 @@ class CalendarService
         var days = new CalendarDay[daysCount];
         var daysSpan = days.AsSpan();
         int i = 0;
+        int workingdaysCount = 0, schooldaysCount = 0;
         // Für jedes Jahr der Range mit der Methode CalendarYear.GetCalendarDays()
         // die einzelnen Tage generieren. Wir verwenden Spans, da wir vorher ein Array
         // entsprechender Größe angeben und die Range des einzelnen Jahres der Methode
         // übergeben können. Sonst müssen wir Arrays zusammenkopieren.
         for (int year = yearFrom; year < yearToExclusive; year++)
         {
-            var calendarYear = new CalendarYear(year);
+            var calendarYear = new CalendarYear(year, workingdaysCount, schooldaysCount);
             i += calendarYear.GetCalendarDays(daysSpan.Slice(i, DaysOfYear(year)));
+            workingdaysCount = daysSpan[i - 1].WorkingdayCounter;
+            schooldaysCount = daysSpan[i - 1].SchooldayCounter;
         }
         _yearFrom = yearFrom;
         _yearToExclusive = yearToExclusive;
