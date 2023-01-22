@@ -40,6 +40,9 @@
   -  [CPU bound work](05%20TPL/01%20CpuBoundWork/README.md)
   -  [Await und async](05%20TPL/02%20AwaitAsyncDemo/Readme.md)
   -  [IO und TPL: der file writer](05%20TPL/03%20FileWriterApp)
+- **Git**
+  - [Howto: Reset des lokalen Repos](06%20Git/05_reset.md)
+  - [Howto: Löschen der History](06%20Git/10_reset_history.md)
 - **Erweiterungskapitel: Professional C#**
   - [Extension methods](Professional%20C%23/10_ExtensionMethods/README.md)
   - [Generics](Professional%20C%23/20_Generics/README.md)
