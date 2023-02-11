@@ -1,4 +1,22 @@
-# Die Git Bash
+# Installation und Konfiguration von git
+
+## Installation
+
+Git ist im Kern ein Kommandozeilentool, mit dessen Hilfe ein Repository verwaltet werden kann.
+Falls du git noch nicht installiert hast, kannst du das Programm von https://git-scm.com/downloads
+laden. Verwende bei allen Dialogen die Standardeinstellung.
+
+## Konfiguration von git
+
+Bei Commits wird dein Name angeführt. Setze daher deinen echten Namen in der Konfiguration des
+*git* Tools:
+
+```
+git config --global user.name "Vorname NachnameOhneNachdenkenKopiert"
+git config --global user.email "ich_habe_ohne_hirn_kopiert@spengergasse.at"
+```
+
+## Die Git Bash
 
 Wenn du git von https://git-scm.com/downloads heruntergeladen und mit den Standardeinstellungen
 installiert hast, dann hast du im Kontextmenü des Windows Explorers (mit der rechten Maustaste
@@ -15,6 +33,7 @@ anders, wie die Tabelle zeigt:
 | **CMD.exe**        | **Bash** | **Description**                                             |
 | ------------------ | -------- | ----------------------------------------------------------- |
 | dir                | ls       | Displays a list of files and subdirectories in a directory. |
+| md                 | mkdir    | Creates a directory.                                        |
 | cd (with param)    | cd       | Changes the current directory.                              |
 | copy, xcopy        | cp       | Copies one or more files to another location.               |
 | ren                | mv       | Renames a file or files.                                    |

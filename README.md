@@ -41,7 +41,10 @@
   -  [Await und async](05%20TPL/02%20AwaitAsyncDemo/Readme.md)
   -  [IO und TPL: der file writer](05%20TPL/03%20FileWriterApp)
 - **Git**
-  - [Die Git Bash](06%20Git/02_git_bash.md)
+  - [Installation von git, Git Bash](06%20Git/01_installation.md)
+  - [Extensions und Arbeit mit git](06%20Git/02_work_with_git.md)
+  - [Arbeiten mit Branches](06%20Git/03_branches.md)
+  - [Merge Konflikte, rebase](06%20Git/04_conflicts.md)
   - [Howto: Reset des lokalen Repos](06%20Git/05_reset.md)
   - [Howto: Löschen der History](06%20Git/10_reset_history.md)
 - **Erweiterungskapitel: Professional C#**
