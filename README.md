@@ -20,7 +20,7 @@
   - [Query Syntax](02%20Linq/05_QuerySyntax/README.md)
   - [Joins](02%20Linq/06_Join_Grouping/README.md)
   - *[Übungsaufgaben](02%20Linq/Uebungen/README.md)*
-- **Der OR Mapper EF Core**
+- **[Der OR Mapper EF Core](03%20EF%20Core/README.md)**
   - [Warum OR Mapping?](03%20EF%20Core/01_WhyORMapping/README.md)
   - [Code first](03%20EF%20Core/02_CodeFirstEfCore5/README.md)
   - [Enhanced code first](03%20EF%20Core/03_EnhancedCodeFirst/README.md)
@@ -36,7 +36,7 @@
   -  [Lists](04%20WPF/04_Lists/Readme.md)
   -  [EF Core und WPF](04%20WPF/05_EF_Core/README.md)
   -  [Validations](04%20WPF/06_Validation/README.md)
-- **TPL - Task Parallel Library**
+- **[TPL - Task Parallel Library](05%20TPL/Readme.md)**
   -  [CPU bound work](05%20TPL/01%20CpuBoundWork/README.md)
   -  [Await und async](05%20TPL/02%20AwaitAsyncDemo/Readme.md)
   -  [IO und TPL: der file writer](05%20TPL/03%20FileWriterApp)
