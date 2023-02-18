@@ -1,6 +1,8 @@
-# Git History löschen
+# Git History löschen, Autor ändern
 
 > **Achtung:** Dies ist eine destruktive Operation, d. h. sie kann nicht rückgängig gemacht werden.
+
+## Gesamte History löschen
 
 Die History eines git repos umfasst viele commits, branches, ... Am Ende eines Semesters möchtest
 du vielleicht mit dem aktuellen Stand "wieder von 0" beginnen. Um die gesamte History zu löschen,
@@ -45,13 +47,12 @@ git push --set-upstream origin tmp-main
 
 **3 Setzen des neuen main Branches**
 
-Öffne im Browser dein Repository auf https://github.com. Zuerst musst du unter *Settings* - *Branches*
-den Branch *tmp-main* zum default Branch machen.
+Öffne im Browser dein Repository auf https://github.com.
+Zuerst musst du unter *Settings* - *Branches* den Branch *tmp-main* zum default Branch machen.
 
 ![](delete_history_change_default_1149.png)
 
-Danach lösche unter *Code* den alten *main* Branch, indem du die Branches auflistet und auf löschen
-klickst.
+Danach lösche unter *Code* den alten *main* Branch, indem du die Branches auflistet und auf löschen klickst.
 
 ![](delete_history_delete_old_1149.png)
 
@@ -61,11 +62,52 @@ Nun kannst du den Branch *tmp-main* auf main umbenennen.
 
 **4 Löschen aller feature Branches**
 
-Lösche auch alle feature Branches in Github. Sie können sowieso nicht mehr in den neuen *main*
-branch commited werden, da die History gelöscht wurde.
+Lösche auch alle feature Branches in Github. Sie können sowieso nicht mehr in den neuen *main* branch commited werden, da die History gelöscht wurde.
 
 **5 Löschen und neues Klonen des lokalen Repos**
 
 
-Am Besten alle Leute im Team löschen nun ihr lokales Repo und klonen mit *git clone* das Repo
-erneut auf ihren Rechner.
+Am Besten alle Leute im Team löschen nun ihr lokales Repo und klonen mit *git clone* das Repo erneut auf ihren Rechner.
+
+## Den Autor ändern
+
+Möchtest du den Autor **aller** Commits im Repository ändern, starte die git bash im Hauptverzeichnis deines Repositories.
+Danach führe die folgenden Befehle aus.
+Natürlich müssen die Variablen *CORRECT_NAME* und *CORRECT_EMAIL* angepasst werden.
+
+```bash
+export FILTER_BRANCH_SQUELCH_WARNING=1 && git filter-branch -f --env-filter '
+  CORRECT_NAME="Firstname Lastname"
+  CORRECT_EMAIL="ichbinauchfürsschummelnzudumm@spengergasse.at"
+  export GIT_AUTHOR_NAME="$CORRECT_NAME"
+  export GIT_AUTHOR_EMAIL="$CORRECT_EMAIL"
+  export GIT_COMMITTER_NAME="$CORRECT_NAME"
+  export GIT_COMMITTER_EMAIL="$CORRECT_EMAIL"
+' --tag-name-filter cat -- --branches --tags
+
+git push --force --tags origin 'refs/heads/*'
+```
+
+Eine Abwandlung, nämlich das Ändern eines einzelnen Autors, ist auf [Stackoverflow](https://stackoverflow.com/questions/3042437/how-to-change-the-commit-author-for-a-single-commit) dokumentiert.
+
+```bash
+export FILTER_BRANCH_SQUELCH_WARNING=1 && git filter-branch --env-filter '
+  OLD_EMAIL="your-old-email@example.com"
+  CORRECT_NAME="Firstname Lastname"
+  CORRECT_EMAIL="ichbinauchfürsschummelnzudumm@spengergasse.at"
+  if [ "$GIT_COMMITTER_EMAIL" = "$OLD_EMAIL" ]
+  then
+      export GIT_COMMITTER_NAME="$CORRECT_NAME"
+      export GIT_COMMITTER_EMAIL="$CORRECT_EMAIL"
+  fi
+  if [ "$GIT_AUTHOR_EMAIL" = "$OLD_EMAIL" ]
+  then
+      export GIT_AUTHOR_NAME="$CORRECT_NAME"
+      export GIT_AUTHOR_EMAIL="$CORRECT_EMAIL"
+  fi
+' --tag-name-filter cat -- --branches --tags
+
+git push --force --tags origin 'refs/heads/*'
+```
+
+Hinweis: Das Datum kann mit den Variablen *GIT_AUTHOR_DATE* und *GIT_COMMITTER_DATE* ebenfalls gesetzt werden, siehe https://git-scm.com/docs/git-commit-tree.

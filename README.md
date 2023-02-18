@@ -46,7 +46,7 @@
   - [Arbeiten mit Branches](06%20Git/03_branches.md)
   - [Merge Konflikte, rebase](06%20Git/04_conflicts.md)
   - [Howto: Reset des lokalen Repos](06%20Git/05_reset.md)
-  - [Howto: Löschen der History](06%20Git/10_reset_history.md)
+  - [Howto: Löschen der History, Ändern des Autors](06%20Git/10_reset_history.md)
 - **Erweiterungskapitel: Professional C#**
   - [Extension methods](Professional%20C%23/10_ExtensionMethods/README.md)
   - [Generics](Professional%20C%23/20_Generics/README.md)
