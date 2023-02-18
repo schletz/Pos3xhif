@@ -171,7 +171,7 @@ Da EF Core einen parameterlosen Konstruktor braucht, wird dieser *protected* ang
 Dies ist notwendig, damit die Weiterleitung des Konstruktors von *ConfirmedOrder* auf
 *Order* funktioniert.
 
-Es wird im Hintergrund eine Tabelle (Table per Hierarchy, TBH) *Order* in der Datenbank angelegt.
+Es wird im Hintergrund eine Tabelle (Table per Hierarchy, TPH) *Order* in der Datenbank angelegt.
 Alle Attribute der Unterklassen werden automatisch als nullable definiert und zu dieser
 Tabelle hinzugefügt. Zusätzlich
 wird eine Spalte *Discriminator* erzeugt. Sie beinhaltet den Namen des konkreten Typs
