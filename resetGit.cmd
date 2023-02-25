@@ -8,9 +8,9 @@ FOR /F "tokens=*" %%a IN ('git branch --show-current') DO (SET current_branch=%%
 git fetch --all --prune
 FOR /F "tokens=* delims=* " %%a IN ('git branch') DO (
     echo Reset branch %%a...
-    git checkout %%a
-    git clean -df
-    git reset --hard origin/%%a
+    git checkout %%a > nul 2>&1
+    REM git clean -df
+    git reset --hard origin/%%a > nul 2>&1
 )
-git checkout %current_branch%
+git checkout %current_branch% > nul 2>&1
 echo You are in branch %current_branch%
