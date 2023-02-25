@@ -20,11 +20,11 @@ FOR /F "tokens=*" %%a IN ('git branch --show-current') DO (SET current_branch=%%
 git fetch --all --prune
 FOR /F "tokens=* delims=* " %%a IN ('git branch') DO (
     echo Reset branch %%a...
-    git checkout %%a
-    git clean -df
-    git reset --hard origin/%%a
+    git checkout %%a > nul 2>&1
+    REM git clean -df
+    git reset --hard origin/%%a > nul 2>&1
 )
-git checkout %current_branch%
+git checkout %current_branch% > nul 2>&1
 echo You are in branch %current_branch%
 ```
 
@@ -33,17 +33,18 @@ echo You are in branch %current_branch%
 #!/bin/bash
 # Setzt alle lokalen Branches zurück
 
+git fetch --all --prune
 current_branch=$(git branch --show-current)
 for branch in $(git branch | tr '*' ' ')
 do
     echo Reset branch $branch
-    git checkout $branch
-    git clean -df
-    git reset --hard origin/$branch
+    git checkout $branch &> /dev/null
+    # git clean -df
+    git reset --hard origin/$branch &> /dev/null
 done
 
-git checkout $current_branch
-echo "You are in Branch $current_branch"
+git checkout $current_branch &> /dev/null
+echo "You are in Branch $current_branch" &> /dev/null
 ```
 
 Committe danach diese Dateien und spiele sie ins remote Repository. Wenn du die Datei zum Testen
@@ -57,8 +58,11 @@ ohne commit ausführst, wird sie natürlich verschwinden, da lokale Änderungen 
   Branches, die es nicht mehr im remote Repository gibt.
 - Danach durchläuft die Schleife alle branches, die von *git branch* zurückgegeben werden.
 - Mit *git checkout* wird in jeden Branch gewechselt.
-- *git clean* löscht alle lokalen Dateien, die nicht unter Versionsverwaltung stehen. Da die Option
-  *-x* nicht gesetzt wird, werden ignorierte Dateien (definiert in *.gitignore*) nicht angetastet.
+- *git clean -df* ist auskommentiert!
+  Der Befehl löscht alle lokalen Dateien, die nicht unter Versionsverwaltung stehen.
+  Vorsicht: Es werden auch die Dateien gelöscht, die im *.gitignore* ignoriert werden (z. B. Configs).
+  Deswegen ist dieser Schritt auskommentiert.
+  Du kannst ihn natürlich aktivieren wenn du möchtest.
 - Mit *git reset --hard* wird auf den Stand des remote Repos (origin) gesetzt.
 - Am Ende wird in den vorher aktiven Branch gewechselt.
 
