@@ -78,7 +78,7 @@ führen können:
   zum Hinzufügen, Ändern und Löschen von Personen schreiben. Solche Projekte können natürlich nicht
   vernünftig auf mehrere Personen aufgeteilt werden, da dies ein einziges Feature in einem
   realen Projekt ist.
-- **Kein rebase vor dem merge.** Siehe nächster Punkt.
+- **Kein durchgeführtes rebase vor dem merge.** Siehe nächster Punkt.
 
 ## Änderungen von *main* in den Feature Branch übertragen
 
@@ -87,12 +87,11 @@ den Featurebranch. Um Commits zu kopieren, gibt es den Befehl *git rebase*. Im G
 Merge werden alle Commits, die nach der "Abspaltung" stattgefunden haben, in den Branach kopiert.
 
 Um einen Rebase durchzuführen, nehmen wir am Besten die Git Bash. Gehe in den Featurebranch, den
-du aktualisieren möchtest, z. B. mit *git checkout (featurebranch)*. Gib danach die folgenden
-Befehle ein:
+du aktualisieren möchtest, z. B. mit *git checkout (featurebranch)*. Gib danach den folgenden
+Befehl ein:
 
 ```bash
-git pull origin main
-git rebase main
+git pull origin main --rebase
 ```
 
 Diese Befehle holen sich den neuesten Stand des Branches *main* auf den Rechner. Danach werden
@@ -114,3 +113,24 @@ Die Technik hilft auch, um Konflikte vor dem Pull Request schon lösen zu könne
 erwähnt der Entwickler des Branches *add-inventory* ein *git rebase main* abgesetzt hätte, so
 würde er selbst die Merge Konflikte haben und lösen. Wird dann ein Pull Request abgesetzt, kann dieser
 ohne Konflikte verarbeitet werden.
+
+## Änderungen des Feature Branches in main mit *rebase* übertragen
+
+Bisher haben wir mit dem Pull Request und der Merge Operation eine Möglichkeit kennengelernt, um die Änderungen des Feature Branches in den main Branch zu integrieren.
+Durch diese Operation entsteht ein sogenannter *merge commit* im Branch *main*.
+Die beschriebene Technik des *rebase* kann auch dazu verwendet werden, um die neu dazugekommenen Features aus dem Feature Branch in den main Branch zu integrieren.
+Im Gegensatz zum *merge* werden dabei die einzelnen Commits des Feature Branches in den Branch main integriert.
+Es entsteht also die selbe History, wie wenn du die Änderungen immer direkt in den Branch main commitet hast.
+Viele halten diesen Ansatz für "sauberer", da die History im Branch main dann alle Commits des Feature Branches umfasst.
+
+Um den main Branch mit *rebase* zu aktualisieren, führe folgende Schritte durch:
+
+1. Gehe mit `git checkout main` in den Branch main.
+1. Stelle mit `git pull --rebase` sicher, dass du die neuesten Änderungen aus dem Remote Repository auf deinem Rechner hast.
+   Die Option *rebase* sorgt dafür, dass bei Konflikten kein merge Commit für die Auflösung entsteht.
+2. Danach kannst du mit `git rebase <featurebranch>` die Änderungen in den main Branch integrieren.
+3. Mit `git push` überträgst du den neuen Stand in das Remote Repository.
+
+> Hinweis: Die Operation `git push --force` sollte im main Branch sehr gut überlegt werden.
+> In vielen Repositories ist diese Operation aus Sicherheitsgründen vom Eigentümer deaktiviert worden.
+> Wenn du wie beschrieben vorher die Änderungen von main in den Feature Branch integrierst, brauchst du diese Operation auch nicht.
