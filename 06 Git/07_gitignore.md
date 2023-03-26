@@ -53,7 +53,7 @@ git commit --amend --no-edit
 git push --force
 ```
 
-### Bereinigen der lokalen Dateien
+## Bereinigen der lokalen Dateien mit find
 
 Möchte man gezielt Builds, etc. bereinigen, hilft der find Befehl.
 Er ist in der **git bash** im obersten Verzeichnis des Repos auszuführen (nicht im Windows Command).
@@ -70,3 +70,6 @@ Es kann auch nach Dateien (z. B. alle SQLite Datenbanken mit der Endung db) gesu
 ```bash
 find . -name "*.db*" -exec rm -rf {} \;
 ```
+
+Zur Sicherheit kann der find Befehl einmal ohne rm ( z. B. `find . -type d -name "bin"`) ausgeführt werden.
+Dann werden die Dateien einmal gelistet, die gelöscht werden würden.
