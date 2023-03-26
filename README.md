@@ -33,7 +33,7 @@
   -  [Intro - Catch the ball](04%20WPF/01_CatchTheBall/Readme.md)
   -  [ViewModels](04%20WPF/02_ViewModelDemoApp/Readme.md)
   -  [Relay Command](04%20WPF/03_RelayCommand/Readme.md)
-  -  [Lists](04%20WPF/04_Lists/Readme.md)
+  -  [Lists](04%20WPF/04_Lists/README.md)
   -  [EF Core und WPF](04%20WPF/05_EF_Core/README.md)
   -  [Validations](04%20WPF/06_Validation/README.md)
 - **[TPL - Task Parallel Library](05%20TPL/Readme.md)**
@@ -46,7 +46,9 @@
   - [Arbeiten mit Branches](06%20Git/03_branches.md)
   - [Merge Konflikte, rebase](06%20Git/04_conflicts.md)
   - [Howto: Reset des lokalen Repos](06%20Git/05_reset.md)
+  - [Howto: Nachträgliches Ändern der .gitignore Datei](06%20Git/07_gitignore.md)
   - [Howto: Löschen der History, Ändern des Autors](06%20Git/10_reset_history.md)
+
 - **Erweiterungskapitel: Professional C#**
   - [Extension methods](Professional%20C%23/10_ExtensionMethods/README.md)
   - [Generics](Professional%20C%23/20_Generics/README.md)
