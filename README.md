@@ -2,7 +2,7 @@
 
 ## Lehrinhalte
 
-- **Types in C#**
+#### Types in C#
   - [Value Types](01%20Types/01_ValueTypes.md)
   - [Reference Types](01%20Types/02_ReferenceTypes.md)
   - [Properties](01%20Types/03_Properties.md)
@@ -12,7 +12,7 @@
   - [Equality](01%20Types/07_Equality.md)
   - [Dependency Injection](01%20Types/08_DependencyInjection.md)
   - *[Übungsaufgaben](01%20Types/Uebungen)*
-- **LINQ - Language Integrated Query**
+#### LINQ - Language Integrated Query
   - [Lambda Expressions](02%20Linq/01_Lambdas/README.md)
   - [Filterausdrücke](02%20Linq/../02%20Linq/02_Filterung/README.md)
   - [Projektionen](02%20Linq/03_Projection/README.md)
@@ -20,7 +20,7 @@
   - [Query Syntax](02%20Linq/05_QuerySyntax/README.md)
   - [Joins](02%20Linq/06_Join_Grouping/README.md)
   - *[Übungsaufgaben](02%20Linq/Uebungen/README.md)*
-- **[Der OR Mapper EF Core](03%20EF%20Core/README.md)**
+#### [Der OR Mapper EF Core](03%20EF%20Core/README.md)
   - [Warum OR Mapping?](03%20EF%20Core/01_WhyORMapping/README.md)
   - [Code first](03%20EF%20Core/02_CodeFirstEfCore5/README.md)
   - [Enhanced code first](03%20EF%20Core/03_EnhancedCodeFirst/README.md)
@@ -29,18 +29,18 @@
   - [CRUD Operationen](03%20EF%20Core/06_Crud/README.md)
   - [Database first](03%20EF%20Core/07_DatabaseFirst/README.md)
   - [Migrations](03%20EF%20Core/08_Migrations/README.md)
-- **WPF - Windows Presentation Foundation (nur HIF)**
+#### WPF - Windows Presentation Foundation (nur HIF)
   -  [Intro - Catch the ball](04%20WPF/01_CatchTheBall/Readme.md)
   -  [ViewModels](04%20WPF/02_ViewModelDemoApp/Readme.md)
   -  [Relay Command](04%20WPF/03_RelayCommand/Readme.md)
   -  [Lists](04%20WPF/04_Lists/README.md)
   -  [EF Core und WPF](04%20WPF/05_EF_Core/README.md)
   -  [Validations](04%20WPF/06_Validation/README.md)
-- **[TPL - Task Parallel Library](05%20TPL/Readme.md)**
+#### [TPL - Task Parallel Library](05%20TPL/Readme.md)
   -  [CPU bound work](05%20TPL/01%20CpuBoundWork/README.md)
   -  [Await und async](05%20TPL/02%20AwaitAsyncDemo/Readme.md)
   -  [IO und TPL: der file writer](05%20TPL/03%20FileWriterApp)
-- **Git**
+#### Git
   - [Installation von git, Git Bash](06%20Git/01_installation.md)
   - [Extensions und Arbeit mit git](06%20Git/02_work_with_git.md)
   - [Arbeiten mit Branches](06%20Git/03_branches.md)
@@ -49,7 +49,7 @@
   - [Howto: Bereinigung des Repos, nachträgliches Ändern der .gitignore Datei](06%20Git/07_gitignore.md)
   - [Howto: Löschen der History, Ändern des Autors](06%20Git/10_reset_history.md)
 
-- **Erweiterungskapitel: Professional C#**
+#### Erweiterungskapitel: Professional C#
   - [Extension methods](Professional%20C%23/10_ExtensionMethods/README.md)
   - [Generics](Professional%20C%23/20_Generics/README.md)
   - [Fluent APIs](Professional%20C%23/30_FluentApi/README.md)
