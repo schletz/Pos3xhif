@@ -45,7 +45,7 @@
   - [Extensions und Arbeit mit git](06%20Git/02_work_with_git.md)
   - [Arbeiten mit Branches](06%20Git/03_branches.md)
   - [Merge Konflikte, rebase](06%20Git/04_conflicts.md)
-  - [Howto: Reset des lokalen Repos](06%20Git/05_reset.md)
+  - [git reset](06%20Git/05_reset.md)
   - [Bearbeiten der History: amend commit und interaktives Rebase](06%20Git/06_history.md)
   - [Howto: Bereinigung des Repos, nachträgliches Ändern der .gitignore Datei](06%20Git/07_gitignore.md)
   - [Howto: Löschen der History, Ändern des Autors](06%20Git/10_reset_history.md)
