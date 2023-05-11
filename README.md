@@ -49,6 +49,7 @@
   - [Bearbeiten der History: amend commit und interaktives Rebase](06%20Git/06_history.md)
   - [Howto: Bereinigung des Repos, nachträgliches Ändern der .gitignore Datei](06%20Git/07_gitignore.md)
   - [Howto: Löschen der History, Ändern des Autors](06%20Git/10_reset_history.md)
+  - [Für Lehrende: Exportieren des git logs](06%20Git/20_check_logs.md) :fearful:
 
 #### Erweiterungskapitel: Professional C#
   - [Extension methods](Professional%20C%23/10_ExtensionMethods/README.md)
