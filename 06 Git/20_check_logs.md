@@ -1,42 +1,51 @@
 # Skript für den HTML Export des git logs (für Lehrende) :fearful: 
 
-Um den Status der Repositories von Klassen leicht prüfen zu können, gibt es ein Skript zum Download.  
-**[Download check_logs.sh](check_logs.sh)**
+Um den Status der Repositories von Klassen leicht prüfen zu können, gibt es ein Skript zum Download.
+
+**Variante 1:** Nur *git fetch* + Auslesen der Logdatei ohne Veränderung der lokalen Dateien.
+- **[Download check_logs.sh](check_logs.sh)**
+- **curl:** `curl https://raw.githubusercontent.com/schletz/Pos3xhif/master/06%20Git/check_logs.sh -o check_logs.sh`
+
+**Variante 2 (bevorzugt):** *git fetch* mit *git reset* und Auslesen der Logdatei.
+Das ist nützlich, wenn du den Stand von github auf der Platte und nicht nur im lokalen Repo haben willst.
+- **[Download check_logs_with_reset.sh](check_logs_with_reset.sh)**
+- **curl:** `curl https://raw.githubusercontent.com/schletz/Pos3xhif/master/06%20Git/check_logs_with_reset.sh -o check_logs_with_reset.sh`
+
+Das Skript wird unter Windows mit der *git bash* ausgeführt.
+Unter macOS/Linux wird es normal in der Shell gestartet, setze mit *chmod 777* vorher die Ausführungsrechte.
+Nach der Installation von git sind *.sh* Dateien automatisch damit verknüpft, du erkennst das am Symbol im Explorer.
 
 ## Vorbereitung
 
-### Einladung und Organisation in git
+### Download des Github CLI Tools
 
-> Hinweis: Gehe mit deinen SchülerInnen das Kapitel [Installation und Konfiguration von git](01_installation.md) durch.
-> Dort wird beschrieben, wie jeder seinen echten Namen als Autor setzen kann.
-> Sonst bekommst du manchmal sehr seltsame Namen im Log.
+Das Skript liest auch die Pull Requests aus.
+Dafür braucht es das GitHub command line tool.
+Du kannst es auf [cli.github.com](https://cli.github.com) laden.
+Danach musst du dich in der Konsole mit `gh auth login` authentifizieren.
+Installiere danach die Extension für github classroom, indem du den folgenden Befehl in der Konsole eingibst:
 
-Wenn deine SchülerInnen nicht mit [github classroom](https://github.com/Die-Spengergasse) arbeiten, und das Repository *private* angelegt wurde, muss dir der Eigentümer eine Einladung schicken.
-In github classroom hast du als owner automatisch Zugriff.
-Um die Repositories vernünftiger verwalten zu können, kannst du neben dem *Star* button das Repository einer Liste zuweisen:
-
-[<img src="git_star_list_1930.png" width="75%" />](git_star_list_1930.png)
-
-### Klonen der Repositories
-
-Am Besten gehe alle Repositories durch und schreibe dir die git clone Befehle in einer Textdatei oder bat Datei zusammen.
-
-Beispiel:
-```bash
-git clone <url1>
-git clone <url2>
-git clone <url3>
+```
+gh extension install github/gh-classroom
 ```
 
-Lege dann einen Ordner mit der Klasse an und kopiere diese Befehle in die Eingabeaufforderung (natürlich im Ordner der Klasse).
-Tipp: Du kannst bei *git clone* auch einen Ordnernamen angeben, wenn die Repositories nicht mit dem Namen versehen sind:  
-`git clone <url> "<ordner>"`
+### Klonen der Repositories aus github classroom: *gh classroom clone student-repos*
 
-> Du kannst auch eine Namensliste z. B. aus Sokrates (unter *Auswertungen* - *Dynamische Suche* - *Aktive Schüler*) in Teams hochladen, per Link freigeben und dann die Klasse bitten, die URL des Repos auszufüllen.
-> Dann kannst du dir die git clone Befehle per Excel Formel erzeugen.
+> Für diesen Schritt musst du eine Klasse auf [https://classroom.github.com/classrooms](https://classroom.github.com/classrooms) und ein Assignment eingerichtet haben.
+> Meist ist ein Assignment als "Arbeitsrepo" die richtige Wahl.
+> Mit diesem Befehl sind nur Repos abrufbar, wo sich SchülerInnen mit einem Einladungslink zu einem Assignment eingeschrieben haben.
+> Falls die Repos ohne Klasse angelegt wurden, kannst du auf [https://github.com/orgs/Die-Spengergasse/repositories](https://github.com/orgs/Die-Spengergasse/repositories) nach den Repos suchen und die ausgegebene Liste in einen Texteditor kopieren, die Zeilen sortieren und `git clone https://github.com/Die-Spengergasse/` vor den Namen schreiben.
 
-> In *github classroom* kannst du über die Suche eine Liste der Klasse anzeigen lassen.
-> Das Ergebnis kannst du markieren, in einen (vernünftigen) Texteditor kopieren, die Zeilen sortieren und dann einfach *git clone https://github.com/Die-Spengergasse/* vor den Reponamen stellen.
+Gehe in der Konsole in das Verzeichnis, wo du die Repositories haben möchtest (z. B. *3CHIF-POS*).
+Führe danach in diesem Verzeichnis in der Windows Konsole (**nicht git bash**, denn die interaktive Eingabe funktioniert unter Windows dort nicht) den folgenden Befehl aus:
+Tipp: Du kannst den Klassennamen eingeben, das Tool filtert dann bei der Eingabe die gefundenen Klassen.
+
+```
+gh classroom clone student-repos
+```
+
+Nun werden alle Repositories des Assignments auf die Platte geladen.
+Hinweis: Das *check_logs* Skript lädt Änderungen vom Server, du musst nur 1x die Repositories mit *gh classroom clone* laden.
 
 ## Starten des Skriptes
 
@@ -46,9 +55,9 @@ Kopiere das Skript *check_logs.sh* in den Klassenordner mit allen Repositories.
 
 Beispiel:
 ```
-📁 3CHIF
-    ├──📂 Repo1
-    ├──📂 Repo2
+📁 sj22-23-6aaif-pos-submissions
+    ├──📂 sj22-23-6aaif-pos-user1
+    ├──📂 sj22-23-6aaif-pos-user2
     ├──📂 ...
     └── check_logs.sh
 ```
@@ -57,16 +66,18 @@ Das Skript geht alle Unterordner (ausgehend vom Verzeichnis des Skriptes) durch 
 
 ```bash
 git fetch --all --prune
-git log origin --all --since="30 days ago" --date=iso-strict --pretty=format:"<tr><td><div>%ad</div></td><td><div>%an (%al)</div></td><td>%s</td></tr>" >> "../log.html"
+git log origin --all ... >> "../log.html"
 ```
 
 Es werden alle Einträge **der letzten 30 Tage** gelesen.
+Die Statistiken über die Autoren bzw. die pull requests haben keine Zeitbeschränkung.
+Die Variable *DAYS_AGO* steuert dies, du kannst sie in [check_logs.sh](check_logs.sh) leicht ändern.
 Die Namen der Ordner werden als Überschriften ausgegeben.
 Der origin wird als Link ergänzt.
-Wenn du alle Einträge haben möchtest, kannst du den Parameter `--since="30 days ago"` anpassen bzw. löschen.
 Im Verzeichnis von *check_logs.sh* wird eine Datei **log.html** erstellt, die du dann im Browser öffnen kannst.
 Beim erneuten Ausführen wird die alte Datei überschrieben.
+Der Dateiname kann in [check_logs.sh](check_logs.sh) über die Variable *OUTFILE* gesetzt werden.
 
 So sieht z. B. die Datei *log.html* einer (sehr fleißigen) Klasse aus:
 
-![](logs_export_1907.png)
+![](logs_export_1232.png)

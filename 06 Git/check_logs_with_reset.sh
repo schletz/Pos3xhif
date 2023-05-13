@@ -72,6 +72,14 @@ for DIR in */ ; do
         continue
     fi
 
+    for branch in $BRANCHES
+    do
+        echo Reset branch $branch
+        git checkout $branch &> /dev/null
+        git clean -dfX
+        git reset --hard @{u} &> /dev/null
+    done
+
     # OPEN PULL REQUESTS
     echo '<table class="pullrequests_open">' >> "$OUTFILE_ABS"
     gh pr list -R $URL --state open --json url,mergeStateStatus,createdAt,updatedAt,state,title,reviewDecision,headRefName,reviewRequests --template \
