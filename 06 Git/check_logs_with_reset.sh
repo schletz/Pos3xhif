@@ -44,7 +44,8 @@ echo '<!DOCTYPE html>
         .pullrequests_open { background-color: hsl(60, 100%, 90%); }
         .pullrequests_merged { background-color: hsl(120, 50%, 90%); }
         .branches, .author_summary { font-style: italic; margin-top:0.25rem; }
-        tr[data-wants_review="1"] { background-color: hsl(60, 100%, 50%); }
+        tr[data-wants_review] { background-color: hsl(60, 100%, 50%); }
+        tr[data-wants_review="0"] { background-color: hsl(60, 100%, 90%); }
         .legend { display: flex; column-gap: 1em; }
         .generated { margin-top: 1rem; }
     </style>    
