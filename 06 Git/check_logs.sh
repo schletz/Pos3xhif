@@ -61,6 +61,7 @@ for DIR in */ ; do
     URL=$(git remote get-url origin)
 
     echo "Fetch $REPO"
+    git gc --prune=now
     git fetch --all --prune
 
     echo '<div class="repo">' >> "$OUTFILE_ABS"
