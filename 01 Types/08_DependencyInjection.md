@@ -1,4 +1,40 @@
 # Dependency Injection
+## Erstellen einer Visual Studio Solution
+
+Um die Beispiele mitmachen zu können, muss eine .NET Konsolenapplikation erstellt werden. Führe
+dafür die folgenden Befehle in der Konsole aus. Unter macOs müssen md und rd durch die entsprechenden
+Befehle ersetzt werden.
+
+```text
+rd /S /Q LoggerDemo
+md LoggerDemo
+cd LoggerDemo
+md LoggerDemo.Application
+cd LoggerDemo.Application
+dotnet new console
+cd ..
+dotnet new sln
+dotnet sln add LoggerDemo.Application
+start LoggerDemo.sln
+
+```
+
+Öffne danach durch Doppelklick auf das Projekt (*CollectionDemo.Application*) die Datei
+*CollectionDemo.Application.csproj* und füge die Optionen für
+*Nullable* und *TreatWarningsAsError* hinzu. Die gesamte Konfiguration muss nun so aussehen:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+</Project>
+```
 
 Eine praktische Anwendung von Interfaces findet sich in der Technik der *Dependency Injection*. In unserem
 Beispiel simulieren wir den Zugriff auf den GPS Sensor des Smartphones. Je nach Betriebssystem (Android oder iOS)
