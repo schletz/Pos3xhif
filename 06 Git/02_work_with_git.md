@@ -40,12 +40,12 @@ dem Screenshot aussehen:
 
 ## Die ersten Schritte in Visual Studio Code
 
-Lege im Terminal von VS Code (Git Bash) einen Ordner *first_app* an. Es soll eine .NET 6 Anwendung sein.
+Lege im Terminal von VS Code (Git Bash) einen Ordner *first_app* an. Es soll eine .NET 8 Anwendung sein.
 
 ```bash
 mkdir first_app
 cd first_app
-dotnet new console -f net6.0 -n FirstApp -o .
+dotnet new console -f net8.0 -n FirstApp -o .
 ```
 
 Wenn du nun unter *Source Control* die Änderungen ansiehst, meldet VS Code bereits Änderungen
