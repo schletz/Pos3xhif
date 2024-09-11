@@ -98,7 +98,13 @@ Diese Befehle holen sich den neuesten Stand des Branches *main* auf den Rechner.
 mit *git rebase main* die Commits *von main in den Feature Branch* kopiert. Falls es Merge Konflikte
 gibt, kannst du sie mit der IDE lösen.
 
-Nach dem Lösen der Konflikte kannst du mit
+Nach dem Lösen des Konfliktes kannst du mit folgendem Befehl den nächsten Commit übertragen bzw. den rebase Modus verlassen:
+
+```bash
+git rebase --continue
+```
+
+Danach wird der neue feature Branch mit *push --force* an den Server übertragen.
 
 ```bash
 git push --force
