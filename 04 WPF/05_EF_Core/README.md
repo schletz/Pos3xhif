@@ -15,8 +15,8 @@ Wir können auch die Projektdaten [ListDemo.csproj](EfCoreDemo/ListDemo.csproj) 
 <ItemGroup>
     <PackageReference Include="AutoMapper" Version="11.*" />
     <PackageReference Include="Bogus" Version="34.*" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.*" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.*" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.*" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.*" />
 </ItemGroup>
 ```
 

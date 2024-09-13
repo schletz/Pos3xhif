@@ -28,7 +28,7 @@ start TypesDemo.sln
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
@@ -146,7 +146,7 @@ Durch diesen Operator können wir unsere Berechnung in myInt schreiben. Ob 0 ein
 ist, hängt natürlich von der Aufgabenstellung ab.
 
 ```c#
-myInt = myInt2 ?? 0 + 2;  // Liefert 1, wenn myInt2 null ist. Sehen Sie auf
+myInt = myInt2 ?? 0 + 2;  // Liefert 2, wenn myInt2 null ist. Sehen Sie auf
                           // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/operators/
                           // nach, welcher Operator zuerst ausgeführt wird.
 ```
