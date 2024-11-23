@@ -1,0 +1,126 @@
+= Routing in Next.js
+Dein Name <name@mail.at>
+:revdate: 23. November 2024
+:source-highlighter: rouge
+:icons: font
+:author: Dein Name
+:pdf-page-header: true
+
+[.author]
+====
+{author} +
+{revdate}
+====
+
+== Text mit Zitat
+
+=== Vergleichendes Zitat
+
+Beim Testen von Webanwendungen wird häufig auf Frameworks wie Next.js zurückgegriffen, da diese eine einfache Integration von Testing-Bibliotheken ermöglichen (vgl. <<nextjs-testing>>).  
+Im Vergleich dazu sind bei anderen Frameworks oft zusätzliche Konfigurationen erforderlich, um ähnliche Funktionalitäten bereitzustellen.
+
+=== Wörtliches Zitat
+
+[quote,Gamma et al., Design Patterns]
+____
+"Next.js is a React framework for building full-stack web applications. You use React Components to build user interfaces, and Next.js for additional features and optimizations."<<nextjs>>.
+____
+
+== Einbinden von Quelltext
+
+=== Codeblock im asciidoctor File mit Callouts
+
+[source,typescript]
+----
+function greet(name: string): string { // <1>
+    const message: string = `Hello, ${name}!`; // <2>
+    return message; // <3>
+}
+
+const user = "Alice";
+console.log(greet(user)); // <4>
+----
+
+<1> Die Funktion `greet` akzeptiert einen Parameter vom Typ `string` und gibt ebenfalls einen `string` zurück.
+<2> Eine Template-String wird verwendet, um die Begrüßungsnachricht zu erstellen.
+<3> Die erstellte Nachricht wird zurückgegeben.
+<4> Der Benutzername `Alice` wird übergeben und das Ergebnis der Funktion im Terminal ausgegeben.
+
+=== Codeblock mit Zeilennummern
+
+[source,tsx,linenums]
+----
+import React from 'react';
+
+type GreetingProps = {
+    name: string;
+};
+
+const Greeting: React.FC<GreetingProps> = ({ name }) => {
+    return <h1>Hello, {name}!</h1>;
+};
+
+export default Greeting;
+----
+
+Erklärung:
+
+- **Zeile 1:** Importiert das React-Modul, das für die Definition von React-Komponenten erforderlich ist.
+- **Zeile 3:** Definiert den Typ `GreetingProps`, der die Eigenschaften (Props) der Komponente beschreibt.
+- **Zeile 4:** Fügt dem `GreetingProps`-Typ die Eigenschaft `name` vom Typ `string` hinzu.
+- **Zeile 6:** Erstellt die funktionale Komponente `Greeting`, die die Props vom Typ `GreetingProps` destrukturiert.
+- **Zeile 7:** Gibt ein `h1`-Element zurück, das den übergebenen Namen in der Begrüßungsnachricht einfügt.
+- **Zeile 10:** Exportiert die `Greeting`-Komponente, sodass sie in anderen Teilen der Anwendung genutzt werden kann.
+
+=== Laden aus Quellcodedateien
+
+Diese Datei braucht `Example.cs`.
+Mit `ìnclude` kann die Datei eingebunden werden.
+
+[source,csharp]
+----
+include::Example.cs[tag=ExampleConstructor,indent=0]
+----
+
+== Fancy AsciiDoc Table Example
+
+[cols="3*", options="header"]
+|===
+| Header 1 | Header 2 | Header 3
+
+| Row 1, Col 1
+| Row 1, Col 2
+.2+| Row 1, Col 3 (rowspan of 2)
+
+| Row 2, Col 1
+| Row 2, Col 2
+
+| Row 3, Col 1
+2+| Row 3, Col 2 and 3 (colspan of 2)
+
+.3+| Row 4, Col 1 (rowspan of 3)
+| Row 4, Col 2
+| Row 4, Col 3
+
+| Row 5, Col 2
+| Row 5, Col 3
+
+| Row 6, Col 2
+| Row 6, Col 3
+|===
+
+== PlantUML-Diagramm in PDF
+
+[plantuml, diagram.png, png]
+----
+@startuml
+Alice -> Bob: Hello Bob!
+Bob --> Alice: Hi Alice!
+@enduml
+----
+
+[bibliography]
+== Literaturverzeichnis
+
+* [[[nextjs,1]]] Vercel. "Introduction to Next.js". URL: https://nextjs.org/docs (abgerufen am 22.11.2024).
+* [[[nextjs-testing,2]]] Vercel. "Building Your Application: Testing". URL: https://nextjs.org/docs/app/building-your-application/testing (abgerufen am 23.11.2024).
