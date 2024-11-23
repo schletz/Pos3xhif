@@ -23,8 +23,13 @@ Der Vorgang muss aber nur einmal ausgeführt werden.
 Erstelle ein Verzeichnis für das Skript (z. B. */Users/username/Scripts*) oder verwende ein bestehendes Verzeichnis.
 Öffne VS Code und kopiere den Inhalt der Datei **[convert_adoc.sh](convert_adoc.sh)** hinein.
 Speichere die Datei unter *convert_adoc.sh* ab.
-Gehe in das Terminal in dieses Verzeichnis und gib den Skript mit *chmod a+x convert_adoc.sh* Ausführungsrechte.
-Führe das Skript dann mit *./convert_adoc.sh* aus.
+Gehe in das Terminal in dieses Verzeichnis und führe die nachfolgenden Befehle aus.
+Sie geben dem Skript ausführungsrechte und starten es einmalig, um das Docker Image zu erstellen.
+
+```bash
+chmod a+x convert_adoc.sh
+./convert_adoc.sh
+```
 
 ## Konvertieren von Asciidoc Dokumenten
 

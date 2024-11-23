@@ -15,6 +15,7 @@ Bei Commits wird dein Name angeführt. Setze daher deinen echten Namen in der Ko
 git config --global user.name "Vorname NachnameOhneNachdenkenKopiert"
 git config --global user.email "ich_habe_ohne_hirn_kopiert@spengergasse.at"
 git config --global init.defaultBranch main
+git config --global push.forceWithLease true
 ```
 
 Details sind auf [Git Commands - Setup and Config](https://git-scm.com/book/en/v2/Appendix-C%3A-Git-Commands-Setup-and-Config) nachzulesen.
