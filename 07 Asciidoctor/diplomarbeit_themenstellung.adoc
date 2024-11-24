@@ -1,0 +1,45 @@
+== Themenstellung von Vorname Nachname
+
+[.lead]
+Hier kommt der Wortlaut der individuellen Themenstellung hin.
+
+=== Überschrift 1
+
+Beim Testen von Webanwendungen wird häufig auf Frameworks wie Next.js zurückgegriffen, da diese eine einfache Integration von Testing-Bibliotheken ermöglichen (vgl. <<nextjs-testing>>).  
+Im Vergleich dazu sind bei anderen Frameworks oft zusätzliche Konfigurationen erforderlich, um ähnliche Funktionalitäten bereitzustellen.
+
+==== Codebeispiel
+
+.Klasse Greeter
+[source,typescript]
+----
+class Greeter {              // <1>
+  greeting: string;          // <2>
+  
+  constructor(message: string) { // <3>
+    this.greeting = message; // <4>
+  }
+
+  greet(): string {          // <5>
+    return `Hello, ${this.greeting}`; // <6>
+  }
+}
+
+const greeter = new Greeter("World"); // <7>
+console.log(greeter.greet());         // <8>
+----
+
+<1> Die Klasse `Greeter` wird definiert.
+<2> Ein Klassenattribut `greeting` wird deklariert.
+<3> Der Konstruktor initialisiert die Klasse mit einer Nachricht.
+<4> Der Wert wird dem Attribut `greeting` zugewiesen.
+<5> Die Methode `greet` wird definiert.
+<6> Die Methode gibt eine personalisierte Begrüßung zurück.
+<7> Eine Instanz der Klasse `Greeter` wird erstellt.
+<8> Die Methode `greet` wird aufgerufen und das Ergebnis ausgegeben.
+
+<<<
+[bibliography]
+=== Literaturverzeichnis
+
+* [[[nextjs-testing,1]]] Vercel. "Building Your Application: Testing". URL: https://nextjs.org/docs/app/building-your-application/testing (abgerufen am 23.11.2024).
