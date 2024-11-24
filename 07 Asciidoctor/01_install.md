@@ -87,6 +87,7 @@ Es bietet live preview, syntax highlighting und snippets an.
 
 ## Weiterführende Infos
 
+- [AsciiDoc cheatsheet](https://powerman.name/doc/asciidoc)
 - [AsciiDoc Syntax Quick Reference](https://docs.asciidoctor.org/asciidoc/latest/syntax-quick-reference/)
 - [Compare AsciiDoc to Markdown](https://docs.asciidoctor.org/asciidoc/latest/asciidoc-vs-markdown/)
 - [Bibliography (Quellenangaben)](https://docs.asciidoctor.org/asciidoc/latest/sections/bibliography/)
