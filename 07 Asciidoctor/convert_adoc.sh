@@ -32,13 +32,13 @@ fi
 # Überprüfen der Eingabeparameter
 if [ -z "$1" ]; then
     echo "[ERROR] Es wurde keine Eingabedatei angegeben."
-    echo "Nutzung: ./convert_adoc.sh eingabedatei.adoc ausgabedatei.ext"
+    echo "Nutzung: ./convert_adoc.sh eingabedatei.adoc ausgabedatei.[pdf|docx|md|html]"
     exit 1
 fi
 
 if [ -z "$2" ]; then
     echo "[ERROR] Es wurde keine Ausgabedatei angegeben."
-    echo "Nutzung: ./convert_adoc.sh eingabedatei.adoc ausgabedatei.ext"
+    echo "Nutzung: ./convert_adoc.sh eingabedatei.adoc ausgabedatei.[pdf|docx|md|html]"
     exit 1
 fi
 
@@ -63,7 +63,7 @@ case "$EXT" in
         echo "[INFO] Konvertiere \"$INPUT_FILE\" nach PDF..."
         [ -n "$THEME_OPTION" ] && echo "[INFO] Verwende Theme-Parameter $THEME_OPTION"
         docker run --rm -v "$(pwd)":/documents asciidoctor-pandoc \
-            sh -c "asciidoctor-pdf $THEME_OPTION -r asciidoctor-diagram \"$INPUT_FILE\" && rm -rf .asciidoctor"
+            sh -c "asciidoctor-pdf $THEME_OPTION -r asciidoctor-diagram -a allow-uri-read \"$INPUT_FILE\" && rm -rf .asciidoctor"
         ;;
     docx)
         echo "[INFO] Konvertiere \"$INPUT_FILE\" nach DOCX..."

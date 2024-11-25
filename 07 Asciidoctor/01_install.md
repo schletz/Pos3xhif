@@ -1,5 +1,7 @@
 # Verwendung von Asciidoctor unter Windows und macOS
 
+![](comparison_2046.png)
+
 Asciidoctor ist ein System, mit dessen Hilfe technische Dokumentationen in einem Textformat geschrieben werden können.
 Der Aufbau ähnelt einer Markdown Datei, Asciidoctor ist aber mächtiger.
 Die Entwickler von Asciidoctor kennen scheinbar Microsoft Windows nicht, es gibt keine ausführbare Datei für Windows.
@@ -23,8 +25,8 @@ Der Vorgang muss aber nur einmal ausgeführt werden.
 Erstelle ein Verzeichnis für das Skript (z. B. */Users/username/Scripts*) oder verwende ein bestehendes Verzeichnis.
 Öffne VS Code und kopiere den Inhalt der Datei **[convert_adoc.sh](convert_adoc.sh)** hinein.
 Speichere die Datei unter *convert_adoc.sh* ab.
-Gehe in das Terminal in dieses Verzeichnis und führe die nachfolgenden Befehle aus.
-Sie geben dem Skript ausführungsrechte und starten es einmalig, um das Docker Image zu erstellen.
+Gehe im Terminal in dieses Verzeichnis und führe die nachfolgenden Befehle aus.
+Sie geben dem Skript Ausführungsrechte und starten es einmalig, um das Docker Image zu erstellen.
 
 ```bash
 chmod a+x convert_adoc.sh
@@ -83,7 +85,7 @@ Der Quelltext in [Example.cs](Example.cs) zeigt, dass in Asciidoc auch externe D
 ## Erstellung mit VS Code
 
 Für VS Code gibt es die Extension [AsciiDoc](https://marketplace.visualstudio.com/items?itemName=asciidoctor.asciidoctor-vscode).
-Es bietet live preview, syntax highlighting und snippets an.
+Sie bietet live preview, syntax highlighting und snippets an.
 
 ## Weiterführende Infos
 

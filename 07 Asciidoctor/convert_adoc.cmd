@@ -37,12 +37,12 @@ if %ERRORLEVEL% neq 0 (
 REM Überprüfen der Eingabeparameter
 if "%~1"=="" (
     echo [ERROR] Es wurde keine Eingabedatei angegeben.
-    echo Nutzung: convert_adoc.cmd "eingabedatei.adoc" "ausgabedatei.ext"
+    echo Nutzung: convert_adoc.cmd "eingabedatei.adoc" "ausgabedatei.[pdf|docx|md|html]"
     exit /b 1
 )
 if "%~2"=="" (
     echo [ERROR] Es wurde keine Ausgabedatei angegeben.
-    echo Nutzung: convert_adoc.cmd "eingabedatei.adoc" "ausgabedatei.ext"
+    echo Nutzung: convert_adoc.cmd "eingabedatei.adoc" "ausgabedatei.[pdf|docx|md|html]"
     exit /b 1
 )
 
@@ -71,7 +71,7 @@ if /i "%EXT%"=="pdf" (
         echo [INFO] Verwende Theme Paramter %THEME_OPTION%
     )
     docker run --rm -v "%cd%":/documents asciidoctor-pandoc ^
-        sh -c "asciidoctor-pdf %THEME_OPTION% -r asciidoctor-diagram '%INPUT_FILE%' && rm -rf .asciidoctor"
+        sh -c "asciidoctor-pdf %THEME_OPTION% -r asciidoctor-diagram -a allow-uri-read '%INPUT_FILE%' && rm -rf .asciidoctor"
 ) else if /i "%EXT%"=="docx" (
     echo [INFO] Konvertiere "%INPUT_FILE%" nach DOCX...
     docker run --rm -v "%cd%":/documents asciidoctor-pandoc ^
