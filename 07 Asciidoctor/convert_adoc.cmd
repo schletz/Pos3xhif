@@ -70,19 +70,19 @@ if /i "%EXT%"=="pdf" (
     if not "%THEME_OPTION%"=="" (
         echo [INFO] Verwende Theme Paramter %THEME_OPTION%
     )
-    docker run --rm -v "%cd%":/documents asciidoctor-pandoc ^
-        sh -c "asciidoctor-pdf %THEME_OPTION% -r asciidoctor-diagram -a allow-uri-read '%INPUT_FILE%' && rm -rf .asciidoctor"
+    docker run -i --rm -v "%cd%":/documents asciidoctor-pandoc ^
+        sh -c "asciidoctor-pdf %THEME_OPTION% -r asciidoctor-diagram -a allow-uri-read -o '%BASENAME%.pdf' '%INPUT_FILE%' && rm -rf .asciidoctor"
 ) else if /i "%EXT%"=="docx" (
     echo [INFO] Konvertiere "%INPUT_FILE%" nach DOCX...
-    docker run --rm -v "%cd%":/documents asciidoctor-pandoc ^
+    docker run -i --rm -v "%cd%":/documents asciidoctor-pandoc ^
         sh -c "asciidoctor -b docbook5 -r asciidoctor-diagram -a data-uri -o - '%INPUT_FILE%' | pandoc -f docbook -t docx --highlight-style pygments -o '%BASENAME%.docx' && rm -rf .asciidoctor"
 ) else if /i "%EXT%"=="md" (
     echo [INFO] Konvertiere "%INPUT_FILE%" nach Markdown...
-    docker run --rm -v "%cd%":/documents asciidoctor-pandoc ^
+    docker run -i --rm -v "%cd%":/documents asciidoctor-pandoc ^
         sh -c "asciidoctor -b docbook5 -r asciidoctor-diagram -a data-uri -o - '%INPUT_FILE%' | pandoc -f docbook -t gfm --highlight-style pygments -o '%BASENAME%.md' && rm -rf .asciidoctor"
 ) else if /i "%EXT%"=="html" (
     echo [INFO] Konvertiere "%INPUT_FILE%" nach HTML...
-    docker run --rm -v "%cd%":/documents asciidoctor-pandoc ^
+    docker run -i --rm -v "%cd%":/documents asciidoctor-pandoc ^
         sh -c "asciidoctor -b html -r asciidoctor-diagram -a data-uri -o '%BASENAME%.html' '%INPUT_FILE%' && rm -rf .asciidoctor"
 ) else (
     echo [ERROR] Unbekannte Ausgabedateierweiterung "%EXT%". Unterstützt sind: pdf, docx, md, html
