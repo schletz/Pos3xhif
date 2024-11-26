@@ -1,67 +1,47 @@
-﻿using System.Text.RegularExpressions;
-namespace Preprocessor;
+﻿namespace Preprocessor;
 
 public class Program
 {
 
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
-        var preprocessor = AsciidocPreprocessor.FromFile(args[0]);
-        preprocessor.AddMacroProcessor("html_image", htmlImageProcessor);
-        var newContent = preprocessor.Process();
-        Console.WriteLine(newContent);
+        try 
+        {
+            var preprocessor = AsciidocPreprocessor.FromFile(args[0]);
+            var client = await ChatGptClient.FromKeyfile("chatgpt_key.txt");
+            preprocessor.AddMacroProcessor("example_macro", ExampleMacroProcessor);
+            preprocessor.AddMacroProcessor("chatgpt_prompt", client.ChatCptMacroProcessor);
+            var newContent = await preprocessor.Process();
+            Console.WriteLine(newContent);
+        }
+        catch(Exception e)
+        {
+            Console.Error.WriteLine(e.InnerException?.Message ?? e.Message);
+        }
     }
-    static string htmlImageProcessor(string target, Attributes attributes)
+
+    static Task<string> ExampleMacroProcessor(string target, Attributes attributes, Dictionary<string, string> globalVariables)
     {
-        return @$"<img src=""{target}"" width=""{attributes[0]}"" style=""width: {attributes["css_width"]}"">";
+        return Task.FromResult(@$"
+.variables
+----
+{System.Text.Json.JsonSerializer.Serialize(globalVariables)}
+----
+
+.target
+----
+{target}
+----
+
+.attributesArray
+----
+{System.Text.Json.JsonSerializer.Serialize(attributes.AttributesArray)}
+----
+
+.namedAttributes
+----
+{System.Text.Json.JsonSerializer.Serialize(attributes.NamedAttributes)}
+----
+");
     }
-}
-
-// *************************************************************************************************
-/// <summary>
-/// Sucht nach Makros und ruft die entsprechenden Prozessoren auf.
-/// </summary>
-public class AsciidocPreprocessor
-{
-    private readonly Regex _macroRegex = new(@"^(?<name>[a-zA-Z0-9-_]+)::(?<target>[^[]+)?\[(?<attributes>[^\]]*)\]",
-        RegexOptions.Compiled | RegexOptions.Multiline);
-    private readonly Dictionary<string, Func<string, Attributes, string>> _macroProcessors = new();
-    private readonly string _content;
-
-    public static AsciidocPreprocessor FromFile(string filename) =>
-        new(File.ReadAllText(filename, new System.Text.UTF8Encoding(false)));
-
-    public AsciidocPreprocessor(string content) => _content = content;
-
-    public void AddMacroProcessor(string name, Func<string, Attributes, string> processor) =>
-        _macroProcessors[name] = processor;
-
-    public string Process() => _macroRegex.Replace(_content, match =>
-    {
-        var name = match.Groups["name"].Value;
-        var target = match.Groups["target"].Value;
-        var attributes = new Attributes(match.Groups["attributes"].Value);
-        return _macroProcessors.TryGetValue(name, out var processor) ? processor(target, attributes) : match.Value;
-    });
-}
-
-/// <summary>
-/// Bildet die Attributes des Makros ab. Der Zugriff erfolgt
-/// über einen numerischen Key, um Attributes nach Position zu erhalten oder
-/// über einen string Key, um Attributes nach Namen zu erhalten
-/// </summary>
-public class Attributes
-{
-    private static readonly Regex _namedAttributeRegex = new(@"(?<name>[a-z0-9_-]+)=(?:""(?<value>[^""]+)""|(?<value>[^,\]]+))",
-        RegexOptions.Compiled);
-    private readonly string[] _attributes;
-    private readonly Dictionary<string, string> _namedAttributes;
-
-    public Attributes(string attributes) => (_attributes, _namedAttributes) =
-        (attributes.Split(','), _namedAttributeRegex
-            .Matches(attributes)
-            .ToDictionary(m => m.Groups["name"].Value, m => m.Groups["value"].Value));
-
-    public string this[int index] => _attributes[index];
-    public string this[string name] => _namedAttributes.TryGetValue(name, out var val) ? val : string.Empty;
 }

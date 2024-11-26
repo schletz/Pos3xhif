@@ -1,0 +1,52 @@
+= C# Präprozessor Test
+:source-highlighter: rouge
+
+== Example Macro
+
+example_macro::test.jpg[100,200,"test1,test2",scale=50%]
+
+== Example Prompt
+
+Wir wollen die folgende Tabelle in eine Datenbank einfügen:
+
+chatgpt_prompt::["Der Output soll in reinem AsciiDoc Format erfolgen.
+Es dürfen keine Formatierungen oder Markdown Anweisungen in der Antwort enthalten sein.
+Erstelle eine Tabelle mit 3 Spalten: ID, Vorname, Nachname.
+Erstelle 10 Zeilen, wobei jeder Wert mit Zufallsdaten gefüllt werden soll.
+",max_tokens=1000,temperature=0.5]
+
+Um die Daten speichern zu können, generieren wir in SQL eine Tabelle:
+
+[source,sql]
+----
+chatgpt_prompt::["Der Output soll in reinem SQL Format erfolgen.
+Es dürfen keine Formatierungen oder Markdown Anweisungen in der Antwort enthalten sein.
+Erstelle für die vorher generierten Daten eine Tabelle Person mit den Spalten Id, Firstname und Lastname.
+Überlege sinnvolle Constraints.
+",max_tokens=1000,temperature=0.5]
+
+----
+
+Um die Daten einzufügen, generieren wir folgende SQL Anweisungen:
+
+[source,sql]
+----
+chatgpt_prompt::["Der Output soll in reinem SQL Format erfolgen.
+Es dürfen keine Formatierungen oder Markdown Anweisungen in der Antwort enthalten sein.
+Erstelle ein SQL Skript, das die 10 vorher generierten Datensätze in die vorher erstellte Tabelle Person
+mit den Spalten Id, Firstname und Lastname einfügt.
+",max_tokens=1000,temperature=0]
+----
+
+Eine mögliche Erweiterung der Datenbank ist das Einfügen der folgenden Tabelle:
+
+[plantuml,test.svg,svg]
+----
+chatgpt_prompt::["Der Output soll in reinem PlantUML Format erfolgen.
+Es dürfen keine Formatierungen oder Markdown Anweisungen in der Antwort enthalten sein.
+Stelle die erstellte Tabelle Person mit einer 2. Tabelle als PlantUML Diagramm dar.
+Überlege einen realen Use Case.
+Verwende ein ER Diagramm und Fremdschlüssel.
+",max_tokens=1000,temperature=0.5]
+----
+
