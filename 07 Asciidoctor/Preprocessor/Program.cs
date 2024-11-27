@@ -10,7 +10,7 @@ public class Program
             preprocessor.AddMacroProcessor("example_macro", ExampleMacroProcessor);
 
             // Lädt den GPT Client. Deaktiviere diese Zeilen, wenn du den GPT Client nicht verwenden möchtest.
-            var client = await ChatGptClient.FromKeyfile("chatgpt_key.txt");
+            var client = await ChatGptClient.Create("chatgpt_key.txt");
             await client.EnableCache("chatgpt_cache.json");
             preprocessor.AddAsyncMacroProcessor("chatgpt_prompt", client.ChatCptMacroProcessor);
 

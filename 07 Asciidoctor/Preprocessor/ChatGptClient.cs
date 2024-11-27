@@ -1,10 +1,7 @@
 ﻿using System.Net.Http.Headers;
-using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Diagnostics.CodeAnalysis;
-using System.Xml.Linq;
 
 namespace Preprocessor
 {
@@ -15,6 +12,7 @@ namespace Preprocessor
     {
         public record ChatGptMessage(string Role, string Content);
         private readonly string _apiKey;
+        private readonly string _model;
         private readonly static Regex _mdCodeblock = new Regex(@"^```\w*", RegexOptions.Compiled | RegexOptions.Multiline);
         private Dictionary<long, List<ChatGptMessage>> _cache = new();
         private string _cacheFile = string.Empty;
@@ -22,14 +20,14 @@ namespace Preprocessor
         /// <summary>
         /// Liest eine Datei mit dem API Key ein und erstellt einen neuen ChatGptClient.
         /// </summary>
-        public static async Task<ChatGptClient> FromKeyfile(string filename)
+        public static async Task<ChatGptClient> Create(string filename, string model = "gpt-4o")
         {
             if (!File.Exists(filename))
                 throw new ServiceException($"API Keyfile {filename} nicht gefunden.");
 
             var apiKey = (await File.ReadAllTextAsync(filename)).Trim();
             Logger.LogInfo($"Using ChatGPT API key from {apiKey}");
-            return new ChatGptClient(apiKey);
+            return new ChatGptClient(apiKey, model);
         }
 
         /// <summary>
@@ -45,9 +43,17 @@ namespace Preprocessor
             _cache = cache;
             Logger.LogInfo($"Using ChatGPT cache in {cacheFile}");
         }
-        public ChatGptClient(string apiKey)
+        private ChatGptClient(string apiKey, string model)
         {
             _apiKey = apiKey;
+            _model = model;
+            _chatGptMessages.Add(
+                new ChatGptMessage("system", @"Du spricht mit einem Computerprogramm, das nur AsciiDoc versteht.
+Es dürfen keine anderen Inhalte übermittelt werden.
+Source code soll in einen [source] Block mit der entsprechenden Programmiersprache stehen und mit der Option linenums versehen werden.
+Achte darauf, dass Callouts immer in spitzen Klammern stehen.
+PlantUML Diagramme sind in einem Codeblock mit [plantuml,,svg] ohne Callouts zu übermitteln.
+Es darf kein Titel (mit einem = beginnend) übermittelt werden."));
         }
         public bool HasCache => !string.IsNullOrEmpty(_cacheFile);
         public async Task<string> ChatCptMacroProcessor(string target, Attributes attributes, Dictionary<string, string> globalVariables)
@@ -57,12 +63,11 @@ namespace Preprocessor
             int maxTokens = attributes.NamedAttributes.TryGetValue("max_tokens", out var maxTokensStr) ? int.Parse(maxTokensStr) : 50;
             decimal temperature = attributes.NamedAttributes.TryGetValue("temperature", out var temperatureStr)
                 ? decimal.Parse(temperatureStr, System.Globalization.CultureInfo.InvariantCulture) : 0.7M;
-            string model = attributes.NamedAttributes.TryGetValue("model", out var modelStr) ? modelStr : "gpt-4o";
             bool saveMessage = attributes.NamedAttributes.TryGetValue("save_message", out var saveMessageStr)
                 ? bool.Parse(saveMessageStr) : false;
-            return await PerformRequest(attributes[0], maxTokens, temperature, model, saveMessage);
+            return await PerformRequest(attributes[0], maxTokens, temperature, saveMessage);
         }
-        public async Task<string> PerformRequest(string prompt, int maxTokens, decimal temperature, string model, bool saveMessage)
+        public async Task<string> PerformRequest(string prompt, int maxTokens, decimal temperature, bool saveMessage, string role = "user")
         {
             if (TryGetCache(prompt, out var chatGptMessages))
             {
@@ -71,13 +76,13 @@ namespace Preprocessor
                 return chatGptMessages.Last().Content;
             }
             chatGptMessages.AddRange(_chatGptMessages);
-            chatGptMessages.Add(new ChatGptMessage("user", prompt));
+            chatGptMessages.Add(new ChatGptMessage(role, prompt));
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
             var request = new HttpRequestMessage(HttpMethod.Post, "https://api.openai.com/v1/chat/completions");
             var payload = new
             {
-                model,
+                model = _model,
                 messages = chatGptMessages.Select(m => new { role = m.Role, content = m.Content }),
                 max_tokens = maxTokens,
                 temperature
@@ -106,9 +111,10 @@ namespace Preprocessor
 
         private long CalculateStringHash(string content)
         {
+            string cleanedContent = string.Concat(content.Where(c => !char.IsWhiteSpace(c)));
             // Hash with SHA256 and convert last 8 bytes to long
             using var sha256 = System.Security.Cryptography.SHA256.Create();
-            var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(content));
+            var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(cleanedContent));
             return BitConverter.ToInt64(hash, hash.Length - 8);
         }
 

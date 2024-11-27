@@ -1,5 +1,4 @@
-﻿
-namespace Preprocessor
+﻿namespace Preprocessor
 {
     [Serializable]
     internal class ServiceException : Exception
