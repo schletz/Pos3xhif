@@ -1,0 +1,6 @@
+= C# Präprozessor Test
+:source-highlighter: rouge
+
+== Example Macro
+
+example_macro::test.jpg[100,200,"test1,test2",scale=50%]

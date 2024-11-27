@@ -1,52 +1,71 @@
-= C# Präprozessor Test
+= Preprocessor Test
 :source-highlighter: rouge
 
-== Example Macro
+== Erklärung zu PL/SQL und Stored Procedures
 
-example_macro::test.jpg[100,200,"test1,test2",scale=50%]
+chatgpt_prompt::["Der Output soll Asciidoc Code sein ohne andere Nachrichten.
+Erkläre in eigenen Worten, was PL/SQL ist und wofür es verwendet wird.
+Erkläre was Stored Procedures sind und wie sie in PL/SQL verwendet werden.
+Gib Codebeispiele in einem sql source block an und erkläre sie mit callouts.
+",max_tokens=10000,temperature=0.5]
 
-== Example Prompt
 
-Wir wollen die folgende Tabelle in eine Datenbank einfügen:
+== Generieren der Tabelle
 
-chatgpt_prompt::["Der Output soll in reinem AsciiDoc Format erfolgen.
-Es dürfen keine Formatierungen oder Markdown Anweisungen in der Antwort enthalten sein.
-Erstelle eine Tabelle mit 3 Spalten: ID, Vorname, Nachname.
+Um Personen in der Datenbank speichern zu können, legen wir eine Tabelle mit Constraints an.
+
+chatgpt_prompt::["Der Output soll Asciidoc Code sein ohne andere Nachrichten.
+Erstelle in SQL eine Tabelle Person mit den Spalten Id, Firstname und Lastname in einem source block.
+Überlege sinnvolle Constraints, die du nachher definierst.
+Verwende Callouts zur Erklärung der Constraints im SQL Code und erkläre sie außerhalb des SQL Blocks. 
+Der Block hat keine Überschrift.
+",max_tokens=10000,temperature=0.5,save_message=true]
+
+== Einfügen mit Musterdaten
+
+Wir wollen die folgenden Daten in die Tabelle einfügen:
+
+chatgpt_prompt::["Der Output soll Asciidoc Code sein ohne andere Nachrichten.
+Erstelle eine Asciidoc Tabelle mit 3 Spalten: ID, Vorname, Nachname.
 Erstelle 10 Zeilen, wobei jeder Wert mit Zufallsdaten gefüllt werden soll.
-",max_tokens=1000,temperature=0.5]
+",max_tokens=10000,temperature=0.5,save_message=true]
 
-Um die Daten speichern zu können, generieren wir in SQL eine Tabelle:
+Dafür generieren wir INSERT INTO Anweisungen, die wir an die Datenbank senden:
 
-[source,sql]
-----
-chatgpt_prompt::["Der Output soll in reinem SQL Format erfolgen.
-Es dürfen keine Formatierungen oder Markdown Anweisungen in der Antwort enthalten sein.
-Erstelle für die vorher generierten Daten eine Tabelle Person mit den Spalten Id, Firstname und Lastname.
-Überlege sinnvolle Constraints.
-",max_tokens=1000,temperature=0.5]
-
-----
-
-Um die Daten einzufügen, generieren wir folgende SQL Anweisungen:
-
-[source,sql]
-----
-chatgpt_prompt::["Der Output soll in reinem SQL Format erfolgen.
-Es dürfen keine Formatierungen oder Markdown Anweisungen in der Antwort enthalten sein.
+chatgpt_prompt::["Der Output soll Asciidoc Code sein ohne andere Nachrichten.
 Erstelle ein SQL Skript, das die 10 vorher generierten Datensätze in die vorher erstellte Tabelle Person
-mit den Spalten Id, Firstname und Lastname einfügt.
-",max_tokens=1000,temperature=0]
-----
+mit den Spalten Id, Firstname und Lastname einfügt in einem source block.
+Es sollen genau die Daten eingefügt werden, die du vorher generiert hast.
+",max_tokens=10000,temperature=0]
 
 Eine mögliche Erweiterung der Datenbank ist das Einfügen der folgenden Tabelle:
 
-[plantuml,test.svg,svg]
-----
-chatgpt_prompt::["Der Output soll in reinem PlantUML Format erfolgen.
-Es dürfen keine Formatierungen oder Markdown Anweisungen in der Antwort enthalten sein.
+== Verwendung einer stored procedure
+
+chatgpt_prompt::["Der Output soll Asciidoc Code sein ohne andere Nachrichten.
+Erstelle eine Stored Procedure in PL/SQL auf Basis der generierten Tabelle Person.
+Füge sie in einem source block ein.
+Beschreibe darunter mit callouts, was die Stored Procedure macht.
+",max_tokens=10000,temperature=0]
+
+== Erweiterung der Datenbank
+
+chatgpt_prompt::["Der Output soll Asciidoc Code sein ohne andere Nachrichten.
 Stelle die erstellte Tabelle Person mit einer 2. Tabelle als PlantUML Diagramm dar.
 Überlege einen realen Use Case.
 Verwende ein ER Diagramm und Fremdschlüssel.
-",max_tokens=1000,temperature=0.5]
-----
+Kennzeichne den Fremdschlüssel im ER Diagramm.
+Beschreibe darunter unter der Überschrift
+=== Erklärung
+welchen Use Case dieses Modell abdeckt.
+",max_tokens=10000,temperature=0.5]
 
+[plantuml,diagram.svg,svg]
+----
+chatgpt_prompt::["Der Output soll plantuml Code sein ohne andere Nachrichten.
+Stelle die erstellte Tabelle Person mit einer 2. Tabelle als PlantUML Diagramm dar.
+Überlege einen realen Use Case.
+Verwende ein ER Diagramm und Fremdschlüssel.
+Liefere nur das Plantuml Diagramm.
+",max_tokens=10000,temperature=0.5]
+----

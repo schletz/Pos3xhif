@@ -2,46 +2,40 @@
 
 public class Program
 {
-
-    public static async Task Main(string[] args)
+    public static async Task<int> Main(string[] args)
     {
-        try 
+        try
         {
             var preprocessor = AsciidocPreprocessor.FromFile(args[0]);
-            var client = await ChatGptClient.FromKeyfile("chatgpt_key.txt");
             preprocessor.AddMacroProcessor("example_macro", ExampleMacroProcessor);
-            preprocessor.AddMacroProcessor("chatgpt_prompt", client.ChatCptMacroProcessor);
+
+            // Lädt den GPT Client. Deaktiviere diese Zeilen, wenn du den GPT Client nicht verwenden möchtest.
+            var client = await ChatGptClient.FromKeyfile("chatgpt_key.txt");
+            await client.EnableCache("chatgpt_cache.json");
+            preprocessor.AddAsyncMacroProcessor("chatgpt_prompt", client.ChatCptMacroProcessor);
+
             var newContent = await preprocessor.Process();
             Console.WriteLine(newContent);
+            return 0;
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             Console.Error.WriteLine(e.InnerException?.Message ?? e.Message);
+            return 1;
         }
     }
 
-    static Task<string> ExampleMacroProcessor(string target, Attributes attributes, Dictionary<string, string> globalVariables)
+    /// <summary>
+    /// Beispiel für einen Makroprozessor, der ein Bildmakro in HTML umwandelt.
+    /// Aufruf: example_macro::test.jpg[300,200,css_width=value]
+    /// </summary>
+    static string ExampleMacroProcessor(string target, Attributes attributes, Dictionary<string, string> globalVariables)
     {
-        return Task.FromResult(@$"
-.variables
+        return @$"
+[source,html]
 ----
-{System.Text.Json.JsonSerializer.Serialize(globalVariables)}
+<img src=""{target}"" width=""{attributes[0]}"" height=""{attributes[1]}"" style=""width: {attributes["css_width"]}"">
 ----
-
-.target
-----
-{target}
-----
-
-.attributesArray
-----
-{System.Text.Json.JsonSerializer.Serialize(attributes.AttributesArray)}
-----
-
-.namedAttributes
-----
-{System.Text.Json.JsonSerializer.Serialize(attributes.NamedAttributes)}
-----
-");
+";
     }
 }
