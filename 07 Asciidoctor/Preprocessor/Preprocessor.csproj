@@ -11,6 +11,9 @@
     <None Update="chatgpt_key.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="d_hue.adoc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="preprocessor_test.adoc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

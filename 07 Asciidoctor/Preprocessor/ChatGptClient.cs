@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using System;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -65,7 +66,13 @@ Es darf kein Titel (mit einem = beginnend) übermittelt werden."));
                 ? decimal.Parse(temperatureStr, System.Globalization.CultureInfo.InvariantCulture) : 0.7M;
             bool saveMessage = attributes.NamedAttributes.TryGetValue("save_message", out var saveMessageStr)
                 ? bool.Parse(saveMessageStr) : false;
-            return await PerformRequest(attributes[0], maxTokens, temperature, saveMessage);
+            bool resolveLinks = attributes.NamedAttributes.TryGetValue("resolve_links", out var resolveLinksStr)
+                ? bool.Parse(resolveLinksStr) : false;
+            string prompt = attributes[0];
+            if (resolveLinks)
+                prompt = RemoveHtmlTags(await ResolveLinks(prompt));
+
+            return await PerformRequest(prompt, maxTokens, temperature, saveMessage);
         }
         public async Task<string> PerformRequest(string prompt, int maxTokens, decimal temperature, bool saveMessage, string role = "user")
         {
@@ -87,7 +94,8 @@ Es darf kein Titel (mit einem = beginnend) übermittelt werden."));
                 max_tokens = maxTokens,
                 temperature
             };
-            request.Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+            var jsonPayload = JsonSerializer.Serialize(payload);
+            request.Content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
             Logger.LogInfo($"Prompting: {prompt.Substring(0, Math.Min(prompt.Length, 60))}");
             var response = await client.SendAsync(request);
             if (!response.IsSuccessStatusCode)
@@ -108,7 +116,34 @@ Es darf kein Titel (mit einem = beginnend) übermittelt werden."));
                 _chatGptMessages = chatGptMessages;
             return contentStr;
         }
+        private async Task<string> ResolveLinks(string prompt)
+        {
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("User-Agent",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0");
 
+            var urlRegex = new Regex(@"https?://[^\s]+");
+            var urls = urlRegex.Matches(prompt).Select(m => m.Value).ToHashSet();
+            foreach (var url in urls)
+            {
+                var response = await client.GetAsync(url);
+                if (!response.IsSuccessStatusCode)
+                    throw new ServiceException($"Request {url} failed. HTTP Status {response.StatusCode}.");
+                var contentType = response.Content.Headers.ContentType?.MediaType;
+                if (contentType != "text/plain" && contentType != "text/html" && contentType != "application/json")
+                    throw new ServiceException($"Content type {contentType} in {url} not supported.");
+                var content = await response.Content.ReadAsStringAsync();
+                prompt = prompt.Replace(url, @$"{Environment.NewLine}---{Environment.NewLine}{content}{Environment.NewLine}---{Environment.NewLine}");
+            }
+            return prompt;
+        }
+        private string RemoveHtmlTags(string html)
+        {
+            html = Regex.Replace(html, @"<script.*?>.*?</script>|<style.*?>.*?</style>", string.Empty, RegexOptions.Singleline);
+            html = Regex.Replace(html, @"<.*?>", string.Empty);
+            html = Regex.Replace(html, @"https?://[^\s]+", string.Empty);
+            return html.Trim();
+        }
         private long CalculateStringHash(string content)
         {
             string cleanedContent = string.Concat(content.Where(c => !char.IsWhiteSpace(c)));
@@ -117,7 +152,6 @@ Es darf kein Titel (mit einem = beginnend) übermittelt werden."));
             var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(cleanedContent));
             return BitConverter.ToInt64(hash, hash.Length - 8);
         }
-
         private bool TryGetCache(string prompt, out List<ChatGptMessage> request)
         {
             if (!HasCache) { request = new(); return false; }
