@@ -9,18 +9,19 @@ public class Program
             var preprocessor = AsciidocPreprocessor.FromFile(args[0]);
             preprocessor.AddMacroProcessor("example_macro", ExampleMacroProcessor);
 
-            // Lädt den GPT Client. Deaktiviere diese Zeilen, wenn du den GPT Client nicht verwenden möchtest.
-            var client = await ChatGptClient.Create("chatgpt_key.txt");
-            await client.EnableCache("chatgpt_cache.json");
-            preprocessor.AddAsyncMacroProcessor("chatgpt_prompt", client.ChatCptMacroProcessor);
-
+            // Lädt den GPT Client. Er ist nur aktiv, wenn ein Keyfile mit dem API Key existiert.
+            if (File.Exists("chatgpt_key.txt"))
+            {
+                var client = await ChatGptClient.Create(keyfile: "chatgpt_key.txt", cachefile: "chatgpt_cache.json");
+                preprocessor.AddAsyncMacroProcessor("chatgpt_prompt", client.ChatCptMacroProcessor);
+            }
             var newContent = await preprocessor.Process();
             Console.WriteLine(newContent);
             return 0;
         }
         catch (Exception e)
         {
-            Console.Error.WriteLine(e.InnerException?.Message ?? e.Message);
+            Logger.LogError(e.InnerException?.Message ?? e.Message);
             return 1;
         }
     }
@@ -34,7 +35,7 @@ public class Program
         return @$"
 [source,html]
 ----
-<img src=""{target}"" width=""{attributes[0]}"" height=""{attributes[1]}"" style=""width: {attributes["css_width"]}"">
+<img src=""{target}"" width=""{attributes[0]}"" height=""{attributes[1]}"" style=""width: {attributes["scale"]}"">
 ----
 ";
     }

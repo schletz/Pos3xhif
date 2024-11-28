@@ -82,10 +82,15 @@ Die Datei [adoc demo.yml](adoc%20demo.yml) beschreibt den Stil der Fußzeile.
 Das Skript *convert_adoc* berücksichtigt automatisch das Layout, wenn eine yml Datei mit gleichem Namen wie die adoc Datei existiert.
 Der Quelltext in [Example.cs](Example.cs) zeigt, dass in Asciidoc auch externe Dateien eingebunden werden können.
 
-## Erstellung mit VS Code
+## Tools zur Erstellung
 
 Für VS Code gibt es die Extension [AsciiDoc](https://marketplace.visualstudio.com/items?itemName=asciidoctor.asciidoctor-vscode).
 Sie bietet live preview, syntax highlighting und snippets an.
+
+Wenn du AsciiDoc Dokumente live über den Browser rendern möchtest, kannst du die Extension *Asciidoctor.js Live Preview* von https://docs.asciidoctor.org/browser-extension/install/ installieren.
+Die Extension ist für die Darstellung besser geeignet als die integrierte Vorschau in VS Code, da sie mehr Features bietet.
+
+> Hinweis: Wenn du lokale Dateien anzeigen und rendern möchtest, musst du der Erweiterung in den Einstellungen das Recht *Zugriff auf Datei-URLs zulassen* erlauben.
 
 ## Weiterführende Infos
 

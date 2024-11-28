@@ -1,0 +1,51 @@
+= Kommentar
+
+== Eingabetext
+
+=== Westenthaler tobt wegen Haushaltsabgabe: "Amoklauf des ORF"
+
+Wegen der Haushaltsabgabe tobt ein mächtiger Streit. Die FPÖ und ihr Stiftungsrat Peter Westenthaler sind sauer. 
+Westenthaler spricht von einem "Amoklauf". Er will die Zuseher vertreten - und deren Interessen.
+Westenthaler ortet ein "Chaos pur". Nichts funktioniere bei der Haushaltsabgabe, stellt Westenthaler fest. Die Zahlungsaufforderungen sind in Westenthalers Augen ein "Skandal".
+Der FPÖ-Stiftungsrat will die Haushaltsabgabe kippen. Der ORF soll eine alternative Finanzierung für den Sender finden. "Der Kampf geht weiter", kündigte Westenthaler schon vor der Sitzung des Stiftungsrates an.
+Auch die Personalausgaben im ORF, sprich die Gehälter, will Westenthaler deckeln. Er will Kürzungen und eine neue Gehaltspyramide. Westenthaler will "Privilegien-Gehälter" abschaffen und den "einfachen" Mitarbeitern dafür mehr Geld geben.
+
+Quelle: https://www.oe24.at/oesterreich/politik/westenthaler-tobt-wegen-haushaltsabgabe-amoklauf-des-orf/613706268
+
+== Rhetorische Stilmittel
+
+chatgpt_prompt::["Analysiere rhetorische Stilmittel zu folgendem Artikel:
+https://www.oe24.at/oesterreich/politik/westenthaler-tobt-wegen-haushaltsabgabe-amoklauf-des-orf/613706268
+",max_tokens=8192,temperature=0,resolve_links=true,save_message=true]
+
+== Kommentar
+
+chatgpt_prompt::["Schreibe einen Kommentar in 500 Worten zu diesem Artikel.
+
+Beachte folgenden Regeln:
+Ein Kommentar ist ein meinungsbildender, journalistischer Text, indem der Autor Anmerkungen zu einem bestimmten Thema oder einer Nachricht macht. Der Autor bezieht also persönlich Stellung, was die Kernaussage des Textes ist. Kommentare erscheinen häufig in Zeitungen oder Zeitschriften. Hier beziehen sie sich meist auf einen bereits erschienen Artikel, immer jedoch auf eine aktuelle Nachrichtenmeldung.
+
+Ihrem Kommentar liegt immer ein aktuelles Thema zu Grunde, das Ihnen aus den Medien bekannt ist, weswegen Sie unbedingt die Zeitung lesen sollten. 
+
+Informationen zum Thema erhalten Sie jedoch aus der Angabe. Bei einem Kommentar müssen Sie außerdem davon ausgehen, dass Sie sich mit nicht-linearen Texten auseinandersetzen müssen. Das können Statistiken, Schaubilder… sein, die Sie dann in Ihre Arbeit aufnehmen müssen. 
+
+Wenn Sie einen Kommentar schreiben müssen, sollten Sie einen Text verfassen, der....  
+
+subjektiv und wertend ist.
+im Präsens verfasst ist.
+die eigene Meinung durch Argumente eindeutig stützt.
+die Leserschaft überzeugen will.
+sachlich und objektiv argumentiert.
+die Zusammenhänge darlegt.
+die Leserin / den Leser direkt anspricht.
+klar und durchdacht aufgebaut ist.
+den Input-Text (in diesem Fall nicht-lineare Texte möglich) behandelt.
+in sich schlüssig ist.
+Emotionen wecken soll.
+lebendig formuliert ist.
+bewusst mit sprachlichen Mitteln (= rhetorische Figuren) arbeitet, um die Leserin / den Leser aufzurütteln.
+kein „Ich“ enthält.
+genau in der vorgegebenen Wortanzahl geschrieben ist, er darf weder kürzer noch länger sein.
+
+",max_tokens=8192,temperature=0.5,resolve_links=true]
+
