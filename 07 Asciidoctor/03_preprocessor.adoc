@@ -111,25 +111,14 @@ Ein Dictionary, in dem alle globalen Variablen (z. B. `:author: value`) abrufbar
 
 Erstelle in einem Verzeichnis eine AsciiDoc Datei.
 Kopiere dann das Verzeichnis _Preprocessor_ in dieses Verzeichnis.
-In der Konsole kannst du dann mit 2 Varianten arbeiten:
+Mit dem _convert_adoc.cmd_ Skript kannst du den Parameter _--processor_ übergeben, der den Pfad zur Preprocessor Anwendung angibt.
 
-.Schreiben der Zwischendatei
 ----
-dotnet run --project Preprocessor my_file.adoc > my_file_processed.adoc
-convert_adoc.cmd my_file_processed.adoc my_file_processed.pdf
+convert_adoc.cmd my_file.adoc my_file.pdf --processor Preprocessor
 ----
 
-Diese Variante hat den Vorteil, dass du die erzeugte Datei _my_file_processed.adoc_ kontrollieren und ggf. händisch anpassen kannst.
-
-.Direkte Verarbeitung über die Pipe
-
-Möchtest du keine Zwischendatei anlegen, kann auch über die Pipe gearbeitet werden. Das Symbol `-` bedeutet, dass _convert_adoc.cmd_ die Daten von stdin liest.
-
-[source]
-----
-dotnet run --project Preprocessor -- my_file.adoc | convert_adoc.cmd - my_file_processed.pdf
-----
-
+In _my_file.processed.adoc_ findest du die Ausgabe des Preprocessors.
+Diese Datei wird dann den nachfolgenden Befehlen übergeben.
 
 === Das Makro `chatgpt_prompt`
 
@@ -223,8 +212,10 @@ Ruft das vordefinierte Makro example_macro im Preprocessor Programm auf.
 Aufruf: 
 +
 ----
-dotnet run --project Preprocessor -- preprocessor_simple_test.adoc | convert_adoc.cmd - preprocessor_simple_test.pdf
+convert_adoc.cmd preprocessor_simple_test.adoc preprocessor_simple_test.pdf --processor Preprocessor
 ----
++
+Die Zwischendatei ist in _preprocessor_simple_test.processed.adoc_ zu finden.
 
 [link:preprocessor_test.adoc[preprocessor_test.adoc]]::
 Verwendet das ChatGPT Makro, um eine Datenbank Aufgabenstellung zu bearbeiten.
@@ -232,8 +223,10 @@ API Key erforderlich!
 Aufruf: 
 +
 ----
-dotnet run --project Preprocessor -- preprocessor_test.adoc | convert_adoc.cmd - preprocessor_test.pdf
+convert_adoc.cmd preprocessor_test.adoc preprocessor_test.pdf --processor Preprocessor
 ----
++
+Die Zwischendatei ist in preprocessor_test.processed.adoc_ zu finden.
 
 [link:kommentar.adoc[kommentar.adoc]]::
 Verwendet das ChatGPT Makro, um einen Kommentar auf Basis der URL eines Artikels zu verfassen.
@@ -241,8 +234,7 @@ API Key erforderlich!
 Aufruf: 
 +
 ----
-dotnet run --project Preprocessor -- kommentar.adoc | convert_adoc.cmd - kommentar.pdf
+convert_adoc.cmd kommentar.adoc kommentar.pdf --processor Preprocessor
 ----
-
-TIP: Du kannst statt der Pipe auch die Ausgabe von `dotnet run` in eine Datei umleiten.
-Dann kannst du das Ergebnis des Preprocessors als AsciiDoc Dokument betrachten und ggf. nachbearbeiten.
++
+Die Zwischendatei ist in kommentar.processed.adoc_ zu finden.

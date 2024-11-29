@@ -45,6 +45,14 @@ if "%~2"=="" (
     echo Nutzung: convert_adoc.cmd "eingabedatei.adoc" "ausgabedatei.[pdf|docx|md|html]"
     exit /b 1
 )
+if "%~3"=="--processor" (
+    if not exist "%~4" (
+        echo [ERROR] Das Verzeichnis %~4 existiert nicht.
+        exit /b 1
+    ) else (
+        set PROCESSOR_DIR=%~4
+    )
+)
 
 REM Parameter setzen
 set INPUT_FILE=%~1
@@ -62,6 +70,17 @@ if exist "%BASENAME%.yml" (
     set THEME_OPTION=--theme '%BASENAME%.yml'
 ) else (
     set THEME_OPTION=
+)
+
+REM Wurde ein Processor angegeben, rufen wir ihn auf
+if not "%PROCESSOR_DIR%"=="" (
+    echo [INFO] Führe Processor aus...
+    dotnet run --project "%PROCESSOR_DIR%" -- "%INPUT_FILE%" > "%BASENAME%.processed.adoc"
+    if %ERRORLEVEL% neq 0 (
+        echo [ERROR] Fehler beim Ausführen des Processors.
+        exit /b 1
+    )
+    set INPUT_FILE=%BASENAME%.processed.adoc
 )
 
 REM Entscheidung basierend auf der Erweiterung
