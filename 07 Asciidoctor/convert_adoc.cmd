@@ -75,6 +75,7 @@ if exist "%BASENAME%.yml" (
 REM Wurde ein Processor angegeben, rufen wir ihn auf
 if not "%PROCESSOR_DIR%"=="" (
     echo [INFO] Führe Processor aus...
+    dotnet restore "%PROCESSOR_DIR%" --no-cache
     dotnet run --project "%PROCESSOR_DIR%" -- "%INPUT_FILE%" > "%BASENAME%.processed.adoc"
     if %ERRORLEVEL% neq 0 (
         echo [ERROR] Fehler beim Ausführen des Processors.

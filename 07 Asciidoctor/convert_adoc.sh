@@ -42,6 +42,15 @@ if [ -z "$2" ]; then
     exit 1
 fi
 
+if [ "$3" == "--processor" ]; then
+    if [ ! -d "$4" ]; then
+        echo "[ERROR] Das Verzeichnis $4 existiert nicht."
+        exit 1
+    else
+        PROCESSOR_DIR="$4"
+    fi
+fi
+
 # Parameter setzen
 INPUT_FILE="$1"
 OUTPUT_FILE="$2"
@@ -55,6 +64,17 @@ if [ -f "${BASENAME}.yml" ]; then
     THEME_OPTION="--theme \"${BASENAME}.yml\""
 else
     THEME_OPTION=""
+fi
+
+# Wurde ein Processor angegeben, rufen wir ihn auf
+if [ -n "$PROCESSOR_DIR" ]; then
+    echo "[INFO] Führe Processor aus..."
+    dotnet restore "$PROCESSOR_DIR" --no-cache
+    if ! dotnet run --project "$PROCESSOR_DIR" -- "$INPUT_FILE" > "${BASENAME}.processed.adoc"; then
+        echo "[ERROR] Fehler beim Ausführen des Processors."
+        exit 1
+    fi
+    INPUT_FILE="${BASENAME}.processed.adoc"
 fi
 
 # Entscheidung basierend auf der Erweiterung

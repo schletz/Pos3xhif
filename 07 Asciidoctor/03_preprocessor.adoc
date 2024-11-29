@@ -109,13 +109,24 @@ Ein Dictionary, in dem alle globalen Variablen (z. B. `:author: value`) abrufbar
 
 === Aufruf
 
+IMPORTANT: Um den Preprocessor zu verwenden, benötigst du die .NET 8 SDK.
+Du kannst dies mit dem Befehl `dotnet --list-sdks` überprüfen.
+
 Erstelle in einem Verzeichnis eine AsciiDoc Datei.
 Kopiere dann das Verzeichnis _Preprocessor_ in dieses Verzeichnis.
+Du kannst das Verzeichnis _Preprocessor_ auch in ein globales Verzeichnis kopieren.
 Mit dem _convert_adoc.cmd_ Skript kannst du den Parameter _--processor_ übergeben, der den Pfad zur Preprocessor Anwendung angibt.
 
+.Windows
 ----
 convert_adoc.cmd my_file.adoc my_file.pdf --processor Preprocessor
 ----
+
+.macOS
+----
+./convert_adoc.sh my_file.adoc my_file.pdf --processor Preprocessor
+----
+
 
 In _my_file.processed.adoc_ findest du die Ausgabe des Preprocessors.
 Diese Datei wird dann den nachfolgenden Befehlen übergeben.
@@ -177,7 +188,7 @@ resolve_links=true::
 Mit dieser Option fordert das C# Programm über die Klasse `HttpClient` die Inhalte an, löscht die HTML Syntaxelemente und ersetzt den Link durch den Text, bevor er an ChatGPT gesendet wird. Dies funktioniert nur für Links, die Textdokumente zurückgeben.
 
 NOTE: Schreibe die Links in eine eigene Zeile und ohne Punkt (.) am Ende.
-Alles von _http(s)?:// bis zur nächsten Leerstelle wird als Link interpretiert.
+Alles von `http(s)?://` bis zur nächsten Leerstelle wird als Link interpretiert.
 
 save_message=true::
 Die API ist _stateless_, das bedeutet dass der Prompt nicht das Ergebnis der vorigen Prompts zur Verarbeitung einschließt.
@@ -205,7 +216,9 @@ Falls du Prompts mit der Option _save_message_ änderst, oder nicht erwartete An
 
 ==== Beispiele
 
-Um die Verwendung zu demonstrieren, gibt es folgende Beispiele:
+Um die Verwendung zu demonstrieren, gibt es folgende Beispiele.
+
+NOTE: Achte darauf, dass sich die Datei _chatgpt_key.txt_ im Verzeichnis des AsciiDoc Dokumentes befindet.
 
 [link:preprocessor_simple_test.adoc[preprocessor_simple_test.adoc]]::
 Ruft das vordefinierte Makro example_macro im Preprocessor Programm auf.
@@ -226,7 +239,7 @@ Aufruf:
 convert_adoc.cmd preprocessor_test.adoc preprocessor_test.pdf --processor Preprocessor
 ----
 +
-Die Zwischendatei ist in preprocessor_test.processed.adoc_ zu finden.
+Die Zwischendatei ist in _preprocessor_test.processed.adoc_ zu finden.
 
 [link:kommentar.adoc[kommentar.adoc]]::
 Verwendet das ChatGPT Makro, um einen Kommentar auf Basis der URL eines Artikels zu verfassen.
@@ -237,4 +250,4 @@ Aufruf:
 convert_adoc.cmd kommentar.adoc kommentar.pdf --processor Preprocessor
 ----
 +
-Die Zwischendatei ist in kommentar.processed.adoc_ zu finden.
+Die Zwischendatei ist in _kommentar.processed.adoc_ zu finden.
