@@ -22,21 +22,20 @@ Es bietet mehrere Vorteile gegenüber Microsoft Word:
 Lade das Paket *link:diplomarbeit_asciidoc.zip[diplomarbeit_asciidoc.zip]* herunter.
 Es beinhaltet folgende Dateien:
 
-== Datei diplomarbeit_intro.docx
 
+Datei diplomarbeit_intro.docx::
 Dies ist die von der Schule vorgegebene Vorlage für die ersten Seiten.
 Sie beinhaltet das Titelblatt, die Eidesstattliche Erklärung und das Abstract in deutscher und englischer Sprache.
 Fülle es aus und erzeuge ein PDF mit dem Namen *diplomarbeit_intro.pdf*.
-
++
 WARNING: Achte auf die Kopfzeile.
 Die Abteilung ist auf der ersten Seite und separat auf den weiteren Seiten zu setzen.
 Achte auf das Schuljahr.
 
-== Datei diplomarbeit_gesamt.yml
-
+Datei diplomarbeit_gesamt.yml::
 Dies ist der Stil für die PDF Umwandlung.
 Er generiert die Seitennummern in der Fußzeile und fügt auch die Überschrift ein, damit gleich zu sehen ist, von wem der Inhalt kommt.
-
++
 .diplomarbeit_gesamt.yml
 [source,yml]
 ----
@@ -57,19 +56,17 @@ footer:
       content: '{page-number} von {page-count} | *{chapter-title}*'
 ----
 
-== Datei diplomarbeit_gesamt.adoc
-
+Datei diplomarbeit_gesamt.adoc::
 Dies ist die Gesamtdatei, die mit `include` die einzelnen Themenstellungen lädt.
 Beachte die Kommentare in dieser Datei.
-
++
 TIP: Schließe die erzeugte PDF Datei _diplomarbeit_gesamt.pdf_ mit einer _.gitignore_ Datei aus.
 Sonst entstehen merge Konflikte.
 
-== Datei diplomarbeit_themenstellung.adoc
-
+Datei diplomarbeit_themenstellung.adoc::
 Dies ist die Vorlage für die individuellen Themenstellungen.
 Kopiere sie am Besten für jeden im Team und füge den Nachnamen zum Dateinamen hinzu.
-
++
 TIP: Erstelle für jeden im Team ein Unterverzeichnis und binde die Datei mit `include::(verzeichnis)/diplomarbeit_themenstellung.adoc[]` in _diplomarbeit_gesamt.adoc_ ein.
 Die adoc Dateien haben meist externe Dateien wie Bilder, etc.
 Dies erhält die Übersichtlichkeit im Repo.

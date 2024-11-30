@@ -95,6 +95,8 @@ Die Extension ist für die Darstellung besser geeignet als die integrierte Vorsc
 ## Weiterführende Infos
 
 - [AsciiDoc cheatsheet](https://powerman.name/doc/asciidoc)
+- [AsciiDoctor Syntax Document](https://github.com/asciidoctor/asciidoctor/blob/main/data/reference/syntax.adoc)
+  *Hinweis: Github rendert die Darstellung. Lade die Rohdatei und betrachte sie z. B. in VS Code.*
 - [AsciiDoc Syntax Quick Reference](https://docs.asciidoctor.org/asciidoc/latest/syntax-quick-reference/)
 - [Compare AsciiDoc to Markdown](https://docs.asciidoctor.org/asciidoc/latest/asciidoc-vs-markdown/)
 - [Bibliography (Quellenangaben)](https://docs.asciidoctor.org/asciidoc/latest/sections/bibliography/)
