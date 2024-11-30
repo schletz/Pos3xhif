@@ -74,10 +74,12 @@ Klassen als Assoziationen umgesetzt. Betrachten wir das folgende Modell. Es setz
 Bestellsystem wie z. B. Geizhals um. Produkte werden in verschiedenen Stores zu unterschiedlichen
 Preisen angeboten (offer).
 
-![](klassenmodell20211206.svg)  
+![](https://www.plantuml.com/plantuml/svg/ZP1FIuCn3CRl_HGXLzdGwtlGWUuWY0hg1oXjjXNwPxHv3qFstUrBsXtAmFNIvDVaUP9k2klCS_3gu2m1XIEV810VaYtAU5qAV77A1ByAwhbxjJ21YopPkmvKyyBPnRqwgzRniTjHljxncPET3LVK8i7YCObNhtHcGPQC2zeBVDE5VuvMy_BoKgzl5sWn5akyNwyZmce5-83GHV5HGhnMrUUGkfvWMwM3vsgrJ_bqopTSq3PUu9Cw3ufTQQlZFrBZ21CCf6etCgmsTigE0qMreMZduFy0) 
 <sup>
-https://www.plantuml.com/plantuml/uml/ZP51oi8m48NtEKNsFxr05xy5xK8G5TG3X6JQ1fga9DD5aTxTb6cA146xQUQRp7jlI1LGU1nDppgjW8CPSE86i7CgCDcB4FWDdGV-P3n-VqV5IwujKdKM1c8Tq6lRifcj4vUc0VzvukgT6YL6j9u8aqT9NkccbWjI8BKHFS6J2FWObC2bSuY_kpQm69EbAuf_qdW7oOdIfN8Vfrldfryssr1jDxXZSwQOb6fXlqZb4SeyLDHU2QsGjokmAZxQ2m00
+https://www.plantuml.com/plantuml/uml/ZP1FIuCn3CRl_HGXLzdGwtlGWUuWY0hg1oXjjXNwPxHv3qFstUrBsXtAmFNIvDVaUP9k2klCS_3gu2m1XIEV810VaYtAU5qAV77A1ByAwhbxjJ21YopPkmvKyyBPnRqwgzRniTjHljxncPET3LVK8i7YCObNhtHcGPQC2zeBVDE5VuvMy_BoKgzl5sWn5akyNwyZmce5-83GHV5HGhnMrUUGkfvWMwM3vsgrJ_bqopTSq3PUu9Cw3ufTQQlZFrBZ21CCf6etCgmsTigE0qMreMZduFy0
 </sup>
+
+Beachte die Kardinalitäten. Ein Store hat mehrere (*0..n*) Offers, während ein Offer genau einem (*1*) Store zuzuordnen ist.
 
 Nun wollen wir dieses Klassenmodell speichern, also *persistieren*. Dafür stehen uns mehrere
 Techniken zur Verfügung:
@@ -112,7 +114,7 @@ an den sogenannten *Conventions*, die wir in den nachfolgenden Klassen einhalten
 
 Erstellen wir die Klasse *Store*, bekommen wir durch die Option *Nullable* und *TreatWarningsAsErrors*
 eine Fehlermeldung beim Property *Name*:
-```c#
+```csharp
 public class Store
 {
     public int Id { get; set; }
@@ -125,7 +127,7 @@ nicht blind jedes Feld im Konstruktor initialisiert werden. *Id* ist ein AutoInc
 (Details unter Conventions), daher kann dieser Wert gar nicht im Konstruktor zugewiesen werden.
 
 Die verbesserte Version sieht nun so aus:
-```c#
+```csharp
 public class Store
 {
     public Store(string name)
@@ -152,33 +154,12 @@ darf also den Wert NULL enthalten. Bei aktivierten nullable reference Types lege
 daher mit dem Datentyp *string?* an. Sollen optionale int, DateTime, ... Werte gespeichert werden,
 wird der entsprechende nullable Datentyp (int?, DateTime?, ...) verwendet. 
 
-```c#
-  public class ProductCategory
-  {
-      public ProductCategory(string name)
-      {
-          Name = name;
-      }
-
-      public int Id { get; private set; }      // ID by convention, AutoIncrement by convention
-      public string Name { get; set; }        
-      public string? NameEn { get; set; }      // nullable
-  }
-```
-
-Im Konstruktor wird das Property *NameEn* nicht initialisiert. Es kann über den Initializer
-bei Bedarf gesetzt werden:
-
-```c#
-var cat = new ProductCategory(name: "Spielzeug") {NameEn = "Toys"};
-```
-
-Es ist auch möglich, ein *Argument mit default value* zu dafür zu definieren. Diese Form hat den Vorteil, dass
+Es ist in C# möglich, ein *Argument mit default value* zu dafür zu definieren. Diese Form hat den Vorteil, dass
 das zusätzliche Property *nameEn* in IntelliSense erscheint. Durch den default value muss kein
 Wert angegeben werden, d. h. der Konstruktor von ProductCategory kann auch mit einem Argument
 aufgerufen werden.
 
-```c#
+```csharp
   public class ProductCategory
   {
       public ProductCategory(string name, string? nameEn = null)
@@ -201,16 +182,7 @@ durch die Verwendung des Typs *ProductCategory* leicht ersichtlich. In einer rel
 Datenbank kennen wir das Konzept des Fremdschlüssels. Möchten wir Produkte und Kategorien speichern,
 würde die Produkttabelle einfach eine Spalte für den Fremdschlüssel (der Kategorie ID) beinhalten.
 
-Beim Definieren der Modelklasse müssen wir dies beachten. Daher legen wir 2 Felder für die
-Produktkategorie an: die eigentliche Navigation (*ProductCategory* vom Typ *ProductCategory*)
-und ein Feld *ProductCategoryId* vom Typ *int*.
-
-> **Achtung:** Das Fremdschlüsselfeld muss eine bestimmte Namensgebung haben.
-> *Navigation Property + Propertyname des Primärschlüssels*. In diesem Fall ist *ProductCategory* der
-> Name des Navigation Properties und *Id* der Name des Schlüssels von *ProductCategory*.
-> Der Datentyp muss natürlich auch
-> dem Datentyp des Primärschlüssels von ProductCategory entsprechen (int). Ansonsten wird das
-> Feld nicht als Fremdschlüssel erkannt und hat immer den Wert 0.
+EF Core macht dies automatisch. Legen wir ein Property *ProductCategory* an, wird automatisch ein Feld *ProductCategoryId* erstellt.
 
 Da der Schlüssel *Ean* heißt, greift die Convention (Id als Schlüsselname) nicht mehr. Wir müssen
 daher mit Annotations aus dem Namespace *System.ComponentModel.DataAnnotations* das jeweils
@@ -218,14 +190,13 @@ nachfolgende Property genauer definieren. Damit der int Wert für die EAN Nummer
 auto increment Wert angelegt wird, setzen wir diese Information mittels der Annotation
 *DatabaseGenerated(DatabaseGeneratedOption.None)*
 
-```c#
+```csharp
 public class Product
 {
     public Product(int ean, string name, ProductCategory productCategory)
     {
         Ean = ean;
         Name = name;
-        ProductCategoryId = productCategory.Id;
         ProductCategory = productCategory;
     }
 
@@ -235,35 +206,29 @@ public class Product
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public int Ean { get; private set; }
     public string Name { get; set; }
-    public int ProductCategoryId { get; set; }            // Value of the FK
     public ProductCategory ProductCategory { get; set; }  // Navigation property
 }
 ```
 
 Der Konstruktor von Product verlangt diesmal den Primärschlüssel (die EAN), da dieser Wert
 von externen Quellen kommt und nicht in der Datenbank generiert wird. Für die Navigation
-verlagen wir nur die Instanz von *ProductCategory*. Den Id Wert für das Fremdschlüsselfeld
-können wir aus dieser Instanz lesen und müssen es daher nicht als extra Argument anführen.
+verlagen wir nur die Instanz von *ProductCategory*.
 
 Nun fehlt noch die Klasse *Offer*, die mit bestehendem Wissen angelegt werden kann:
 
-```c#
+```csharp
 public class Offer
 {
     public Offer(Product product, Store store, decimal price, DateTime lastUpdate)
     {
         Product = product;
-        ProductEan = product.Ean;
         Store = store;
-        StoreId = store.Id;
         Price = price;
         LastUpdate = lastUpdate;
     }
 
     public int Id { get; private set; }
-    public int ProductEan { get; set; }     // FK for Product
     public Product Product { get; set; }
-    public int StoreId { get; set; }        // FK for Store
     public Store Store { get; set; }
     public decimal Price { get; set; }
     public DateTime LastUpdate { get; set; }
@@ -274,7 +239,7 @@ public class Offer
 
 Zum Abschluss müssen wir noch eine Besonderheit von EF Core berücksichtigen. EF Core versucht
 beim Lesen eines Datensatzes eine Instanz der entsprechenden Klasse zu erzeugen. Dafür braucht es
-aber einen Default Kontruktor. Diese Default Konstruktoren wollen wir allerdings vermeiden. Ein
+aber einen Default Konstruktor. Diese Default Konstruktoren wollen wir allerdings vermeiden. Ein
 guter Weg ist das Anlegen dieses Konstruktors als private oder protected Konstruktor. Damit kann
 niemand mit *new Store()* ein uninitialisiertes Store Objekt anlegen. Wir verwenden protected,
 da wir im nächsten Kapitel auch Vererbung verwenden wollen.
@@ -288,7 +253,7 @@ Anweisung Warnungen unterdrücken. In Visual Studio können die *#pragma* Anweis
 > ausschließen können, dass dadurch ein Laufzeitfehler entsteht. EF Core garantiert das Initialisieren
 > der Felder, daher kann diese Technik hier verwendet werden.
 
-```c#
+```csharp
 public class Store
 {
     public Store(string name)
@@ -310,7 +275,7 @@ Verbindung zur darunterliegenden Datenbank. Dafür legen wir einen Ordner *Infra
 erstellen eine Klasse *StoreContext*. Die Klasse kann beliebig benannt werden, die Endung *Context*
 hat sich aber bei .NET Entwicklern durchgesetzt.
 
-```c#
+```csharp
 public class StoreContext : DbContext
 {
     public StoreContext(DbContextOptions opt) : base(opt) { }
@@ -345,7 +310,7 @@ Sie erstellt im Konstruktor eine SQLite Datenbank. Damit nach dem Unittest alle 
 geschlossen werden, implementiert diese Klasse das Interface *IDisposeable*.
 
 **DatabaseTest.cs**
-```c#
+```csharp
 public class DatabaseTest : IDisposable
 {
     protected readonly StoreContext _db;
@@ -370,7 +335,7 @@ daher steht die Membervariable *_db* zur Verfügung. Dieser Test prüft nur, ob 
 Exception ausgeführt werden kann.
 
 **StoreContextTests.cs**
-```c#
+```csharp
 [Collection("Sequential")] // A file database does not support parallel test execution.
 public class StoreContextTests : DatabaseTest
 {
@@ -414,10 +379,43 @@ ergeben sich mehrere Vorteile:
 Im Programm [CodeFirstDemo](../CodeFirstDemo/CodeFirstDemo.Test) werden die Unittests mit einer
 in-memory durchgeführt. Hier sind auch Infos über den Connectionstring und die Besonderheiten
 im Code abgebildet.
+Wichtig ist, dass eine offene SqliteConnection bei `UseSqlite` übergeben wird.
+Sonst wird EF Core nach `EnsureCreated` die Verbindung schließen und beim nächsten Öffnen ist die Datenbank wieder leer.
+
+
+```csharp
+public class DatabaseTest : IDisposable
+{
+    private readonly SqliteConnection _connection;
+    protected readonly StoreContext _db;
+
+    public DatabaseTest()
+    {
+        _connection = new SqliteConnection("DataSource=:memory:");
+        _connection.Open();
+
+        // Enable Data Source=stores.db instead of UseSqlite(_connection)
+        // if you want to open the database in DBeaver.
+        var opt = new DbContextOptionsBuilder()
+            //.UseSqlite("Data Source=stores.db") 
+            .UseSqlite(_connection)  // Keep connection open (only needed with SQLite in memory db)
+            .LogTo(message => Debug.WriteLine(message), Microsoft.Extensions.Logging.LogLevel.Information)
+            .EnableSensitiveDataLogging()
+            .Options;
+
+        _db = new StoreContext(opt);
+    }
+    public void Dispose()
+    {
+        _db.Dispose();
+        _connection.Dispose();
+    }
+}
+```
 
 ## Ansehen der Datenbank in DBeaver
 
-Nachdem der Unittest ausgeführt wurde, findet sich im Ordner *CodeFirstDemo.Test\bin\Debug\net6.0*
+Nachdem der Unittest ausgeführt wurde, findet sich im Ordner *CodeFirstDemo.Test\bin\Debug\net8.0*
 die Datei *Stores.db*. Zum Betrachten der Datenbank kann z. B. DBeaver (https://dbeaver.io/)
 verwendet werden. Öffnen wir mit DBeaver die Datenbank und klicken doppelt auf *Tables*,
 kann das ER Diagramm der erstellen Datenbank angezeigt werden:
@@ -461,9 +459,9 @@ Datenbank soll erzeugt werden, um Abgaben in MS Teams verwalten zu können. Dabe
 pro Team mehrere Aufgaben (Tasks) definiert werden. Für Aufgaben können Studenten
 Arbeiten einrechen (HandIn).
 
-![](teamsModell20211204_2.svg)
+![](https://www.plantuml.com/plantuml/svg/hLBFJlCm3B_tAQoSzkdh9hXEqxO389008RON2ArXWII5neL9Y7UdhjEkdSe9BhNpI-pV7tKTI9TKEPjaLeS06wfoz0IV2S3_2rC6yjeXp25GQVmJezTw13ntsjW-CfrE6O_x9eB3OxinXOXOVGGWR_gNV2LHqHPrjiFopnJ5VRzJv4JERPyK5elAcxSAbyl6UROh2YiJeofSAs505WvZJDbnwl0Yd9lguHap6dZT6h8uH5ZZ7BZqJ3CYNPFG_jMKcapXppJnE9UjSSYNDtf_LnXFBBukguDqbj9A3oAcKqyi99M4gFvmAymaDUr800VqR5PSgfFPpAkQ3TIfWcX4BPjEZR-97F9C3gfDxbBx_CfBTiti7BZqViuQYHs38rdSuxl1ZwEB5T_y495mJXewgZzfIm11QY-6F9gFEeVEufWuYmSr_fJ9v1rtAbcZpojdlm40)
 <sup>
-https://www.plantuml.com/plantuml/uml/hPB1JiCm38RlVGeVXzQ-09h63e100eJONi2qXWMI51eN9asyEt7TZ6mQ9xZ4wH_P__TRNGJ6ZdjdYzfY2B3alY7Fi2q0ffUc2-pH4Pn2uCxuPr5ly8XuuT3ONAcgIlHntaHrU4eJInWLYmS2oQIJugiOYLQ4zPgwVoCQv_sDo2dENMuAirdlpNjFy_cGl5wthTMEenGk8UoPXP-smJ9vOdXLpsN_-48rxsLT6RPvUfqV1IbPQ5NaDcneysOwPDFwSsHfbx8oZkJn5ZVthV4iyB6SPUWH9Q47XTdHiu2KkY6EHvdyWBMMEnEWFNi9godRgfehUFwjxMaTL-YRQm_Rn1CXfMH_N5J6cuX70ZxGXw7FWmU9EVqbjtfE1ZkEHvaC86ZDiZLZ8ktH20adqnHwGRxfdVq6
+https://www.plantuml.com/plantuml/uml/hLD1J_Cm3BttLrWvxTFNJN15qxO3Go01Gcn_mBI61TeK6XSc8VuxyPnkxLHES8cT5zllFQjTUCQQcx98iWAzXnKtEJc6pmJW_uMjFJii2Sx0SstTaw3NE00kIxH55ncFnuB7UIF5uR6Tc4942Zm2I2RzIxwIg6XDc6se_ZD5STxl59KgvxPB2jDfu-nRGxFPpdcsgQf2EmPLbAs47fa_j0dbdXFzYtAkceTdohZdTMsvwBkN-G6Gq36jY6G2BhUljaQsbJj7bdO9QrkIFDxWzgwoZaLy2FE3T97IIlSgPg-UHKYg6-9mIAhCh37Tam3rwCMikZGdauapWGtCgO5enCnscHckYHnQfXVJRkuINNxbT7VI6weaT3xEWCHCm85TtDExfO-ZXxcy_B0YvHpjw3WSQKi0NcDd3NaqhprzPssREeiNCrmgP5edcKaMv7Bvhxy1
 </sup>
 
 Das Klassenmodell zeigt keine EF Core spezifischen Properties wie Fremdschlüsselfelder.
@@ -488,7 +486,7 @@ Es müssen beide Tests erfolgreich durchlaufen. Führe die Tests zur Sicherheit 
 aus, um Zugriffskonflikte bei der Datenbank zu vermeiden.
 
 Nach dem Test *CreateDatabaseSuccessTest* soll das ER Modell der Datenbank in DBeaver so
-aussehen. Die Datenbank wird in *TeamsManager.Test\bin\Debug\net6.0* unter dem Namen
+aussehen. Die Datenbank wird in *TeamsManager.Test\bin\Debug\net8.0* unter dem Namen
 *Teams.db* angelegt.
 
 ![](ermodell20211202.png)
@@ -505,10 +503,9 @@ cd TeamsManager
 md TeamsManager.Application
 cd TeamsManager.Application
 dotnet new classlib
-dotnet add package Microsoft.EntityFrameworkCore --version 6.*
-dotnet add package Microsoft.EntityFrameworkCore.Sqlite --version 6.*
-dotnet add package Microsoft.EntityFrameworkCore.Proxies --version 6.*
-dotnet add package Bogus --version 34.*
+dotnet add package Microsoft.EntityFrameworkCore --version 8.*
+dotnet add package Microsoft.EntityFrameworkCore.Sqlite --version 8.*
+dotnet add package Microsoft.EntityFrameworkCore.Proxies --version 8.*
 cd ..
 md TeamsManager.Test
 cd TeamsManager.Test
@@ -523,8 +520,7 @@ start TeamsManager.sln
 ```
 
 ### Kontextklasse
-```c#
-using Bogus;
+```csharp
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -536,60 +532,6 @@ namespace TeamsManager.Application.Infrastructure
     {
         public TeamsContext(DbContextOptions opt) : base(opt) { }
         /* TODO: Add your DbSets here */
-
-        public void Seed()
-        {
-            Randomizer.Seed = new Random(2145);
-
-            var teachers = new Faker<Teacher>("de").CustomInstantiator(f => new Teacher(
-                firstname: f.Name.FirstName(),
-                lastname: f.Name.LastName(),
-                email: f.Internet.Email()))
-                .Generate(10)
-                .ToList();
-            Teachers.AddRange(teachers); SaveChanges();
-
-            var students = new Faker<Student>("de").CustomInstantiator(f => new Student(
-                firstname: f.Name.FirstName(),
-                lastname: f.Name.LastName(),
-                email: f.Internet.Email()))
-                .Generate(10)
-                .ToList();
-            Students.AddRange(students); SaveChanges();
-
-            var teams = new Faker<Team>("de").CustomInstantiator(f => new Team(
-                name: f.Commerce.ProductName(),
-                schoolclass: $"{f.Random.Int(1, 5)}{f.Random.String2(1, "ABC")}HIF"))
-                .Generate(10)
-                .ToList();
-            Teams.AddRange(teams); SaveChanges();
-
-            var tasks = new Faker<Task>("de").CustomInstantiator(f => new Task(
-                subject: f.Commerce.ProductMaterial(),
-                title: f.Commerce.ProductAdjective(),
-                team: f.Random.ListItem(teams),
-                teacher: f.Random.ListItem(teachers),
-                expirationDate: new DateTime(2021, 1, 1).AddDays(f.Random.Int(0, 4 * 30))))
-                .Rules((f, t) => t.MaxPoints = f.Random.Int(16, 48).OrNull(f, 0.5f))
-                .Generate(10)
-                .ToList();
-            Tasks.AddRange(tasks); SaveChanges();
-
-
-            var handIns = new Faker<HandIn>("de").CustomInstantiator(f => new HandIn(
-                task: f.Random.ListItem(tasks),
-                student: f.Random.ListItem(students),
-                date: new DateTime(2021, 1, 1).AddDays(f.Random.Int(0, 4 * 30))))
-                .Rules((f, h) =>
-                {
-                    var reviewDate = h.Date.AddDays(f.Random.Int(1, 7)).OrNull(f, 0.5f);
-                    h.ReviewDate = reviewDate;
-                    h.Points = reviewDate.HasValue && h.Task.MaxPoints.HasValue ? f.Random.Int(0, h.Task.MaxPoints.Value) : null;
-                })
-                .Generate(20)
-                .ToList();
-            HandIns.AddRange(handIns); SaveChanges();
-        }
     }
 
 }
@@ -597,7 +539,7 @@ namespace TeamsManager.Application.Infrastructure
 ```
 
 ### Unittest
-```c#
+```csharp
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using TeamsManager.Application.Infrastructure;
@@ -627,17 +569,9 @@ namespace TeamsManager.Test
         }
 
         [Fact]
-        public void SeedDatabaseTest()
+        public void AddHandinSuccessTest()
         {
-            using var db = GetDatabase(deleteDb: true);
-            db.Seed();
-            // Multiple assert statements should be avoided in real unit tests, but in this case
-            // the database is tested, not the program logic.
-            Assert.True(db.Students.Count() == 10);
-            Assert.True(db.Teams.Count() == 10);
-            Assert.True(db.Teachers.Count() == 10);
-            Assert.True(db.HandIns.Count() == 20);
-            Assert.True(db.Tasks.Count() == 10);
+            // Todo: Add a handin and check with Assert.Any() if there is a Handin in your database.
         }
     }
 }
