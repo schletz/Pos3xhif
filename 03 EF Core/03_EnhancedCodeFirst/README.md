@@ -1,8 +1,8 @@
 # Erweiterte Konfigurationsmöglichkeiten mit EF Core
 
-![](klassenmodell20220213.svg)
+![](https://www.plantuml.com/plantuml/svg/ZP1FIuCn3CRl_HGXLzdGwtlGWUuWY0hg1oXjjXNwPxHv3qFstUrBsXtAmFNIvDVaUP9k2klCS_3gu2m1XIEV810VaYtAU5qAV77A1ByAwhbxjJ21YopPkmvKyyBPnRqwgzRniTjHljxncPET3LVK8i7YCObNhtHcGPQC2zeBVDE5VuvMy_BoKgzl5sWn5akyNwyZmce5-83GHV5HGhnMrUUGkfvWMwM3vsgrJ_bqopTSq3PUu9Cw3ufTQQlZFrBZ21CCf6etCgmsTigE0qMreMZduFy0)
 <sup>
-https://www.plantuml.com/plantuml/uml/XPBRIiD048RlzocMN2asnTu6jGKjAdWer3x0cjqc2ti8Uq2AzDsTpIGrna1xqNI-sVtdcvAL3yo5g1Mf9HTKw2OSg1QXjjoJKZ7lwJPO9-WteV2vUkQqeD84h1wZJ7Lw87XZMW3mmKbJ8NfbXbN20TrvuPOjpFCScqtyLBB44HTuYnh8cE5XghlBjzH4fIx9aQ1Ks_vr6YYbXlbliMKg_2KRYFcoZZynNuyEuyO5QaqAfoczRyI9uDm13xDEHJCOCyD4wjDtkmpMsIAxoVExx7e-NsHjTh_c-tultFH_lt6Mnp80wdvDkkD9MIR4HIarKmXVc0-xXhEGEW_m-91Q92KSQS47CuQWduHsVNaFjolh3XEUKwy4ehKvmIKvZXBxf3KpPwB62iLO2h8xWYkCsojXUDJg1m00
+https://www.plantuml.com/plantuml/uml/ZP1FIuCn3CRl_HGXLzdGwtlGWUuWY0hg1oXjjXNwPxHv3qFstUrBsXtAmFNIvDVaUP9k2klCS_3gu2m1XIEV810VaYtAU5qAV77A1ByAwhbxjJ21YopPkmvKyyBPnRqwgzRniTjHljxncPET3LVK8i7YCObNhtHcGPQC2zeBVDE5VuvMy_BoKgzl5sWn5akyNwyZmce5-83GHV5HGhnMrUUGkfvWMwM3vsgrJ_bqopTSq3PUu9Cw3ufTQQlZFrBZ21CCf6etCgmsTigE0qMreMZduFy0
 </sup>
 
 ## Collection Navigations
@@ -18,7 +18,7 @@ Angebote zum aktuellen Produkt abgerufen. Das macht LINQ Abfragen besonders einf
 Die Tabellennamen werden durch den Namen des Properties in der Kontextklasse bestimmt.
 So erzeugt der folgende DbContext die Tabellen Stores, Offers, Products und ProductCategories.
 
-```c#
+```csharp
 public class StoreContext : DbContext
 {
     public StoreContext(DbContextOptions opt) : base(opt) { }
@@ -32,7 +32,7 @@ public class StoreContext : DbContext
 Oft sind aber Tabellennamen in der Einzahl, also Store, Offer, ... erwünscht. Mit der Annotation *Table*
 über der *Modelklasse*  (nicht im Kontext) aus dem Namespace *System.ComponentModel.DataAnnotations.Schema*
 kann das Verhalten abgeändert werden.
-```c#
+```csharp
 [Table("Offer")]
 public class Offer
 {
@@ -48,7 +48,7 @@ Kontext zu definieren. Dafür wird mit override die Methode *OnModelCreating()* 
 Der ModelBuilder stellt mit *Entity\<T\>()* eine Methode bereit, die die Konfiguration aller
 Properties erlaubt. So kann z. B. der Tabellenname mit *ToTable()* definiert werden:
 
-```c#
+```csharp
 public class StoreContext : DbContext
 {
     public StoreContext(DbContextOptions opt) : base(opt) { }
@@ -83,7 +83,7 @@ Für *decimal* werden standardmäßig 2 Nachkommastellen definiert.
 
 Oftmals wird die Annotation *Column* zur Definition des SQL Datentyps verwendet:
 
-```c#
+```csharp
 public class Store
 {
     /* ... */
@@ -112,7 +112,7 @@ werden. Der EF Core Provider kann dadurch weiterhin den geeigneten Typ auswähle
 Für die Angabe der Precision gibt es (in EF Core 6) keine Annotation. Daher muss dieser Wert in der
 Methode *OnModelCreating()* der Klasse *StoreContext* definiert werden.
 
-```c#
+```csharp
 public class Store
 {
     /* ... */
@@ -140,29 +140,33 @@ public class StoreContext : DbContext
 In einem *CREATE TABLE* Statement können Schlüssel auch aus mehreren Spalten bestehen.
 Durch die Methode *HasKey()* kann dies auch im Context definiert werden:
 
-```c#
+```csharp
 public class StoreContext : DbContext
 {
     /* ... */
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Offer>().HasKey(o => new { o.StoreId, o.ProductEan });
+        modelBuilder.Entity<Offer>().HasKey("StoreId", "ProductEan");
     }
 }
 ```
+
+> [!IMPORTANT]
+> In der Klasse *Offer* muss mit einer *ForeignKey* Annotation über den Navigations zu *Store* und *Product* der Name des Fremdschlüsselfeldes explizit gesetzt werden.
+> Beispiel: `[ForeignKey("StoreId")]` 
 
 **Wir werden allerdings mehrteilige Schlüssel vermeiden!** Navigationen müssen - falls
 z. B. eine Bestellung auf ein Offer verweist - auch mehrteilig sein und immer händisch
 definiert werden. Daher verwenden wir eine bessere Technik: Wir belassen die auto increment Id und
 definieren einen *Unique Index*.
 
-```c#
+```csharp
 public class StoreContext : DbContext
 {
     /* ... */
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Offer>().HasIndex(o => new { o.StoreId, o.ProductEan }).IsUnique();
+        modelBuilder.Entity<Offer>().HasIndex("StoreId" "ProductEan").IsUnique();
     }
 }
 ```
@@ -197,7 +201,7 @@ wir - um einen Store anlegen zu können - einen User im Konstruktor verlangen. D
 wiederum einen Store. Wir gehen davon aus, dass der Store zeitlich zuerst angelegt werden muss.
 Daher hat er einen optionalen User.
 
-```c#
+```csharp
 public class Store
 {
     public Store(string name, User? manager = null)
@@ -235,7 +239,7 @@ In der Methode *StoreContext.OnModelCreating()* können wir mit *HasOne()* zuers
 (1:n Beziehung) bzw *WithOne()* (1:1 Beziehung) geben wir den zweiten Teil der Beziehung an.
 Dass *ManagerId* das zugehörige Fremdschlüsselfeld ist wird mit *HasForeignKey()* angegeben.
 
-```c#
+```csharp
 protected override void OnModelCreating(ModelBuilder modelBuilder)
 {
     // 1:1 relationship
@@ -262,7 +266,7 @@ schwieriger, auf einen anderen Store zu schließen.
 Die GUID wird mit dem .NET Typ *Guid* einfach im Model definiert. Da wir sie nicht zuweisen wollen,
 hat sie eine *private set* Methode.
 
-```c#
+```csharp
 public class Store
 {
     public Store(string name, User? manager = null)
@@ -278,7 +282,6 @@ public class Store
     public Guid Guid { get; private set; }
     [MaxLength(255)]      // Produces NVARCHAR(255) in SQL Server
     public string Name { get; set; }
-    public int? ManagerId { get; set; }
     public User? Manager { get; set; }
 }
 ```
@@ -291,7 +294,7 @@ die zweite Konfiguration. Mit *ValueGeneratedOnAdd()* wird EF Core - wie der Nam
 selbstständig einen GUID Wert beim Einfügen des Datensatzes generieren. Dies funktioniert allerdings
 nur, wenn das Property mit *HasAlternateKey()* konfiguriert wurde.
 
-```c#
+```csharp
 protected override void OnModelCreating(ModelBuilder modelBuilder)
 {
     /* ... */
@@ -307,7 +310,7 @@ ID geniert.
 Es ist auch möglich, die Properties mit dem Namen *Guid* in *allen Entity Klassen* mit der
 oben beschriebenen Konfiguration zu versehen:
 
-```c#
+```csharp
 protected override void OnModelCreating(ModelBuilder modelBuilder)
 {
     /* ... */
@@ -334,11 +337,7 @@ definiere folgende Einstellungen:
 - Der Teamname soll maximal 64 Stellen lang sein, die Klasse maximal 16 Stellen.
 - Alle anderen string Properties (Name, Mail) sollen maximal 255 Stellen lang sein.
 - Stelle mit einem Unique Index sicher, dass ein Student pro Task nur eine Abgabe einreichen kann.
-
-> **Achtung:** Die Musterdaten generieren mehrere HandIns pro Student und Task. Ändere daher
-> die Seed Methode in der Contextklasse, sodass nur ein HandIn pro Student und Task erstellt wird.
-> Dies kann man nach *Generate(40).GroupBy(h=>new {h.TaskId, h.StudentId}).Select(g=>g.First()).Take(20)*
-> sicherstellen.
+- Schreibe einen Unittest `AddHandinSuccessTest`, um zu prüfen, ob dieses Constraint erfüllt wird.
 
 Hinweis: In SQLite gibt es für Strings nur den Datentyp *TEXT*. Daher ist die Einstellung
 der Länge in DBeaver nicht sichtbar.
