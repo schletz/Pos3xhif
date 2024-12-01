@@ -208,6 +208,7 @@ public class Store
     {
         Name = name;
         Manager = manager;
+        ManagerId = manager?.Id;
     }
     /* ... */
     public int? ManagerId { get; set; }
@@ -273,6 +274,7 @@ public class Store
     {
         Name = name;
         Manager = manager;
+        ManagerId = manager?.Id;
         Guid = Guid.NewGuid();
     }
     #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -282,6 +284,7 @@ public class Store
     public Guid Guid { get; private set; }
     [MaxLength(255)]      // Produces NVARCHAR(255) in SQL Server
     public string Name { get; set; }
+    public int? ManagerId { get; set; }
     public User? Manager { get; set; }
 }
 ```
@@ -314,16 +317,19 @@ oben beschriebenen Konfiguration zu versehen:
 protected override void OnModelCreating(ModelBuilder modelBuilder)
 {
     /* ... */
-    // Exclude inherited properties
-    var searchFlag = System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.DeclaredOnly;
-    foreach (var entity in modelBuilder.Model.GetEntityTypes())
+    foreach (var prop in entityType.GetDeclaredProperties())
     {
-        var type = entity.ClrType;
-        if (type.GetProperty("Guid", searchFlag) is not null)
+        // Define Guid as alternate key. The database can create a guid fou you.
+        if (prop.Name == "Guid")
         {
-            modelBuilder.Entity(type).HasAlternateKey("Guid");
-            modelBuilder.Entity(type).Property("Guid").ValueGeneratedOnAdd();
+            modelBuilder.Entity(entityType.ClrType).HasAlternateKey("Guid");
+            prop.ValueGenerated = Microsoft.EntityFrameworkCore.Metadata.ValueGenerated.OnAdd;
         }
+        // Default MaxLength of string Properties is 255.
+        if (prop.ClrType == typeof(string) && prop.GetMaxLength() is null) prop.SetMaxLength(255);
+        // Seconds with 3 fractional digits.
+        if (prop.ClrType == typeof(DateTime)) prop.SetPrecision(3);
+        if (prop.ClrType == typeof(DateTime?)) prop.SetPrecision(3);
     }
 }
 ```
@@ -337,7 +343,10 @@ definiere folgende Einstellungen:
 - Der Teamname soll maximal 64 Stellen lang sein, die Klasse maximal 16 Stellen.
 - Alle anderen string Properties (Name, Mail) sollen maximal 255 Stellen lang sein.
 - Stelle mit einem Unique Index sicher, dass ein Student pro Task nur eine Abgabe einreichen kann.
-- Schreibe einen Unittest `AddHandinSuccessTest`, um zu prüfen, ob dieses Constraint erfüllt wird.
+- Schreibe einen Unittest `AddHandinSuccessTest`, um zu prüfen, ob ein Handin eingefügt werden kann.
+- Schreibe einen Unittest `AddHandinThrowsDbUpdateExceptionIfDuplicateStudentAndTaskTest`.
+  Er soll das UNIQUE Constraint prüfen, das verhindert, dass ein Student für einen Task mehrere Handins anlegt.
+  Mit `Assert.Throws<DbUpdateException>()` kannst du feststellen, ob bei der Verletzung eines Unique Constraints eine `DbUpdateException` geworfen wird.
 
 Hinweis: In SQLite gibt es für Strings nur den Datentyp *TEXT*. Daher ist die Einstellung
 der Länge in DBeaver nicht sichtbar.

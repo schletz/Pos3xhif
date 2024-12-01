@@ -8,19 +8,17 @@ namespace CodeFirstDemo.Application.Model
         public Offer(Product product, Store store, decimal price, DateTime lastUpdate)
         {
             Product = product;
-            ProductEan = product.Ean;   // Can be assigned from the Product object. No constructor argument needed.
             Store = store;
-            StoreId = store.Id;         // Can be assigned from the Store object. No constructor argument needed.
             Price = price;
             LastUpdate = lastUpdate;
         }
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         protected Offer() { }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public int Id { get; private set; }         // private set, EF Core does not support changing the PK.
-        public int ProductEan { get; set; }         // FK value
+        public int Id { get; private set; }          // private set, EF Core does not support changing the PK.
+        [ForeignKey("ProductEan")]                   // EF Core Annotation for a specific foreign key name.
         public Product Product { get; set; }        // Navigation property
-        public int StoreId { get; set; }            // FK value
+        [ForeignKey("StoreId")]                     // EF Core Annotation for a specific foreign key name.
         public Store Store { get; set; }            // Navigation property
         public decimal Price { get; set; }
         public DateTime LastUpdate { get; set; }

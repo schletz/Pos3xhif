@@ -1,0 +1,263 @@
+= Musterdaten erzeugen mit Bogus
+:source-highlighter: rouge
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+In der Enwicklung eines Projektes möchte man Programmteile wie z. B. das Frontend mit eingetragenen Daten testen.
+Für diesen Zweck gibt es in den verschiedenen Programmiersprachen sogenannte _Faker_ wie _fakerjs_, etc.
+In .NET gibt es das NuGet Paket https://www.nuget.org/packages/bogus[Bogus].
+Um es zu verwenden, muss es zuerst installiert werden.
+Dies geht am Schnellsten über das Terminal im Ordner des C# Application Projektes mit
+
+----
+dotnet add package Bogus --version 35.6.1
+----
+
+Im Musterprogramm _CodeFirstDemo_ gibt es in der Datei link:../CodeFirstDemo/CodeFirstDemo.Application/Infrastructure/StoreContext.cs[StoreContext.cs] die Methode `Seed()`.
+Sie zeigt die Verwendung des Paketes.
+Eine ausführliche Beschreibung ist im Repo auf https://github.com/bchavez/Bogus?tab=readme-ov-file#usage[github.com/bchavez/Bogus] zu sehen.
+
+[source,csharp,linenums]
+----
+public void Seed()
+{
+    Randomizer.Seed = new Random(1335);    // <1>
+    var productCategories = new Faker<ProductCategory>("de")    // <2>
+        .CustomInstantiator(f => 
+            new ProductCategory(name: f.Commerce.ProductAdjective())  // <3>
+        {
+            NameEn = f.Commerce.ProductAdjective().OrNull(f, 0.5f)    // <4>
+        })
+        .Generate(5)    // <5>
+        .ToList();      // <6>
+    ProductCategories.AddRange(productCategories);
+    SaveChanges();
+}
+----
+
+<1> Um bei jedem Programmstart gleiche Daten zu erzeugen, setzen wir ein fixes Seed.
+    Das ist wichtig, um Fehler zu finden.
+    Sonst würde beim nächsten Programmstart der Fehler vielleicht nicht mehr auftreten, da andere Daten generiert werden.
+
+<2> Zuerst speichern wir die Daten in eine Liste vom Typ `List<ProductCategory>`.
+    Dadurch können wir später auf die Daten zugreifen, wenn wir sie brauchen.
+    Außerdem setzen wir mit _de_ die locale Einstellung.
+    So werden z. B. Namen mit Umlauten generiert.
+
+<3> Da die Klasse `ProductCategory` keinen public default Konstruktor besitzt, erzeugen wir die Instanz mit `CustomInstantiator()`.
+<4> Der Faker bietet verschiedene Profile für Musterdaten an. Im Property `Commerce` finden wir z. B. eine Methode `ProductAdjective()`, um Produkteigenschaften zu generieren.
+    Da das Feld auch null sein kann, müssen wir auch solche Werte generieren.
+    Die Methode `OrNull()` definiert, wie viel Prozent der Werte _null_ sein sollen.
+    Hier sind es 50%.
+<5> Nun wollen wir _n_ Werte generieren.
+    Mit `Generate(n)` können wir die Anzahl der zu generierenden Datensätze angeben.
+<6> Da `Generate()` nur einen Enumerator zurückgibt, müssen wir mit `ToList()` die Daten fix in eine Liste ablegen.
+
+Wenn wir die Tabelle _ProductCategory_ nun in einem Datenbankeditor betrachten, sehen wir die generierten Daten:
+
+.ProductCategory
+[%header,cols="1,2,2",format=tsv]
+|===
+Id	Name	NameEn
+1	Rustic	Awesome
+2	Sleek	[NULL]
+3	Ergonomic	[NULL]
+4	Awesome	Refined
+5	Fantastic	[NULL]
+|===
+
+Die verschiedenen Profile, die für die Musterdatengenerierung zur Verfügung stehen, sind in der Doku oder in der Klasse `Faker` zu sehen.
+Am Wichtigsten ist das Property `Random`.
+Es gibt einen `Randomizer` zurück, der zufällige Zahlen, Listenelemente, etc. generieren kann.
+Im nächsten Punkt sehen wir, warum dies nützlich ist.
+
+.Klasse Faker
+[%collapsible]
+====
+[source,csharp]
+----
+public class Faker : ILocaleAware, IHasRandomizer, IHasContext
+{
+    public static bool DefaultStrictMode;
+    public static int GlobalUniqueIndex;
+    public int IndexFaker;
+    public int IndexVariable;
+    protected SeedNotifier Notifier;
+    public Faker(string locale = "en");
+    public Lorem Lorem { get; set; }
+    public Images Image { get; set; }
+    public Finance Finance { get; set; }
+    public Address Address { get; set; }
+    public Date Date { get; set; }
+    public Company Company { get; set; }
+    public Internet Internet { get; set; }
+    public DataSets.Database Database { get; set; }
+    public DataSets.System System { get; set; }
+    public Name Name { get; set; }
+    public Rant Rant { get; set; }
+    public Vehicle Vehicle { get; set; }
+    public Music Music { get; set; }
+    public string Locale { get; set; }
+    public int UniqueIndex { get; }
+    public Commerce Commerce { get; set; }
+    public PhoneNumbers Phone { get; set; }
+    public Person Person { get; }
+    public DateTime? DateTimeReference { get; set; }
+    public Hacker Hacker { get; set; }
+    public Hashids Hashids { get; set; }
+    public int IndexGlobal { get; }
+    public Randomizer Random { get; set; }
+    public IList<T> Make<T>(int count, Func<int, T> action);
+    public IList<T> Make<T>(int count, Func<T> action);
+    public IEnumerable<T> MakeLazy<T>(int count, Func<int, T> action);
+    public IEnumerable<T> MakeLazy<T>(int count, Func<T> action);
+    public string Parse(string str);
+    public T PickRandom<T>() where T : struct, Enum;
+    public T PickRandom<T>(params T[] items);
+    public T PickRandom<T>(List<T> items);
+    public T PickRandom<T>(ICollection<T> items);
+    public T PickRandom<T>(IList<T> items);
+    public T PickRandom<T>(IEnumerable<T> items);
+    public IEnumerable<T> PickRandom<T>(IEnumerable<T> items, int amountToPick);
+    public T PickRandomParam<T>(params T[] items);
+    public T PickRandomWithout<T>(params T[] exclude) where T : struct, Enum;
+}
+----
+====
+
+.Klasse Randomizer
+[%collapsible]
+====
+[source,csharp]
+----
+public class Randomizer
+{
+    public static Random Seed;
+    protected Random localSeed;
+    public Randomizer();
+    public Randomizer(int localSeed);
+    public string AlphaNumeric(int length);
+    public T ArrayElement<T>(T[] array);
+    public BValue ArrayElement(BArray props, int? min = null, int? max = null);
+    public string ArrayElement(Array array);
+    public T[] ArrayElements<T>(T[] array, int? count = null);
+    public bool Bool(float weight);
+    public bool Bool();
+    public byte Byte(byte min = 0, byte max = 255);
+    public byte[] Bytes(int count);
+    public char Char(char min = '\0', char max = '\uffff');
+    public char[] Chars(char min = '\0', char max = '\uffff', int count = 5);
+    public string ClampString(string str, int? min = null, int? max = null);
+    public T CollectionItem<T>(ICollection<T> collection);
+    public decimal Decimal(decimal min = 0.0M, decimal max = 1.0M);
+    public int[] Digits(int count, int minDigit = 0, int maxDigit = 9);
+    public double Double(double min = 0, double max = 1);
+    public T Enum<T>(params T[] exclude) where T : struct, Enum;
+    public T[] EnumValues<T>(int? count = null, params T[] exclude) where T : Enum;
+    public int Even(int min = 0, int max = 1);
+    public float Float(float min = 0, float max = 1);
+    public Guid Guid();
+    public string Hash(int length = 40, bool upperCase = false);
+    public string Hexadecimal(int length = 1, string prefix = "0x");
+    public int Int(int min = int.MinValue, int max = int.MaxValue);
+    public T ListItem<T>(List<T> list);
+    public T ListItem<T>(IList<T> list);
+    public List<T> ListItems<T>(IList<T> items, int? count = null);
+    public IList<T> ListItems<T>(List<T> items, int? count = null);
+    public long Long(long min = long.MinValue, long max = long.MaxValue);
+    public int Number(int max);
+    public int Number(int min = 0, int max = 1);
+    public int Odd(int min = 0, int max = 1);
+    public string RandomLocale();
+    public string Replace(string format);
+    public string ReplaceNumbers(string format, char symbol = '#');
+    public string ReplaceSymbols(string format, char symbol, Func<char> func);
+    public sbyte SByte(sbyte min = sbyte.MinValue, sbyte max = sbyte.MaxValue);
+    public short Short(short min = short.MinValue, short max = short.MaxValue);
+    [IteratorStateMachine(typeof(Randomizer.<Shuffle>d__47<>))]
+    public IEnumerable<T> Shuffle<T>(IEnumerable<T> source);
+    public string String(int? length = null, char minChar = '\0', char maxChar = '\uffff');
+    public string String(int minLength, int maxLength, char minChar = '\0', char maxChar = '\uffff');
+    public string String2(int minLength, int maxLength, string chars = "abcdefghijklmnopqrstuvwxyz");
+    public string String2(int length, string chars = "abcdefghijklmnopqrstuvwxyz");
+    public uint UInt(uint min = 0, uint max = uint.MaxValue);
+    public ulong ULong(ulong min = 0, ulong max = ulong.MaxValue);
+    public ushort UShort(ushort min = 0, ushort max = ushort.MaxValue);
+    public string Utf16String(int minLength = 40, int maxLength = 80, bool excludeSurrogates = false);
+    public Guid Uuid();
+    public T WeightedRandom<T>(T[] items, float[] weights);
+    public string Word();
+    public string Words(int? count = null);
+    public string[] WordsArray(int min, int max);
+    public string[] WordsArray(int count);
+}
+----
+====
+
+== Generieren von abhängigen Daten
+
+Die Klasse `Product` verwendet die Klasse `ProductCategory`, da hier eine 1:n Beziehung vorliegt.
+Wenn Musterdaten für `Product` generiert werden, muss also eine zufällige `ProductCategory` gewählt werden.
+
+[source,csharp,linenums]
+----
+var products = new Faker<Product>("de")
+    .CustomInstantiator(f => new Product(
+        ean: f.Random.Int(1000, 9999),
+        name: f.Commerce.ProductName(),
+        productCategory: f.Random.ListItem(productCategories)))    // <1>
+    .Generate(25)
+    .DistinctBy(p => p.Ean)    // <2>
+    .ToList();
+Products.AddRange(products);
+SaveChanges();
+----
+
+<1> Die Methode `ListItem()` der Klasse `Randomizer` liefert ein zufälliges Element einer Liste.
+    So generieren wir einen gültigen Fremdschlüsselwert.
+<2> Da das Property `Ean` eindeutig sein muss, brauchen wir `DistinctBy`.
+    Beim Generieren von Zufallszahlen ist es nämlich möglich, dass eine Zahl nochmals auftritt (_"ziehen mit Zurücklegen"_).
+    Es werden in diesem Fall zwar nicht genau 25 Elemente generiert, das ist jedoch für uns nicht wichtig.
+
+== Generieren von Zeitwerten, mehrteilige unique constraints
+
+Interessant ist das Generieren von Offers.
+Hier werden Zahlen und Datumswerte generiert.
+
+[source,csharp,linenums]
+----
+var offers = new Faker<Offer>("de")
+    .CustomInstantiator(f => new Offer(
+        product: f.Random.ListItem(products),
+        store: f.Random.ListItem(stores),
+        price: Math.Round(f.Random.Decimal(100, 999), 2),    // <1>
+        lastUpdate: new DateTime(2021, 1, 1)
+            .AddSeconds(f.Random.Int(0, 180 * 86_400))))     // <2>
+    .Generate(125)
+    .DistinctBy(o => new { o.Store.Id, o.Product.Ean })      // <3>
+    .ToList();
+----
+
+<1> Normalerweise haben die generierten `decimal` Werte viele Nachkommastellen.
+    Um realistische Preise zu generieren, verwenden wir `Math.Round()`.
+<2> Wir wollen den Zeitstempel auf Sekunde genau generieren, ohne Millisekunden.
+    Daher verwenden wir einen Trick: Beginnend mit 1.01.2021 addieren wir ganzzahlig Sekunden dazu.
+    1 Tag hat 86.400 Sekunden, somit ergibt `180 * 86_400` einen Zeitraum von 180 Tagen.
+<3> Da wir ein UNIQUE Constraint über die Spalten _StoreId_ und _ProductEan_ definiert haben, müssen wir sicherstellen, dass nicht doppelte Werte auftreten.
+
+== Übung
+
+Verwende die Übung des letzten Kapitels link:../02_CodeFirstEfCore5/README.md[Klassenmodelle persistieren mit EF Core] und
+generiere für das Datenmodell Musterdaten.
+Schreibe dafür eine Methode `Seed()` in den Datenbankkontext.
+Schreibe einen Unittest, der sicherstellt, dass die `Seed()` Methode erfolgreich arbeitet.
+
+NOTE: Wenn du die Datenbank z. B. in DBeaver ansehen willst, tausche den Connectionstring `DataSource=:memory:` durch `DataSource=test.db` aus.
+Die Datenbank wird dann in _Appname.Test/bin/Debug/net8.0_ abgelegt.
+Aus Performancegründen sollte aber die In-Memory Datenbank verwendet werden, da das Anlegen einer Datei im Vergleich dazu recht lange dauert.

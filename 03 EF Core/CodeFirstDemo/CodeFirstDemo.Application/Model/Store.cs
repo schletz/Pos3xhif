@@ -24,7 +24,6 @@ namespace CodeFirstDemo.Application.Model
         public Guid Guid { get; private set; }
         [MaxLength(255)]      // Produces NVARCHAR(255) in SQL Server
         public string Name { get; set; }
-        public int? ManagerId { get; set; }
         public User? Manager { get; set; }
     }
 }

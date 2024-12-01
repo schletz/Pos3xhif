@@ -43,12 +43,11 @@ Nun stellen wir durch Doppelklick auf die Projektdatei (*CodeFirstDemo.Applicati
 Option *TreatWarningsAsErrors* ein.
 
 ```xml
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-	</PropertyGroup>
+<PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+</PropertyGroup>
 ```
 
 **Im Ordner [CodeFirstDemo](../CodeFirstDemo) des Kapitels *03 EF Core* befindet sich eine fertige
@@ -550,22 +549,24 @@ namespace TeamsManager.Test
     [Collection("Sequential")]
     public class TeamsContextTests
     {
-        private TeamsContext GetDatabase(bool deleteDb = false)
+        private TeamsContext GetDatabase()
         {
-            var db = new TeamsContext(new DbContextOptionsBuilder()
-                 .UseSqlite("Data Source=Teams.db")
-                 .Options);
-            if (deleteDb)
-            {
-                db.Database.EnsureDeleted();
-                db.Database.EnsureCreated();
-            }
-            return db;
+            var connection = new SqliteConnection("DataSource=:memory:");
+            connection.Open();
+
+            var opt = new DbContextOptionsBuilder()
+                .UseSqlite(_connection)  // Keep connection open (only needed with SQLite in memory db)
+                .LogTo(message => Debug.WriteLine(message), Microsoft.Extensions.Logging.LogLevel.Information)
+                .EnableSensitiveDataLogging()
+                .Options;
+
+            var db = new TeamsContext(opt);
+            db.Database.EnsureCreated();
         }
         [Fact]
         public void CreateDatabaseSuccessTest()
         {
-            using var db = GetDatabase(deleteDb: true);
+            using var db = GetDatabase();
         }
 
         [Fact]

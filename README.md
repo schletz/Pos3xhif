@@ -24,6 +24,7 @@
   - [Warum OR Mapping?](03%20EF%20Core/01_WhyORMapping/README.md)
   - [Code first](03%20EF%20Core/02_CodeFirstEfCore5/README.md)
   - [Enhanced code first](03%20EF%20Core/03_EnhancedCodeFirst/README.md)
+  - [Musterdaten erzeugen mit Bogus](03%20EF%20Core/03a_Bogus/README.adoc)
   - [Rich domain models](03%20EF%20Core/04_RichDomainModels/README.md)
   - [Queries](03%20EF%20Core/05_Queries/README.md)
   - [CRUD Operationen](03%20EF%20Core/06_Crud/README.md)
