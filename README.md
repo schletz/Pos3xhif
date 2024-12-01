@@ -1,4 +1,4 @@
-# POS im III. Jahrgang / 5. Semester Kolleg der HTL Spengergasse
+# C# Basics und EF Core
 
 ## Lehrinhalte
 
