@@ -248,7 +248,7 @@ Features Warnungen bzw. Fehlermeldungen. Wir können aber in diesem Fall mit ein
 Anweisung Warnungen unterdrücken. In Visual Studio können die *#pragma* Anweisungen mit
 *STRG + .* und *Suppress or Configure issues* - *Suppress CS8618 in Source Code* deaktiviert werden.
 
-> **Hinweis:** Das Unterdrucken von Warnungen ist nur gerechtfertigt, wenn wir mit Sicherheit
+> **Hinweis:** Das Unterdrücken von Warnungen ist nur gerechtfertigt, wenn wir mit Sicherheit
 > ausschließen können, dass dadurch ein Laufzeitfehler entsteht. EF Core garantiert das Initialisieren
 > der Felder, daher kann diese Technik hier verwendet werden.
 
@@ -471,15 +471,12 @@ Definiere die public Konstruktoren so, dass die benötigten Informationen bei de
 Initialisierung übergeben werden müssen. Für EF Core sind dann protected Konstruktoren
 ohne Parameter anzulegen.
 
-Der Kontext soll den Namen *TeamsContextTests* haben. Weiter unten ist der Mustercode
-für die Definition der Klasse. Er beinhaltet auch eine Methode *Seed()*, die die Datenbank
-mit Musterdaten füllt.
-
+Der Kontext soll den Namen *TeamsContextTests* haben.
 Erstelle danach eine Testklasse im Unittest Projekt mit dem Namen *TeamsContextTests*. Kopiere
 den Code weiter unten in diese Testklasse. Sie beinhaltet 2 Tests:
 
 - *CreateDatabaseSuccessTest()* versucht, eine leere Datenbank anzulegen.
-- *SeedDatabaseTest()* versucht, Musterdaten zu generieren und die Datenbank zu befüllen.
+- *AddHandinSuccessTest()* versucht, ein Handin anzulegen.
 
 Es müssen beide Tests erfolgreich durchlaufen. Führe die Tests zur Sicherheit nacheinander
 aus, um Zugriffskonflikte bei der Datenbank zu vermeiden.
@@ -488,7 +485,7 @@ Nach dem Test *CreateDatabaseSuccessTest* soll das ER Modell der Datenbank in DB
 aussehen. Die Datenbank wird in *TeamsManager.Test\bin\Debug\net8.0* unter dem Namen
 *Teams.db* angelegt.
 
-![](ermodell20211202.png)
+![](teams_er_model_20211204.png)
 
 > **Hinweis:** Die Klasse *Task* kommt im Namespace System.Threading.Task ebenfalls vor.
 > Bei mehrdeutigen Referenzen muss der volle Klassenname (*Model.Task*) angegeben werden.
