@@ -248,7 +248,7 @@ Features Warnungen bzw. Fehlermeldungen. Wir können aber in diesem Fall mit ein
 Anweisung Warnungen unterdrücken. In Visual Studio können die *#pragma* Anweisungen mit
 *STRG + .* und *Suppress or Configure issues* - *Suppress CS8618 in Source Code* deaktiviert werden.
 
-> **Hinweis:** Das Unterdrucken von Warnungen ist nur gerechtfertigt, wenn wir mit Sicherheit
+> **Hinweis:** Das Unterdrücken von Warnungen ist nur gerechtfertigt, wenn wir mit Sicherheit
 > ausschließen können, dass dadurch ein Laufzeitfehler entsteht. EF Core garantiert das Initialisieren
 > der Felder, daher kann diese Technik hier verwendet werden.
 
