@@ -536,7 +536,9 @@ namespace TeamsManager.Application.Infrastructure
 
 ### Unittest
 ```csharp
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 using System.Linq;
 using TeamsManager.Application.Infrastructure;
 using Xunit;
@@ -552,13 +554,14 @@ namespace TeamsManager.Test
             connection.Open();
 
             var opt = new DbContextOptionsBuilder()
-                .UseSqlite(_connection)  // Keep connection open (only needed with SQLite in memory db)
+                .UseSqlite(connection)  // Keep connection open (only needed with SQLite in memory db)
                 .LogTo(message => Debug.WriteLine(message), Microsoft.Extensions.Logging.LogLevel.Information)
                 .EnableSensitiveDataLogging()
                 .Options;
 
             var db = new TeamsContext(opt);
             db.Database.EnsureCreated();
+            return db;
         }
         [Fact]
         public void CreateDatabaseSuccessTest()
