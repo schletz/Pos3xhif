@@ -1,4 +1,6 @@
 = Schreiben der Diplomarbeit mit AsciiDoc
+:lang: DE
+:hyphens:
 ifndef::env-github[:icons: font]
 ifdef::env-github[]
 :caution-caption: :fire:

@@ -1,5 +1,7 @@
 = Ein Preprocessor für AsciiDoc
 :source-highlighter: rouge
+:lang: DE
+:hyphens:
 ifndef::env-github[:icons: font]
 ifdef::env-github[]
 :caution-caption: :fire:

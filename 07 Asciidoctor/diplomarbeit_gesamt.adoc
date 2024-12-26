@@ -6,6 +6,8 @@
 :header_image: kopfzeile_diplomarbeit_aul.png
 :pdf-page-size: a4
 :toc-title: Inhaltsverzeichnis
+:lang: DE
+:hyphens:
 
 // Lädt das PDF, das aus der Wordvorlage erzeugt wurde, zu Beginn der Arbeit.
 image::diplomarbeit_intro.pdf[pages=1..99]

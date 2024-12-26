@@ -5,6 +5,8 @@ Dein Name <name@mail.at>
 :icons: font
 :author: Dein Name
 :pdf-page-header: true
+:lang: DE
+:hyphens:
 // Die nachfolgenden Zeilen sind nur für die Darstellung auf github relevant.
 // Dort werden die Icons für NOTE, TIP, ... Blöcke mit einem Icon dargestellt.
 // Sonst wird aus der Font ein Symbol genommen.
