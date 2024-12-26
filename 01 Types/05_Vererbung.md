@@ -306,13 +306,22 @@ namespace InheritanceDemo.Application
         private static int _testCount = 0;
         private static int _testsSucceeded = 0;
 
+        private static bool HasWritableProperties(Type type) {
+            return type.GetProperties().Any(p => p.GetSetMethod() != null);
+        }
+
+        private static void TestWritableProperties(Type type) {
+            CheckAndWrite(() => !HasWritableProperties(type), $"Alle Properties in {type.Name} sind read only");
+        }
+
         private static void Main(string[] args)
         {
             Console.WriteLine("Teste Klassenimplementierung.");
-            CheckAndWrite(() => typeof(Product).GetProperties().Any() && typeof(Product).GetProperties().All(p => p.CanWrite == false), "Alle Properties in Product sind read only");
-            CheckAndWrite(() => typeof(Order).GetProperties().Any() && typeof(Order).GetProperties().All(p => p.CanWrite == false), "Alle Properties in Order sind read only");
-            CheckAndWrite(() => typeof(PaymentProvider).GetProperties().Any() && typeof(PaymentProvider).GetProperties().All(p => p.CanWrite == false), "Alle Properties in PaymentProvider sind read only");
-            CheckAndWrite(() => typeof(CreditCard).GetProperties().Any() && typeof(CreditCard).GetProperties().All(p => p.CanWrite == false), "Alle Properties in CreditCard sind read only");
+            TestWritableProperties(typeof(Product));
+            TestWritableProperties(typeof(Order));
+            TestWritableProperties(typeof(PaymentProvider));
+            TestWritableProperties(typeof(CreditCard));
+            TestWritableProperties(typeof(PrepaidCard));
 
             CheckAndWrite(() => typeof(PaymentProvider).GetConstructor(Type.EmptyTypes) is null, "Kein Defaultkonstruktor in PaymentProvider");
             CheckAndWrite(() => typeof(PaymentProvider).IsAbstract, "PaymentProvider ist abstrakt");
