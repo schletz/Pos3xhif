@@ -11,6 +11,12 @@ Das ist nützlich, wenn du den Stand von github auf der Platte und nicht nur im 
 - **[Download check_logs_with_reset.sh](check_logs_with_reset.sh)**
 - **curl:** `curl https://raw.githubusercontent.com/schletz/Pos3xhif/master/06%20Git/check_logs_with_reset.sh -o check_logs_with_reset.sh`
 
+**Variante 3:** Prüfen der pull requests.
+Das ist nützlich, wenn du eine Übersicht über alle pull requests haben willst.
+Die Daten werden pivotiert in *pullrequests_pivot.txt* geschrieben.
+- **[Download check_pull_requests.sh](check_pull_requests.sh)**
+- **curl:** `curl https://raw.githubusercontent.com/schletz/Pos3xhif/master/06%20Git/check_pull_requests.sh -o check_pull_requests.sh`
+
 Das Skript wird unter Windows mit der *git bash* ausgeführt.
 Unter macOS/Linux wird es normal in der Shell gestartet, setze mit *chmod 777* vorher die Ausführungsrechte.
 Nach der Installation von git sind *.sh* Dateien automatisch damit verknüpft, du erkennst das am Symbol im Explorer.
