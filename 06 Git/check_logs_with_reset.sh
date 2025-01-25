@@ -3,7 +3,7 @@
 # Pullrequests und Statistiken in eine HTML Datei.
 # (c) 2023, Michael Schletz
 
-DAYS_AGO=30             # Die commits der letzten n Tage auslesen.
+DAYS_AGO=300             # Die commits der letzten n Tage auslesen.
 OUTFILE="log.html"      # Ausgabedatei (wird ersetzt)
 
 # **************************************************************************************************
@@ -16,6 +16,7 @@ fi
 
 BASE_DIR=$(pwd)
 OUTFILE_ABS="$BASE_DIR/$OUTFILE"
+PULLREQUESTS="$BASE_DIR/pullrequests.txt"
 echo Write log to $OUTFILE_ABS...
 
 echo '<!DOCTYPE html>
@@ -53,6 +54,7 @@ echo '<!DOCTYPE html>
 <body>
 ' > "$OUTFILE_ABS"
 
+echo -e "REPO\tCREATE_DATE\tTITLE\tBRANCH\tREVIEW_REQUESTS\tSTATE\tURL\tREVIEW_DECISION"  > "$PULLREQUESTS"
 COUNT=0
 for DIR in */ ; do
     ((COUNT++))
@@ -81,6 +83,12 @@ for DIR in */ ; do
         git clean -dfX
         git reset --hard @{u} &> /dev/null
     done
+
+    # PULL REQUESTS
+    gh pr list -R $URL \
+    --state all \
+    --json url,mergeStateStatus,createdAt,updatedAt,state,title,reviewDecision,headRefName,reviewRequests \
+    --template  '{{range .}}{{printf "'$REPO'\t%s\t%s\t%s\t%d\t%s\t%s\t%s\n" .createdAt .title .headRefName (len .reviewRequests) .state .url .reviewDecision}}{{end}}' >> "$PULLREQUESTS"
 
     # OPEN PULL REQUESTS
     echo '<table class="pullrequests_open">' >> "$OUTFILE_ABS"
