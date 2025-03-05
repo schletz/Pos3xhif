@@ -1,0 +1,38 @@
+= Precompiled Math
+Sample example, courtesy of link:https://github.com/aledomu[@aledomu], with inspiration from link:https://github.com/philwinder[@philwinder].
+
+== Equations in asciimath blocks
+
+[asciimath]
+++++
+k_(n+1) = n^2 + k_n^2 - k_(n-1)
+++++
+
+Some useful text!
+
+Formula for quadratic root:
+
+[asciimath]
+++++
+x = (-b +- sqrt(b^2 - 4ac)) / (2a)
+++++
+
+== Equations in latexmath blocks
+
+[latexmath]
+++++
+k_{n+1} = n^2 + k_n^2 - k_{n-1}
+++++
+
+Some useful text!
+
+Formula for quadratic root:
+
+[latexmath]
+++++
+x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+++++
+
+* Equations can also be inlined, like
+latexmath:[\frac{v^2}{2} + gz + \frac{p}{\rho} = \text{constant}]
+(Bernoulli equation here).
