@@ -91,7 +91,7 @@ if /i "%EXT%"=="pdf" (
         echo [INFO] Verwende Theme Paramter %THEME_OPTION%
     )
     docker run -i --rm -v "%cd%":/documents asciidoctor-pandoc ^
-        sh -c "asciidoctor-pdf %THEME_OPTION% -r asciidoctor-mathematical -r asciidoctor-diagram -a allow-uri-read -a stem -o '%BASENAME%.pdf' '%INPUT_FILE%' && rm -rf .asciidoctor"
+        sh -c "asciidoctor-pdf %THEME_OPTION% -r asciidoctor-mathematical -r asciidoctor-diagram -a allow-uri-read -a stem -a mathematical-format=svg -o '%BASENAME%.pdf' '%INPUT_FILE%' && rm -rf .asciidoctor"
 ) else if /i "%EXT%"=="docx" (
     echo [INFO] Konvertiere "%INPUT_FILE%" nach DOCX...
     docker run -i --rm -v "%cd%":/documents asciidoctor-pandoc ^
