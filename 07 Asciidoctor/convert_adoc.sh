@@ -58,10 +58,11 @@ OUTPUT_FILE="$2"
 # Erweiterung der Ausgabedatei extrahieren
 EXT="${OUTPUT_FILE##*.}"
 BASENAME="${OUTPUT_FILE%.*}"
+BASENAME_INPUT_FILE="${INPUT_FILE%.*}"
 
 # Überprüfen, ob ein Theme-File existiert
-if [ -f "${BASENAME}.yml" ]; then
-    THEME_OPTION="--theme \"${BASENAME}.yml\""
+if [ -f "${BASENAME_INPUT_FILE}.yml" ]; then
+    THEME_OPTION="--theme \"${BASENAME_INPUT_FILE}.yml\""
 else
     THEME_OPTION=""
 fi

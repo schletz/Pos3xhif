@@ -65,9 +65,12 @@ set EXT=%EXT:~1%
 REM Basename für die Ausgabedatei
 for %%x in ("%OUTPUT_FILE%") do set BASENAME=%%~nx
 
+REM Basename für die Eingabedatei
+for %%x in ("%INPUT_FILE%") do set BASENAME_INPUT_FILE=%%~nx
+
 REM Überprüfen, ob theme.yml existiert
-if exist "%BASENAME%.yml" (
-    set THEME_OPTION=--theme '%BASENAME%.yml'
+if exist "%BASENAME_INPUT_FILE%.yml" (
+    set THEME_OPTION=--theme '%BASENAME_INPUT_FILE%.yml'
 ) else (
     set THEME_OPTION=
 )
