@@ -183,13 +183,19 @@ würde die Produkttabelle einfach eine Spalte für den Fremdschlüssel (der Kate
 
 EF Core macht dies automatisch. Legen wir ein Property *ProductCategory* an, wird automatisch ein Feld *ProductCategoryId* erstellt.
 
+### Schlüssel und UNIQUE Constraints
+
 Da der Schlüssel *Ean* heißt, greift die Convention (Id als Schlüsselname) nicht mehr. Wir müssen
 daher mit Annotations aus dem Namespace *System.ComponentModel.DataAnnotations* das jeweils
 nachfolgende Property genauer definieren. Damit der int Wert für die EAN Nummer nicht als
 auto increment Wert angelegt wird, setzen wir diese Information mittels der Annotation
 *DatabaseGenerated(DatabaseGeneratedOption.None)*
 
+Die Annotation `[Index(nameof(Name), IsUnique = true)]` muss über der Klasse stehen.
+Sie gibt an, dass EF Core für das Feld *Name* einen *unique index* anlegt.
+
 ```csharp
+[Index(nameof(Name), IsUnique = true)]
 public class Product
 {
     public Product(int ean, string name, ProductCategory productCategory)
@@ -448,10 +454,10 @@ Unittest die Datenbank neu erzeugt werden.
 
 ## Übung
 
-Lege wie unten beschrieben eine Solution mit dem Namen *TeamsManager.sln* und 2
-Projekte (*TeamsManager.Application* und *TeamsManager.Test*) an. Vergiss nicht,
-die Option *\<TreatWarningsAsErrors\>true\</TreatWarningsAsErrors\>* in der Projektdatei 
-zu setzen.
+Lade die Datei [TeamsManager20251018.7z](TeamsManager20251018.7z) herunter und entpacke sie in dein Repo.
+
+> **Achtung:** Die 7z Datei soll nicht im Repo sein. Das Archiv soll auch nicht in einen eigenen Ordner entpackt werden,
+> sodass eine Struktur (Archivname)/TeamsManager entsteht. Der Ordner TeamsManager soll im Hauptordner des Repos sein.
 
 Eine kleine
 Datenbank soll erzeugt werden, um Abgaben in MS Teams verwalten zu können. Dabei können
@@ -463,123 +469,37 @@ Arbeiten einrechen (HandIn).
 https://www.plantuml.com/plantuml/uml/hLBDJiCm3BxtAQoS1dGJNATfsm4GI80Gsmk4rh10aaBZmYJ4krFNwTPEvGINslaI-_jHbu5qIPMpIMPr2B2YAaTFy9K0d5oQCf3N3c4AWKhZdnczqGFWXTF6Tf7nUCnut3SI79xQZIb4nEe307dJKVATH4LhrDa6otzJ5FVzJP4JENTTKfZDAc_UAvpF6-VPfYYiJ0ogSAs47bdOZp7bZbE7L-5SLOylc57FwzgGnJx26gV0fMEQ4UcQXBPlfjHa2d-kYSUvh8r3lhpLs_l2U6BnTLdifREKLdeGCJlrn49IIOZg3xV2J5BJ7GbWZvxDYajrEfaSgveDr9c2Q4JDcquDluaSyamEgatkIllysajspUmKk7H-pXg97OC3MJpWXy7FWui5t_mIaN2E6ZggFsbB045g9uOyceyw-yxYc3YB1pNybCda7NSgMQBFAsT_0000
 </sup>
 
-Das Klassenmodell zeigt keine EF Core spezifischen Properties wie Fremdschlüsselfelder.
-Überlege auch einen passenden primary key (auto increment Wert oder ein vorhandenes
-Property).
+Das Klassenmodell zeigt keine EF Core spezifischen Properties wie Fremdschlüsselfelder oder interne primary keys.
+Definiere deshalb - wenn nötig - ein Property mit dem Namen *Id* als primary key (auto increment).
 
 Definiere die public Konstruktoren so, dass die benötigten Informationen bei der
 Initialisierung übergeben werden müssen. Für EF Core sind dann protected Konstruktoren
 ohne Parameter anzulegen.
 
 Der Kontext soll den Namen *TeamsContextTests* haben.
-Erstelle danach eine Testklasse im Unittest Projekt mit dem Namen *TeamsContextTests*. Kopiere
-den Code weiter unten in diese Testklasse. Sie beinhaltet 2 Tests:
+Verwende danach die Testklasse im Unittest Projekt mit dem Namen *TeamsContextTests*.
 
 - *CreateDatabaseSuccessTest()* versucht, eine leere Datenbank anzulegen.
 - *AddHandinSuccessTest()* versucht, ein Handin anzulegen.
+- *AddTeamWithSameNameThrowsDbUpdateExceptionTest()* versucht, zwei Teams mit dem gleichen Namen anzulegen.
 
-Es müssen beide Tests erfolgreich durchlaufen. Führe die Tests zur Sicherheit nacheinander
-aus, um Zugriffskonflikte bei der Datenbank zu vermeiden.
+Beim letzten Test möchten wir prüfen, ob eine Exception geworfen wird.
+Mit `Assert.Throws<DbUpdateException>(()=>/*your code */)` kann ein Assert definiert werden, dass nur erfüllt wird, wenn der Lambdaausdruck den entsprechenden Fehler liefert.
 
-Nach dem Test *CreateDatabaseSuccessTest* soll das ER Modell der Datenbank in DBeaver so
-aussehen. Die Datenbank wird in *TeamsManager.Test\bin\Debug\net8.0* unter dem Namen
-*Teams.db* angelegt.
+Es müssen alle Tests erfolgreich durchlaufen.
+
+Es soll folgendes ER Modell als SQLite in-memory Datenbank erzeugt werden:
 
 ![](teams_er_model_20211204.png)
 
 > **Hinweis:** Die Klasse *Task* kommt im Namespace System.Threading.Task ebenfalls vor.
 > Bei mehrdeutigen Referenzen muss der volle Klassenname (*Model.Task*) angegeben werden.
 
-### Anlegen des Projektes
-
-```text
-rd /S /Q TeamsManager
-md TeamsManager
-cd TeamsManager
-md TeamsManager.Application
-cd TeamsManager.Application
-dotnet new classlib
-dotnet add package Microsoft.EntityFrameworkCore --version 8.*
-dotnet add package Microsoft.EntityFrameworkCore.Sqlite --version 8.*
-dotnet add package Microsoft.EntityFrameworkCore.Proxies --version 8.*
-cd ..
-md TeamsManager.Test
-cd TeamsManager.Test
-dotnet new xunit
-dotnet add reference ..\TeamsManager.Application
-cd ..
-dotnet new sln
-dotnet sln add TeamsManager.Application
-dotnet sln add TeamsManager.Test
-start TeamsManager.sln
-
-```
-
-### Kontextklasse
-```csharp
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
-using TeamsManager.Application.Model;
-
-namespace TeamsManager.Application.Infrastructure
-{
-    public class TeamsContext : DbContext
-    {
-        public TeamsContext(DbContextOptions opt) : base(opt) { }
-        /* TODO: Add your DbSets here */
-    }
-
-}
-
-```
-
-### Unittest
-```csharp
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
-using System.Linq;
-using TeamsManager.Application.Infrastructure;
-using Xunit;
-
-namespace TeamsManager.Test
-{
-    [Collection("Sequential")]
-    public class TeamsContextTests
-    {
-        private TeamsContext GetDatabase()
-        {
-            var connection = new SqliteConnection("DataSource=:memory:");
-            connection.Open();
-
-            var opt = new DbContextOptionsBuilder()
-                .UseSqlite(connection)  // Keep connection open (only needed with SQLite in memory db)
-                .LogTo(message => Debug.WriteLine(message), Microsoft.Extensions.Logging.LogLevel.Information)
-                .EnableSensitiveDataLogging()
-                .Options;
-
-            var db = new TeamsContext(opt);
-            db.Database.EnsureCreated();
-            return db;
-        }
-        [Fact]
-        public void CreateDatabaseSuccessTest()
-        {
-            using var db = GetDatabase();
-        }
-
-        [Fact]
-        public void AddHandinSuccessTest()
-        {
-            // Todo: Add a handin and check with Assert.Any() if there is a Handin in your database.
-        }
-    }
-}
-
-```
-
 ### Ausführen der Tests
+
+Im Projekt gibt es eine Klasse *GradingTests*.
+Sie greifen auf die erzeugte Datenbank zu und prüfen, ob sie korrekt geschrieben werden kann.
+Diese Tests müssen alle erfolgreich durchlaufen.
 
 Gehe zur Kontrolle in der Konsole in das Verzeichnis des Testprojektes. Mit
 
