@@ -455,6 +455,7 @@ Unittest die Datenbank neu erzeugt werden.
 ## Übung
 
 Lade die Datei [TeamsManager20251018.7z](TeamsManager20251018.7z) herunter und entpacke sie in dein Repo.
+Alternativ kannst du mit `git clone https://github.com/Die-Spengergasse/course-pos-csharp_basics` das Repo klonen und das Programm aus dem Verzeichnis *03 EF Core/02_CodeFirstEfCore5/TeamsManager* kopieren.
 
 > **Achtung:** Die 7z Datei soll nicht im Repo sein. Das Archiv soll auch nicht in einen eigenen Ordner entpackt werden,
 > sodass eine Struktur (Archivname)/TeamsManager entsteht. Der Ordner TeamsManager soll im Hauptordner des Repos sein.
