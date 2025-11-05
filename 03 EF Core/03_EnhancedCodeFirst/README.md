@@ -13,6 +13,44 @@ Klasse *Product* ist auch eine besondere Navigation vom Typ *ICollection\<Offer\
 EF Core unterstützt auch diese Art der Navigation. In *Offers* werden automatisch alle
 Angebote zum aktuellen Produkt abgerufen. Das macht LINQ Abfragen besonders einfach.
 
+Hier ein Beispiel, wie in *ProductCategory* die Liste der Produkte leichter abgerufen werden kann:
+
+```csharp
+public class Product
+{
+    #pragma warning disable CS8618
+    protected Product() { }
+    #pragma warning restore CS8618
+    public Product(int ean, string name, ProductCategory productCategory)
+    {
+        Ean = ean;
+        Name = name;
+        ProductCategory = productCategory;
+    }
+
+    [Key]                                               // bestimmt den Key
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]   // verhindert AUTO_INCREMENT
+    public int Ean { get; private set; }                 // PK
+    public string Name { get; set; }
+    public ProductCategory ProductCategory { get; set; }
+}
+
+
+public class ProductCategory
+{
+    public ProductCategory(string name, string? nameEn = null)
+    {
+        Name = name;
+        NameEn = nameEn;
+    }
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string? NameEn { get; set; }
+    // Liste aller Produkte, die diese Produktkategorie verwenden.
+    public List<Product> Products = new();
+}
+```
+
 ## Festlegen der Tabellennamen
 
 Die Tabellennamen werden durch den Namen des Properties in der Kontextklasse bestimmt.
@@ -166,6 +204,8 @@ public class StoreContext : DbContext
     /* ... */
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // Hinweis: Setze [ForeignKey("StoreId")] und [ForeignKey("ProductEan")]
+        // über den Navigations, um den Nanem des FK genau zu spezifizieren.
         modelBuilder.Entity<Offer>().HasIndex("StoreId" "ProductEan").IsUnique();
     }
 }
@@ -180,76 +220,101 @@ Möglichkeiten aus.
 
 ## 1:1 Beziehungen
 
-Im Klassendiagramm ist auch eine 1:1 Beziehung zwischen Store und User abgebildet. Dabei muss
-ein User einem Store zugeordnet sein, während ein Store 0 oder 1 User als Manageraccount
-haben kann.
+Betrachten wir folgendes Klassendiagramm.
+Es zeigt Kunden, die eine Kundenkarte besitzen können.
 
-### Abbilden der Navigations
+![](https://www.plantuml.com/plantuml/svg/NSszgeD04CNnVf_YO7jHxcsj16zIXUGP5dUY0_iXioD4GjuzMKG8LdFu5x_fibhH9NWpiIDGc7L589sIoyRJNQ49mkEaS2mqAATe1czpHhzaJO44JmC0FsUMhD46Gekimd7S-iKUyyiSYDwAsvcohu8M77KhfyVCOildVwk5AUSM_LgWdK3rLw6kQrI_JVEPtxJfABeb-3S0)
 
-EF Core definiert bei Beziehungen dem Begriff des sogenannten *Dependent entity*: 
-> This is the entity that contains the foreign key properties.
-> Sometimes referred to as the 'child' of the relationship
-> [<sup>https://docs.microsoft.com/en-us/ef/core/modeling/relationships?tabs=fluent-api%2Cfluent-api-simple-key%2Csimple-key#definition-of-terms</sup>]
+Wir stellen bei der genaueren Analyse der 1:1 Beziehung fest:
+* Es handelt sich um eine **1 : 0 oder 1** Beziehung, da ein Kunde auch keine Kundenkarte besitzen kann.
+* Eine Kundenkarte kann nicht ohne Kunde existieren, umgekehrt jedoch schon.
 
-Bei 1:1 Beziehungen gehen wir so vor: Beide Klassen (Store und User) haben ein Navigation
-Property vom jeweils anderen Typ (User bzw. Store). *Nur eine Klasse darf allerdings ein
-Fremdschlüsselfeld besitzen!* In unserem Fall ist dies der Store, der mit *ManagerId* ein
-Fremdschlüsselfeld hat.
+Besonders die letzte Feststellung ist für den Begriff der *dependent entity* relevant.
+Wir müssen vor der konkreten Umsetzung identifizieren, welche Entity von der anderen abhängig ist.
+Diese Entity wird dann das Fremdschlüsselfeld beinhalten.
 
-Außerdem ist eine Seite als *nullable* definiert. Sonst erzeugen wir einen Zustand, wo
-wir - um einen Store anlegen zu können - einen User im Konstruktor verlangen. Der User verlangt
-wiederum einen Store. Wir gehen davon aus, dass der Store zeitlich zuerst angelegt werden muss.
-Daher hat er einen optionalen User.
+Die Modelklassen haben folgenden Aufbau:
 
 ```csharp
-public class Store
+
+public class Customer
 {
-    public Store(string name, User? manager = null)
+    #pragma warning disable CS8618
+    protected Customer() { }
+    #pragma warning restore CS8618
+    public Customer(string firstname, string lastname)
     {
-        Name = name;
-        Manager = manager;
-        ManagerId = manager?.Id;
+        Firstname = firstname;
+        Lastname = lastname;
     }
-    /* ... */
-    public int? ManagerId { get; set; }
-    public User? Manager { get; set; }
+
+    public int Id { get; set; }
+    public string Firstname { get; set; }
+    public string Lastname { get; set; }
+    public CustomerCard? CustomerCard { get; set; }
 }
 
-public class User
+public class CustomerCard
 {
-    public User(string username, string salt, string passwordHash, Store store)
+    #pragma warning disable CS8618
+    protected CustomerCard() { }
+    #pragma warning restore CS8618
+    public CustomerCard(int cardNr, DateOnly expirationDate, Customer customer)
     {
-        Username = username;
-        Salt = salt;
-        PasswordHash = passwordHash;
-        Store = store;
+        CardNr = cardNr;
+        ExpirationDate = expirationDate;
+        Customer = customer;
     }
-    /* ... */
-    public Store Store { get; set; }
+
+    public int Id { get; set; }
+    public int CardNr { get; set; }
+    public DateOnly ExpirationDate { get; set; }
+    [ForeignKey("CustomerId")]
+    public Customer Customer { get; set; }
 }
 ```
 
-## Manuelle Konfiguration von Beziehungen
+Wir erkennen folgende Besonderheiten bei der Umsetzung:
 
-Bis jetzt hat EF Core alle Beziehungen über Conventions angelegt. Manchmal muss eine
-Beziehung aber händisch konfiguriert werden. Man bekommt dies in der Regel durch eine
-Exception mit.
+* Das Property *CustomerCard* von *Customer* ist *nullable*.
+  Ein Kunde muss schließlich keine Kundenkarte haben.
+* Das Property *CustomerCard* ist nicht im Konstruktor von *Customer* enthalten.
+  Wir müssen ja zuerst einen Kunden anlegen, um ihn eine Kundenkarte zuweisen zu können.
+* Das Entity *Customer* ist das sogenannte *principal entity*.
+  Es kann alleine existieren.
 
-In der Methode *StoreContext.OnModelCreating()* können wir mit *HasOne()* zuerst das
-*dependent entity*, also das Entity mit dem FK Feld in der Tabelle, konfigurieren. Mit *WithMany()*
-(1:n Beziehung) bzw *WithOne()* (1:1 Beziehung) geben wir den zweiten Teil der Beziehung an.
-Dass *ManagerId* das zugehörige Fremdschlüsselfeld ist wird mit *HasForeignKey()* angegeben.
+### Das ForeignKey Attribut
 
-```csharp
-protected override void OnModelCreating(ModelBuilder modelBuilder)
-{
-    // 1:1 relationship
-    modelBuilder.Entity<Store>()
-        .HasOne(s => s.Manager)
-        .WithOne(u => u.Store)       // or WithOne() if there is no navigation property.
-        .HasForeignKey<Store>(s => s.ManagerId);
-}
+Im Code fällt das Attribut *[ForeignKey("CustomerId")]* auf.
+Würden wir keinen ForeignKey definieren, entsteht beim Erstellen der Datenbank eine Exception:
+
 ```
+System.InvalidOperationException : The dependent side could not be determined for the one-to-one relationship between 'CustomerCard.Customer' and 'Customer.CustomerCard'. To identify the dependent side of the relationship, configure the foreign key property. If these navigations should not be part of the same relationship, configure them independently via separate method chains in 'OnModelCreating'. See https://go.microsoft.com/fwlink/?LinkId=724062 for more details.
+```
+
+Diese Exception sagt folgendes aus: EF Core muss wissen, in welcher Tabelle der Fremdschlüssel angelegt werden soll.
+Bei 1:n Beziehungen ist dies klar (auf der 1er Seite), bei 1:1 Beziehungen wird der FK üblicherweise beim *dependent entity* angelegt.
+Durch diese Annotation bestimmen wir, dass *CustomerCard* das *dependent entity* ist und dass dort der Fremdschlüssel angelegt werden kann.
+
+### Grenzen der 1:1 Beziehung
+
+Die Datenbank hat keine eigenen Constraints für eine 1:1 Beziehung.
+Es wird ein "normaler" Fremdschlüssel wie bei einer 1:n Beziehung angelegt.
+Dadurch ist es aber möglich, dass ein Kunde mehrere Kundenkarten besitzt.
+Um dies zu forcieren, können wir noch einen *unique index* auf das Feld *CustomerId* in *CustomerCard* anlegen.
+
+Wir haben in diesem Fall eine "1 : 0 oder 1" Beziehung modelliert.
+Wie können wir eine exakte 1:1 Beziehung abbilden, sprich: Jeder Kunde *muss* eine Kundenkarte haben?
+
+In der Doku von EF Core gibt es einen Hinweis, dass dies nicht möglich ist:
+
+> A required relationship ensures that every dependent entity must be associated with some principal entity.
+> However, a principal entity can always exist without any dependent entity.
+> That is, a required relationship does not indicate that there will always be a dependent entity.
+> There is no way in the EF model, and also no standard way in a relational database, to ensure that a principal is associated with a dependent.
+> If this is needed, then it must be implemented in application (business) logic. See Required navigations for more information.
+> 
+> <sup>https://learn.microsoft.com/en-us/ef/core/modeling/relationships/one-to-one</sup>
 
 Alle möglichen Szenarien von Beziehungen und deren Konfiguration sind auf
 https://docs.microsoft.com/en-us/ef/core/modeling/relationships beschrieben.
@@ -342,19 +407,3 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
 }
 ```
 
-## Übung
-
-Verwende die Übung des letzten Kapitels (*Klassenmodelle persistieren mit EF Core*) und
-definiere folgende Einstellungen:
-
-- Die Tabellennamen sollen alle in der Einzahl (Team, HandIn, ...) angelegt werden.
-- Der Teamname soll maximal 64 Stellen lang sein, die Klasse maximal 16 Stellen.
-- Alle anderen string Properties (Name, Mail) sollen maximal 255 Stellen lang sein.
-- Stelle mit einem Unique Index sicher, dass ein Student pro Task nur eine Abgabe einreichen kann.
-- Schreibe einen Unittest `AddHandinSuccessTest`, um zu prüfen, ob ein Handin eingefügt werden kann.
-- Schreibe einen Unittest `AddHandinThrowsDbUpdateExceptionIfDuplicateStudentAndTaskTest`.
-  Er soll das UNIQUE Constraint prüfen, das verhindert, dass ein Student für einen Task mehrere Handins anlegt.
-  Mit `Assert.Throws<DbUpdateException>()` kannst du feststellen, ob bei der Verletzung eines Unique Constraints eine `DbUpdateException` geworfen wird.
-
-Hinweis: In SQLite gibt es für Strings nur den Datentyp *TEXT*. Daher ist die Einstellung
-der Länge in DBeaver nicht sichtbar.
