@@ -301,7 +301,7 @@ Durch diese Annotation bestimmen wir, dass *CustomerCard* das *dependent entity*
 Die Datenbank hat keine eigenen Constraints für eine 1:1 Beziehung.
 Es wird ein "normaler" Fremdschlüssel wie bei einer 1:n Beziehung angelegt.
 Dadurch ist es aber möglich, dass ein Kunde mehrere Kundenkarten besitzt.
-Um dies zu forcieren, können wir noch einen *unique index* auf das Feld *CustomerId* in *CustomerCard* anlegen.
+Um dies zu verhindern, legt der OR Mapper einen *unique index* auf das Feld *CustomerId* in *CustomerCard* an.
 
 Wir haben in diesem Fall eine "1 : 0 oder 1" Beziehung modelliert.
 Wie können wir eine exakte 1:1 Beziehung abbilden, sprich: Jeder Kunde *muss* eine Kundenkarte haben?
