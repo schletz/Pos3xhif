@@ -407,3 +407,38 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
 }
 ```
 
+## Übung
+
+Lade die Datei [StoresWithOneToOne20251106.7z](StoresWithOneToOne20251106.7z) herunter und entpacke sie in dein Repo.
+Alternativ kannst du mit `git clone https://github.com/Die-Spengergasse/course-pos-csharp_basics` das Repo klonen und das Programm aus dem Verzeichnis *03 EF Core/03_EnhancedCodeFirst/StoresWithOneToOne* kopieren.
+
+
+> **Achtung:** Die 7z Datei soll nicht im Repo sein. Das Archiv soll auch nicht in einen eigenen Ordner entpackt werden,
+> sodass eine Struktur StoresWithOneToOne20251106/StoresWithOneToMany entsteht. Der Ordner StoresWithOneToMany soll im Hauptordner des Repos sein.
+
+Implementiere das folgende Modell und beachte die folgenden Informationen:
+
+* Primary Keys heißen - wenn nicht im Modell angegeben - *Id*.
+* Die Foreign Keys werden nach der Convention Propertyname + Name des PK generiert.
+  Dies ist bei der Zuweisung des FKs der dependent Entities wichtig.
+* Zwischen *Store* und *StoreDetails* sowie zwischen *Product* und *ProductDetails* liegt eine 1:1 Beziehung vor.
+  Definiere korrekt das principal und das dependent Entity.
+* Die Enum *Weekday* ist als String zu speichern.
+  Verwende die Konfiguration `HasConversion<string>()` für das Property *OpeningHour.Weekday* in *OnModelCreating*.
+* Erstelle alle Tabellen mit den im Modell angegeben Namen (also Offer statt Offers, etc.).
+* Stringfelder sollen mit 255 Zeichen begrenzt werden.
+* *Offer.Price* soll mit 9 Stellen, davon 4 Nachkommastellen gespeichert werden.
+* Alle Klassen sollen Konstruktoren mit den notwendigen Feldern sowie protected default Konstruktoren für EF Core besitzen. Es soll keine Klasse einen public default Konstruktor besitzen!
+
+Im Musterprojekt sind in der Klasse *StoreContextTests.cs* folgende Unittests zu implementieren. Die Beschreibung befindet sich im Musterprojekt:
+
+* EnsureProductAndStoreInOfferIsUniqueTest()
+* InsertStoreAndStoreDetailsTest()
+* InsertProductAndProductDetailsTest()
+* InsertOpeningHourTest()
+
+Die vordefinierten Tests in *GradingTests.cs* dienen zur Selbstkontrolle.
+
+![](https://www.plantuml.com/plantuml/svg/RL9DZzCm4BtxLunoGO9sHQzHM-r2M85sIrVi8YHkLZnjBM8xsED3GVntx4r6TQf4iZ9-ysRUVFWsaFGKJITEMY6WwUaC1kdaL13Y3Mms6tZeP0XeiotQRCCpEO_mLq3wtdsL1g66G5xR8y1w7Qt-7N6x5Vz4oM-GfEuuwaufZyd5WGFwK_TNo4TDvojetwDDbyyk-Xp_g0Ej2-nL5sqqy0FnbvBdKNAtNq3pPG6xT9fattzRmFDTEljBeKKQBhIilIux6ToiKRFQ0DzxPnBseWtkRJU2Bww4acWfjrnoXWbSlR-vULjbRxMgO5fCjIs1Yfjuyax5bhY1Jz8chhOqjwxfjgmZ1A-F9m9tu3nrdJAasAS7WLP1vbmfJJVRO6YzxaaxUxMudRJn85kA7lt5THd-uO3JiVF01uZxgbcNOTrcfi9M6pckvL46-juhITdJf5yUUvBYD_q1_sWyHNiSttNMdXrsCUPgbiLLPHvVgYopgbVBGaOCwNB8_387ArI2CnRK4PeXtw9LqNJ_0G00)
+<sup>https://www.plantuml.com/plantuml/uml/RLDDZzCm4BtxLunyGO9sHQzHM-r2M85sIrVi8YHkLZnjBHexsED3GVntx4r6TQ9KiZf-ysRUV3YtWPIds9x5oMW4R3kwG8jqSZe8yGOscmqyd5K8QBCjccp3CpcFy5T0-htxgbg42W9vOuy0wtMqvdV4xLRy4oM_HbBcp55tMdjCBWxiqP-cco0V3LqcqBv3cowVNVGv_j44MXVOgoxQsC8Fn5zQNGR9tNu1zPS5xDAfatt_RG7FT-dihuKMQRZGilQgxAHtiqR5QZryxrsRi1VJujwU1_35bL0IBUMMIyumWkNxcvktCdlbIiAu6Baj0SbDF7cdOqFSm2Tb4zTOcblNU5lM4O8tnnE1Et2UgaePKkpJWq2h8NCcIkFDrXWQRpeopauMjrCs7bH3qQE_kgx3FnnmF7OUU0znNnNhCcoQpDJOc5ODQtbKWRvtMb7srEalZpr9yPl-W7yCdg8z3kywQyyEknYpd6LnLPd75vbbLjLgMSY8FbqEcLzcRmKfE6D17Q0PihX5g_Ft-ny0</sup>
+
