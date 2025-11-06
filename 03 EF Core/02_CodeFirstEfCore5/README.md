@@ -477,7 +477,7 @@ Definiere die public Konstruktoren so, dass die benötigten Informationen bei de
 Initialisierung übergeben werden müssen. Für EF Core sind dann protected Konstruktoren
 ohne Parameter anzulegen.
 
-Der Kontext soll den Namen *TeamsContextTests* haben.
+Der Kontext soll den Namen *TeamsContext* haben.
 Verwende danach die Testklasse im Unittest Projekt mit dem Namen *TeamsContextTests*.
 
 - *CreateDatabaseSuccessTest()* versucht, eine leere Datenbank anzulegen.
