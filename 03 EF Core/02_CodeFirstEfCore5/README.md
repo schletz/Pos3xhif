@@ -489,10 +489,6 @@ Mit `Assert.Throws<DbUpdateException>(()=>/*your code */)` kann ein Assert defin
 
 Es müssen alle Tests erfolgreich durchlaufen.
 
-Es soll folgendes ER Modell als SQLite in-memory Datenbank erzeugt werden:
-
-![](teams_er_model_20211204.png)
-
 > **Hinweis:** Die Klasse *Task* kommt im Namespace System.Threading.Task ebenfalls vor.
 > Bei mehrdeutigen Referenzen muss der volle Klassenname (*Model.Task*) angegeben werden.
 
