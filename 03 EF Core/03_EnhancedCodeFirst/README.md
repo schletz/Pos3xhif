@@ -414,7 +414,7 @@ Alternativ kannst du mit `git clone https://github.com/Die-Spengergasse/course-p
 
 
 > **Achtung:** Die 7z Datei soll nicht im Repo sein. Das Archiv soll auch nicht in einen eigenen Ordner entpackt werden,
-> sodass eine Struktur StoresWithOneToOne20251106/StoresWithOneToMany entsteht. Der Ordner StoresWithOneToMany soll im Hauptordner des Repos sein.
+> sodass eine Struktur StoresWithOneToOne20251106/StoresWithOneToOne entsteht. Der Ordner StoresWithOneToOne soll im Hauptordner des Repos sein.
 
 Implementiere das folgende Modell und beachte die folgenden Informationen:
 
