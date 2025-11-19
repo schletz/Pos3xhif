@@ -419,8 +419,11 @@ Alternativ kannst du mit `git clone https://github.com/Die-Spengergasse/course-p
 Implementiere das folgende Modell und beachte die folgenden Informationen:
 
 * Primary Keys heißen - wenn nicht im Modell angegeben - *Id*.
+* Vorgegebene Namespaces im Projekt dürfen nicht umbenannt werden.
 * Die Foreign Keys werden nach der Convention Propertyname + Name des PK generiert.
   Dies ist bei der Zuweisung des FKs der dependent Entities wichtig.
+* Es soll kein Offer mit gleichem Store und gleichem Product angelegt werden können.
+  Stelle dies durch ein *unique constraint*, bestehend aus den 2 Fremdschlüsselspalten, sicher.
 * Zwischen *Store* und *StoreDetails* sowie zwischen *Product* und *ProductDetails* liegt eine 1:1 Beziehung vor.
   Definiere korrekt das principal und das dependent Entity.
 * Die Enum *Weekday* ist als String zu speichern.
