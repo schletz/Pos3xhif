@@ -1,0 +1,11 @@
+= Übungen zu Domain Modelling mit EF Core
+
+== PLF vom 26.11.2025
+
+Thema:: Domainmodel mit EF Core (Vererbung, 1:1, rich types und value objects) und Unittests
+Modell:: image:Plf5akif_20251126/model.svg[Modell,50%]
+Angabendatei:: link:Plf5akif_20251126/Angabe.pdf[Angabe.pdf]
+Vorlagenprojekt:: link:Plf5akif_20251126/Plf5akif.7z[Plf5akif.7z]
+Anmerkung:: Bei der Prüfung sind nur die Tests _T00_CanCreateDatabaseTest_ und _T00_SchemaTest_ in _GradingTests_ enthalten.
+Hier sind zur Selbstkontrolle alle Tests enthalten.
+

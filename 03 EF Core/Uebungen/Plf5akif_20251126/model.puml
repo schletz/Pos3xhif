@@ -1,0 +1,101 @@
+@startuml
+' ---- Layout & Stil ----
+hide empty methods
+
+' ---- Legende ----
+legend right
+<<RichType>>: Stark typisierte Primitive
+<<ValueObject>>: Value Objects
+<<entity>>: Persistente Entität
+<<unique>>: Eindeutige Einschränkung auf Spaltenebene
+<<nn>>: Not null
+endlegend
+
+' ===================== Packages =====================
+
+package "Shared\n(Value Objects)" as P_Shared #EEF6FF {
+
+  class InsuranceNumber << (R,#FFEECC) RichType >> {
+    +Value: string <<nn>>
+  }
+
+  class PhoneNumber << (R,#FFEECC) RichType >> {
+    +Value: string <<nn>>
+  }
+
+  class TimeSlot << (V,#CCEEFF) ValueObject >> {
+    +Start: TimeOnly <<nn>>
+    +End: TimeOnly <<nn>>
+  }
+}
+
+package "Patients" as P_Patients #FFF5E6 {
+
+  class Patient <<entity>> {
+    +Firstname: string <<nn>>
+    +Lastname: string <<nn>>
+    +InsuranceNumber: InsuranceNumber <<nn>>
+    +Mobile: PhoneNumber
+  }
+}
+
+package "Staff" as P_Staff #FFF0FF {
+
+  class Doctor <<entity>> {
+    +Firstname: string <<nn>>
+    +Lastname: string <<nn>>
+    +Email: string <<nn>> <<unique>>
+  }
+}
+
+package "Appointments" as P_Appointments #EAF8EA {
+
+  class Appointment <<entity>> {
+    +Date: DateOnly <<nn>>
+    +Created: DateTime <<nn>>
+    +Patient: Patient <<nn>>
+    +CurrentState: AppointmentState
+  }
+
+  abstract class AppointmentState <<entity>> {
+    +Appointment: Appointment <<nn>>
+    +Created: DateTime <<nn>>
+    +Type: string <<nn>>
+  }
+    note left of AppointmentState::Type
+    Discriminator
+    end note
+
+  class ConfirmedAppointmentState <<entity>> {
+    +Doctor: Doctor <<nn>>
+    +PlannedSlot: TimeSlot <<nn>>
+    +Infotext: string
+  }
+
+  class CancelledAppointmentState <<entity>> {
+  }
+
+  ' ---- Vererbung der Zustände ----
+  ConfirmedAppointmentState -up-|> AppointmentState
+  CancelledAppointmentState   -up-|> AppointmentState
+}
+
+' ===================== Beziehungen =====================
+
+' Patient zu Shared VOs / Rich Types
+Patient -- InsuranceNumber : "> InsuranceNumber"
+Patient -- PhoneNumber     : "> Mobile"
+
+' Patient zu Appointment (n:1)
+Appointment "0..*" -- "1" Patient : "> Patient"
+
+' 1:1-Beziehung zwischen Appointment und AppointmentState
+AppointmentState "0..1" -- "1" Appointment : "> Appointment"
+
+' ConfirmedAppointmentState zu Doctor (n:1)
+ConfirmedAppointmentState "0..*" -- "1" Doctor   : "> Doctor"
+
+' ConfirmedAppointmentState zu TimeSlot (1:1 Value Object)
+ConfirmedAppointmentState -- TimeSlot
+
+@enduml

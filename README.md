@@ -25,6 +25,7 @@
   - [Code first](03%20EF%20Core/02_CodeFirstEfCore5/README.md)
   - [Enhanced code first](03%20EF%20Core/03_EnhancedCodeFirst/README.md)
   - [Vererbung und andere OOP Konzepte](03%20EF%20Core/03b_EfCoreInheritance/README.adoc)
+  - [Übungen zu Domain Modelling](03%20EF%20Core/Uebungen/README.adoc)
   - [Musterdaten erzeugen mit Bogus](03%20EF%20Core/03a_Bogus/README.adoc)
   - [Rich domain models](03%20EF%20Core/04_RichDomainModels/README.md)
   - [Queries](03%20EF%20Core/05_Queries/README.md)
