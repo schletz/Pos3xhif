@@ -251,13 +251,63 @@ var offers = new Faker<Offer>("de")
     1 Tag hat 86.400 Sekunden, somit ergibt `180 * 86_400` einen Zeitraum von 180 Tagen.
 <3> Da wir ein UNIQUE Constraint über die Spalten _StoreId_ und _ProductEan_ definiert haben, müssen wir sicherstellen, dass nicht doppelte Werte auftreten.
 
-== Übung
+== Übung: Musterdaten für ein Bestellsystem
 
-Verwende die Übung des letzten Kapitels link:../02_CodeFirstEfCore5/README.md[Klassenmodelle persistieren mit EF Core] und
-generiere für das Datenmodell Musterdaten.
-Schreibe dafür eine Methode `Seed()` in den Datenbankkontext.
-Schreibe einen Unittest, der sicherstellt, dass die `Seed()` Methode erfolgreich arbeitet.
+image::./model_deliverymanager_1120.svg[]
+link:https://www.plantuml.com/plantuml/uml/bLF9Rjim4BtpAmRkHKQbeBaAWfB0iO42GU8koA4tHfpMB4HAuLAWAFBlfIdJP2dNI2xYCgEtl96kjQ7AMD6J7MS8A4Rp6mIQtS0q8IWDT-ULrMOGgA1frlwcRU4F0TZk1edtLZoXga4RnUKFro9bsxhYMb3UPzTkiP8_M_GT3ugXqZNSSMqQVsY9ktuVw8fnZby2fhXBya98rrEjuOOnXMvj6YWUotUhrNgzsIpXaVOM7vv-OcVW8FkBKOWcGBYBRtnCJYjdy7XyEORm6LrKLb5fyXZkgS1pHeEqEcnYI5irCDkP4CBXU2wSAAEG2My9D90aoIIQgogm1qU1_CrsjeftheDXnmNjevd8LYVxMFSkFXeKgIr_CLcRzEI-nd_OIjS8e4uoBPDftIh-Q_x1RhZI9eMFukxegSgvIKmKnVSSiuG-mqg5UO1SL_ZYw-FkzQbECkh3UXK4trBZ-FVFhrnWqexzlW_PZOdbgrTCnn-BRgQq_CyqzfCQvagIB29bdeSlrDCo-rdgi8cLJvRwrslWCPeWsZCKGm9PmfX1bV2SGdYHnr4iBXTGLLKBYmyN5t8nOP3eD6y8e7dB3C8_O-boAWN99DZCteqDqyXFOr-ZP5Rqv2y0[PlantUML Source]
 
-NOTE: Wenn du die Datenbank z. B. in DBeaver ansehen willst, tausche den Connectionstring `DataSource=:memory:` durch `DataSource=test.db` aus.
-Die Datenbank wird dann in _Appname.Test/bin/Debug/net8.0_ abgelegt.
-Aus Performancegründen sollte aber die In-Memory Datenbank verwendet werden, da das Anlegen einer Datei im Vergleich dazu recht lange dauert.
+Lade die Datei link:./DeliveryManager20251201.7z[DeliveryManager20251201.7z] herunter und verschiebe den Ordner _DeliveryManager_ in dein Working Repo.
+Öffne danach die Datei _DeliveryManager/DeliveryManager.sln_ in deiner IDE.
+In der Datei _DeliveryManager.Application/Infrastructure/DeliveryContext.cs_ ist ein fertig konfigurierter DbContext bereitgestellt.
+
+Mit der Methode _Seed()_ soll das Domainmodel mit Musterdaten befüllt werden.
+Es gelten folgende Anforderungen an die generierten Daten:
+
+* Es müssen mindestens 3 Kunden (Customer) generiert werden.
+* Es müssen mindestens 3 Restaurants (Restaurant) generiert werden.
+* Es müssen mindestens 5 Fahrer (Driver) generiert werden.
+* Es müssen mindestens 3 Produkte (Product) generiert werden.
+* Es müssen mindestens 10 Bestellungen (Order) in Summe generiert werden.
+* Es müssen mindestens 20 Bestellpositionen (OrderItem) in Summe generiert werden.
+
+Die Datenbank hat einige Constraints, die berücksichtigt werden müssen:
+
+* _Restaurant.Name_ ist unique.
+* _Product.Name_ ist unique.
+* _Customer.Name_ ist unique.
+* Es dürfen nicht 2 OrderItems mit gleicher Order und gleichem Produkt generiert werden.
+
+Für die fachliche Logik sind folgende Punkte zu berücksichtigen:
+
+* Es soll ein Fahrer ohne Orders generiert werden.
+  Du kannst z. B. mit `var driversWithOrders = drivers.Take(drivers.Count - 1).ToList();` die ersten n-1 Elemente der Liste nehmen und für diese dann Orders generieren.
+* Jede Bestellung (_Order_) muss mindestens eine Position (_OrderItem_) besitzen.
+* _Order.Quantity_ muss Werte zwischen 1 und 5 (inklusive) haben.
+* Es müssen auch Bestellungen generiert werden, die noch nicht zugeordnet wurden (_Order.Driver_ ist null).
+* Es müssen auch Bestellungen generiert werden, die noch nicht zugestellt wurden (_Order.DeliveredAt_ ist null).
+* Es dürfen keine Bestellungen generiert werden, die zwar zugestellt wurden, aber keinen Fahrer haben (wenn _Order.DeliveredAt_ einen Wert hat, darf _Order.Driver_ nicht null sein).
+* Alle Werte von _Order.OrderDate_ sind aus dem Jahr 2024, also zwischen 1.1.2024 und 1.1.2025.
+* Zwischen _Order.OrderDate_ und _Order.DeliveredAt_ müssen mindestens 10 Minuten und maximal 2 Stunden liegen.
+
+[NOTE]
+Die generierten Musterdaten müssen immer gleich sein.
+Achte daher auf ein fixes Seed.
+Verwende immer die generierten Listen im Speicher und nicht die DbSets, da die Reihenfolge sonst unbestimmt ist.
+Vermeide _DateTime.Now_ oder andere Funktionen, die auf sich ändernde Werte zugreifen.
+Teile deine _Seed()_ Methode in Teile auf, indem sie z. B. _SeedRestaurants()_, ... aufruft.
+Die Untermethoden besitzen - wenn benötigt - Parameter wie Listen der davor generierten Daten.
+
+=== Prüfen der Implementierung
+
+In _DeliveryManager.Test/DeliveryContextTests.cs_ sind 3 Unittests hinterlegt, die die Richtigkeit prüfen:
+
+* T01_SeedCreatesMinimumNumberOfEntitiesTest
+* T02_SeedCreatesValidRelationsBetweenEntitiesTest
+* T03_SeedCreatesOrdersWithValidBusinessRules
+
+Die Datenbank _delivery.db_ wird ausnahmsweise als Datei im Ordner der sln Datei erstellt.
+Du kannst sie mit einem Datenbankeditor ansehen, um Fehler zu finden.
+
+[NOTE]
+Schließe die Verbindung in deinem Datenbankeditor, bevor du den Unittest erneut ausführst.
+Der Unittest löscht die Datenbankdatei, daher gibt es eine Zugriffsverletzung wenn ein Editor darauf zugreift.

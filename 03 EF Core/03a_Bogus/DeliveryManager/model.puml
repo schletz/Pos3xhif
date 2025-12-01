@@ -1,0 +1,73 @@
+@startuml
+hide empty methods
+
+entity Customer <<Entity>> {
+  PhoneNumber: string <<nn>>
+  Email: string <<nn>> <<unique>>
+  Orders: List<Order>
+
+  +Customer(phoneNumber: string, email: string)
+}
+
+class Address << (V,#CCEEFF) ValueObject >> {
+  Street: string
+  Zip: string
+  City: string
+}
+
+entity Restaurant <<Entity>> {
+  Name: string <<nn>> <<unique>>
+  Address: Address <<nn>>
+  Products: List<Product>
+  Orders: List<Order>
+
+  +Restaurant(name: string, address: string)
+}
+
+Restaurant -- Address
+
+entity Product <<Entity>> {
+  Name: string <<nn>> <<unique>>
+  Price: decimal <<nn>>
+  Restaurant: Restaurant <<nn>>
+  OrderItems: List<OrderItem>
+
+  +Product(name: string, price: decimal,
+    restaurant: Restaurant)
+}
+
+entity Driver <<Entity>> {
+  Firstname: string <<nn>>
+  Lastname: string <<nn>>
+  Orders: List<Order>
+
+  +Driver(firstname: string, lastname: string)
+}
+
+entity Order <<Entity>> {
+  Customer: Customer <<nn>>
+  Restaurant: Restaurant <<nn>>
+  Driver: Driver?
+  OrderDate: DateTime <<nn>>
+  DeliveredAt: DateTime?
+  OrderItems: List<OrderItem>
+
+  +Order(customer: Customer, restaurant: Restaurant,
+  orderDate: DateTime)
+}
+
+entity OrderItem <<Entity>> {
+  Order: Order <<nn>>
+  Product: Product <<nn>>
+  Quantity: int <<nn>>
+
+  +OrderItem(order: Order, product: Product, quantity: int)
+}
+
+Customer "1" ---> "0..n" Order
+Restaurant "1" ---> "0..n" Product
+Restaurant "1" --> "0..n" Order
+Order "1" --> "1..n" OrderItem
+Product "1" --> "0..n" OrderItem
+Driver "1" --> "0..n" Order
+@enduml
