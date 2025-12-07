@@ -27,9 +27,8 @@
   - [Vererbung und andere OOP Konzepte](03%20EF%20Core/03b_EfCoreInheritance/README.adoc)
   - 💡[Übungen zu Domain Modelling](03%20EF%20Core/Uebungen/README.adoc) 💡
   - [Musterdaten erzeugen mit Bogus](03%20EF%20Core/03a_Bogus/README.adoc)
+  - [Services mit EF Core](03%20EF%20Core/05_Services/README.adoc)
   - [Rich domain models](03%20EF%20Core/04_RichDomainModels/README.md)
-  - [Queries](03%20EF%20Core/05_Queries/README.md)
-  - [CRUD Operationen](03%20EF%20Core/06_Crud/README.md)
   - [Database first](03%20EF%20Core/07_DatabaseFirst/README.md)
   - [Migrations](03%20EF%20Core/08_Migrations/README.md)
 #### WPF - Windows Presentation Foundation (nur HIF)

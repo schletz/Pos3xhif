@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Bogus" Version="35.6.5" />
+		<PackageReference Include="ConsoleTables" Version="2.*" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.*" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlserver" Version="8.*" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Infrastructure\" />
+	  <Folder Include="Model\" />
+	</ItemGroup>
+
+</Project>
