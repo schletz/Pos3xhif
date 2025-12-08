@@ -240,7 +240,7 @@ var offers = new Faker<Offer>("de")
         lastUpdate: new DateTime(2021, 1, 1)
             .AddSeconds(f.Random.Int(0, 180 * 86_400))))     // <2>
     .Generate(125)
-    .DistinctBy(o => new { o.Store.Id, o.Product.Ean })      // <3>
+    .DistinctBy(o => new { o.Store, o.Product })      // <3>
     .ToList();
 ----
 
@@ -315,6 +315,32 @@ Mit _SelectMany()_ können wir jedoch alle Produkte aus _productCategories_ in e
 ----
 var products = productCategories.SelectMany(p => p.Products).ToList();
 ----
+
+== Generieren von DateTime Werten mit Minuten- und Sekundenauflösung
+
+Wir betrachten folgende Berechnung:
+
+----
+125247 / 100 * 100
+----
+
+Das Ergebnis ist mathematsch klarerweise wieder 125247, da wir durch 100 teilen und danach wieder mit 100 multiplizieren.
+Da aber in C#, Java, C++ und vielen anderen Programmiersprachen die Division von Ganzzahlen ebenfalls eine Ganzzahl zurückgibt, wird hier zuerst 1252 berechnet.
+Multiplikation mit 100 ergibt dann 125200.
+Wir haben also den Wert auf Hunderter abgerundet.
+
+Für DateTime Werte können wir diese Technik verwenden, um auf Minuten- oder Sekundenauflösung zu runden.
+
+[source,csharp]
+----
+var dateTime = f.Date.Between(new DateTime(2024, 1, 1), new DateTime(2025, 1, 1));
+dateTime = new DateTime(dateTime.Ticks / TimeSpan.TicksPerMinute * TimeSpan.TicksPerMinute);
+----
+
+_Ticks_ ist das interne Zeitmaß von DateTime Werten.
+Es ist die Anzahl der 100-Nanosekunden Intervalle seit dem 1.1.0001, ähnlich wie Unix Time oder dem Timestamp in Javascript.
+
+Für "normale" Zahlen wie double oder decimal können wir _Math.Round()_ verwenden, um auf eine bestimmte Anzahl an Nachkommastellen zu runden.
 
 == Übung: Musterdaten für ein Bestellsystem
 
