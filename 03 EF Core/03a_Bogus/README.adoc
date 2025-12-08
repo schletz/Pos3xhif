@@ -251,6 +251,71 @@ var offers = new Faker<Offer>("de")
     1 Tag hat 86.400 Sekunden, somit ergibt `180 * 86_400` einen Zeitraum von 180 Tagen.
 <3> Da wir ein UNIQUE Constraint über die Spalten _StoreId_ und _ProductEan_ definiert haben, müssen wir sicherstellen, dass nicht doppelte Werte auftreten.
 
+== Generieren von einer gewissen Anzahl an abhängigen Daten
+
+Manchmal möchten wir bei einer 1:n Beziehung sicherstellen, dass für jedes Element der 1-Seite mindestens n Elemente der n-Seite generiert werden.
+Dafür können wir die Collection Navigation in ProductCategory verwenden und dort mit der entsprechenden Anzahl an Produkten füllen.
+Mit _GenerateForever()_ können wir unendlich viele Werte generieren und diese dann mit _Take(n)_ auf die gewünschte Anzahl beschränken.
+Da wir vorher ein _DistinctBy()_ auf die eindeutigen Felder anwenden, können wir sicherstellen, dass die gewünschten eindeutigen Werte generiert werden.
+
+[NOTE]
+Verwende _GenerateForever()_ immer mit einer Begrenzung wie _Take(n)_, da sonst unendlich viele Werte generiert werden.
+Wenn das Dataset zu klein ist, um die gewünschten eindeutigen Werte zu generieren, läuft die Methode ebenfalls endlos.
+Daher verwenden wir - wenn möglich - das _DistinctBy()_ im Nachhinein und nehmen eine kleinere Anzahl an Werten in Kauf.
+
+[source,csharp]
+----
+var productCategories = new Faker<ProductCategory>("de")
+    .CustomInstantiator(f =>
+    {
+        var name = f.Commerce.Categories(1)[0];
+        var nameEn = f.Commerce.Categories(1)[0].OrNull(f, 0.5f);
+        var productCategory = new ProductCategory(name, nameEn);
+
+        var products = new Faker<Product>("de")
+            .CustomInstantiator(f =>
+            {
+                var ean = f.Random.Int(10000, 99999);  // PK
+                var name = $"{f.Commerce.ProductName()} {f.Commerce.ProductName()}";
+                return new Product(ean, name, productCategory);
+            })
+            .GenerateForever()
+            .DistinctBy(p => p.Ean)
+            .DistinctBy(p => p.Name)
+            .Take(f.Random.Int(9, 10))   // Zwischen 9 und 10 Produkte pro Kategorie
+            .ToList();
+
+        productCategory.Products.AddRange(products);
+        return productCategory;
+    })
+    .Generate(10)
+    .DistinctBy(p => p.Name)
+    .ToList();
+----
+
+Die Anzahl der generierten Produkte pro Kategorie ist zufällig zwischen 9 und 10.
+
+[%header,cols="1,2,1",format=tsv]
+|===
+Id	Name	Count
+1	Beauty	9
+2	Movies	9
+3	Computers	10
+4	Music	10
+5	Outdoors	9
+6	Automotive	9
+7	Toys	10
+8	Home	9
+|===
+
+Durch diese Technik haben wir allerdings keine Liste aller Produkte mehr, da wir sie pro Kategorie generiert haben.
+Mit _SelectMany()_ können wir jedoch alle Produkte aus _productCategories_ in einer Liste sammeln.
+
+[source,csharp]
+----
+var products = productCategories.SelectMany(p => p.Products).ToList();
+----
+
 == Übung: Musterdaten für ein Bestellsystem
 
 image::./model_deliverymanager_1120.svg[]
