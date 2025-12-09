@@ -1,0 +1,170 @@
+= PLF in Programmieren und Software Engineering
+:source-highlighter: rouge
+:icons: font
+:pdf-page-header: true
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+
+____
+[.lead]
+Klasse: 5CAIF +
+Datum: DI, 9. Dezember 2025 +
+Arbeitszeit: 3 UE
+____
+
+== Wichtiger Hinweis vor Arbeitsbeginn
+
+Auf dem Laufwerk _Z_ finden Sie die Datei _Plf5caif_20251209.7z_.
+Klicken Sie mit der rechten Maustaste auf die Datei und wählen Sie _Weitere Optionen_ - _7-Zip_ und _Extract here_.
+Gehen Sie dann in den Ordner _Plf5caif_ und starten Sie die Datei _start_solution.cmd_.
+Diese Datei lädt zuerst alle Dependencies aus dem Internet und startet dann die sln Datei in diesem Ordner.
+Sie müssen das Programm nicht abgeben, denn Sie arbeiten direkt am Netzlaufwerk.
+
+[WARNING]
+====
+Füllen Sie die Datei _README.md_ in _Plf5caif/README.md_ mit Ihren Daten (Klasse, Name und Accountname) aus.
+Sie sehen die Datei in Visual Studio unter _Solution Items_ nach dem Öffnen der Solution.
+*Falls Sie dies nicht machen, kann Ihre Arbeit nicht zugeordnet und daher nicht bewertet werden!*
+====
+
+[WARNING]
+====
+Während der Prüfung ist der Internetzugriff gesperrt.
+Führen Sie daher niemals _Build_ - _Rebuild Solution_ aus, denn dadurch werden die lokalen Pakete gelöscht.
+Arbeiten Sie immer mit _Build_ - _Build Solution_ (F6).
+====
+
+== Aufgabe: Object Relation Mapping
+
+An unserer Schule können Personen Softwarelizenzen für verschiedene Programme erwerben.
+Zuerst wird die Software mit Name, Version und Hersteller (Vendor) erfasst.
+Viele Softwareprodukte arbeiten mit einem Lizenzserver, der die Lizenzen verwaltet.
+In der Klasse _Software_ wird daher eine Liste von Lizenzservern (_LicenseServer_) gespeichert.
+
+Die Personen (_Person_) werden mit Vorname und Nachname aus einem Fremdsystem übernommen.
+Jede Person kann maximal einen Benutzeraccount (_User_) besitzen, der mit einem Accountnamen und dem letzten Login gespeichert wird.
+
+Eine Lizenz kann entweder eine Userlizenz (_UserLicense_) oder eine Volumenlizenz (_VolumeLicense_) sein.
+Die Userlizenz ist an einen Benutzer (_User_) gebunden, während die Volumenlizenz nur über einen allgemeinen Lizenzschlüssel (_Key_) verfügt.
+Da Lizenzen eine Gültigkeitsdauer (_ValidityPeriod_) besitzen, wird diese als Value Object modelliert.
+Um kurzfristig Lizenzen deaktivieren zu können, wird ein Enum (_Activated_) verwendet, das den Status der Lizenz angibt.
+
+Um dies in einem System abzubilden, wurde folgendes Domain Model entworfen.
+
+
+[plantuml,format=svg]
+----
+include::model.puml[]
+----
+
+=== Arbeitsauftrag
+
+==== Erstellung der Modelklassen
+
+Implementieren Sie das dargestellte Diagramm Modelklassen für den OR Mapper.
+
+Im Projekt _Plf5caif.Application_ befinden sich leere Klassen sowie die Klasse _LicenseContext_, die Sie nutzen sollen.
+
+Beachten Sie bei der Umsetzung folgende Punkte:
+
+*Allgemeine Anforderungen*
+
+* Legen Sie nötige Konstruktoren an.
+  Ein _public_ Konstruktor soll alle im Modell enthaltenen Properties initialisieren.
+  Ergänzen Sie bei Bedarf die für den OR Mapper nötigen Konstruktoren.
+* Beachten Sie Attribute Constraints wie _not null_ (`++<<nn>>++`).
+* Verwenden sie eigene primary keys mit dem Namen _Id_ (autoincrement), außer im Modell ist mit _PK_ explizit ein Schlüssel mit `++<<PK>>++` angegeben.
+* Die Foreign Keys werden nach der Convention Propertyname + Name des PK generiert. Dies ist z. B. bei der Zuweisung des FKs der dependent Entities wichtig.
+
+*Fachliche Anforderungen*
+
+* Die generierten Tabellennamen sollen in Einzahl erzeugt werden (_Person_, _Software_, _User_, ...).
+* Eine Person kann maximal einen User besitzen.
+  Implementieren Sie die _1:0..1_ Beziehung entsprechend.
+* Das Attribut _User.Accountname_ soll ein _unique constraint_ besitzen.
+* Es dürfen nicht 2 Userlizenzen mit den gleichen Werten in _Software_ und _User_ angelegt werden können.
+  Stellen Sie dies durch ein unique constraint über diese 2 Spalten (also die darunterliegenden Fremdschlüssel) sicher.
+* Das Attribut _License.LicenseType_ soll als discriminator definiert werden.
+* Das Attribut _License.Validity_ soll als _value object_ definiert werden.
+  Die erzeugten Spalten sollen _Validity_From_ und _Validity_To_ in der Datenbank heißen (Standardverhalten in EF Core).
+* Das Attribut _Software.LicenseServers_ soll als Liste von _value objects_ definiert werden.
+  Achten Sie darauf, dass der Key der erzeugten Tabelle für die value objects _Id_ heißt.
+* Die Enum in _License.Activated_ soll als String mit den Stringwerten _A_ für den Wert _Active_ und _I_ für den Wert _Inactive_ gespeichert werden.
+* Das Attribut _Software.Version_ soll als _rich type_ definiert und als String gespeichert werden.
+* Implementieren Sie die Klasse _VersionNumber_ so, dass sie eine Versionsnummer im Format _Major.Minor.Patch_ (z. B. _1.0.0_ oder _2.1_) repräsentiert.
+  Implementieren Sie dazu einen Konstruktor, der die drei Ganzzahlen Major, Minor und Patch (optional) entgegennimmt, sowie einen weiteren Konstruktor, der eine String-Repräsentation der Versionsnummer entgegennimmt.
+  Sie können die `Split(string)`-Methode des Strings verwenden, um die einzelnen Teile der Versionsnummer zu extrahieren.
+  Mit `int.Parse(string)` können Sie einen String in eine Ganzzahl umwandeln.
+  Achten Sie darauf, dass der String aus 2 oder 3 Teilen besteht und dass Major und Minor immer gesetzt sind.
+  Ist dies nicht der Fall, werfen Sie mit `new LicenseException("Invalid version string.")` eine Exception.
+  Überschreiben Sie die Methode _ToString()_, sodass diese die Versionsnummer im Format _Major.Minor.Patch_ bzw. _Major.Minor_ (wenn Patch nicht gesetzt wurde) zurückgibt.
+
+[NOTE]
+Falls Sie Probleme mit der Klasse _VersionNumber_ haben, können Sie diese auch als einfaches Stringfeld in _Software.Version_ implementieren.
+
+Das durch den OR Mapper erzeugte Datenbankschema soll so aussehen:
+
+image::schema.png[]
+
+Der vorgegebene Test _T00_CanCreateDatabaseTest_ in _GradingTests_ prüft, ob mit Ihrer Implementierung überhaupt eine Datenbank erzeugt werden kann.
+*Läuft dieser Test nicht durch, können Sie keine positive Note erhalten.*
+
+Der vorgegebene Test _T00_SchemaTest_ in _GradingTests_ verwenden, um das Gesamtmodell zu prüfen. 
+Läuft dieser Test erfolgreich durch, sind Sie positiv.
+
+==== Verfassen von Tests
+
+In der Klasse _LicenseContextTests_ im Projekt _Plf5caif.Test_ sollen Testmethoden verfasst werden, die die Richtigkeit der Konfiguration des OR Mappers beweisen sollen.
+
+* _T01_InsertSoftwareWithUserLicenceTest_ zeigt, dass Sie eine Userlizenz mit zugehöriger Software anlegen und speichern können.
+* _T02_UserLicenceUserAndSoftwareIsUniqueTest_ zeigt, dass beim Einfügen einer zweiten Userlizenz mit gleichen Werten in _User_ und _Software_ ein Fehler beim Persistieren (_DbUpdateException_) geworfen wird.
+* _T03_AddSoftwareWithLicenceServersTest_ zeigt, dass Sie eine Software mit mehreren Lizenzservern anlegen und speichern können.
+  Achten Sie im Assert darauf, dass Sie ohne _Include_ beim Laden der Software auch auf die Liste der Lizenzserver zugreifen können (Anzahl prüfen).
+* _T04_VersionNumberFromNumericArgumentsReturnsCorrentStringTest_ prüft, ob die _ToString()_ Methode von _VersionNumber_ mit numerischen Argumenten den korrekten String zurückgibt.
+  Beispiele: `new VersionNumber(1,0)` liefert "1.0", `new VersionNumber(2,1,3)` liefert "2.1.3"
+
+=== Bewertung
+
+Um eine positive Beurteilung erreichen zu können, muss das Programm kompilieren und die implementierten Modelklassen müssen ein Erzeugen der Datenbank über den OR Mapper ermöglichen.
+
+[%header,cols="8,1",format=tsv]
+|===
+Aufgabe (36 Punkte in Summe)	Ges
+Das Entity Person wird mit den definierten Feldern Datenbank abgebildet.	1
+Das Entity Software wird mit den definierten Feldern Datenbank abgebildet.	1
+Das Entity User wird mit den definierten Feldern Datenbank abgebildet.	1
+Die Liste in Software.LicenseServer wird mit den definierten Feldern Datenbank abgebildet.	1
+Das Entity License wird mit den definierten Feldern Datenbank abgebildet.	1
+Das Entity UserLicense wird mit den definierten Feldern Datenbank abgebildet.	1
+Das Entity VolumeLicense wird mit den definierten Feldern Datenbank abgebildet.	1
+Die 1:1 Beziehung zwischen User und Person ist korrekt konfiguriert.	1
+User.Accountname ist unique	1
+Das Tupel UserLicence.Software und UserLicence.User ist unique.	2
+Licence.Validity ist als value object definiert.	1
+Software.LicenceServer ist als Liste von value objects definiert.	2
+Software.VersionNumber ist als rich type mit converter definiert.	2
+License.LicenseType ist als discriminator definiert.	1
+License.Activated wird mit den korrekten Werten (A und I) gespeichert.	2
+Mit der Klasse VersionNumber können Stringwerte aus der Datenbank korrekt eingelesen werden.	2
+Die Konstruktoren, Properties und die Methoden von VersionNumber arbeiten korrekt.	3
+Der Test T01_InsertSoftwareWithUserLicenceTest hat den richtigen Aufbau.	2
+Der Test T01_InsertSoftwareWithUserLicenceTest läuft durch.	1
+Der Test T02_UserLicenceUserAndSoftwareIsUniqueTest hat den richtigen Aufbau.	2
+Der Test T02_UserLicenceUserAndSoftwareIsUniqueTest läuft durch.	1
+Der Test T03_AddSoftwareWithLicenceServersTest hat den richtigen Aufbau.	2
+Der Test T03_AddSoftwareWithLicenceServersTest läuft durch.	1
+Der Test T04_VersionNumberFromNumericArgumentsReturnsCorrentStringTest hat den richtigen Aufbau.	2
+Der Test T04_VersionNumberFromNumericArgumentsReturnsCorrentStringTest läuft durch.	1
+|===
+
+36 - 32 Punkte: Sehr gut, 31 - 28 Punkte: Gut, 27 - 23 Punkte: Befriedigend, 22 - 19 Punkte: Genügend, 18 - 0 Punkte: Nicht genügend.

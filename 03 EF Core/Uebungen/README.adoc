@@ -18,3 +18,13 @@ Vorlagenprojekt:: link:Plf7abifcif_20251204/Plf7abifcif_20251204.7z[Plf7abifcif_
 Anmerkung:: Bei der Prüfung sind nur die Tests _T00_CanCreateDatabaseTest_ und _T00_SchemaTest_ in _GradingTests_ enthalten.
 Hier sind zur Selbstkontrolle alle Tests enthalten.
 
+== PLF vom 9.12.2025
+
+Thema:: Domainmodel mit EF Core (Vererbung, 1:1, rich types und value objects) und Unittests
+Modell:: image:Plf5caif_20251209/model.svg[Modell,50%]
+Angabendatei:: link:Plf5caif_20251209/Angabe.pdf[Angabe.pdf]
+Vorlagenprojekt:: link:Plf5caif_20251209/Plf5caif_20251209.7z[Plf5caif_20251209.7z]
+Anmerkung:: Bei der Prüfung sind nur die Tests _T00_CanCreateDatabaseTest_ und _T00_SchemaTest_ in _GradingTests_ enthalten.
+Hier sind zur Selbstkontrolle alle Tests enthalten.
+
+
