@@ -365,7 +365,7 @@ Die Datenbank hat einige Constraints, die berücksichtigt werden müssen:
 
 * _Restaurant.Name_ ist unique.
 * _Product.Name_ ist unique.
-* _Customer.Name_ ist unique.
+* _Customer.Email_ ist unique.
 * Es dürfen nicht 2 OrderItems mit gleicher Order und gleichem Produkt generiert werden.
 
 Für die fachliche Logik sind folgende Punkte zu berücksichtigen:
