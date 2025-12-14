@@ -342,6 +342,78 @@ Es ist die Anzahl der 100-Nanosekunden Intervalle seit dem 1.1.0001, ähnlich wi
 
 Für "normale" Zahlen wie double oder decimal können wir _Math.Round()_ verwenden, um auf eine bestimmte Anzahl an Nachkommastellen zu runden.
 
+== Für Profis: Generische Hilfsmethoden
+
+Wir erkennen in den oberen Beispielen, dass sich einige Codeblöcke wiederholen:
+
+* Instanzieren des Fakers vom Typ _T_
+* _Generate()_ und _ToList()_
+* Eventuell auch _DistinctBy()_
+* _AddRange()_ und _SaveChanges()_
+
+Die nachfolgenden Methoden _Generate()_ und _GenerateDistinct()_ bündeln diesen Ablauf für Entities vom Typ _T_:
+
+[source,csharp]
+----
+public class StoreContext : DbContext
+{
+    // ...
+
+    public void Seed()
+    {
+        // ...
+    }
+
+    private List<T> Generate<T>(Func<Faker, T> generator, int count) where T : class
+    {
+        var data = new Faker<T>("de")
+            .CustomInstantiator(generator)
+            .Generate(count)
+            .ToList();
+        var set = Set<T>();
+        set.AddRange(data);
+        SaveChanges();
+        return data;
+    }
+
+    private List<T> GenerateDistinct<T, Tkey>(Func<Faker, T> generator, int count, params Func<T, Tkey>[] distinctBys) where T : class
+    {
+        var dataEnumerable = new Faker<T>("de")
+            .CustomInstantiator(generator)
+            .GenerateForever();
+        foreach (var distinctBy in distinctBys) 
+            dataEnumerable = dataEnumerable.DistinctBy(distinctBy);
+        var data = dataEnumerable.Take(count).ToList();
+        var set = Set<T>();
+        set.AddRange(data);
+        SaveChanges();
+        return data;
+    }
+}
+----
+
+Nun können z. B. Entities mit weniger Codezeilen generiert und gespeichert werden:
+
+[source,csharp]
+----
+// Generates 10 customers.
+var candidates = Generate(f =>
+{
+    var lastName = f.Name.LastName();
+    var email = f.Internet.Email();
+    return new Customer(f.Name.FirstName(), lastName, email);
+}, 10);
+// Generates 5 departments, distinct by name.
+var departments = GenerateDistinct(
+    f => new Department(f.Commerce.Department()),
+    5, d => d.Name);
+// Generates 5 products, first distinct by ean, then by name.
+var products = GenerateDistinct(
+    f => new Product(f.Random.Int(10000, 99999), f.Commerce.ProductName()),
+    5, p => p.Ean, p => p.Name);    
+----
+
+
 == Übung: Musterdaten für ein Bestellsystem
 
 image::./model_deliverymanager_1120.svg[]
