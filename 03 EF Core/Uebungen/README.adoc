@@ -3,7 +3,7 @@
 == PLF vom 26.11.2025
 
 Thema:: Domainmodel mit EF Core (Vererbung, 1:1, rich types und value objects) und Unittests
-Modell:: image:Plf5akif_20251126/model.svg[Modell,50%]
+Modell:: link:Plf5akif_20251126/model.svg[image:Plf5akif_20251126/model.svg[Modell,25%]]
 Angabendatei:: link:Plf5akif_20251126/Angabe.pdf[Angabe.pdf]
 Vorlagenprojekt:: link:Plf5akif_20251126/Plf5akif.7z[Plf5akif.7z]
 Anmerkung:: Bei der Prüfung sind nur die Tests _T00_CanCreateDatabaseTest_ und _T00_SchemaTest_ in _GradingTests_ enthalten.
@@ -12,7 +12,7 @@ Hier sind zur Selbstkontrolle alle Tests enthalten.
 == PLF vom 4.12.2025
 
 Thema:: Domainmodel mit EF Core (Vererbung, 1:1, rich types und value objects) und Unittests
-Modell:: image:Plf7abifcif_20251204/model.svg[Modell,50%]
+Modell:: link:Plf7abifcif_20251204/model.svg[image:Plf7abifcif_20251204/model.svg[Modell,25%]]
 Angabendatei:: link:Plf7abifcif_20251204/Angabe.pdf[Angabe.pdf]
 Vorlagenprojekt:: link:Plf7abifcif_20251204/Plf7abifcif_20251204.7z[Plf7abifcif_20251204.7z]
 Anmerkung:: Bei der Prüfung sind nur die Tests _T00_CanCreateDatabaseTest_ und _T00_SchemaTest_ in _GradingTests_ enthalten.
@@ -21,10 +21,20 @@ Hier sind zur Selbstkontrolle alle Tests enthalten.
 == PLF vom 9.12.2025
 
 Thema:: Domainmodel mit EF Core (Vererbung, 1:1, rich types und value objects) und Unittests
-Modell:: image:Plf5caif_20251209/model.svg[Modell,50%]
+Modell:: link:Plf5caif_20251209/model.svg[image:Plf5caif_20251209/model.svg[Modell,25%]]
 Angabendatei:: link:Plf5caif_20251209/Angabe.pdf[Angabe.pdf]
 Vorlagenprojekt:: link:Plf5caif_20251209/Plf5caif_20251209.7z[Plf5caif_20251209.7z]
 Anmerkung:: Bei der Prüfung sind nur die Tests _T00_CanCreateDatabaseTest_ und _T00_SchemaTest_ in _GradingTests_ enthalten.
 Hier sind zur Selbstkontrolle alle Tests enthalten.
+
+== PLF vom 16.12.2025
+
+Thema:: Domainmodel mit EF Core (Vererbung, 1:1, rich types und value objects) und Unittests
+Modell:: link:Plf5aaif_20251216/model.svg[image:Plf5aaif_20251216/model.svg[Modell,25%]]
+Angabendatei:: link:Plf5aaif_20251216/Angabe.pdf[Angabe.pdf]
+Vorlagenprojekt:: link:Plf5aaif_20251216/Plf5aaif_20251216.7z[Plf5aaif_20251216.7z]
+Anmerkung:: Bei der Prüfung sind nur die Tests _T00_CanCreateDatabaseTest_ und _T00_SchemaTest_ in _GradingTests_ enthalten.
+Hier sind zur Selbstkontrolle alle Tests enthalten.
+
 
 
