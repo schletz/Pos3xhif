@@ -28,6 +28,14 @@ public class DeliveryContextTests
     {
         using var db = GetSeededDbContext();
 
+        // Mindestens eine Order hat einen Driver
+        Assert.True(
+            db.Orders.Any(o => o.Driver != null));
+
+        // Mindestens eine Order hat ein DeliveredAt date.
+        Assert.True(
+            db.Orders.Any(o => o.DeliveredAt != null));
+
         // Es gibt mindestens einen Fahrer ohne Orders
         Assert.True(
             db.Drivers.Include(d => d.Orders).Any(d => !d.Orders.Any()),
@@ -76,8 +84,8 @@ public class DeliveryContextTests
 
         Assert.True(
             deliveredOrders.All(o =>
-                o.OrderDate > o.DeliveredAt!.Value.AddHours(-2) &&
-                o.OrderDate < o.DeliveredAt!.Value.AddMinutes(-10)),
+                o.OrderDate >= o.DeliveredAt!.Value.AddHours(-2) &&
+                o.OrderDate <= o.DeliveredAt!.Value.AddMinutes(-10)),
             "Delivered orders must be within 2h and 10min before DeliveredAt");
     }
 
