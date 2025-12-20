@@ -253,6 +253,127 @@ public ContingentStatistics CalcContingentStatistics(int contingentId)
 }
 ----
 
+== Eager Loading vs. Projektion
+
+Ein häufiger Fehler bei der Arbeit mit EF Core ist die Annahme, dass man immer `.Include()` verwenden muss, um auf verknüpfte Daten zuzugreifen.
+Tatsächlich gibt es zwei grundlegend verschiedene Ansätze.
+
+=== Eager Loading (Laden der gesamten Entities)
+
+Beim **Eager Loading** sagen wir EF Core explizit, welche Navigation Properties (verknüpfte Tabellen) zusammen mit der Haupt-Entity geladen werden sollen.
+Das Ergebnis sind vollständige Instanzen deiner Model-Klassen.
+
+[source,csharp]
+----
+// Wir laden das Event-Objekt UND alle zugehörigen Show-Objekte vollständig in den Speicher
+var eventWithShows = _db.Events
+    .Include(e => e.Shows) 
+    .FirstOrDefault(e => e.Id == 1);
+
+// Danach können wir auf die Liste zugreifen
+Console.WriteLine(eventWithShows.Shows.Count);
+----
+
+* **Vorteil:** Man erhält "echte" Entities, die man ändern und wieder mit `_db.SaveChanges()` speichern kann.
+* **Nachteil:** Es werden oft viel mehr Daten geladen (alle Spalten), als eigentlich für die Anzeige benötigt werden.
+
+=== Projektion (Abbildung auf DTOs)
+
+Bei der **Projektion** verwenden wir `.Select()`, um genau zu definieren, welche Daten wir benötigen.
+EF Core ist hier "intelligent" genug: Wenn du im `Select` auf ein Navigation Property zugreifst, erstellt EF Core den nötigen SQL-Join automatisch.
+
+[source,csharp]
+----
+var eventDto = _db.Events
+    .Where(e => e.Id == 1)
+    .Select(e => new EventWithShowCountDto(
+        e.Id, 
+        e.Name, 
+        e.Shows.Count // EF Core generiert hierfür automatisch den Join/Subquery!
+    ))
+    .FirstOrDefault();
+----
+
+[NOTE]
+====
+**Die goldene Regel:**
+Wenn du `.Select()` verwendest, ist ein zusätzliches `.Include()` absolut **unnötig** und wird von EF Core ignoriert.
+Das `Select` definiert bereits alles, was geladen werden muss.
+====
+
+=== Vergleich der Ansätze
+
+[cols="1,2,2", options="header"]
+|===
+| Merkmal | Eager Loading (`.Include`) | Projektion (`.Select`)
+| **Rückgabetyp** | Model-Klasse (z. B. `Event`) | DTO-Klasse (z. B. `EventDto`)
+| **Verwendung** | Wenn Daten geändert/gelöscht werden sollen. | Wenn Daten nur angezeigt werden (Read-only / API).
+| **Performance** | Schlechter (lädt alle Spalten beider Tabellen). | Optimal (lädt nur die benötigten Spalten).
+| **Navigation** | Man muss `.Include()` manuell hinschreiben. | EF Core erkennt Abhängigkeiten im `Select` automatisch.
+|===
+
+[IMPORTANT]
+====
+In modernen Web-APIs solltest du zu bevorzugt Projektionen auf DTOs verwenden.
+Das schont die Datenbankressourcen und verhindert, dass interne Datenbankstrukturen (Entities) eins zu eins nach außen (Frontend) gegeben werden.
+====
+
+== Performance-Optimierung mit AsNoTracking()
+
+Standardmäßig "beobachtet" EF Core alle Entities, die aus der Datenbank geladen werden.
+Dies geschieht durch den sogenannten **Change Tracker**. Das ist nützlich, wenn wir Daten ändern wollen, aber es kostet Performance und Arbeitsspeicher.
+
+=== Der Change Tracker
+
+Wenn du eine Liste von Mitgliedern lädst, erstellt EF Core im Hintergrund eine Kopie (einen Snapshot) jedes Objekts.
+Wenn du später ein Property änderst und `_db.SaveChanges()` aufrufst, vergleicht EF Core das aktuelle Objekt mit dem Snapshot, um zu wissen, welches SQL `UPDATE` gesendet werden muss.
+
+=== Wann ist Tracking unnötig?
+
+In einem Service gibt es viele Methoden, die Daten nur **lesen**, um sie z. B. in einer Liste anzuzeigen.
+Hier wird niemals `SaveChanges()` aufgerufen. In diesen Fällen sollten wir das Tracking deaktivieren.
+
+[source,csharp]
+----
+public List<Member> GetAllMembersReadOnly()
+{
+    return _db.Members
+        .AsNoTracking() // Deaktiviert die Erstellung von Snapshots
+        .Where(m => m.IsActive)
+        .ToList();
+}
+----
+
+=== Die Vorteile von AsNoTracking()
+
+1. **Weniger Speicherverbrauch:** EF Core muss keine Snapshots der Objekte im RAM behalten.
+2. **Höhere Geschwindigkeit:** Der Vergleichsalgorithmus beim Speichern wird übersprungen.
+3. **Keine Seiteneffekte:** Es kann nicht passieren, dass versehentlich Daten in der DB geändert werden, nur weil man ein Property im Speicher für eine Anzeige kurzzeitig geändert hat.
+
+[NOTE]
+====
+Benutze `AsNoTracking()` **nur**, wenn du die geladenen Objekte danach nicht verändern und wieder speichern möchtest.
+Wenn du ein Objekt lädst, `AsNoTracking()` nutzt und dann `SaveChanges()` aufrufst, wird die Änderung **nicht** in die Datenbank übernommen.
+====
+
+=== Zusammenhang mit DTOs / Projektionen
+
+Ein wichtiger Punkt zur Entwarnung: Wenn du `.Select()` verwendest, um Daten in ein **DTO oder Record** zu transformieren, wird das Tracking für diese Objekte **automatisch deaktiviert**.
+
+[source,csharp]
+----
+// Hier ist AsNoTracking() technisch nicht nötig, da Records/DTOs 
+// vom Change Tracker ohnehin ignoriert werden.
+return _db.Members
+    .Select(m => new MemberDto(m.FirstName, m.LastName))
+    .ToList(); 
+----
+
+[NOTE]
+====
+Gewöhne dir an, bei allen Methoden, die eine Liste von Entities (`List<MyEntity>`) zurückgeben und nur für die Anzeige gedacht sind, standardmäßig `.AsNoTracking()` zu verwenden.
+====
+
 == Methoden für Datenänderungen schreiben
 
 Mit den DbSets können wir auf die Datenbank auch schreibend zugreifen.
