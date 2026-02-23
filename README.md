@@ -68,25 +68,29 @@
 
 ## Wichtiges zum Start
 
-### Installation der IDE Visual Studio 2022
+### Installation der IDE Visual Studio 2026
 
 Die verbreitetste IDE zur Entwicklung im .NET Bereich ist Visual Studio. Microsoft stellt unserer
 Schule eine Lizenz von Visual Studio Enterprise zur Verfügung.
 
-- Lade die Testversion von Visual Studio **Enterprise** von https://visualstudio.microsoft.com/de/downloads/
-  herunter.
-- Installiere die nachfolgenden Workloads und achte bei den Sprachpaketen darauf, nur *Englisch* auszuwählen.
-- Der Key wird im Unterricht ausgegeben.
+Lade von https://visualstudio.microsoft.com/de/downloads/ die *Enterprise* Version von Visual Studio 2026 herunter.
+Falls du unter macOS arbeitest, stelle sicher, dass du die neueste Rider Installation besitzt, die .NET 10 unterstützt.
 
-> **Hinweis:** Der Workload *.NET desktop development* wird nur für den 3. Jahrgang der HIF benötigt.
-> Für Kollegs und Aufbaulehrgänge ist nur *ASP.NET and web development* erforderlich.
+Wähle im Installer den Workload *ASP.NET* and web development_ aus.
+Installiere unter *Individual options* zusätzlich die .NET 8 Runtime, um ältere Projekte ausführen zu können.
+Unter *Language packs* wähle das englische Sprachpaket.
 
-![](vs_workloads_2.png)
+![](vs2026_installer_2041.png)
+
+Starte nach der Installation Visual Studio 2026.
+Du kannst mit *Help* - *Register Visual Studio* den Key eingeben.
+
+![](vs2026_activate_2041.png)
+
 
 ### Alternativ: Verwenden von JetBrains Rider
 
 Eine andere weit verbreitete Entwicklungsumgebung - gerade unter macOS - ist Rider von JetBrains.
-Ab der Version 2021.3 unterstützt Rider auch .NET 6.
 Wer mit IntelliJ gut arbeiten konnte, kann auch mit der Schullizenz Rider beziehen. Logge dich dafür
 auf https://account.jetbrains.com/login ein. Wer noch keinen Zugang hat, kann mit der Schul Mailadresse
 eine Lizenz gratis beziehen. Nach dem Login steht Rider als Download zur Verfügung.

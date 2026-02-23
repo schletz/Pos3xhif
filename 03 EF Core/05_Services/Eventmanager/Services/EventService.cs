@@ -2,12 +2,12 @@
 using Eventmanager.Model;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Eventmanager.Services;
 
-public record ContingentStatistics(int SoldTickets, int ReservedTickets, Show Show);
 
 public class EventService
 {
@@ -24,15 +24,12 @@ public class EventService
             .ToList();
     }
 
-
     public record EventWithShowCountDto(int EventId, string EventName, int ShowCount);
     public List<EventWithShowCountDto> GetEventsWithShowCount()
     {
         return _db.Events
             .Select(e => new EventWithShowCountDto(
-                e.Id,
-                e.Name,
-                e.Shows.Count))
+                e.Id, e.Name, e.Shows.Count()))
             .ToList();
     }
 
@@ -45,9 +42,12 @@ public class EventService
             .Where(e => e.Id == eventId)
             .Select(e => new EventWithShowsDto(
                 e.Id, e.Name,
-                e.Shows.Select(s => new ShowDto(s.Id, s.Date)).ToList()))
+                e.Shows
+                    .Select(s => new ShowDto(s.Id, s.Date))
+                    .ToList()))
             .FirstOrDefault();
     }
+    public record ContingentStatistics(int SoldTickets, int ReservedTickets, Show Show);
     public ContingentStatistics CalcContingentStatistics(int contingentId)
     {
         var statistics = _db.Contingents
@@ -64,7 +64,8 @@ public class EventService
     public int CreateReservation(int guestId, int contingentId, int pax, DateTime dateTime)
     {
         var contingent = _db.Contingents
-            .Include(c => c.Show).Include(c => c.Tickets).FirstOrDefault(c => c.Id == contingentId);
+            .FirstOrDefault(c => c.Id == contingentId);
+
         if (contingent is null)
             throw new EventServiceException("Invalid contingent id.");
         if (contingent.Show.Date < dateTime.AddDays(14))
