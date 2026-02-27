@@ -28,6 +28,7 @@
   - 💡[Übungen zu Domain Modelling](03%20EF%20Core/Uebungen/README.adoc) 💡
   - [Musterdaten erzeugen mit Bogus](03%20EF%20Core/03a_Bogus/README.adoc)
   - [Services mit EF Core](03%20EF%20Core/05_Services/README.adoc)
+  - 💡[Übung zu Services](03%20EF%20Core/05_Services/ServicePlf_6aaif/README.adoc) 💡
   - [Rich domain models](03%20EF%20Core/04_RichDomainModels/README.md)
   - [Database first](03%20EF%20Core/07_DatabaseFirst/README.md)
   - [Migrations](03%20EF%20Core/08_Migrations/README.md)
