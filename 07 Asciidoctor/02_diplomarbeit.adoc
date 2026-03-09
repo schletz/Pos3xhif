@@ -52,7 +52,7 @@ header:
 footer:
   recto:
     right:
-      content: '*{chapter-title}* | {page-number} of {page-count}'
+      content: '*{chapter-title}* | {page-number} von {page-count}'
   verso:
     left:
       content: '{page-number} von {page-count} | *{chapter-title}*'
@@ -68,7 +68,45 @@ Sonst entstehen merge Konflikte.
 Datei diplomarbeit_themenstellung.adoc::
 Dies ist die Vorlage für die individuellen Themenstellungen.
 Kopiere sie am Besten für jeden im Team und füge den Nachnamen zum Dateinamen hinzu.
-+
-TIP: Erstelle für jeden im Team ein Unterverzeichnis und binde die Datei mit `include::(verzeichnis)/diplomarbeit_themenstellung.adoc[]` in _diplomarbeit_gesamt.adoc_ ein.
-Die adoc Dateien haben meist externe Dateien wie Bilder, etc.
-Dies erhält die Übersichtlichkeit im Repo.
+
+[TIP]
+====
+Benenne die Datei _diplomarbeit_themenstellung.adoc_ in _diplomarbeit_name1.adoc_, _diplomarbeit_name2.adoc_, ... um
+und binde sie in _diplomarbeit_gesamt.adoc_ mit _include_ ein.
+Erstelle für jeden im Team ein Unterverzeichnis _assets_name1_, _assets_name2_, .... für Bilder und andere Dateien, die in den Themenstellungen inkludiert werden. 
+
+Achte darauf, dass die adoc Datei der einzelnen Themenstellungen im selben Verzeichnis wie die Gesamtdatei ist, damit Bildpfade nicht ungültig werden.
+====
+
+== Anpassen der Layoutdatei
+
+Die Datei link:diplomarbeit_gesamt.yml[diplomarbeit_gesamt.yml] definiert das Grundlayout.
+Auf link:https://github.com/asciidoctor/asciidoctor-pdf/blob/main/data/themes/default-theme.yml[der Github Seite von asciidoctor-pdf] siehst du das Basislayout.
+Du kannst alle diese Einstellungen in der yml Datei überschreiben.
+
+Um z. B. die Überschriften etwas kleiner zu gestalten und die Zitierungen in der selben Schriftgröße zu rendern,
+kann folgender Block in _diplomarbeit_gesamt.yml_ eingefügt werden:
+
+[source,yml]
+----
+heading:
+  part_break_before: always
+  chapter_break_before: always
+  # h1 is used for part titles (book doctype) or the doctitle (article doctype)
+  h1_font_size: floor($base_font_size_large * 2)
+  # h2 is used for chapter titles (book doctype only)
+  h2_font_size: floor($base_font_size_large * 1.59)
+  h3_font_size: round($base_font_size_large * 1.26)
+  h4_font_size: $base_font_size_large
+  h5_font_size: $base_font_size
+  h6_font_size: $base_font_size_small
+code:
+  font_size: ceil($base_font_size * 0.8)
+  line_height: 1.15
+list:
+  item_spacing: $vertical_rhythm / 6
+table:
+  cell_padding: 1.3
+quote:
+  font_size: $base_font_size
+----

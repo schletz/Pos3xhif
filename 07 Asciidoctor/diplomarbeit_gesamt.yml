@@ -9,7 +9,7 @@ header:
 footer:
   recto:
     right:
-      content: '*{chapter-title}* | {page-number} of {page-count}'
+      content: '*{chapter-title}* | {page-number} von {page-count}'
   verso:
     left:
       content: '{page-number} von {page-count} | *{chapter-title}*'
