@@ -56,6 +56,7 @@
 #### Asciidoctor
   - [Verwenden von Asciidoctor unter Windows/macOS](07%20Asciidoctor/01_install.md)
   - [Schreiben der Diplomarbeit mit AsciiDoc](07%20Asciidoctor/02_diplomarbeit.adoc)
+  - [Quellcode für die KI kopieren](07%20Asciidoctor/copy_code.adoc)
   - [Ein Preprocessor für AsciiDoc in C# mit ChatGPT](07%20Asciidoctor/03_preprocessor.adoc)
 #### Erweiterungskapitel: Professional C#
   - [Extension methods](Professional%20C%23/10_ExtensionMethods/README.md)
