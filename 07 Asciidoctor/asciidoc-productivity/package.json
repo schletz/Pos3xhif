@@ -1,0 +1,102 @@
+{
+  "name": "asciidoc-productivity",
+  "publisher": "schletz",
+  "displayName": "asciidoc-productivity",
+  "description": "Improves AsciiDoc editing features.",
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.110.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "asciidoc-productivity.insertSourceBlock",
+        "title": "Insert clipboard as source block"
+      },
+      {
+        "command": "asciidoc-productivity.insertImageBlock",
+        "title": "Insert image from URL"
+      },
+      {
+        "command": "asciidoc-productivity.insertTsvTable",
+        "title": "Insert clipboard as tsv table"
+      },
+      {
+        "command": "asciidoc-productivity.insertImageFromFile",
+        "title": "Insert image from file"
+      },
+      {
+        "command": "asciidoc-productivity.insertImageFromClipboard",
+        "title": "Insert image from clipboard"
+      },
+      {
+        "command": "asciidoc-productivity.insertFileAsSourceBlock",
+        "title": "Insert file as source block"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "asciidoc-productivity.insertSourceBlock",
+          "when": "editorLangId == asciidoc",
+          "group": "navigation@1"
+        },
+        {
+          "command": "asciidoc-productivity.insertTsvTable",
+          "when": "editorLangId == asciidoc",
+          "group": "navigation@2"
+        },
+        {
+          "command": "asciidoc-productivity.insertImageBlock",
+          "when": "editorLangId == asciidoc",
+          "group": "navigation@3"
+        },
+        {
+          "command": "asciidoc-productivity.insertImageFromFile",
+          "when": "editorLangId == asciidoc",
+          "group": "navigation@4"
+        },
+        {
+          "command": "asciidoc-productivity.insertImageFromClipboard",
+          "when": "editorLangId == asciidoc",
+          "group": "navigation@5"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "asciidoc-productivity.insertFileAsSourceBlock",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.110.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "typescript-eslint": "^8.56.1",
+    "eslint": "^9.39.3",
+    "typescript": "^5.9.3",
+    "ts-loader": "^9.5.4",
+    "webpack": "^5.105.3",
+    "webpack-cli": "^6.0.1",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2"
+  }
+}
