@@ -25,14 +25,31 @@ Prüfe daher mit `dotnet --list-sdks`, ob du die .NET 10 SDK installiert hast.
 Lade die Datei link:copy_code.cs[copy_code.cs] herunter und gehe in der Konsole in diesen Ordner.
 Mit `dotnet publish copy_code.cs` kompilierst du das Skript und erstellst eine _exe_ Datei.
 Sie wird in _artifacts/copy_code_ abgelegt.
-Kopiere die Datei aus diesem Ordner z. B. nach _C:\scripts_.
+Kopiere die Datei aus diesem Ordner z. B. nach _C:\scripts_ bzw. /User/(username)/scripts.
+Unter _macOS_ musst du mit _chmod a+x copy_code_ das Ausführungsrecht setzen.
 
 [TIP]
 ====
-Füge den Ordner _C:\scripts_ zur _PATH_ Variable hinzu.
-Eine Anleitung ist auf https://www.simplified.guide/microsoft-windows/path-add zu finden.
+Füge den Ordner _C:\scripts_ bzw. /User/(username)/scripts zur _PATH_ Variable hinzu.
+Eine Anleitung für Windows ist auf https://www.simplified.guide/microsoft-windows/path-add zu finden.
 Beachte, dass in einer deutschen Windows Installation der Begriff _environment variables_ mit _Umgebungsvariablen_ übersetzt wird.
 ====
+
+== Erzeugen einer "echten" exe Datei (optional)
+
+Wenn du *alle 3 property Optionen* in den ersten Zeilen durch
+
+[source,csharp]
+----
+#:property PublishAot=true
+----
+
+ersetzt, wird _dotnet publish_ eine "echte" exe Datei erstellen.
+Echt bedeutet, dass sie aus Maschinencode besteht, den z. B. auch kompilierte C Programme produzieren.
+Du brauchst unter Windows den Workload _Desktop development with C++_ in Visual Studio.
+Unter _macOS_ brauchst du _Command Line Tools for XCode_.
+
+Weitere Infos: link:https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot[Native AOT deployment]
 
 == Ausführen des Skripts
 

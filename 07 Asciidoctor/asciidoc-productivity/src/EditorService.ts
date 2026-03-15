@@ -27,8 +27,8 @@ export default class EditorService {
         if (this.editor.document.uri.scheme === 'file') {
             return vscode.Uri.file(path.dirname(this.editor.document.uri.fsPath));
         }
-        return useWorkspaceAsDefault 
-            ? vscode.workspace.workspaceFolders?.[0]?.uri 
+        return useWorkspaceAsDefault
+            ? vscode.workspace.workspaceFolders?.[0]?.uri
             : undefined;
     }
 
@@ -51,5 +51,12 @@ export default class EditorService {
     public getRelativeAsciiDocPath(targetPath: string): string {
         const docPath = path.dirname(this.editor.document.uri.fsPath);
         return path.relative(docPath, targetPath).replace(/\\/g, '/');
+    }
+
+    public async focusEditor(): Promise<void> {
+        if (this.editor && this.editor.document) {
+            await vscode.window.showTextDocument(
+                this.editor.document, this.editor.viewColumn, false);
+        }
     }
 }

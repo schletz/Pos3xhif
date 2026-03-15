@@ -1,0 +1,35 @@
+import * as vscode from 'vscode';
+import EditorService from './EditorService';
+import path from 'path';
+import { sourceTypes } from './globals';
+
+export async function insertFileAsSourceBlock(clickedUri: vscode.Uri) {
+    if (!clickedUri) {
+        vscode.window.showErrorMessage('Dieser Befehl muss aus dem Datei-Explorer aufgerufen werden.');
+        return;
+    }
+
+    try {
+        const editorService = new EditorService(); // Wirft den Error, falls kein Editor offen ist
+        const filePath = clickedUri.fsPath;
+        const fileName = path.basename(filePath);
+        const ext = path.extname(filePath).replace('.', '').toLowerCase();
+        const sourceHeader = sourceTypes[ext] !== undefined ? sourceTypes[ext] : "[source]";
+        if (sourceHeader === "") {
+            vscode.window.showWarningMessage(`Dateien vom Typ .${ext} können nicht als Source-Block eingefügt werden.`);
+            return;
+        }
+
+        const fileData = await vscode.workspace.fs.readFile(clickedUri);
+        const fileContent = Buffer.from(fileData).toString('utf8').replace(/^\uFEFF/, '');
+        const relativePath = editorService.getRelativeAsciiDocPath(filePath);
+        const block = `.link:${relativePath}[→ ${fileName}]\n${sourceHeader}\n----\n${fileContent}\n----\n`;
+        await editorService.insertAtCurrentPosition(block);
+        await editorService.focusEditor();
+
+    } catch (error: any) {
+        if (error instanceof Error) {
+            vscode.window.showErrorMessage(error.message);
+        }
+    }
+}

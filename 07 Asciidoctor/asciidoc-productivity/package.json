@@ -13,6 +13,38 @@
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
+    "configuration": {
+      "title": "AsciiDoc Productivity",
+      "properties": {
+        "asciidoc-productivity.includeExtensions": {
+          "type": "string",
+          "default": "cs|csproj|java|rb|json|js|ts|jsx|tsx|py|txt|xml|adoc|md|cmd|sh|sql|yaml|puml",
+          "description": "Regex für Dateiendungen, die beim Kopieren berücksichtigt werden sollen (z.B. 'cs|csproj|ts|html')."
+        },
+        "asciidoc-productivity.excludeDirectories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "bin",
+            "obj",
+            "node_modules"
+          ],
+          "description": "Verzeichnisse, die beim Kopieren ignoriert werden sollen."
+        },
+        "asciidoc-productivity.excludeFiles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "package-lock.json"
+          ],
+          "description": "Dateien, die beim Kopieren ignoriert werden sollen."
+        }
+      }
+    },
     "commands": [
       {
         "command": "asciidoc-productivity.insertSourceBlock",
@@ -37,9 +69,25 @@
       {
         "command": "asciidoc-productivity.insertFileAsSourceBlock",
         "title": "Insert file as source block"
+      },
+      {
+        "command": "asciidoc-productivity.copySourcesToClipboard",
+        "title": "Copy sources to clipboard",
+        "icon": "$(notebook-open-as-text)"
+      },
+      {
+        "command": "asciidoc-productivity.copyAsTsv",
+        "title": "Copy AsciiDoc Table as TSV to clipboard"
       }
     ],
     "menus": {
+      "view/title": [
+        {
+          "command": "asciidoc-productivity.copySourcesToClipboard",
+          "when": "view == workbench.explorer.fileView",
+          "group": "navigation"
+        }
+      ],
       "editor/context": [
         {
           "command": "asciidoc-productivity.insertSourceBlock",
@@ -65,12 +113,22 @@
           "command": "asciidoc-productivity.insertImageFromClipboard",
           "when": "editorLangId == asciidoc",
           "group": "navigation@5"
+        },
+        {
+          "command": "asciidoc-productivity.copyAsTsv",
+          "when": "editorLangId == asciidoc",
+          "group": "navigation@6"
         }
       ],
       "explorer/context": [
         {
           "command": "asciidoc-productivity.insertFileAsSourceBlock",
           "group": "navigation"
+        },
+        {
+          "command": "asciidoc-productivity.copySourcesToClipboard",
+          "when": "explorerResourceIsFolder",
+          "group": "2_workspace"
         }
       ]
     }
@@ -98,5 +156,9 @@
     "webpack-cli": "^6.0.1",
     "@vscode/test-cli": "^0.0.12",
     "@vscode/test-electron": "^2.5.2"
+  },
+  "dependencies": {
+    "mammoth": "^1.12.0",
+    "pdfreader": "^3.0.8"
   }
 }

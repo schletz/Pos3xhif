@@ -4,3 +4,4 @@
 **/obj
 *.htm*
 *.user
+.DS_Store
