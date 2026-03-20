@@ -20,7 +20,7 @@ Diese VS Code Extension ist ein Hilfsmittel, um das Schreiben von Dokumentatione
 
 == Installation
 
-Lade die Datei *link:asciidoc-productivity/asciidoc-productivity-1.0.0.vsix[asciidoc-productivity-1.0.0.vsix]* in einen Ordner auf deiner Festplatte.
+Lade die Datei *link:asciidoc-productivity/asciidoc-productivity-1.0.1.vsix[asciidoc-productivity-1.0.1.vsix]* in einen Ordner auf deiner Festplatte.
 Führe danach die folgenden Schritte durch:
 
 1. Öffne in VS Code die Ansicht für _Erweiterungen / Extensions_ (Shortcut: `Strg + Shift + X`).

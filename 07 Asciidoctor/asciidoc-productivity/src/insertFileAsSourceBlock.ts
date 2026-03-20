@@ -21,7 +21,7 @@ export async function insertFileAsSourceBlock(clickedUri: vscode.Uri) {
         }
 
         const fileData = await vscode.workspace.fs.readFile(clickedUri);
-        const fileContent = Buffer.from(fileData).toString('utf8').replace(/^\uFEFF/, '');
+        const fileContent = Buffer.from(fileData).getStringWithEncodingDetection();
         const relativePath = editorService.getRelativeAsciiDocPath(filePath);
         const block = `.link:${relativePath}[→ ${fileName}]\n${sourceHeader}\n----\n${fileContent}\n----\n`;
         await editorService.insertAtCurrentPosition(block);

@@ -1,5 +1,5 @@
 import { commands, ExtensionContext, Uri } from 'vscode';
-
+import './bufferExtensions';
 import { insertSourceBlock } from './insertSourceBlock';
 import { insertImageBlock } from './insertImageBlock';
 import { insertTsvTable } from './insertTsvTable';

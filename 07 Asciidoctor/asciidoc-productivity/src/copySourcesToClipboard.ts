@@ -53,7 +53,7 @@ const parsers: Record<string, (filename: vscode.Uri) => Promise<string>> = {
 export async function copySourcesToClipboard(
     clickedUri: vscode.Uri | undefined,
     configurationService: ConfigurationService) {
-    
+
     let targetUri = clickedUri;
     // Hat der User auf das Icon im Explorer beim Titel geklickt?
     if (!targetUri) {
@@ -80,7 +80,7 @@ export async function copySourcesToClipboard(
         const MAX_FILE_SIZE_BYTES = 10_485_760; // 10 MB
         const excludedDirectories = configurationService.getExcludedDirectories();
         const excludedFiles = configurationService.getExcludedFiles();
-        
+
         // Root Name von der targetUri ableiten
         const rootName = path.basename(targetUri.fsPath);
         const parentPath = path.dirname(targetUri.fsPath);
@@ -120,13 +120,13 @@ export async function copySourcesToClipboard(
                     }
                     else {
                         const fileData = await vscode.workspace.fs.readFile(itemUri);
-                        const fileContent = Buffer.from(fileData).toString('utf8').replace(/^\uFEFF/, '');
+                        const fileContent = Buffer.from(fileData).getStringWithEncodingDetection();
                         output += `${sourceHeader}\n----\n${fileContent}\n----\n\n`;
                     }
                 }
             }
         }
-        
+
         await processDirectory(targetUri, 1); // targetUri verwenden
         await vscode.env.clipboard.writeText(output.trim() + '\n');
         vscode.window.showInformationMessage(`Source code von '${rootName}' wurde kopiert!`);
