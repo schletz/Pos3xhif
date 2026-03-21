@@ -4,6 +4,7 @@
   "displayName": "asciidoc-productivity",
   "description": "Improves AsciiDoc editing features.",
   "version": "1.0.1",
+  "icon": "icon.png",
   "engines": {
     "vscode": "^1.110.0"
   },
