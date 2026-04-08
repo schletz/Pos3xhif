@@ -110,3 +110,8 @@ table:
 quote:
   font_size: $base_font_size
 ----
+
+== Drucken in der Schule
+
+Das Kopiersystem ist unter der Adresse *https://safeq01.htl-wien5.schule:9443/end-user/ui/login* erreichbar.
+Dort kannst du das PDF hochladen und bei einem Schulkopierer ausdrucken.
