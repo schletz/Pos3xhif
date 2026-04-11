@@ -20,7 +20,7 @@ Diese VS Code Extension ist ein Hilfsmittel, um das Schreiben von Dokumentatione
 
 == Installation
 
-Lade die Datei *link:asciidoc-productivity/asciidoc-productivity-1.0.1.vsix[asciidoc-productivity-1.0.1.vsix]* in einen Ordner auf deiner Festplatte.
+Lade die Datei *link:asciidoc-productivity/asciidoc-productivity-1.0.2.vsix[asciidoc-productivity-1.0.2.vsix]* in einen Ordner auf deiner Festplatte.
 Führe danach die folgenden Schritte durch:
 
 1. Öffne in VS Code die Ansicht für _Erweiterungen / Extensions_ (Shortcut: `Strg + Shift + X`).
@@ -38,9 +38,9 @@ Diese Extension bietet verschiedene Werkzeuge, die du alle über das _Rechtsklic
 Kopiere einen beliebigen Code. Mache einen Rechtsklick in dein AsciiDoc-Dokument und wähle `Insert as source block`. 
 Es öffnet sich oben eine Eingabezeile, in der du die Programmiersprache (z. B. `csharp`, `java`, `python`) eintippen kannst. Der Code wird dann perfekt formatiert als AsciiDoc-Source-Block eingefügt.
 
-=== 2. TSV-Tabellen einfügen (Insert as tsv table)
-Kopiere tabellenartige Daten (z. B. direkt aus Excel) in deine Zwischenablage. Wähle im Rechtsklick-Menü `Insert as tsv table`. 
-Die Extension erkennt automatisch die Anzahl der Spalten (anhand der Tabulatoren) und generiert einen fertigen AsciiDoc-Tabellen-Block im TSV-Format.
+=== 2. TSV-Tabellen einfügen (Insert as table)
+Kopiere tabellenartige Daten (z. B. direkt aus Excel) in deine Zwischenablage. Wähle im Rechtsklick-Menü `Insert as table`. 
+Die Extension erkennt automatisch die Anzahl der Spalten (anhand der Tabulatoren) und generiert einen fertigen AsciiDoc-Tabellen-Block.
 
 === 3. Bild aus lokaler Datei einfügen (Insert image from file)
 Du möchtest ein Bild einbinden, das auf deiner Festplatte liegt? Wähle `Insert image from file`. 

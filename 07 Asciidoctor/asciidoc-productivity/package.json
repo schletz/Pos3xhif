@@ -3,7 +3,7 @@
   "publisher": "schletz",
   "displayName": "asciidoc-productivity",
   "description": "Improves AsciiDoc editing features.",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "icon": "icon.png",
   "repository": {
     "type": "git",
@@ -62,7 +62,7 @@
       },
       {
         "command": "asciidoc-productivity.insertTsvTable",
-        "title": "Insert clipboard as tsv table"
+        "title": "Insert clipboard as table"
       },
       {
         "command": "asciidoc-productivity.insertImageFromFile",
