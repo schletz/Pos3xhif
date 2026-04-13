@@ -5,10 +5,10 @@ export async function insertImageFromFile() {
     try {
         const editorService = new EditorService();
 
-        // Wir nutzen die gekapselte Logik aus dem Service
+        // We use the encapsulated logic from the service
         const imagePath = await editorService.showOpenDialog({
             canSelectMany: false,
-            openLabel: 'Bild auswählen',
+            openLabel: 'Select image',
             filters: { 'Images': ['png', 'jpg', 'jpeg', 'gif', 'svg'] }
         });
 
@@ -21,7 +21,7 @@ export async function insertImageFromFile() {
         if (error instanceof Error) {
             vscode.window.showErrorMessage(error.message);
         } else {
-            vscode.window.showErrorMessage('Ein unbekannter Fehler ist aufgetreten.');
+            vscode.window.showErrorMessage('An unknown error occurred.');
         }
     }
 }

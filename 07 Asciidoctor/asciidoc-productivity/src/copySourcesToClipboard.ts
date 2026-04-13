@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import path from 'path';
 import * as mammoth from 'mammoth';
 import ConfigurationService from './ConfigurationService';
-// @ts-expect-error: Ignoriert den ESM/CommonJS Konflikt (TS1479)
+// @ts-expect-error: Ignore ESM/CommonJS conflict (TS1479)
 import { PdfReader } from "pdfreader";
 
 async function copyDocx(uri: vscode.Uri): Promise<string> {
@@ -14,8 +14,8 @@ async function copyDocx(uri: vscode.Uri): Promise<string> {
         return result.value.trim();
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
-        console.error(`Fehler beim Lesen der DOCX ${uri}:`, errorMessage);
-        return `[Fehler beim Extrahieren der DOCX-Datei: ${errorMessage}]`;
+        console.error(`Error reading DOCX ${uri}:`, errorMessage);
+        return `[Error extracting DOCX file: ${errorMessage}]`;
     }
 }
 
@@ -38,8 +38,8 @@ async function copyPdf(uri: vscode.Uri): Promise<string> {
         return content.trim();
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
-        console.error(`Fehler beim Lesen der PDF ${uri.fsPath}:`, errorMessage);
-        return `[Fehler beim Extrahieren der PDF-Datei: ${errorMessage}]`;
+        console.error(`Error reading PDF ${uri.fsPath}:`, errorMessage);
+        return `[Error extracting PDF file: ${errorMessage}]`;
     }
 }
 
@@ -57,7 +57,7 @@ export async function copySourcesToClipboard(
         if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
             targetUri = vscode.workspace.workspaceFolders[0].uri;
         } else {
-            vscode.window.showErrorMessage('Bitte öffne einen Ordner (Workspace) oder wähle ein Verzeichnis aus.');
+            vscode.window.showErrorMessage('Please open a folder (workspace) or select a directory.');
             return;
         }
     }
@@ -65,12 +65,12 @@ export async function copySourcesToClipboard(
     try {
         const stat = await vscode.workspace.fs.stat(targetUri);
         if (stat.type !== vscode.FileType.Directory) {
-            vscode.window.showErrorMessage('Bitte wähle ein Verzeichnis aus.');
+            vscode.window.showErrorMessage('Please select a directory.');
             return;
         }
 
         const includeExtensions = await vscode.window.showInputBox({
-            prompt: 'Zu berücksichtigende Erweiterungen. Regex Ausdruck. Beispiel: cs|java',
+            prompt: 'Extensions to consider. Regex expression. Example: cs|java',
             value: configurationService.getIncludeExtensions()
         }) ?? '';
         const extRegex = new RegExp(`^(${includeExtensions})$`, 'i');
@@ -113,7 +113,7 @@ export async function copySourcesToClipboard(
                         fileContent = await parsers[ext](itemUri);
                     } else {
                         const fileData = await vscode.workspace.fs.readFile(itemUri);
-                        // Behalte deine custom methode bei:
+                        // Keep your custom method:
                         fileContent = (Buffer.from(fileData) as any).getStringWithEncodingDetection();
                     }
 
@@ -127,31 +127,31 @@ export async function copySourcesToClipboard(
 
         await vscode.env.clipboard.writeText(output);
         const userChoice = await vscode.window.showInformationMessage(
-            `Source code von '${rootName}' als XML kopiert! Möchtest du den Inhalt auch als Datei speichern?`,
-            'Ja',
-            'Nein'
+            `Source code from '${rootName}' copied as XML! Would you also like to save the content as a file?`,
+            'Yes',
+            'No'
         );
 
-        if (userChoice === 'Ja') {
+        if (userChoice === 'Yes') {
             const saveUri = await vscode.window.showSaveDialog({
                 defaultUri: vscode.Uri.file(`${rootName}_sources.xml`),
                 filters: {
-                    'XML Dateien': ['xml'],
-                    'Alle Dateien': ['*']
+                    'XML Files': ['xml'],
+                    'All Files': ['*']
                 },
-                saveLabel: 'XML speichern'
+                saveLabel: 'Save XML'
             });
 
             if (saveUri) {
-                // Inhalt in ein Uint8Array/Buffer umwandeln und schreiben
+                // Convert content to Uint8Array/Buffer and write
                 const fileData = Buffer.from(output, 'utf8');
                 await vscode.workspace.fs.writeFile(saveUri, fileData);
-                vscode.window.showInformationMessage('XML-Datei erfolgreich gespeichert!');
+                vscode.window.showInformationMessage('XML file saved successfully!');
             }
         }
     } catch (error: any) {
         if (error instanceof Error) {
-            vscode.window.showErrorMessage(`Fehler beim Kopieren: ${error.message}`);
+            vscode.window.showErrorMessage(`Error during copying: ${error.message}`);
         }
     }
 }

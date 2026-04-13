@@ -1,99 +1,112 @@
 # AsciiDoc Productivity
 
-## 1. Quellcode aus der Zwischenablage einfügen (Insert as source block)
-Kopiere einen beliebigen Code. Mache einen Rechtsklick in dein AsciiDoc-Dokument und wähle _Insert as source block_. 
-Es öffnet sich oben eine Eingabezeile, in der du die Programmiersprache (z. B. _csharp_, _java_, _python_) eintippen kannst. Der Code wird dann perfekt formatiert als AsciiDoc-Source-Block eingefügt.
+## 1. Insert source code from clipboard (Insert as source block)
+Copy any code. Right-click in your AsciiDoc document and select _Insert as source block_.
+An input line will open at the top where you can type the programming language (e.g., _csharp_, _java_, _python_). The code will then be inserted as a perfectly formatted AsciiDoc source block.
 
-## 2. TSV-Tabellen einfügen (Insert as tsv table)
-Kopiere tabellenartige Daten (z. B. direkt aus Excel) in deine Zwischenablage. Wähle im Rechtsklick-Menü _Insert as tsv table_. 
-Die Extension erkennt automatisch die Anzahl der Spalten (anhand der Tabulatoren) und generiert einen fertigen AsciiDoc-Tabellen-Block im TSV-Format.
+## 2. Insert TSV tables (Insert as tsv table)
+Copy table-like data (e.g., directly from Excel) to your clipboard. Select _Insert as tsv table_ from the right-click menu.
+The extension automatically detects the number of columns (based on the tabs) and generates a completed AsciiDoc table block in TSV format.
 
-## 3. Bild aus lokaler Datei einfügen (Insert image from file)
-Du möchtest ein Bild einbinden, das auf deiner Festplatte liegt? Wähle _Insert image from file_. 
-Ein Dialogfenster öffnet sich im aktuellen Ordner. Wähle dein Bild aus. Die Extension berechnet vollautomatisch den _relativen Pfad_ von deinem Dokument zum Bild und fügt die korrekte _image::pfad/zum/bild.png[]_ Syntax ein.
-Hinweis: Damit der Pfad zur adoc Datei passt, muss du sie zuerst speichern.
+## 3. Insert image from local file (Insert image from file)
+Do you want to embed an image located on your hard drive? Select _Insert image from file_.
+A dialog window opens in the current folder. Select your image. The extension automatically calculates the _relative path_ from your document to the image and inserts the correct _image::path/to/image.png[]_ syntax.
+Note: To ensure the path matches the .adoc file, you must save the file first.
 
-## 4. Bild aus der Zwischenablage speichern (Insert image from clipboard)
-Du hast einen Screenshot gemacht und er liegt in deiner unsichtbaren Zwischenablage? 
-Wähle _Insert image from clipboard_. Ein Speichern-Dialog öffnet sich. Gib dem Bild einen Namen. Die Extension speichert das Bild aus dem Arbeitsspeicher auf deine Festplatte und fügt den Code mit dem relativen Pfad sofort ins Dokument ein.
-Hinweis: Damit der Pfad zur adoc Datei passt, muss du sie zuerst speichern.
+## 4. Save image from clipboard (Insert image from clipboard)
+Have you taken a screenshot that is currently in your clipboard?
+Select _Insert image from clipboard_. A save dialog will open. Give the image a name. The extension saves the image from memory to your hard drive and immediately inserts the code with the relative path into the document.
+Note: To ensure the path matches the .adoc file, you must save the file first.
 
-## 5. Bild aus dem Internet herunterladen (Insert image URL)
-Kopiere die URL eines Bildes (z. B. _https://beispiel.de/bild.png_) in die Zwischenablage. Wähle _Insert image URL_. 
-Die Extension lädt das Bild aus dem Internet herunter, fragt dich, wo du es lokal abspeichern möchtest, und fügt es dann mit der Angabe der ursprünglichen Quelle ins Dokument ein. So gehen keine Bilder verloren, falls die Website später offline geht.
-Hinweis: Damit der Pfad zur adoc Datei passt, muss du sie zuerst speichern.
+## 5. Download image from the internet (Insert image URL)
+Copy the URL of an image (e.g., _https://example.com/image.png_) to the clipboard. Select _Insert image URL_.
+The extension downloads the image from the internet, asks where you would like to save it locally, and then inserts it into the document along with the original source. This ensures that no images are lost if the website later goes offline.
+Note: To ensure the path matches the .adoc file, you must save the file first.
 
-## 6. AsciiDoc Tabelle als TSV in die Zwischenablage kopieren
-Markiere eine Tabelle in AsciiDoc mit dem Start- und Endzeichen (_|===_).
-Im Kontextmenü gibt es den Punkt _Copy AsciiDoc Table as TSV to clipboard_.
-Er kopiert die Tabelle als Tab getrennte Tabelle in die Zwischenablage.
-Diese Daten können dann z. B. in Excel eingefügt werden.
+## 6. Copy AsciiDoc table as TSV to clipboard
+Highlight a table in AsciiDoc including the start and end markers (_|===_).
+In the context menu, there is an option _Copy AsciiDoc Table as TSV to clipboard_.
+This copies the table as a tab-separated table to the clipboard.
+This data can then be pasted, for example, into Excel.
 
-## 7. Datei direkt als Code-Block importieren (File Explorer Feature)
-Das ist das mächtigste Feature für Programmierer: 
-Gehe in der _linken Dateibaum-Ansicht_ von VS Code (File Explorer) auf eine Code-Datei (z. B. _.cs_, _.java_, _.py_). Mache einen Rechtsklick _auf die Datei_ und wähle _Insert as source block_. 
-Die Extension liest die komplette Datei ein, erkennt die Programmiersprache automatisch, berechnet den relativen Pfad und fügt in deinem aktuell geöffneten AsciiDoc-Dokument einen klickbaren Link zur Datei samt dem Quellcode ein.
-Hinweis: Damit der Pfad zur adoc Datei passt, muss du sie zuerst speichern.
+## 7. Import file directly as code block (File Explorer Feature)
+This is the most powerful feature for programmers:
+In the _left-hand file tree view_ of VS Code (File Explorer), go to a code file (e.g., _.cs_, _.java_, _.py_). Right-click _on the file_ and select _Insert as source block_.
+The extension reads the entire file, automatically detects the programming language, calculates the relative path, and inserts a clickable link to the file along with the source code into your currently open AsciiDoc document.
+Note: To ensure the path matches the .adoc file, you must save the file first.
 
-## 8. Dateien eines Verzeichnisses in die Zwischenablage kopieren
-Gerade für KI Prompts wird der Source Code im Contextwindow benötigt.
-Beim Klicken auf ein *Verzeichnis* im File Explorer erscheint ein Menüpunkt _Copy sources to clipboard_.
-Wenn du den aktuellen Ordner kopieren möchtest, kannst du im Explorer auf den Button neben dem Verzeichnisnamen klicken (siehe Screenshot).
-Achte beim Prompten, ob auch der ganze Code kopiert wurde.
-Gerade im Free Plan ist das Contextwindow nur sehr begrenzt.
+## 8. Copy files of a directory to the clipboard
+Source code is required in the context window, especially for AI prompts.
+When clicking on a *directory* in the File Explorer, a menu item _Copy sources to clipboard_ appears.
+If you want to copy the current folder, you can click the button next to the directory name in the Explorer (see screenshot).
+When prompting, check whether the entire code was copied.
+Especially in the Free Plan, the context window is very limited.
 
+## 9. AI Features: LLM translate and LLM check spelling and grammar
 
-### Konfiguration
+You can translate a selected text or an entire file.
+_LLM: Translate_ is available in the context menu of the Editor and Explorer.
+_LLM: Check spelling and grammar_ is available when you select text in a document.
+An OpenAI compatible endpoint such as LM Studio, Ollama, etc., is required for these features.
 
-Vor jedem Start fragt die App, welche Erweiterungen berücksichtigt werden sollen.
-Die Vorbelegung wird aus der Datei _settings.json_ gelesen (_includeExtensions_).
+## Configuration
 
-Für die Erweiterungen _docx_ und _pdf_ ist ein Extraktor vorhanden (_mammoth_ für Worddateien, _pdfreader_ für PDF Dateien).
-Um auch diese Dateien zu kopieren, musst du die Erweiterungen _docx_ und _pdf_ in den Einstellungen hinzufügen bzw. vor dem Kopieren eingeben.
-
-Es werden keine Dateien gelesen, die über 10 MB groß sind.
-
-Die folgenden Einstellungen können in der _settings.json_ Datei gesetzt werden (Beispiele):
+The following settings can be set in the _settings.json_ file (examples):
 
 ```json
 "asciidoc-productivity.includeExtensions": "cs|csproj|java|rb|json|js|ts|jsx|tsx|py|txt|xml|adoc|md|cmd|sh|sql|yaml|puml",
 "asciidoc-productivity.excludeDirectories": ["bin", "obj", "node_modules", "TestResults"],
 "asciidoc-productivity.excludeFiles": ["package-lock.json"],
+"asciidoc-productivity.completionsUrl": "http://127.0.0.1:8000/v1/chat/completions",
+"asciidoc-productivity.llm": "LilaRest/gemma-4-31B-it-NVFP4-turbo",
+"asciidoc-productivity.maxOutputTokens": 4096,
 ```
 
-## Erweitern und Erstellen der VSIX Datei
+### For copy files to clipboard (explorer menu)
 
-Im auf https://github.com/Die-Spengergasse/course-pos-csharp_basics/tree/master/07%20Asciidoctor/asciidoc-productivity befindet sich der Quelltext.
+The app asks which extensions should be considered.
+The default is read from the _settings.json_ file (_includeExtensions_).
+
+An extractor is available for the _docx_ and _pdf_ extensions (_mammoth_ for Word files, _pdfreader_ for PDF files).
+To copy these files as well, you must add the _docx_ and _pdf_ extensions in the settings or enter them before copying.
+
+Files larger than 10 MB will not be read.
+
+## Extending the app and Creating the VSIX File
+
+The source code can be found at https://github.com/Die-Spengergasse/course-pos-csharp_basics/tree/master/07%20Asciidoctor/asciidoc-productivity.
 
 **package.json:**
-Definiert im Key _contributes_ die Menüeintrage und verweist auf die Methoden in der Extension.
+Defines the menu entries in the _contributes_ key and refers to the methods in the extension.
 
 **src/extension.ts:**
-Die eigentliche Extension.
-Sie wird zu Beginn geladen.
-Bei einem Klick auf das Menü wird die entsprechende Methode aufgerufen.
+The actual extension.
+It is loaded at the start.
+When a menu item is clicked, the corresponding method is called.
 
 **src/EditorService.ts:**
-Um die Methoden des Editors zusammenzufassen, gibt es hier eine klassische Servicedatei.
+A classic service file used to summarize the editor methods.
 
 **src/ConfigurationService.ts:**
-Liest die Konfiguration aus der Datei _settings.json_ und stellt diese der Applikation bereit.
+Reads the configuration from the _settings.json_ file and provides it to the application.
 
-## Testen
+**src/LLMService.ts:**
+A wrapper for the fetch requests to the OpenAI-compatible endpoint for LLM prompts.
 
-Wenn du mit _Open Folder_ das Verzeichnis der Extension öffnest, kannst du einfach mit _F5_ oder _Run -> Start Debugging_ ein VS Code Fenster öffnen und deine Extension zuerst einmal testen.
+### Debugging
 
-## Exportieren in eine VSIX Datei
+If you open the extension directory with _Open Folder_, you can simply open a VS Code window with _F5_ or _Run -> Start Debugging_ and test your extension.
 
-Um die Extension selbst zu bauen und in Visual Studio Code (VS Code) zu installieren, wird das globale Node.js Tool _@vscode/vsce_ benötigt.
-Du kannst es mit _npm install -g @vscode/vsce_ in der Konsole installieren.
-Gehe nun in den Ordner der Extension (dort, wo die _package.json_ liegt).
-Führe dann folgenden Befehl aus, um die fertige Installationsdatei zu generieren:
+### Exporting to a VSIX File
+
+To build the extension yourself and install it in Visual Studio Code (VS Code), the global Node.js tool _@vscode/vsce_ is required.
+You can install it via the console with _npm install -g @vscode/vsce_.
+Now go to the extension folder (where the _package.json_ is located).
+Then execute the following command to generate the finished installation file:
 
 ```bash
 vsce package --allow-missing-repository
 ```
 
-Nach dem Durchlauf findest du in deinem Ordner eine neue Datei mit der Endung _.vsix_ (z. B. _asciidoc-productivity-1.0.0.vsix_).
-Diese kannst du nun in VS Code installieren.
-
+After the process, you will find a new file with the extension _.vsix_ (e.g., _asciidoc-productivity-1.0.0.vsix_) in your folder.
+You can now install this in VS Code.

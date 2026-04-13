@@ -7,7 +7,7 @@ export async function insertTsvTable() {
 
         const clipboardText = await vscode.env.clipboard.readText();
         if (!clipboardText || clipboardText.trim() === '') {
-            vscode.window.showWarningMessage('Die Zwischenablage ist leer.');
+            vscode.window.showWarningMessage('Clipboard is empty.');
             return;
         }
 
@@ -25,7 +25,7 @@ export async function insertTsvTable() {
         if (error instanceof Error) {
             vscode.window.showErrorMessage(error.message);
         } else {
-            vscode.window.showErrorMessage('Ein unbekannter Fehler ist aufgetreten.');
+            vscode.window.showErrorMessage('An unknown error occurred.');
         }
     }
 }

@@ -9,6 +9,9 @@ import { insertFileAsSourceBlock } from './insertFileAsSourceBlock';
 import { copySourcesToClipboard } from './copySourcesToClipboard';
 import ConfigurationService from './ConfigurationService';
 import { copyAsTsv } from './copyAsTsv';
+import { translate } from './translate';
+import LLMService from './LLMService';
+import { checkSpelling } from './spellcheck';
 
 export function activate(context: ExtensionContext) {
     // --- BEFEHL 1: Source Block einfügen ---
@@ -47,6 +50,37 @@ export function activate(context: ExtensionContext) {
     let copyAsTsvCmd = commands.registerCommand(
         'asciidoc-productivity.copyAsTsv', copyAsTsv);
 
+    // --- BEFEHL 9: Übersetzung ---
+    let translateCmd = commands.registerCommand(
+        'asciidoc-productivity.translate',
+        async () => {
+            const configurationService = new ConfigurationService();
+            const llmService = new LLMService(configurationService);
+            await translate(configurationService, llmService, undefined);
+        }
+    );
+
+    // --- BEFEHL 10: Übersetzung (ganze Datei) ---
+    let translateEntireFileCmd = commands.registerCommand(
+        'asciidoc-productivity.translateEntireFile',
+        async (clickedUri?: Uri) => { // clickedUri wird vom Explorer übergeben
+            const configurationService = new ConfigurationService();
+            const llmService = new LLMService(configurationService);
+            await translate(configurationService, llmService, clickedUri);
+        }
+    );
+
+    // --- BEFEHL 10: Rechtschreibprüfung ---
+    let checkSpellingCmd = commands.registerCommand(
+        'asciidoc-productivity.checkSpelling',
+        async () => {
+            const configurationService = new ConfigurationService();
+            const llmService = new LLMService(configurationService);
+            await checkSpelling(configurationService, llmService);
+        }
+    );
+
+
     context.subscriptions.push(
         insertSourceBlockCmd,
         insertImageBlockCmd,
@@ -55,7 +89,10 @@ export function activate(context: ExtensionContext) {
         insertImageFromClipboardCmd,
         insertFileAsSourceBlockCmd,
         copySourcesToClipboardCmd,
-        copyAsTsvCmd
+        copyAsTsvCmd,
+        translateCmd,
+        translateEntireFileCmd,
+        checkSpellingCmd
     );
 }
 

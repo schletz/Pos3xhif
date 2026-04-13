@@ -8,11 +8,11 @@ export async function insertImageFromClipboard() {
         const editorService = new EditorService();
 
         if (!editorService.isDocumentSaved()) {
-            vscode.window.showErrorMessage('Bitte speichere das AsciiDoc-Dokument zuerst, um Bilder mit relativen Pfaden einzufügen.');
+            vscode.window.showErrorMessage('Please save the AsciiDoc document first to insert images with relative paths.');
             return;
         }
         const savePath = await editorService.showSaveDialog({
-            saveLabel: 'Bild speichern',
+            saveLabel: 'Save image',
             filters: { 'Images': ['png'] }
         });
         if (!savePath) { return; }
@@ -25,13 +25,13 @@ export async function insertImageFromClipboard() {
         } else if (platform === 'darwin') {
             script = `osascript -e 'set theFile to (open for access POSIX file "${savePath}" with write permission)' -e 'try' -e 'write (the clipboard as «class PNGf») to theFile' -e 'end try' -e 'close access theFile'`;
         } else {
-            vscode.window.showErrorMessage('Diese Funktion wird auf Linux nicht unterstützt.');
+            vscode.window.showErrorMessage('This function is not supported on Linux.');
             return;
         }
 
         exec(script, async (error) => {
             if (error) {
-                vscode.window.showErrorMessage('Fehler: Es konnte kein Bild in der Zwischenablage gefunden werden.');
+                vscode.window.showErrorMessage('Error: No image found in the clipboard.');
                 return;
             }
             await editorService.insertAtCurrentPosition(`image::${relativePath}[]\n`);
@@ -42,7 +42,7 @@ export async function insertImageFromClipboard() {
         if (error instanceof Error) {
             vscode.window.showErrorMessage(error.message);
         } else {
-            vscode.window.showErrorMessage('Ein unbekannter Fehler ist aufgetreten.');
+            vscode.window.showErrorMessage('An unknown error occurred.');
         }
     }
 }

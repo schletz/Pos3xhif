@@ -1,4 +1,6 @@
 = Precompiled Math
+:stem: latexmath
+
 Sample example, courtesy of link:https://github.com/aledomu[@aledomu], with inspiration from link:https://github.com/philwinder[@philwinder].
 
 == Equations in asciimath blocks

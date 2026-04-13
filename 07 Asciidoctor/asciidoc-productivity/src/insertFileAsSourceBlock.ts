@@ -5,18 +5,18 @@ import { sourceTypes } from './globals';
 
 export async function insertFileAsSourceBlock(clickedUri: vscode.Uri) {
     if (!clickedUri) {
-        vscode.window.showErrorMessage('Dieser Befehl muss aus dem Datei-Explorer aufgerufen werden.');
+        vscode.window.showErrorMessage('This command must be called from the file explorer.');
         return;
     }
 
     try {
-        const editorService = new EditorService(); // Wirft den Error, falls kein Editor offen ist
+        const editorService = new EditorService(); // Throws error if no editor is open
         const filePath = clickedUri.fsPath;
         const fileName = path.basename(filePath);
         const ext = path.extname(filePath).replace('.', '').toLowerCase();
         const sourceHeader = sourceTypes[ext] !== undefined ? sourceTypes[ext] : "[source]";
         if (sourceHeader === "") {
-            vscode.window.showWarningMessage(`Dateien vom Typ .${ext} können nicht als Source-Block eingefügt werden.`);
+            vscode.window.showWarningMessage(`Files of type .${ext} cannot be inserted as a source block.`);
             return;
         }
 

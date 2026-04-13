@@ -4,13 +4,13 @@ export async function copyAsTsv() {
     try {
         const editor = vscode.window.activeTextEditor;
         if (!editor) {
-            vscode.window.showErrorMessage('Kein Editor geöffnet.');
+            vscode.window.showErrorMessage('No editor open.');
             return;
         }
 
         const selection = editor.selection;
         if (selection.isEmpty) {
-            vscode.window.showWarningMessage('Bitte markiere zuerst eine AsciiDoc-Tabelle.');
+            vscode.window.showWarningMessage('Please select an AsciiDoc table first.');
             return;
         }
         const text =  editor.document.getText(selection);
@@ -28,17 +28,17 @@ export async function copyAsTsv() {
         });
         const tsvOutput = tsvRows.join('\n');
         if (!tsvOutput) {
-            vscode.window.showWarningMessage('Konnte keine Tabellendaten extrahieren.');
+            vscode.window.showWarningMessage('Could not extract table data.');
             return;
         }
         await vscode.env.clipboard.writeText(tsvOutput);
-        vscode.window.showInformationMessage('Tabelle als TSV in die Zwischenablage kopiert!');
+        vscode.window.showInformationMessage('Table copied to clipboard as TSV!');
 
     } catch (error: any) {
         if (error instanceof Error) {
             vscode.window.showErrorMessage(error.message);
         } else {
-            vscode.window.showErrorMessage('Ein unbekannter Fehler ist aufgetreten.');
+            vscode.window.showErrorMessage('An unknown error occurred.');
         }
     }
 }

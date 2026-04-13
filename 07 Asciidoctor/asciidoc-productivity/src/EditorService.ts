@@ -8,7 +8,7 @@ export default class EditorService {
     constructor() {
         const activeEditor = vscode.window.activeTextEditor;
         if (!activeEditor) {
-            throw new Error('Kein Editor geöffnet.');
+            throw new Error('No editor open.');
         }
         this.editor = activeEditor;
     }

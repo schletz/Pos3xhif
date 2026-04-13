@@ -24,4 +24,28 @@ export default class ConfigurationService {
             'excludeFiles', ["package-lock.json"])
             .map(file => file.toLowerCase());
     }
+    public getCompletionsUrl(): string {
+        const config = vscode.workspace.getConfiguration('asciidoc-productivity');
+
+        return config.get<string>(
+            'completionsUrl', "http://127.0.0.1:8000/v1/chat/completions");
+    }
+    public getLlm(): string {
+        const config = vscode.workspace.getConfiguration('asciidoc-productivity');
+
+        return config.get<string>(
+            'llm', "LilaRest/gemma-4-31B-it-NVFP4-turbo");
+    }
+    public getMaxOutputTokens(): number {
+        const config = vscode.workspace.getConfiguration('asciidoc-productivity');
+
+        return config.get<number>(
+            'maxOutputTokens', 4096);
+    }    
+    public getDefaultTargetLanguage(): string {
+        const config = vscode.workspace.getConfiguration('asciidoc-productivity');
+
+        return config.get<string>(
+            'defaultLanguage', "en-US");
+    }      
 }

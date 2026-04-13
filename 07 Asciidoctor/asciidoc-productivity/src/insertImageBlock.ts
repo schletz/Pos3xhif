@@ -7,28 +7,28 @@ export async function insertImageBlock() {
 
         const clipboardText = await vscode.env.clipboard.readText();
         if (!clipboardText) {
-            vscode.window.showWarningMessage('Die Zwischenablage ist leer.');
+            vscode.window.showWarningMessage('Clipboard is empty.');
             return;
         }
 
         const url = clipboardText.trim();
         if (!url.startsWith('http://') && !url.startsWith('https://')) {
-            vscode.window.showErrorMessage('Die Zwischenablage enthält keine gültige HTTP/HTTPS URL.');
+            vscode.window.showErrorMessage('Clipboard does not contain a valid HTTP/HTTPS URL.');
             return;
         }
         if (!editorService.isDocumentSaved()) {
-            vscode.window.showErrorMessage('Bitte speichere das AsciiDoc-Dokument zuerst, um Bilder mit relativen Pfaden einzufügen.');
+            vscode.window.showErrorMessage('Please save the AsciiDoc document first to insert images with relative paths.');
             return;
         }
         const savePath = await editorService.showSaveDialog({
-            saveLabel: 'Bild herunterladen & speichern',
+            saveLabel: 'Download & save image',
             filters: { 'Images': ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp'] }
         });
-        if (!savePath) { return; } // Benutzer hat den Dialog abgebrochen
+        if (!savePath) { return; } // User cancelled the dialog
 
         const response = await fetch(url);
         if (!response.ok) {
-            vscode.window.showErrorMessage(`Fehler beim Herunterladen des Bildes (Status: ${response.status}).`);
+            vscode.window.showErrorMessage(`Error downloading image (Status: ${response.status}).`);
             return;
         }
         const arrayBuffer = await response.arrayBuffer();
@@ -43,7 +43,7 @@ export async function insertImageBlock() {
         if (error instanceof Error) {
             vscode.window.showErrorMessage(error.message);
         } else {
-            vscode.window.showErrorMessage('Ein unbekannter Fehler ist aufgetreten.');
+            vscode.window.showErrorMessage('An unknown error occurred.');
         }
     }
 }

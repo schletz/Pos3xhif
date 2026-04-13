@@ -3,13 +3,12 @@
   "publisher": "schletz",
   "displayName": "asciidoc-productivity",
   "description": "Improves AsciiDoc editing features.",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "icon": "icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/Die-Spengergasse/course-pos-csharp_basics"
   },
-
   "engines": {
     "vscode": "^1.110.0"
   },
@@ -25,7 +24,7 @@
         "asciidoc-productivity.includeExtensions": {
           "type": "string",
           "default": "cs|csproj|java|rb|json|js|ts|jsx|tsx|py|txt|xml|adoc|md|cmd|sh|sql|yaml|puml",
-          "description": "Regex für Dateiendungen, die beim Kopieren berücksichtigt werden sollen (z.B. 'cs|csproj|ts|html')."
+          "description": "Regex for file extensions that should be considered when copying (e.g., 'cs|csproj|ts|html')."
         },
         "asciidoc-productivity.excludeDirectories": {
           "type": "array",
@@ -37,7 +36,7 @@
             "obj",
             "node_modules"
           ],
-          "description": "Verzeichnisse, die beim Kopieren ignoriert werden sollen."
+          "description": "Directories that should be ignored when copying."
         },
         "asciidoc-productivity.excludeFiles": {
           "type": "array",
@@ -47,7 +46,27 @@
           "default": [
             "package-lock.json"
           ],
-          "description": "Dateien, die beim Kopieren ignoriert werden sollen."
+          "description": "Files that should be ignored when copying."
+        },
+        "asciidoc-productivity.completionsUrl": {
+          "type": "string",
+          "default": "http://127.0.0.1:8000/v1/chat/completions",
+          "description": "OpenAI compatible LLM server."
+        },
+        "asciidoc-productivity.llm": {
+          "type": "string",
+          "default": "LilaRest/gemma-4-31B-it-NVFP4-turbo",
+          "description": "LLM to be used."
+        },
+        "asciidoc-productivity.maxOutputTokens": {
+          "type": "number",
+          "default": 4096,
+          "description": "Maximum token count of the response."
+        },        
+        "asciidoc-productivity.getDefaultTargetLanguage": {
+          "type": "string",
+          "default": "en-US",
+          "description": "Default target language for translations."
         }
       }
     },
@@ -84,6 +103,18 @@
       {
         "command": "asciidoc-productivity.copyAsTsv",
         "title": "Copy AsciiDoc Table as TSV to clipboard"
+      },
+      {
+        "command": "asciidoc-productivity.translate",
+        "title": "LLM: Translate"
+      },
+      {
+        "command": "asciidoc-productivity.translateEntireFile",
+        "title": "LLM: Translate entire file"
+      },      
+      {
+        "command": "asciidoc-productivity.checkSpelling",
+        "title": "LLM: Check spelling and grammar"
       }
     ],
     "menus": {
@@ -124,11 +155,25 @@
           "command": "asciidoc-productivity.copyAsTsv",
           "when": "editorLangId == asciidoc",
           "group": "navigation@6"
+        },
+        {
+          "command": "asciidoc-productivity.translate",
+          "when": "editorHasSelection",
+          "group": "navigation@7"
+        },
+        {
+          "command": "asciidoc-productivity.checkSpelling",
+          "when": "editorHasSelection",
+          "group": "navigation@8"
         }
       ],
       "explorer/context": [
         {
           "command": "asciidoc-productivity.insertFileAsSourceBlock",
+          "group": "navigation"
+        },
+        {
+          "command": "asciidoc-productivity.translateEntireFile",
           "group": "navigation"
         },
         {
