@@ -6,6 +6,7 @@
 # Datum: 23.11.2024
 # Beschreibung: Dieses Skript konvertiert AsciiDoc-Dateien (adoc)
 #               in PDF, DOCX, Markdown (md) oder HTML mithilfe von Docker.
+#               Unterstützt die Weitergabe beliebiger Parameter (KWARGS).
 # ===============================================================
 
 # Überprüfen, ob Docker läuft.
@@ -32,74 +33,68 @@ fi
 # Überprüfen der Eingabeparameter
 if [ -z "$1" ]; then
     echo "[ERROR] Es wurde keine Eingabedatei angegeben."
-    echo "Nutzung: ./convert_adoc.sh eingabedatei.adoc ausgabedatei.[pdf|docx|md|html]"
+    echo "Nutzung: ./convert_adoc.sh eingabedatei.adoc ausgabedatei.[pdf|docx|md|html] [weitere asciidoctor Parameter...]"
     exit 1
 fi
 
 if [ -z "$2" ]; then
     echo "[ERROR] Es wurde keine Ausgabedatei angegeben."
-    echo "Nutzung: ./convert_adoc.sh eingabedatei.adoc ausgabedatei.[pdf|docx|md|html]"
+    echo "Nutzung: ./convert_adoc.sh eingabedatei.adoc ausgabedatei.[pdf|docx|md|html] [weitere asciidoctor Parameter...]"
     exit 1
 fi
 
-if [ "$3" == "--processor" ]; then
-    if [ ! -d "$4" ]; then
-        echo "[ERROR] Das Verzeichnis $4 existiert nicht."
-        exit 1
-    else
-        PROCESSOR_DIR="$4"
-    fi
-fi
-
-# Parameter setzen
+# Pflicht-Parameter setzen
 INPUT_FILE="$1"
 OUTPUT_FILE="$2"
 
+# Die ersten beiden Parameter ($1 und $2) verwerfen
+shift 2
+
+# Alle verbleibenden Parameter in KWARGS speichern
+KWARGS="$@"
+
 # Erweiterung der Ausgabedatei extrahieren
 EXT="${OUTPUT_FILE##*.}"
-BASENAME="${OUTPUT_FILE%.*}"
-BASENAME_INPUT_FILE="${INPUT_FILE%.*}"
 
-# Überprüfen, ob ein Theme-File existiert
-if [ -f "${BASENAME_INPUT_FILE}.yml" ]; then
-    THEME_OPTION="--theme \"${BASENAME_INPUT_FILE}.yml\""
-else
-    THEME_OPTION=""
-fi
+# Den reinen Dateinamen ohne Pfad und Endung extrahieren
+BASENAME=$(basename "${OUTPUT_FILE%.*}")
+BASENAME_INPUT_FILE=$(basename "${INPUT_FILE%.*}")
 
-# Wurde ein Processor angegeben, rufen wir ihn auf
-if [ -n "$PROCESSOR_DIR" ]; then
-    echo "[INFO] Führe Processor aus..."
-    dotnet restore "$PROCESSOR_DIR" --no-cache
-    if ! dotnet run --project "$PROCESSOR_DIR" -- "$INPUT_FILE" > "${BASENAME}.processed.adoc"; then
-        echo "[ERROR] Fehler beim Ausführen des Processors."
-        exit 1
+# Automatisches Theme prüfen
+AUTO_THEME=""
+# Prüfen ob --theme in KWARGS vorkommt. Nur wenn nicht, Fallback nutzen.
+if [[ ! "$KWARGS" == *"--theme"* ]]; then
+    if [ -f "${BASENAME_INPUT_FILE}.yml" ]; then
+        AUTO_THEME="--theme '${BASENAME_INPUT_FILE}.yml'"
     fi
-    INPUT_FILE="${BASENAME}.processed.adoc"
 fi
 
 # Entscheidung basierend auf der Erweiterung
 case "$EXT" in
-    pdf)
+    pdf|PDF)
         echo "[INFO] Konvertiere \"$INPUT_FILE\" nach PDF..."
-        [ -n "$THEME_OPTION" ] && echo "[INFO] Verwende Theme-Parameter $THEME_OPTION"
+        [ -n "$AUTO_THEME" ] && echo "[INFO] Verwende Auto-Theme: $AUTO_THEME"
+        [ -n "$KWARGS" ] && echo "[INFO] Zusätzliche Parameter (KWARGS): $KWARGS"
         docker run -i --rm -v "$(pwd)":/documents asciidoctor-pandoc \
-            sh -c "asciidoctor-pdf $THEME_OPTION -r asciidoctor-mathematical -r asciidoctor-diagram -a allow-uri-read -a stem -a mathematical-format=svg -o '${BASENAME}.pdf' \"$INPUT_FILE\" && rm -rf .asciidoctor"
+            sh -c "asciidoctor-pdf $AUTO_THEME $KWARGS -r asciidoctor-mathematical -r asciidoctor-diagram -a allow-uri-read -a stem -a mathematical-format=svg -o '${BASENAME}.pdf' \"$INPUT_FILE\" && rm -rf .asciidoctor"
         ;;
-    docx)
+    docx|DOCX)
         echo "[INFO] Konvertiere \"$INPUT_FILE\" nach DOCX..."
+        [ -n "$KWARGS" ] && echo "[INFO] Zusätzliche Parameter (KWARGS): $KWARGS"
         docker run -i --rm -v "$(pwd)":/documents asciidoctor-pandoc \
-            sh -c "asciidoctor -b docbook5 -r asciidoctor-diagram -a data-uri -o - \"$INPUT_FILE\" | pandoc -f docbook -t docx --highlight-style pygments -o '${BASENAME}.docx' && rm -rf .asciidoctor"
+            sh -c "asciidoctor -b docbook5 $KWARGS -r asciidoctor-diagram -a data-uri -o - \"$INPUT_FILE\" | pandoc -f docbook -t docx --highlight-style pygments -o '${BASENAME}.docx' && rm -rf .asciidoctor"
         ;;
-    md)
+    md|MD)
         echo "[INFO] Konvertiere \"$INPUT_FILE\" nach Markdown..."
+        [ -n "$KWARGS" ] && echo "[INFO] Zusätzliche Parameter (KWARGS): $KWARGS"
         docker run -i --rm -v "$(pwd)":/documents asciidoctor-pandoc \
-            sh -c "asciidoctor -b docbook5 -r asciidoctor-diagram -a data-uri -o - \"$INPUT_FILE\" | pandoc -f docbook -t gfm --highlight-style pygments -o '${BASENAME}.md' && rm -rf .asciidoctor"
+            sh -c "asciidoctor -b docbook5 $KWARGS -r asciidoctor-diagram -a data-uri -o - \"$INPUT_FILE\" | pandoc -f docbook -t gfm --highlight-style pygments -o '${BASENAME}.md' && rm -rf .asciidoctor"
         ;;
-    html)
+    html|HTML)
         echo "[INFO] Konvertiere \"$INPUT_FILE\" nach HTML..."
+        [ -n "$KWARGS" ] && echo "[INFO] Zusätzliche Parameter (KWARGS): $KWARGS"
         docker run -i --rm -v "$(pwd)":/documents asciidoctor-pandoc \
-            sh -c "asciidoctor -b html -r asciidoctor-diagram -a data-uri -o '${BASENAME}.html' \"$INPUT_FILE\" && rm -rf .asciidoctor"
+            sh -c "asciidoctor -b html $KWARGS -r asciidoctor-diagram -a data-uri -o '${BASENAME}.html' \"$INPUT_FILE\" && rm -rf .asciidoctor"
         ;;
     *)
         echo "[ERROR] Unbekannte Ausgabedateierweiterung '$EXT'. Unterstützt sind: pdf, docx, md, html"
