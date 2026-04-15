@@ -42,7 +42,15 @@ If you want to copy the current folder, you can click the button next to the dir
 When prompting, check whether the entire code was copied.
 Especially in the Free Plan, the context window is very limited.
 
-## 9. AI Features: LLM translate and LLM check spelling and grammar
+## 9. PDF generation
+
+In the Explorer context menu, you can export an ADOC file to PDF.
+Right-click on the file.
+
+**Prerequisite: Docker must be installed**.
+The conversion is executed with the Docker image *asciidoctor/docker-asciidoctor*.
+
+## 10. AI Features: LLM translate and LLM check spelling and grammar
 
 You can translate a selected text or an entire file.
 _LLM: Translate_ is available in the context menu of the Editor and Explorer.

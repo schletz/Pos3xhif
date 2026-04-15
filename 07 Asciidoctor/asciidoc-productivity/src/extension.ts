@@ -7,6 +7,7 @@ import { insertImageFromFile } from './insertImageFromFile';
 import { insertImageFromClipboard } from './insertImageFromClipboard';
 import { insertFileAsSourceBlock } from './insertFileAsSourceBlock';
 import { copySourcesToClipboard } from './copySourcesToClipboard';
+import { exportAsPdf } from './exportAsPdf';
 import ConfigurationService from './ConfigurationService';
 import { copyAsTsv } from './copyAsTsv';
 import { translate } from './translate';
@@ -79,7 +80,10 @@ export function activate(context: ExtensionContext) {
             await checkSpelling(configurationService, llmService);
         }
     );
-
+    // --- BEFEHL 11: Export als PDF ---
+    let exportAsPdfCmd = commands.registerCommand(
+        'asciidoc-productivity.exportAsPdf',
+        async (clickedUri: Uri) => await exportAsPdf(clickedUri));
 
     context.subscriptions.push(
         insertSourceBlockCmd,
@@ -92,7 +96,8 @@ export function activate(context: ExtensionContext) {
         copyAsTsvCmd,
         translateCmd,
         translateEntireFileCmd,
-        checkSpellingCmd
+        checkSpellingCmd,
+        exportAsPdfCmd
     );
 }
 
