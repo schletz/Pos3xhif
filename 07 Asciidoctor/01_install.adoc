@@ -32,6 +32,8 @@ Lade die folgenden Extensions herunter:
 - link:https://marketplace.visualstudio.com/items?itemName=asciidoctor.asciidoctor-vscode[Asciidoctor]
 - link:https://marketplace.visualstudio.com/items?itemName=schletz.asciidoc-productivity[asciidoc-productivity]
 
+Die Extension _asciidoc-productivity_ wird link:04_adoc_productivity.adoc[→ in diesem Kapitel] genauer beschrieben.
+
 == Browser-Extension für AsciiDoc
 
 Wenn du AsciiDoc-Dokumente live über den Browser rendern möchtest, kannst du die Extension **Asciidoctor.js Live Preview** von https://docs.asciidoctor.org/browser-extension/install/ installieren.
