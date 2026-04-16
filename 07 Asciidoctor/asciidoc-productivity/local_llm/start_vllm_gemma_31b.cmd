@@ -1,5 +1,5 @@
 docker build -t my-vllm-gemma4 .
-docker run --gpus all ^
+docker create --gpus all ^
   -v %USERPROFILE%/.cache/huggingface:/root/.cache/huggingface ^
   -p 8000:8000 ^
   --name vllm-gemma4 ^

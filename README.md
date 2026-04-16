@@ -54,11 +54,9 @@
   - [Howto: Löschen der History, Ändern des Autors](06%20Git/10_reset_history.md)
   - [Für Lehrende: Exportieren des git logs](06%20Git/20_check_logs.md) :fearful:
 #### Asciidoctor
-  - [Verwenden von Asciidoctor unter Windows/macOS](07%20Asciidoctor/01_install.md)
-  - [Schreiben der Diplomarbeit mit AsciiDoc](07%20Asciidoctor/02_diplomarbeit.adoc)
+  - [Verwenden von Asciidoctor unter Windows/macOS](07%20Asciidoctor/01_install.adoc)
   - [Die AsciiDoc Productivity Extension für VS Code](07%20Asciidoctor/04_adoc_productivity.adoc)
-  - [Quellcode für die KI kopieren](07%20Asciidoctor/copy_code.adoc)
-  - [Ein Preprocessor für AsciiDoc in C# mit ChatGPT](07%20Asciidoctor/03_preprocessor.adoc)
+  - [Schreiben der Diplomarbeit mit AsciiDoc](07%20Asciidoctor/02_diplomarbeit.adoc)
 #### Erweiterungskapitel: Professional C#
   - [Extension methods](Professional%20C%23/10_ExtensionMethods/README.md)
   - [Generics](Professional%20C%23/20_Generics/README.md)
