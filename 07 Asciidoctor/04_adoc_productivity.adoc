@@ -14,7 +14,7 @@ ifdef::env-github[]
 :file-code-o: :page_facing_up:
 endif::[]
 
-image::extension_screenshot_830.png[]
+image::extension_screenshot_2103.png[]
 
 Diese VS Code Extension ist ein Hilfsmittel, um das Schreiben von Dokumentationen, Arbeiten und Berichten in AsciiDoc massiv zu beschleunigen. Sie automatisiert das Einfügen von Quellcode, Tabellen und Bildern, sodass der Fokus auf dem Inhalt und nicht auf der Syntax liegt.
 

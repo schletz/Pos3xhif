@@ -13,6 +13,7 @@ import { copyAsTsv } from './copyAsTsv';
 import { translate } from './translate';
 import LLMService from './LLMService';
 import { checkSpelling } from './spellcheck';
+import { showPreview } from './showPreview';
 
 export function activate(context: ExtensionContext) {
     // --- BEFEHL 1: Source Block einfügen ---
@@ -85,6 +86,11 @@ export function activate(context: ExtensionContext) {
         'asciidoc-productivity.exportAsPdf',
         async (clickedUri: Uri) => await exportAsPdf(clickedUri));
 
+    let showPreviewCmd = commands.registerCommand(
+        'asciidoc-productivity.showPreview',
+        () => showPreview(context)
+    );
+
     context.subscriptions.push(
         insertSourceBlockCmd,
         insertImageBlockCmd,
@@ -97,7 +103,8 @@ export function activate(context: ExtensionContext) {
         translateCmd,
         translateEntireFileCmd,
         checkSpellingCmd,
-        exportAsPdfCmd
+        exportAsPdfCmd,
+        showPreviewCmd
     );
 }
 

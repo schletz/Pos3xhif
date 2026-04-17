@@ -1,5 +1,7 @@
 # AsciiDoc Productivity
 
+![](https://raw.githubusercontent.com/Die-Spengergasse/course-pos-csharp_basics/master/07%20Asciidoctor/extension_screenshot_2103.png)
+
 ## 1. Insert source code from clipboard (Insert as source block)
 Copy any code. Right-click in your AsciiDoc document and select _Insert as source block_.
 An input line will open at the top where you can type the programming language (e.g., _csharp_, _java_, _python_). The code will then be inserted as a perfectly formatted AsciiDoc source block.
@@ -56,6 +58,8 @@ You can translate a selected text or an entire file.
 _LLM: Translate_ is available in the context menu of the Editor and Explorer.
 _LLM: Check spelling and grammar_ is available when you select text in a document.
 An OpenAI compatible endpoint such as LM Studio, Ollama, etc., is required for these features.
+
+## 11. Preview with highlight.js and PlantUML rendering
 
 ## Configuration
 

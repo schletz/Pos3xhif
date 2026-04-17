@@ -3,11 +3,12 @@
   "publisher": "schletz",
   "displayName": "asciidoc-productivity",
   "description": "Improves AsciiDoc editing features.",
-  "version": "1.0.4",
+  "version": "1.0.8",
   "icon": "icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Die-Spengergasse/course-pos-csharp_basics"
+    "url": "https://github.com/Die-Spengergasse/course-pos-csharp_basics",
+    "directory": "07 Asciidoctor/asciidoc-productivity"
   },
   "engines": {
     "vscode": "^1.110.0"
@@ -119,6 +120,14 @@
       {
         "command": "asciidoc-productivity.exportAsPdf",
         "title": "Export as PDF (requires docker)"
+      },
+      {
+        "command": "asciidoc-productivity.showPreview",
+        "title": "Open AsciiDoc Preview",
+        "icon": {
+          "light": "./media/preview-branded-light.svg",
+          "dark": "./media/preview-branded-dark.svg"
+        }
       }
     ],
     "menus": {
@@ -169,6 +178,13 @@
           "command": "asciidoc-productivity.checkSpelling",
           "when": "editorHasSelection",
           "group": "navigation@8"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "asciidoc-productivity.showPreview",
+          "when": "editorLangId == asciidoc",
+          "group": "navigation"
         }
       ],
       "explorer/context": [
