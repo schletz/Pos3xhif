@@ -1,0 +1,250 @@
+@font-face {
+    font-family: 'Noto Serif';
+    src: url('fonts/notoserif-regular-subset.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Noto Serif';
+    src: url('fonts/notoserif-bold-subset.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Noto Serif';
+    src: url('fonts/notoserif-italic-subset.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Noto Serif';
+    src: url('fonts/notoserif-bold_italic-subset.ttf') format('truetype');
+    font-weight: bold;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'M+ 1mn';
+    src: url('fonts/mplus1mn-regular-subset.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'FontAwesomeRegular';
+    src: url('fonts/fa-solid-900.woff2') format('woff2');
+    font-weight: 900;
+    font-style: normal;
+}
+
+body {
+
+    font-family: 'Noto Serif', serif;
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 1em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: bold;
+    text-align: left;
+    line-height: 1.2;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+}
+
+h1 {
+    font-size: 2em;
+    margin-top: 0.5em;
+}
+
+h2 {
+    font-size: 1.59em;
+}
+
+h3 {
+    font-size: 1.25em;
+}
+
+h4 {
+    font-size: 1em;
+}
+
+h5 {
+    font-size: 1em;
+}
+
+h6 {
+    font-size: 0.85em;
+}
+
+a {
+    color: #428BCA;
+    text-decoration: none;
+}
+
+code {
+    font-family: 'M+ 1mn', monospace;
+    color: #B12146;
+}
+
+pre {
+    background-color: #F5F5F5;
+    border: 0.75pt solid #CCCCCC;
+    border-radius: 4px;
+    padding: 14px;
+    font-family: 'M+ 1mn', monospace;
+    color: #333333;
+    line-height: 1.25;
+    overflow-x: auto;
+}
+
+pre,
+code,
+blockquote {
+    color: inherit;
+    background-color: inherit;
+    padding: 0;
+}
+
+code {
+    color: #ff235a;
+}
+
+dt {
+    font-weight: bold;
+}
+
+.title {
+    text-align: left;
+    font-style: italic;
+}
+
+.paragraph {
+    margin-bottom: 1em;
+}
+
+.quoteblock {
+    border-left: 5px solid #EEEEEE;
+    margin-bottom: 1em;
+}
+
+.quoteblock .attribution {
+    font-size: 0.85em;
+    color: #999999;
+    text-align: left;
+}
+
+.exampleblock {
+    border: 0.75pt solid #EEEEEE;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 1em;
+}
+
+table.tableblock {
+    border-collapse: collapse;
+    border: 0.5pt solid #DDDDDD;
+    width: 100%;
+    margin-bottom: 1em;
+}
+
+table.tableblock th,
+table.tableblock td {
+    border: 0.5pt solid #DDDDDD;
+    padding: 0.25em;
+    text-align: left;
+}
+
+table.tableblock thead th {
+    font-weight: bold;
+    border-bottom: 1.25pt solid #DDDDDD;
+}
+
+table.tableblock tfoot {
+    background-color: #F0F0F0;
+}
+
+table .paragraph {
+    margin: 0;
+}
+
+p {
+    margin: 0;
+    padding: 0;
+}
+
+hr {
+    border: none;
+    border-bottom: 0.5pt solid #EEEEEE;
+    margin: 1.5em 0;
+}
+
+.admonitionblock {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.admonitionblock td.icon {
+    text-align: center;
+    width: 40px;
+    padding-right: 15px;
+    border-right: 0.5pt solid rgba(128, 128, 128, 0.3);
+}
+
+.fa {
+    font-family: 'FontAwesomeRegular';
+    font-weight: 900;
+    font-style: normal;
+    font-size: 2em;
+    color: #333333;
+}
+
+.admonitionblock td.icon .icon-warning {
+    color: #bf0000;
+}
+
+.admonitionblock td.icon .icon-tip {
+    color: #111;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.admonitionblock td.icon .icon-note {
+    color: #19407c;
+}
+
+.admonitionblock td.icon .icon-important {
+    color: #bf0000;
+}
+
+.admonitionblock td.icon .icon-caution {
+    color: #bf6900;
+}
+
+.admonitionblock td.icon .icon-note::before {
+    content: "\f05a";
+}
+
+.admonitionblock td.icon .icon-tip::before {
+    content: "\f0eb";
+}
+
+.admonitionblock td.icon .icon-warning::before {
+    content: "\f071";
+}
+
+.admonitionblock td.icon .icon-caution::before {
+    content: "\f06d";
+}
+
+.admonitionblock td.icon .icon-important::before {
+    content: "\f06a";
+}
