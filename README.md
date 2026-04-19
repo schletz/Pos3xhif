@@ -57,6 +57,7 @@
   - [Verwenden von Asciidoctor unter Windows/macOS](07%20Asciidoctor/01_install.adoc)
   - [Die AsciiDoc Productivity Extension für VS Code](07%20Asciidoctor/04_adoc_productivity.adoc)
   - [Schreiben der Diplomarbeit mit AsciiDoc](07%20Asciidoctor/02_diplomarbeit.adoc)
+  - [AsciiDoc cheat sheet](https://raw.githubusercontent.com/Die-Spengergasse/course-pos-csharp_basics/refs/heads/master/07%20Asciidoctor/asciidoc_quick_reference.svg)
 #### Erweiterungskapitel: Professional C#
   - [Extension methods](Professional%20C%23/10_ExtensionMethods/README.md)
   - [Generics](Professional%20C%23/20_Generics/README.md)

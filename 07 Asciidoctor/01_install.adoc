@@ -14,7 +14,7 @@ ifdef::env-github[]
 :file-code-o: :page_facing_up:
 endif::[]
 
-image::comparison_2046.png[]
+*link:https://raw.githubusercontent.com/Die-Spengergasse/course-pos-csharp_basics/refs/heads/master/07%20Asciidoctor/asciidoc_quick_reference.svg[Zum cheat sheet]*
 
 Asciidoctor ist ein System, mit dessen Hilfe technische Dokumentationen in einem Textformat geschrieben werden können.
 Der Aufbau ähnelt einer Markdown-Datei, Asciidoctor ist aber mächtiger.
@@ -120,10 +120,6 @@ Für die Formatierung der Kopf- und Fußzeilen kannst du eine YAML-Datei anlegen
 Die Datei link:adoc%20demo.yml[adoc demo.yml] beschreibt den Stil der Fußzeile.
 Das Skript *convert_adoc* berücksichtigt automatisch das Layout, wenn eine YML-Datei mit gleichem Namen wie die adoc-Datei existiert.
 
-## Weiterführende Infos
+== Cheat sheet
 
-- link:https://powerman.name/doc/asciidoc[AsciiDoc cheatsheet]
-- link:https://docs.asciidoctor.org/asciidoc/latest/syntax-quick-reference/[AsciiDoc Syntax Quick Reference]
-- link:https://asciidoc-py.github.io/userguide.html[AsciiDoc User Guide] (sehr detaillierte Auflistung aller Optionen)
-- link:https://docs.asciidoctor.org/asciidoc/latest/asciidoc-vs-markdown/[Compare AsciiDoc to Markdown]
-- link:https://docs.asciidoctor.org/asciidoc/latest/sections/bibliography/[Bibliography (Quellenangaben)]
+image::asciidoc_quick_reference.svg[]
