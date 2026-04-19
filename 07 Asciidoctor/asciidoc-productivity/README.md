@@ -2,6 +2,8 @@
 
 ![](https://raw.githubusercontent.com/Die-Spengergasse/course-pos-csharp_basics/master/07%20Asciidoctor/extension_screenshot_2103.png)
 
+This extension turbocharges your AsciiDoc editing experience in Visual Studio Code, providing smart tools for handling images, source code snippets, data tables, LLM integrations, and PDF exports.
+
 ## 1. Insert source code from clipboard (Insert as source block)
 Copy any code. Right-click in your AsciiDoc document and select _Insert as source block_.
 An input line will open at the top where you can type the programming language (e.g., _csharp_, _java_, _python_). The code will then be inserted as a perfectly formatted AsciiDoc source block.
@@ -12,68 +14,80 @@ The extension automatically detects the number of columns (based on the tabs) an
 
 ## 3. Insert image from local file (Insert image from file)
 Do you want to embed an image located on your hard drive? Select _Insert image from file_.
-A dialog window opens in the current folder. Select your image. The extension automatically calculates the _relative path_ from your document to the image and inserts the correct _image::path/to/image.png[]_ syntax.
-Note: To ensure the path matches the .adoc file, you must save the file first.
+A dialog window opens in the current folder. Select your image. The extension automatically calculates the _relative path_ from your document to the image and inserts the correct `image::path/to/image.png[]` syntax.
+*Note: To ensure the path matches the .adoc file, you must save your document first.*
 
 ## 4. Save image from clipboard (Insert image from clipboard)
 Have you taken a screenshot that is currently in your clipboard?
 Select _Insert image from clipboard_. A save dialog will open. Give the image a name. The extension saves the image from memory to your hard drive and immediately inserts the code with the relative path into the document.
-Note: To ensure the path matches the .adoc file, you must save the file first.
+*Note: To ensure the path matches the .adoc file, you must save your document first.*
 
 ## 5. Download image from the internet (Insert image URL)
 Copy the URL of an image (e.g., _https://example.com/image.png_) to the clipboard. Select _Insert image URL_.
 The extension downloads the image from the internet, asks where you would like to save it locally, and then inserts it into the document along with the original source. This ensures that no images are lost if the website later goes offline.
-Note: To ensure the path matches the .adoc file, you must save the file first.
+*Note: To ensure the path matches the .adoc file, you must save your document first.*
 
 ## 6. Copy AsciiDoc table as TSV to clipboard
-Highlight a table in AsciiDoc including the start and end markers (_|===_).
-In the context menu, there is an option _Copy AsciiDoc Table as TSV to clipboard_.
-This copies the table as a tab-separated table to the clipboard.
-This data can then be pasted, for example, into Excel.
+Highlight a table in AsciiDoc including the start and end markers (`|===`).
+In the context menu, select _Copy AsciiDoc Table as TSV to clipboard_.
+This copies the table as a tab-separated text to your clipboard, allowing you to easily paste it into spreadsheet software like Excel.
 
 ## 7. Import file directly as code block (File Explorer Feature)
-This is the most powerful feature for programmers:
-In the _left-hand file tree view_ of VS Code (File Explorer), go to a code file (e.g., _.cs_, _.java_, _.py_). Right-click _on the file_ and select _Insert as source block_.
+This is a powerful feature for writing technical documentation:
+In the _left-hand file tree view_ of VS Code (File Explorer), right-click on any code file (e.g., _.cs_, _.java_, _.py_) and select _Insert file as source block_.
 The extension reads the entire file, automatically detects the programming language, calculates the relative path, and inserts a clickable link to the file along with the source code into your currently open AsciiDoc document.
-Note: To ensure the path matches the .adoc file, you must save the file first.
+*Note: To ensure the path matches the .adoc file, you must save your document first.*
 
 ## 8. Copy files of a directory to the clipboard
-Source code is required in the context window, especially for AI prompts.
-When clicking on a *directory* in the File Explorer, a menu item _Copy sources to clipboard_ appears.
-If you want to copy the current folder, you can click the button next to the directory name in the Explorer (see screenshot).
-When prompting, check whether the entire code was copied.
-Especially in the Free Plan, the context window is very limited.
+When writing AI prompts, you often need to provide your source code as context. 
+Right-click on a **directory** in the File Explorer and select _Copy sources to clipboard_. You can also click the dedicated icon next to the directory name.
+This recursively bundles your code into an XML structure optimized for LLMs. Check the output window to ensure the code fits within your LLM's context limits. 
+_Note: Extractors are included for `.docx` and `.pdf` files. Ensure you add these to your included extensions if you want their text extracted!_
 
 ## 9. PDF generation
+In the Explorer context menu, you can export an ADOC file to PDF by right-clicking on the file and selecting _Export as PDF_.
 
-In the Explorer context menu, you can export an ADOC file to PDF.
-Right-click on the file.
+**Prerequisite: Docker must be installed and running.**
+The conversion is executed using the `asciidoctor/docker-asciidoctor` Docker image. 
+* **Linux:** Ensure your user is in the `docker` group (`sudo usermod -aG docker $USER`).
+* **Troubleshooting:** Check if communication with the daemon is working by running `docker ps` in your terminal.
 
-**Prerequisite: Docker must be installed**.
-The conversion is executed with the Docker image *asciidoctor/docker-asciidoctor*.
+## 10. AI Features: Translation and Spellchecking
+You can trigger AI-assisted edits directly from your editor or explorer:
+* **Translate Selection:** Select text, right-click, and choose _LLM: Translate_.
+* **Translate Entire File:** Right-click an `.adoc` file in the Explorer and choose _LLM: Translate entire file_.
+* **Spellcheck:** Select text, right-click, and choose _LLM: Check spelling and grammar_. 
 
-## 10. AI Features: LLM translate and LLM check spelling and grammar
+*Prerequisite: An OpenAI-compatible endpoint (like LM Studio, Ollama, or an OpenAI API key wrapper) is required. Configure this in your workspace settings.*
 
-You can translate a selected text or an entire file.
-_LLM: Translate_ is available in the context menu of the Editor and Explorer.
-_LLM: Check spelling and grammar_ is available when you select text in a document.
-An OpenAI compatible endpoint such as LM Studio, Ollama, etc., is required for these features.
+## 11. Live Preview with highlight.js and PlantUML
+Click the **Preview Icon** in the top right corner of the editor title bar, or run _Open AsciiDoc Preview_ from the Command Palette.
+The live preview natively renders integrated PlantUML diagrams (marked with `[plantuml]`), supports MathJax equations, and provides syntax highlighting via `highlight.js`. It closely resembles the final PDF output.
 
-## 11. Preview with highlight.js and PlantUML rendering
+---
+
+## 💡 Tips for a Smooth Workflow
+* **Use the Command Palette:** All features can be triggered by pressing `Ctrl+Shift+P` (Windows/Linux) or `Cmd+Shift+P` (Mac) and typing `AsciiDoc Productivity`.
+* **Save Frequently:** Many features rely on calculating relative paths. Ensure your `.adoc` file is saved to your workspace before inserting images or files.
+* **Local LLMs:** If you use Ollama or LM Studio locally, set your `completionsUrl` to your local endpoint (e.g., `http://127.0.0.1:1234/v1/chat/completions` for LM Studio).
+
+---
 
 ## Configuration
 
-The following settings can be set in the _settings.json_ file (examples):
+You can customize the extension via your `settings.json`. Here are the available parameters and their default values:
 
 ```json
-"asciidoc-productivity.includeExtensions": "cs|csproj|java|rb|json|js|ts|jsx|tsx|py|txt|xml|adoc|md|cmd|sh|sql|yaml|puml",
-"asciidoc-productivity.excludeDirectories": ["bin", "obj", "node_modules", "TestResults"],
-"asciidoc-productivity.excludeFiles": ["package-lock.json"],
-"asciidoc-productivity.completionsUrl": "http://127.0.0.1:8000/v1/chat/completions",
-"asciidoc-productivity.llm": "LilaRest/gemma-4-31B-it-NVFP4-turbo",
-"asciidoc-productivity.maxOutputTokens": 4096,
+{
+  "asciidoc-productivity.includeExtensions": "cs|csproj|java|rb|json|js|ts|jsx|tsx|py|txt|xml|adoc|md|cmd|sh|sql|yaml|puml",
+  "asciidoc-productivity.excludeDirectories": ["bin", "obj", "node_modules"],
+  "asciidoc-productivity.excludeFiles": ["package-lock.json"],
+  "asciidoc-productivity.completionsUrl": "http://127.0.0.1:8000/v1/chat/completions",
+  "asciidoc-productivity.llm": "LilaRest/gemma-4-31B-it-NVFP4-turbo",
+  "asciidoc-productivity.maxOutputTokens": 4096,
+  "asciidoc-productivity.defaultLanguage": "en-US"
+}
 ```
-
 ### For copy files to clipboard (explorer menu)
 
 The app asks which extensions should be considered.

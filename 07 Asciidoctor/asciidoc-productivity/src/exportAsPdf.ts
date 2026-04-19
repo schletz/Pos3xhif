@@ -196,9 +196,13 @@ export async function exportAsPdf(clickedUri: vscode.Uri) {
 
             vscode.window.showInformationMessage(`Export successful: ${targetPdf}`);
             outputChannel.appendLine('[INFO] Done!');
-
         } catch (error: any) {
-            vscode.window.showErrorMessage(error.message || 'Error during PDF export. Check the output channel for details.');
+            if (error.syscall == 'connect') {
+                vscode.window.showErrorMessage("Unable to access docker. Run 'docker ps' in the terminal to check if docker is running and if you have the necessary permissions.");
+            }
+            else {
+                vscode.window.showErrorMessage(error.message || 'Error during PDF export. Check the output channel for details.');
+            }
             outputChannel.appendLine(`[ABORT] ${error.message}`);
         } finally {
             // tempThemePath is used here for cleanup
