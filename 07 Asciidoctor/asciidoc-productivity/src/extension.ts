@@ -43,10 +43,10 @@ export function activate(context: ExtensionContext) {
         async (clickedUri: Uri) => await insertFileAsSourceBlock(clickedUri));
 
     // --- BEFEHL 7: Sourcecode aus einem Verzeichnis in die Zwischenablage kopieren
-    // Wichtig: Beim Klick im Explorer übergibt VS Code die "clickedUri" als Argument!    
+    // Wichtig: Beim Klick im Explorer übergibt VS Code die "clickedUri" als 1. und alle "selectedUris" als 2. Argument!    
     let copySourcesToClipboardCmd = commands.registerCommand(
         'asciidoc-productivity.copySourcesToClipboard',
-        async (clickedUri?: Uri) => await copySourcesToClipboard(clickedUri, new ConfigurationService()));
+        async (clickedUri?: Uri, selectedUris?: Uri[]) => await copySourcesToClipboard(clickedUri, selectedUris, new ConfigurationService()));
 
     // --- BEFEHL 8: Tabelle als TSV kopieren ---
     let copyAsTsvCmd = commands.registerCommand(

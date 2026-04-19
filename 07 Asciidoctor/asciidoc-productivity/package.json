@@ -3,7 +3,7 @@
   "publisher": "schletz",
   "displayName": "asciidoc-productivity",
   "description": "Improves AsciiDoc editing features.",
-  "version": "1.0.8",
+  "version": "1.0.10",
   "icon": "icon.png",
   "repository": {
     "type": "git",
@@ -203,7 +203,6 @@
         },
         {
           "command": "asciidoc-productivity.copySourcesToClipboard",
-          "when": "explorerResourceIsFolder",
           "group": "2_workspace"
         }
       ]

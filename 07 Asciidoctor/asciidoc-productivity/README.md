@@ -38,10 +38,10 @@ In the _left-hand file tree view_ of VS Code (File Explorer), right-click on any
 The extension reads the entire file, automatically detects the programming language, calculates the relative path, and inserts a clickable link to the file along with the source code into your currently open AsciiDoc document.
 *Note: To ensure the path matches the .adoc file, you must save your document first.*
 
-## 8. Copy files of a directory to the clipboard
+## 8. Copy files and directories to the clipboard
 When writing AI prompts, you often need to provide your source code as context. 
-Right-click on a **directory** in the File Explorer and select _Copy sources to clipboard_. You can also click the dedicated icon next to the directory name.
-This recursively bundles your code into an XML structure optimized for LLMs. Check the output window to ensure the code fits within your LLM's context limits. 
+Select **one or multiple files and directories** in the File Explorer, right-click, and choose _Copy sources to clipboard_. You can also click the dedicated icon next to a directory name.
+This recursively bundles your selected code into an XML structure optimized for LLMs, and will notify you exactly how many files were processed. 
 _Note: Extractors are included for `.docx` and `.pdf` files. Ensure you add these to your included extensions if you want their text extracted!_
 
 ## 9. PDF generation
