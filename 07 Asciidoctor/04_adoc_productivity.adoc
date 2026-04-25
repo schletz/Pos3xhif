@@ -16,36 +16,36 @@ endif::[]
 
 image::extension_screenshot_2103.png[]
 
-Diese VS Code Extension ist ein Hilfsmittel, um das Schreiben von Dokumentationen, Arbeiten und Berichten in AsciiDoc massiv zu beschleunigen. Sie automatisiert das Einfügen von Quellcode, Tabellen und Bildern, sodass der Fokus auf dem Inhalt und nicht auf der Syntax liegt.
+Diese VS Code-Erweiterung hilft dir, Dokumentationen, Entwürfe und Berichte in AsciiDoc deutlich schneller zu schreiben. Sie fügt automatisch Quellcode, Tabellen und Bilder ein. So konzentrierst du dich auf den Inhalt und musst nicht ständig die Syntax beachten.
 
 == Installation
 
-Suche in den Erweiterungen nach `asciidoc-productivity` oder gehe zur Seite der Erweiterung im Marketplace unter https://marketplace.visualstudio.com/items?itemName=schletz.asciidoc-productivity.
+Suche im Erweiterungs-Manager nach dem Paket `asciidoc-productivity`. Alternativ kannst du die Erweiterung direkt im Marketplace öffnen: https://marketplace.visualstudio.com/items?itemName=schletz.asciidoc-productivity.
 
 == Features
 
-Siehe link:asciidoc-productivity/README.md[README.md] der App.
+Die vollständige Funktionsliste findest du in der Datei link:asciidoc-productivity/README.md[README.md].
 
 === LLM-Server für AI-Features
 
-Die LLM-Funktionen „Translate“ und „Check spelling and grammar“ erfordern einen OpenAI-kompatiblen Endpunkt wie Ollama, vLLM etc.
+Die KI-Funktionen „Translate“ und „Check spelling and grammar“ benötigen einen OpenAI-kompatiblen Endpunkt. Du kannst zum Beispiel Ollama oder vLLM verwenden.
 
 ==== Betrieb mit LM Studio
 
-Installiere link:https://lmstudio.ai/[LM Studio].
-Unter _Model search_ kannst du z. B. das Modell *lmstudio-community/gemma-4-E4B-it-GGUF* suchen.
-Wähle das Modell in der Quantisierung _Q8_.
-Stelle nach dem Download die _context length_ auf _8192 Token_.
-1 Token ist etwa 3.5 Zeichen lang.
-Das sind etwa 28.500 Zeichen für Text und Antwort.
-Das bedeutet, du kannst damit ca. 14.000 Zeichen übersetzen.
+Installiere zuerst link:https://lmstudio.ai/[LM Studio].
+Suche im Bereich _Model search_ nach dem Modell *lmstudio-community/gemma-4-E4B-it-GGUF*.
+Wähle die Quantisierung _Q8_.
+Lade das Modell herunter.
+Passe danach die _context length_ auf _8192 Tokens_ an.
+Ein Token entspricht ungefähr 3,5 Zeichen.
+Der gesamte Kontext (Text und Antwort) umfasst also etwa 28.500 Zeichen.
+Das bedeutet: Du kannst mit dieser Einstellung ca. 14.000 Zeichen übersetzen.
 
 image::lm_studio_1620.png[]
 
-Aktiviere dann im _Developer_-Bereich den Server.
-Er stellt OpenAI-kompatible Endpunkte zur Verfügung.
+Aktiviere danach im Bereich _Developer_ den Server. Der Server stellt dir die benötigten OpenAI-kompatiblen Endpunkte bereit.
 
-Stelle dann in den Einstellungen von VS Code mittels _Preferences: Open User Settings (JSON)_ das Modell für die AI-Features ein:
+Öffne nun die Benutzereinstellungen von VS Code über _Preferences: Open User Settings (JSON)_. Trage dort folgende Einstellungen für die KI-Funktionen ein:
 
 [source,json]
 ----
@@ -55,96 +55,41 @@ Stelle dann in den Einstellungen von VS Code mittels _Preferences: Open User Set
 ----
 
 [IMPORTANT]
-Das Modell wird nach 4.096 Token in der Antwort aufhören.
-Prüfe daher immer, ob der Inhalt nicht abgeschnitten wurde.
-Für längere Texte kannst du den Wert _maxOutputTokens_ auf 8.192 erhöhen.
-Dann musst du aber auch in den Einstellungen die _context length_ auf _16.384 Token_ erhöhen, da der Kontext aus System Prompt + Eingabetext + Antwort besteht.
+Die Antwort endet nach 4.096 Tokens automatisch. Prüfe daher immer, ob der Text vollständig ist.
+Für längere Texte kannst du den Wert `maxOutputTokens` auf 8.192 erhöhen.
+Passe dann auch die _context length_ in LM Studio auf 16.384 Tokens an. Der Kontext besteht aus System Prompt, Eingabetext und Antwort.
 
-=== Für neue NVIDIA-GPUs der 50er-Serie 💰💰💰
+===== Für PCs mit 32 GB VRAM 💰💰💰
 
-Wenn du eine neuere NVIDIA-Grafikkarte der 50er-Serie mit Blackwell-Architektur besitzt, die _NVFP4_ unterstützt, kannst du vLLM ganz einfach als Docker-Container mit einem spezialisierten Modell starten.
-
-==== Download des Modells
-
-Für die folgenden Befehle benötigen wir das CLI-Tool von Hugging Face.
-Du kannst es mit folgendem Befehl in der Konsole herunterladen:
-
-----
-powershell -ExecutionPolicy ByPass -c "irm https://hf.co/cli/install.ps1 | iex"
-----
-
-Schließe danach die Konsole und öffne eine neue Konsole.
-Der folgende Befehl lädt unser Modell in _%USERPROFILE%/.cache/huggingface_:_
-
-----
-hf download LilaRest/gemma-4-31B-it-NVFP4-turbo
-----
-
-Für manche Modelle ist der Befehl `hf login` nötig.
-Hierfür musst du vorher auf https://huggingface.co einen Token generieren.
-
-==== Starten des Containers
-
-Wechsle in ein geeignetes Verzeichnis, z. B. _C:\vllm_.
-Erstelle eine Datei namens _Dockerfile_ und füge den folgenden Inhalt ein:
-
-.Dockerfile
-[source,dockerfile]
-----
-FROM vllm/vllm-openai:cu130-nightly
-RUN pip install --upgrade pandas
-RUN pip install --upgrade "transformers>=5.5.0"
-RUN pip install nvidia-modelopt[torch]
-----
-
-Erstelle anschließend eine Datei _create_vllm_gemma4_31b.cmd_ im selben Verzeichnis und füge den folgenden Inhalt ein:
-
-.create_vllm_gemma4_31b.cmd
-[source,text]
-----
-REM Check if Docker is running.
-docker info >nul 2>&1
-if %ERRORLEVEL% neq 0 (
-    echo [ERROR] Docker does not seem to be running. Please start Docker and try again.
-    pause
-    exit /b 1
-)
-
-docker build -t my-vllm-gemma4 .
-docker create --gpus all ^
-  -v %USERPROFILE%/.cache/huggingface:/root/.cache/huggingface ^
-  -p 8000:8000 ^
-  --name vllm-gemma4 ^
-  my-vllm-gemma4 ^
-  --model LilaRest/gemma-4-31B-it-NVFP4-turbo ^
-  --quantization modelopt ^
-  --max-model-len 16384 ^
-  --max-num-seqs 128 ^
-  --max-num-batched-tokens 16384 ^
-  --gpu-memory-utilization 0.9 ^
-  --kv-cache-dtype fp8 ^
-  --enable-prefix-caching ^
-  --trust-remote-code
-----
-
-Nach dem Ausführen der cmd Datei kannst du in Docker Desktop den Container starten.
-Überprüfe das Docker-Log, um sicherzustellen, dass der Container bereit ist (die Meldung _Application startup complete_ erscheint).
-Dies kann einige Minuten dauern, da beim Starten Optimierungen durchgeführt werden.
-
-[WARNING]
-Dies ist ein nightly Build des vLLM Servers.
-Einstellungen können sich jederzeit ändern.
-Prüfe daher nach dem Anlegen des Containers im Log, ob dieser auch startet.
-
-==== Anpassen der Einstellungen der Extension
-
-Stelle dann in den Einstellungen von VS Code mittels _Preferences: Open User Settings (JSON)_ das Modell für die AI-Features ein:
+Verfügst du über 32 GB VRAM oder nutzt du einen Mac mit Unified Memory, kannst du auch größere Modelle verwenden.
+Teste zum Beispiel das Modell link:https://huggingface.co/lmstudio-community/Qwen3.6-35B-A3B-GGUF[lmstudio-community/Qwen3.6-35B-A3B-GGUF] in der Quantisierung Q4_K_M.
+Stelle die _Context Length_ auf 65536 ein. So steht genug Platz für das Reasoning zur Verfügung.
+Lade das Modell mit folgenden Einstellungen:
 
 [source,json]
 ----
-"asciidoc-productivity.completionsUrl": "http://127.0.0.1:8000/v1/chat/completions",
-"asciidoc-productivity.llm": "LilaRest/gemma-4-31B-it-NVFP4-turbo",
-"asciidoc-productivity.maxOutputTokens": 8192,
+"asciidoc-productivity.completionsUrl": "http://127.0.0.1:1234/v1/chat/completions",
+"asciidoc-productivity.llm": "lmstudio-community/Qwen3.6-35B-A3B-GGUF",
+"asciidoc-productivity.maxOutputTokens": 32768,
 ----
 
-Mit einer RTX 5090 ist ein Wert von etwa 45 Tokens pro Sekunde zu erwarten.
+=== Verwendung von Cloud-Services
+
+Wenn du AI-Services in der Cloud nutzen möchtest, kannst du zum Beispiel auf https://aistudio.google.com einen API-Endpunkt erstellen.
+Google bietet ein großzügiges Free Tier an.
+Dieses begrenzt nicht die Anzahl der Tokens, sondern nur die Rate (Häufigkeit).
+Für unsere Zwecke ist dies völlig ausreichend.
+Wir müssen keine Dokumente jede Minute übersetzen.
+Beachte allerdings, dass deine Daten von Google im Free Tier für das Modelltraining verwendet werden.
+Das ist der "Preis" dafür.
+Erstelle zunächst einen API-Key und füge ihn dann in den Einstellungen ein:
+
+[source,json]
+----
+{
+  "asciidoc-productivity.completionsUrl": "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+  "asciidoc-productivity.llm": "gemini-2.5-flash",
+  "asciidoc-productivity.apiKey": "DEIN-ECHTER-GEMINI-API-KEY-HIER",
+  "asciidoc-productivity.maxOutputTokens": 32768,
+}
+----

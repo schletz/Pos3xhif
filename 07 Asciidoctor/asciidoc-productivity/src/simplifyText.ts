@@ -2,15 +2,15 @@ import * as vscode from 'vscode';
 import ConfigurationService from './ConfigurationService';
 import LLMService from './LLMService';
 
-const outputChannel = vscode.window.createOutputChannel("LLM-Spellcheck");
+const outputChannel = vscode.window.createOutputChannel("LLM-Simplify");
 
-export async function checkSpelling(configurationService: ConfigurationService, llmService: LLMService) {
+export async function simplifyText(configurationService: ConfigurationService, llmService: LLMService) {
     try {
         const editor = vscode.window.activeTextEditor;
         if (!editor) { return; }
         const selection = editor.selection;
         if (selection.isEmpty) {
-            vscode.window.showWarningMessage('Please first select the text that should be checked.');
+            vscode.window.showWarningMessage('Please first select the text that should be simplified.');
             return;
         }
 
@@ -19,25 +19,24 @@ export async function checkSpelling(configurationService: ConfigurationService, 
         if (textToProcess.length > MAX_CHARS) {
             vscode.window.showWarningMessage(`You have selected ${textToProcess.length} characters. Make sure that the response is not cut off.`);
         }
-        const systemPrompt = configurationService.getCheckSpellingPrompt();
 
+        const systemPrompt = configurationService.getSimplifyTextPrompt();
         const userPrompt = textToProcess;
 
         await vscode.window.withProgress({
             location: vscode.ProgressLocation.Notification,
-            title: `Performing spell check...`,
+            title: `Simplifying text (B2)...`,
             cancellable: false
         }, async () => {
-            // We use the same sendPrompt method
             const result = await llmService.sendPrompt(
-                systemPrompt, userPrompt, 0.1, outputChannel);
+                systemPrompt, userPrompt, 0.2, outputChannel);
 
             await editor.edit(editBuilder => {
                 editBuilder.replace(selection, result.content);
             });
 
             if (result.stats) {
-                let message = `Spell checking finished in ${result.stats.durationSeconds} sec, ${result.stats.completionTokens} tokens, ${result.stats.tokensPerSecond} tokens/sec.`
+                let message = `Simplification finished in ${result.stats.durationSeconds} sec, ${result.stats.completionTokens} tokens, ${result.stats.tokensPerSecond} tokens/sec.`
                 if (result.stats.hasLengethExeeded) {
                     message = message + "\nWARNING: The limit for maxOutputTokens has been exceeded. The text is truncated."
                     vscode.window.showWarningMessage(message, { modal: true });
@@ -48,6 +47,6 @@ export async function checkSpelling(configurationService: ConfigurationService, 
         });
 
     } catch (error: any) {
-        vscode.window.showWarningMessage('Error during correction: ' + error.message);
+        vscode.window.showWarningMessage('Error during simplification: ' + error.message);
     }
 }

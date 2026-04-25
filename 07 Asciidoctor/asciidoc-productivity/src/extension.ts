@@ -13,6 +13,7 @@ import { copyAsTsv } from './copyAsTsv';
 import { translate } from './translate';
 import LLMService from './LLMService';
 import { checkSpelling } from './spellcheck';
+import { simplifyText } from './simplifyText';
 import { showPreview } from './showPreview';
 
 export function activate(context: ExtensionContext) {
@@ -90,6 +91,15 @@ export function activate(context: ExtensionContext) {
         'asciidoc-productivity.showPreview',
         () => showPreview(context)
     );
+    // --- BEFEHL 12: Einfachere Sprache (B2) ---
+    let simplifyTextCmd = commands.registerCommand(
+        'asciidoc-productivity.simplifyText',
+        async () => {
+            const configurationService = new ConfigurationService();
+            const llmService = new LLMService(configurationService);
+            await simplifyText(configurationService, llmService);
+        }
+    );    
 
     context.subscriptions.push(
         insertSourceBlockCmd,
@@ -103,6 +113,7 @@ export function activate(context: ExtensionContext) {
         translateCmd,
         translateEntireFileCmd,
         checkSpellingCmd,
+        simplifyTextCmd,
         exportAsPdfCmd,
         showPreviewCmd
     );

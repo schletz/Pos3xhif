@@ -28,24 +28,44 @@ export default class ConfigurationService {
         const config = vscode.workspace.getConfiguration('asciidoc-productivity');
 
         return config.get<string>(
-            'completionsUrl', "http://127.0.0.1:8000/v1/chat/completions");
+            'completionsUrl', "http://localhost:1234/v1/chat/completions");
     }
     public getLlm(): string {
         const config = vscode.workspace.getConfiguration('asciidoc-productivity');
 
         return config.get<string>(
-            'llm', "LilaRest/gemma-4-31B-it-NVFP4-turbo");
+            'llm', "lmstudio-community/Qwen3.6-35B-A3B-GGUF");
     }
     public getMaxOutputTokens(): number {
         const config = vscode.workspace.getConfiguration('asciidoc-productivity');
 
         return config.get<number>(
             'maxOutputTokens', 4096);
-    }    
+    }
     public getDefaultTargetLanguage(): string {
         const config = vscode.workspace.getConfiguration('asciidoc-productivity');
 
         return config.get<string>(
             'defaultLanguage', "en-US");
-    }      
+    }
+    public getCheckSpellingPrompt(): string {
+        const config = vscode.workspace.getConfiguration('asciidoc-productivity');
+
+        return config.get<string>(
+            'checkSpellingPrompt',
+            "You are an expert editor for asciidoc documents. Correct spelling, grammar, and punctuation of the provided text.\nMaintain the original tone and all formatting (especially AsciiDoc syntax and source blocks).\nOutput ONLY the corrected text. Do not add explanations or comments."
+        );
+    }
+    public getSimplifyTextPrompt(): string {
+        const config = vscode.workspace.getConfiguration('asciidoc-productivity');
+
+        return config.get<string>(
+            'simplifyTextPrompt',
+            "You are an expert editor for asciidoc documents. Rewrite the provided German text to be clear and easily understandable for non-native students with a B2 language level.\nKeep all technical terms intact, but resolve overly nested sentences (Schachtelsätze) and avoid unnecessary passive voice.\nMaintain the original tone and all formatting (especially AsciiDoc syntax and source blocks).\nOutput ONLY the rewritten text. Do not add explanations or comments."
+        );
+    }
+    public getApiKey(): string {
+        const config = vscode.workspace.getConfiguration('asciidoc-productivity');
+        return config.get<string>('apiKey', "");
+    }
 }

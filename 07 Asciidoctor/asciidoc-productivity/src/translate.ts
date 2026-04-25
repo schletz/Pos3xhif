@@ -77,9 +77,13 @@ export async function translate(
             }
 
             if (result.stats) {
-                vscode.window.showInformationMessage(
-                    `Translation finished in ${result.stats.durationSeconds} sec, ${result.stats.completionTokens} tokens, ${result.stats.tokensPerSecond} tokens/sec.`
-                );
+                let message = `Translation finished in ${result.stats.durationSeconds} sec, ${result.stats.completionTokens} tokens, ${result.stats.tokensPerSecond} tokens/sec.`
+                if (result.stats.hasLengethExeeded) {
+                    message = message + "\nWARNING: The limit for maxOutputTokens has been exceeded. The text is truncated."
+                    vscode.window.showWarningMessage(message, { modal: true });
+                }
+                else
+                    vscode.window.showInformationMessage(message);
             }
         });
 

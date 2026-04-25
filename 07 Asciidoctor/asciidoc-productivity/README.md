@@ -52,26 +52,23 @@ The conversion is executed using the `asciidoctor/docker-asciidoctor` Docker ima
 * **Linux:** Ensure your user is in the `docker` group (`sudo usermod -aG docker $USER`).
 * **Troubleshooting:** Check if communication with the daemon is working by running `docker ps` in your terminal.
 
-## 10. AI Features: Translation and Spellchecking
+## 10. AI Features: Translation, Spellchecking, and Simplification
 You can trigger AI-assisted edits directly from your editor or explorer:
 * **Translate Selection:** Select text, right-click, and choose _LLM: Translate_.
 * **Translate Entire File:** Right-click an `.adoc` file in the Explorer and choose _LLM: Translate entire file_.
 * **Spellcheck:** Select text, right-click, and choose _LLM: Check spelling and grammar_. 
+* **Simplify Text (B2):** Select text, right-click, and choose _LLM: Simplify to B2_. Perfect for resolving complex nested sentences to make technical documentation more accessible for non-native speakers.
 
-*Prerequisite: An OpenAI-compatible endpoint (like LM Studio, Ollama, or an OpenAI API key wrapper) is required. Configure this in your workspace settings.*
+*Prerequisite: An OpenAI-compatible endpoint (like LM Studio, Ollama) or a Cloud API (like Google Gemini, OpenAI) is required. Configure your endpoint URL, model, and optional API Key in your workspace settings.*
 
 ## 11. Live Preview with highlight.js and PlantUML
 Click the **Preview Icon** in the top right corner of the editor title bar, or run _Open AsciiDoc Preview_ from the Command Palette.
 The live preview natively renders integrated PlantUML diagrams (marked with `[plantuml]`), supports MathJax equations, and provides syntax highlighting via `highlight.js`. It closely resembles the final PDF output.
 
----
-
 ## 💡 Tips for a Smooth Workflow
 * **Use the Command Palette:** All features can be triggered by pressing `Ctrl+Shift+P` (Windows/Linux) or `Cmd+Shift+P` (Mac) and typing `AsciiDoc Productivity`.
 * **Save Frequently:** Many features rely on calculating relative paths. Ensure your `.adoc` file is saved to your workspace before inserting images or files.
 * **Local LLMs:** If you use Ollama or LM Studio locally, set your `completionsUrl` to your local endpoint (e.g., `http://127.0.0.1:1234/v1/chat/completions` for LM Studio).
-
----
 
 ## Configuration
 
@@ -82,12 +79,16 @@ You can customize the extension via your `settings.json`. Here are the available
   "asciidoc-productivity.includeExtensions": "cs|csproj|java|rb|json|js|ts|jsx|tsx|py|txt|xml|adoc|md|cmd|sh|sql|yaml|puml",
   "asciidoc-productivity.excludeDirectories": ["bin", "obj", "node_modules"],
   "asciidoc-productivity.excludeFiles": ["package-lock.json"],
-  "asciidoc-productivity.completionsUrl": "http://127.0.0.1:8000/v1/chat/completions",
-  "asciidoc-productivity.llm": "LilaRest/gemma-4-31B-it-NVFP4-turbo",
-  "asciidoc-productivity.maxOutputTokens": 4096,
-  "asciidoc-productivity.defaultLanguage": "en-US"
+  "asciidoc-productivity.completionsUrl": "http://localhost:1234/v1/chat/completions",
+  "asciidoc-productivity.llm": "lmstudio-community/Qwen3.6-35B-A3B-GGUF",
+  "asciidoc-productivity.maxOutputTokens": 32768,
+  "asciidoc-productivity.defaultLanguage": "en-US",
+  "asciidoc-productivity.checkSpellingPrompt": "You are an expert editor for asciidoc documents. Correct spelling, grammar, and punctuation of the provided text.\nMaintain the original tone and all formatting (especially AsciiDoc syntax and source blocks).\nOutput ONLY the corrected text. Do not add explanations or comments.",
+  "asciidoc-productivity.simplifyTextPrompt": "You are an expert editor for asciidoc documents. Rewrite the provided German text to be clear and easily understandable for non-native students with a B2 language level.\nKeep all technical terms intact, but resolve overly nested sentences (Schachtelsätze) and avoid unnecessary passive voice.\nMaintain the original tone and all formatting (especially AsciiDoc syntax and source blocks).\nOutput ONLY the rewritten text. Do not add explanations or comments.",
+  "asciidoc-productivity.apiKey": "your api key for your cloud service (not needed for local llms)"
 }
 ```
+
 ### For copy files to clipboard (explorer menu)
 
 The app asks which extensions should be considered.

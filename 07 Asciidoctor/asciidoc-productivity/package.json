@@ -3,7 +3,7 @@
   "publisher": "schletz",
   "displayName": "asciidoc-productivity",
   "description": "Improves AsciiDoc editing features.",
-  "version": "1.0.10",
+  "version": "1.0.13",
   "icon": "icon.png",
   "repository": {
     "type": "git",
@@ -51,12 +51,12 @@
         },
         "asciidoc-productivity.completionsUrl": {
           "type": "string",
-          "default": "http://127.0.0.1:8000/v1/chat/completions",
+          "default": "http://localhost:1234/v1/chat/completions",
           "description": "OpenAI compatible LLM server."
         },
         "asciidoc-productivity.llm": {
           "type": "string",
-          "default": "LilaRest/gemma-4-31B-it-NVFP4-turbo",
+          "default": "lmstudio-community/Qwen3.6-35B-A3B-GGUF",
           "description": "LLM to be used."
         },
         "asciidoc-productivity.maxOutputTokens": {
@@ -68,6 +68,23 @@
           "type": "string",
           "default": "en-US",
           "description": "Default target language for translations."
+        },
+        "asciidoc-productivity.checkSpellingPrompt": {
+          "type": "string",
+          "default": "You are an expert editor for asciidoc documents. Correct spelling, grammar, and punctuation of the provided text.\nMaintain the original tone and all formatting (especially AsciiDoc syntax and source blocks).\nOutput ONLY the corrected text. Do not add explanations or comments.",
+          "description": "System prompt used for the check spelling command.",
+          "editPresentation": "multilineText"
+        },
+        "asciidoc-productivity.simplifyTextPrompt": {
+          "type": "string",
+          "default": "You are an expert editor for asciidoc documents. Rewrite the provided German text to be clear and easily understandable for non-native students with a B2 language level.\nKeep all technical terms intact, but resolve overly nested sentences (Schachtelsätze) and avoid unnecessary passive voice.\nMaintain the original tone and all formatting (especially AsciiDoc syntax and source blocks).\nOutput ONLY the rewritten text. Do not add explanations or comments.",
+          "description": "System prompt used for the simplify text (B2) command.",
+          "editPresentation": "multilineText"
+        },
+        "asciidoc-productivity.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "API Key for cloud providers (leave empty for local models like LM Studio)."
         }
       }
     },
@@ -116,6 +133,10 @@
       {
         "command": "asciidoc-productivity.checkSpelling",
         "title": "LLM: Check spelling and grammar"
+      },
+      {
+        "command": "asciidoc-productivity.simplifyText",
+        "title": "LLM: Simplify to B2"
       },
       {
         "command": "asciidoc-productivity.exportAsPdf",
@@ -178,6 +199,11 @@
           "command": "asciidoc-productivity.checkSpelling",
           "when": "editorHasSelection",
           "group": "navigation@8"
+        },
+        {
+          "command": "asciidoc-productivity.simplifyText",
+          "when": "editorHasSelection",
+          "group": "navigation@9"
         }
       ],
       "editor/title": [

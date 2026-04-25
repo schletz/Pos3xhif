@@ -7,6 +7,7 @@ export interface PromptStats {
     completionTokens: number;
     durationSeconds: number;
     tokensPerSecond: number;
+    hasLengethExeeded: boolean;
 }
 
 export interface PromptResult {
@@ -22,11 +23,13 @@ export default class LLMService {
     }
 
     public async sendPrompt(
-        systemPrompt: string, userPrompt: string, 
+        systemPrompt: string, userPrompt: string,
         temperature: number,
         outputChannel?: vscode.OutputChannel): Promise<PromptResult> {
         const url = this.configService.getCompletionsUrl();
         const model = this.configService.getLlm();
+        const apiKey = this.configService.getApiKey();
+        const authHeader = apiKey ? `Bearer ${apiKey}` : 'Bearer EMPTY';
 
         if (outputChannel) {
             outputChannel.appendLine(`\n[LLMService] Sending request to: ${url}`);
@@ -38,7 +41,7 @@ export default class LLMService {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer EMPTY'
+                'Authorization': authHeader
             },
             body: JSON.stringify({
                 model: model,
@@ -57,6 +60,8 @@ export default class LLMService {
 
         const data: any = await response.json();
         const content = data.choices[0].message.content.trim();
+        // Was processing aborted due to the maxTokens limitation?
+        const hasLengethExeeded = data.choices[0].finish_reason == "length";
         const endTime = performance.now();
 
         // Calculate statistics
@@ -70,7 +75,8 @@ export default class LLMService {
                 promptTokens,
                 completionTokens,
                 durationSeconds: Number(durationSeconds.toFixed(1)),
-                tokensPerSecond: Number((completionTokens / durationSeconds).toFixed(1))
+                tokensPerSecond: Number((completionTokens / durationSeconds).toFixed(1)),
+                hasLengethExeeded: hasLengethExeeded
             };
 
             if (outputChannel) {
