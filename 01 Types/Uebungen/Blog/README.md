@@ -12,7 +12,7 @@ https://www.plantuml.com/plantuml/uml/XL9Tpjem47pFAVRnGsqkKA4KbBOg4b8h10SmyGAM_8
 ## Klassenbeschreibung
 
 #### Klasse User
-Ist eine reine datenhaltende Klasse für die Userdaten. Alle Properties sind read-only.
+Ist eine reine datenhaltende Klasse für die Userdaten. Alle Properties sind immutable.
 
 #### Klasse Comment
 Speichert die Daten eines Kommentares. Alle Properties sind read-only.
@@ -20,7 +20,7 @@ Speichert die Daten eines Kommentares. Alle Properties sind read-only.
   (DateTime.UtcNow).
 
 #### Klasse Post
-Speichert einen Post. Alle Properties sind read-only.
+Speichert einen Post. Alle Properties sind immutable.
 - **AverageRating** Gibt das durchschnittliche Rating zurück. Ist noch kein Rating für den
   Post abgegeben worden, ist das durchschnittliche Rating null.
 - **RatingCount** Gibt die Anzahl der abgegebenen Ratings an.
@@ -32,14 +32,14 @@ Speichert einen Post. Alle Properties sind read-only.
   - Ist das Rating kleiner als 1 oder größer als 5, wird false geliefert.
 
 #### Klasse ImagePost
-Speichert einen Post, der aus einem Bild besteht. Alle Properties sind read-only.
+Speichert einen Post, der aus einem Bild besteht. Alle Properties sind immutable.
 
 - **Html** Erzeugt ein HTML Element für das Bild mit dem Aufbau `<img src="(Url)" />` 
 Der Wert (Url) ist durch die tatsächliche URL zu ersetzen. Hinweis: Anführungszeichen
 im String müssen mit einem Backshash escaped werden.
 
 #### Klasse TextPost
-Speichert einen Post, der Text beinhaltet. Alle Properties sind read-only.
+Speichert einen Post, der Text beinhaltet. Alle Properties sind immutable.
 
 - **Html** Erzeugt ein HTML Element für den Inhalt mit dem Aufbau
 `<h1>(Title)</h1><p>(Content)</p>` 
