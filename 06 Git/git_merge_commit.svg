@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 760" width="1100" height="760" font-family="'Segoe UI', Helvetica, Arial, sans-serif">
+  <style>
+    .band { fill: #F7F7F7; stroke: #DDDDDD; stroke-width: 2; }
+    .h { font-size: 21px; font-weight: 700; fill: #262626; }
+    .line { fill: none; stroke: #404040; stroke-width: 4; stroke-linecap: round; }
+    .main { fill: #B3E3FF; stroke: #404040; stroke-width: 3; }
+    .feat { fill: #B18BE8; stroke: #404040; stroke-width: 3; }
+    .merge { fill: #FFB547; stroke: #404040; stroke-width: 3; }
+    .cid { font-size: 11px; font-weight: 700; fill: #262626; text-anchor: middle; }
+    .bname { font-family: Consolas, Menlo, monospace; font-size: 14px; font-weight: 700; }
+    .hash { font-family: Consolas, Menlo, monospace; font-size: 12px; fill: #6E6E6E; text-anchor: middle; }
+    .legend { font-size: 13px; fill: #262626; }
+    .parentN { fill: none; stroke: #6B3FB5; stroke-width: 2.5; }
+    .parentM { fill: none; stroke: #C77800; stroke-width: 2.5; }
+    .plN { font-size: 13px; font-weight: 700; fill: #6B3FB5; }
+    .plM { font-size: 13px; font-weight: 700; fill: #C77800; }
+    .card { fill: #FFFFFF; stroke: #C8C8C8; stroke-width: 1.5; }
+    .ct { font-size: 17px; font-weight: 700; fill: #262626; }
+    .txt { font-size: 14px; fill: #262626; }
+    .b { font-weight: 700; }
+    .code { fill: #F3F3F3; stroke: #E0E0E0; stroke-width: 1; }
+    .cmd { font-family: Consolas, Menlo, monospace; font-size: 13px; fill: #0B4F8A; }
+    .out { font-family: Consolas, Menlo, monospace; font-size: 13px; fill: #404040; }
+    .hlN { font-family: Consolas, Menlo, monospace; font-size: 13px; font-weight: 700; fill: #6B3FB5; }
+    .hlM { font-family: Consolas, Menlo, monospace; font-size: 13px; font-weight: 700; fill: #C77800; }
+    .note { font-size: 12px; fill: #6E6E6E; }
+  </style>
+  <defs>
+    <marker id="arrowN" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6B3FB5"/>
+    </marker>
+    <marker id="arrowM" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#C77800"/>
+    </marker>
+    <marker id="arrowDark" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#404040"/>
+    </marker>
+  </defs>
+
+  <!-- Commit graph: feature branch add-inventory merged into main -->
+  <g>
+    <rect class="band" x="10" y="10" width="1080" height="350" rx="14"/>
+    <text class="h" x="36" y="50">Normaler Commit und Merge Commit beim Zusammenführen von Branches</text>
+
+    <!-- Legend -->
+    <circle class="main" cx="46" cy="83" r="9"/>
+    <circle class="feat" cx="68" cy="83" r="9"/>
+    <text class="legend" x="86" y="88">normaler Commit (1 Parent)</text>
+    <circle class="merge" cx="290" cy="83" r="11"/>
+    <text class="legend" x="310" y="88">Merge Commit (2 Parents)</text>
+    <line x1="510" y1="83" x2="548" y2="83" stroke="#404040" stroke-width="2.5" marker-end="url(#arrowDark)"/>
+    <text class="legend" x="562" y="88">Pfeil zeigt vom Commit auf seinen Parent (Vorgänger)</text>
+
+    <!-- Branch lines -->
+    <text class="bname" x="86" y="275" text-anchor="end" fill="#1A6FA3">main</text>
+    <line class="line" x1="110" y1="270" x2="1000" y2="270" marker-end="url(#arrowDark)"/>
+    <path class="line" d="M230,270 C230,200 260,150 310,150 L700,150 C760,150 820,200 820,248"/>
+    <text class="bname" x="275" y="132" text-anchor="end" fill="#6B3FB5">add-inventory</text>
+
+    <!-- Parent references -->
+    <path class="parentN" d="M488,166 C470,194 410,194 394,168" marker-end="url(#arrowN)"/>
+    <text class="plN" x="441" y="212" text-anchor="middle">Parent</text>
+    <path class="parentM" d="M800,290 C760,340 620,340 576,288" marker-end="url(#arrowM)"/>
+    <text class="plM" x="688" y="346" text-anchor="middle">Parent 1</text>
+    <path class="parentM" d="M842,240 C850,160 780,128 638,140" marker-end="url(#arrowM)"/>
+    <text class="plM" x="858" y="168">Parent 2</text>
+
+    <!-- Commits -->
+    <circle class="main" cx="110" cy="270" r="16"/><text class="cid" x="110" y="274">M1</text>
+    <circle class="main" cx="230" cy="270" r="16"/><text class="cid" x="230" y="274">M2</text>
+    <circle class="main" cx="560" cy="270" r="16"/><text class="cid" x="560" y="274">M3</text>
+    <circle class="feat" cx="380" cy="150" r="16"/><text class="cid" x="380" y="154">F1</text>
+    <circle class="feat" cx="500" cy="150" r="16"/><text class="cid" x="500" y="154">F2</text>
+    <circle class="feat" cx="620" cy="150" r="16"/><text class="cid" x="620" y="154">F3</text>
+    <circle class="merge" cx="820" cy="270" r="22"/><text class="cid" x="820" y="274" style="font-size:10px">Merge</text>
+
+    <!-- Short hashes -->
+    <text class="hash" x="110" y="306">c09a1b4</text>
+    <text class="hash" x="230" y="306">71fe3d2</text>
+    <text class="hash" x="560" y="310">3e1a3f0</text>
+    <text class="hash" x="380" y="125">5d2b8e1</text>
+    <text class="hash" x="500" y="125">a7c90d3</text>
+    <text class="hash" x="620" y="125">b41d7c2</text>
+    <text class="hash" x="820" y="312">9a621e4</text>
+  </g>
+
+  <!-- Card: normal commit -->
+  <g>
+    <rect class="card" x="10" y="380" width="530" height="358" rx="12"/>
+    <rect x="10" y="380" width="530" height="8" rx="4" fill="#B18BE8"/>
+    <circle class="feat" cx="42" cy="418" r="11"/>
+    <text class="ct" x="62" y="424">Normaler Commit (z. B. F2)</text>
+    <text class="txt" x="36" y="458">• Entsteht durch <tspan class="b">git commit</tspan>.</text>
+    <text class="txt" x="36" y="482">• Hat <tspan class="b">genau einen Parent</tspan>: den vorigen Commit (F1).</text>
+    <text class="txt" x="36" y="506">• Enthält deine Änderungen an den Dateien.</text>
+
+    <rect class="code" x="30" y="558" width="490" height="160" rx="6"/>
+    <text class="cmd" x="46" y="584">$ git cat-file -p a7c90d3</text>
+    <text class="out" x="46" y="608">tree 8f31c2a</text>
+    <text class="hlN" x="46" y="628">parent 5d2b8e1</text>
+    <text class="out" x="46" y="648">author A &lt;a@example.com&gt; 1757930000 +0200</text>
+    <text class="out" x="46" y="684">Add inventory list</text>
+  </g>
+
+  <!-- Card: merge commit -->
+  <g>
+    <rect class="card" x="560" y="380" width="530" height="358" rx="12"/>
+    <rect x="560" y="380" width="530" height="8" rx="4" fill="#FFB547"/>
+    <circle class="merge" cx="592" cy="418" r="11"/>
+    <text class="ct" x="612" y="424">Merge Commit</text>
+    <text class="txt" x="586" y="458">• Entsteht beim Merge (Pull Request oder <tspan class="b">git merge</tspan>).</text>
+    <text class="txt" x="586" y="482">• Hat <tspan class="b">zwei Parents</tspan>: den letzten Commit von main (M3)</text>
+    <text class="txt" x="598" y="500">und den letzten Commit des Feature Branches (F3).</text>
+    <text class="txt" x="586" y="524">• Verbindet beide Stände. Eigene Änderungen enthält er</text>
+    <text class="txt" x="598" y="542">nur, wenn beim Merge Konflikte gelöst wurden.</text>
+
+    <rect class="code" x="580" y="558" width="490" height="160" rx="6"/>
+    <text class="cmd" x="596" y="584">$ git cat-file -p 9a621e4</text>
+    <text class="out" x="596" y="608">tree 2c7d0b9</text>
+    <text class="hlM" x="596" y="628">parent 3e1a3f0</text>
+    <text class="hlM" x="596" y="648">parent b41d7c2</text>
+    <text class="out" x="596" y="668">author A &lt;a@example.com&gt; 1757940000 +0200</text>
+    <text class="out" x="596" y="704">Merge pull request #1 from team/add-inventory</text>
+  </g>
+
+  <text class="note" x="1090" y="756" text-anchor="end">Hashes gekürzt, Ausgabe von git cat-file vereinfacht</text>
+</svg>

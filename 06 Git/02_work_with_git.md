@@ -1,139 +1,172 @@
-# Arbeiten mit Git in VS Code und Visual Studio
+# Arbeiten mit Git in VS Code
 
-## Erstellen und Klonen eines Repositories
+## Ein Repository erstellen und klonen
 
-Um mit Git zu arbeiten, brauchen wir natürlich einmal ein Repository. Gehe hierfür auf
-https://github.com und melde dich an. Danach kannst du unter *Repositories* ein neues Repository
-erstellen (grüner *New* Button). Wähle die folgenden Einstellungen:
+Zuerst brauchst du ein Repository auf GitHub:
 
-- **Repository name:** Kannst du frei wählen, in diesem Beispiel verwenden wir first_repo
-- **Visibility:** Private
-- **Add a README file:** enable
+1. Gehe auf https://github.com und melde dich an.
+2. Klicke unter *Repositories* auf den grünen Button *New*.
+3. Wähle diese Einstellungen:
+   - **Repository name:** frei wählbar. In diesem Beispiel verwenden wir `first_repo`.
+   - **Visibility:** *Private*
+   - **Add a README file:** aktivieren
 
-Erstelle nun z. B. einen Ordner *C:\Github* (Windows) bzw. */Users/(username)/Github* (macOS).
-Starte nun die Git Bash wie im vorigen Kapitel beschrieben in diesem Ordner.
+Lege danach auf deinem Rechner einen Ordner für deine Repositories an, z. B. `C:\Github` (Windows)
+oder `/Users/<username>/Github` (macOS). Öffne in diesem Ordner die Git Bash, wie im Kapitel
+[Installation](01_installation.md) beschrieben.
 
-Dein Repository hat die URL https://github.com/(github_username)/(reponame). Du kannst die URL aus
-dem Browser kopieren. Nun starte *git clone*
+Die URL deines Repositories kopierst du aus dem Browser. Sie hat die Form
+`https://github.com/<github-username>/first_repo`. Mit `git clone` lädst du das Repository auf
+deinen Rechner:
 
 ```bash
-git clone https://github.com/(github_username)/first_repo
+git clone https://github.com/<github-username>/first_repo
+cd first_repo
 ```
 
-Es wird automatisch ein Ordner mit dem Namen des Repositories erstellt, in diesem Fall *first_repo*.
-Wechsle in dieses Verzeichnis. In der Git Bash siehst du nun, dass der *Branch main* angezeigt wird.
+`git clone` erstellt automatisch einen Ordner mit dem Namen des Repositories, hier `first_repo`.
+Nach `cd first_repo` zeigt die Git Bash im Prompt den Branch `main` an.
 
-## Extensions für Visual Studio Code
+> Das Repository ist privat. Git fragt deshalb beim ersten Mal nach deinem GitHub-Login. Meist
+> öffnet sich dafür ein Fenster zur Anmeldung im Browser.
 
-Installiere - wenn du es nicht schon gemacht hast - [Visual Studio Code](https://code.visualstudio.com/).
-Das Programm bietet neben den Editorfunktionen auch gute Features für die Verwaltung von Repositories.
-Nach der Installation installiere folgende Extensions:
+## VS Code einrichten
 
-- [Git Graph](https://marketplace.visualstudio.com/items?itemName=mhutchie.git-graph)
-- [GitHub Pull Requests and Issues](https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-pull-request-github)
+Installiere [Visual Studio Code](https://code.visualstudio.com/), falls du es noch nicht hast.
+VS Code hat eingebaute Funktionen für Git. Zwei Extensions machen die Arbeit noch einfacher:
 
-Öffne nun mit *File - Open Folder...* den Ordner des Repositories. Wenn du wie im vorigen Schritt
-die Standardshell von VS Code auf die Git Bash umgestellt hast, sollte das Userinterface so wie auf
-dem Screenshot aussehen:
+- [Git Graph](https://marketplace.visualstudio.com/items?itemName=mhutchie.git-graph) zeigt Commits
+  und Branches als Graph.
+- [GitHub Pull Requests](https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-pull-request-github)
+  erstellt und verwaltet Pull Requests direkt in VS Code.
+
+Installiere die beiden Extensions in der Konsole:
+
+```bash
+code --install-extension mhutchie.git-graph
+code --install-extension GitHub.vscode-pull-request-github
+```
+
+> Unter macOS musst du den Befehl `code` zuerst aktivieren. Öffne dafür in VS Code mit
+> *⌘ + Shift + P* die Command Palette und wähle *Shell Command: Install 'code' command in PATH*.
+
+Öffne dann mit *File → Open Folder...* den Ordner deines Repositories. Hast du im Kapitel
+[Installation](01_installation.md) die Git Bash als Standard-Terminal eingestellt, sieht VS Code
+so aus:
 
 ![](vs_code_ui_1949.png)
 
-## Die ersten Schritte in Visual Studio Code
+## Die drei Orte und die Grundoperationen
 
-Lege im Terminal von VS Code (Git Bash) einen Ordner *first_app* an. Es soll eine .NET 8 Anwendung sein.
+Bevor du den ersten Commit machst, musst du wissen, wo dein Code gespeichert ist. Es gibt drei Orte:
 
-```bash
-mkdir first_app
-cd first_app
-dotnet new console -f net8.0 -n FirstApp -o .
-```
+- **Lokale Dateien:** die Dateien in deinem Ordner. Diese Dateien bearbeitest du im Editor.
+- **Lokales Repository:** der Ordner `.git` in deinem Repository. Hier speichert Git alle Commits.
+  Erst dieser Ordner macht aus einem normalen Ordner ein Repository. Der Ordner ist versteckt. Im
+  Explorer siehst du ihn nur, wenn du versteckte Dateien anzeigen lässt.
+- **Remote Repository (`origin`):** das Repository auf GitHub. `origin` ist der Standardname dafür.
 
-Wenn du nun unter *Source Control* die Änderungen ansiehst, meldet VS Code bereits Änderungen
-im Repository. Nun wollen wir eine besondere Datei anlegen: Die Datei *.gitignore*.
-
-### Anlegen der Datei *.gitignore*
-
-Lege im Hauptordner deines Repositories die Datei *.gitignore* an. Diese Datei legt fest, welche
-Dateien oder Verzeichnisse *nicht* in das Repository kommen. Achte auf den Punkt. Kopiere
-die folgenden Zeilen in die Datei und speichere ab:
-
-```
-**/.vs
-**/.vsode
-**/bin
-**/obj
-```
-
-Diese Ordner erstellt Visual Studio beim Kompilieren des Programmes und zum Speichern von lokalen
-Einstellungen. Die zwei Sterne bedeuten, dass das Verzeichnis in jedem Unterverzeichnis sein kann.
-
-> **Merke:** Builds und lokale Konfiguration werden nie in das Repository geladen.
-
-### Der erste Commit
-
-Gehe nun in VS Code auf *Source Control* und gib den Test *Add console app* als Commit Message
-ein. Klicke danach auf *Commit*. Beim ersten Commit kommt die Frage, ob alle Dateien direkt
-commited werden oder sie "staged" werden. Gib ab, dass VS Code alle Dateien committen soll.
-
-Nun hast du die Änderung in das *lokale Repository* geschrieben. Klicke nun auf den Punkt
-*git graph*. Du siehst, dass das lokale Repository dem *origin* (also dem Repo auf Github) um
-einen Commit voraus ist. Klickst du auf den Commit, dann kannst du die Details und die Dateien,
-die geändert wurden, ansehen. Beim Klick auf eine Datei werden die Änderungen angezeigt.
-
-![](git_graph_first_commit_2002.png)
-
-### Sync Changes
-
-Um die Änderung in das Github Repo (dem *origin*) zu übertragen, klicke auf *Sync Changes*.
-
-## Arbeiten mit Git in Visual Studio
-
-Wir haben eine .NET Applikation angelegt, nun wollen wir natürlich in Visual Studio unseren
-Programmcode schreiben. Öffne dafür die angelegte Datei *first_app/FirstApp.csproj* in Visual
-Studio. Wenn du nun eine Zeile Programmcode hinzufügst und auf die Palette *Git Changes* wechselst,
-siehst du eine ähnliche Darstellung wie in VS Code. Falls du die Palette nicht hast, kannst du sie
-mit *View* - *Git Changes* aktivieren.
-
-![](vs_git_ui_2019.png)
-
-Wir können nun die Änderung wieder committen (z. B. mit *Add output*). Wie in VS Code wird die
-Änderung nach dem Commit nicht direkt an Github übertragen. Dafür drücken wir den Pfeil hinauf
-(*git push*). Erst jetzt sind die Änderungen in Github sichtbar.
-
-## Die Grundoperationen: fetch, pull und push
-
-Die Buttons in VS Code, Visual Studio oder jeder anderen IDE starten im Prinzip git Kommandos.
-Für das Verständnis ist es wichtig zu wissen, dass dein Programmcode an 3 Orten gespeichert ist.
-
-- Zuerst steht der Code einmal als Datei im lokalen Dateisystem. Hier werden die Dateien mit dem
-  Editor bearbeitet, gespeichert oder gelöscht.
-- Versteckt gibt es in jedem geklonten Repository einen Ordner *.git*. Wenn du die versteckten Dateien
-  im Explorer aktivierst, siehst du diesen Ordner. Erst dieser Ordner macht aus einem gewöhnlichen
-  Verzeichnis ein Repository. Es wird als *lokales Repo* bezeichnet.
-- In Github ist der Programmcode im Web gespeichert. Dieser Ort wird auch als *origin* (Quelle)
-  bezeichnet.
-
-Die beschriebenen Operationen regeln den Transfer zwischen diesen 3 Stellen:
+Die Git-Befehle übertragen Änderungen zwischen diesen drei Orten:
 
 ![](git_base_operations_2035.png)
 
-- **git fetch** lädt die Änderungen in das lokale Repository, aber ohne die lokalen Dateien zu ändern.
-- **git pull** "zieht" die Änderungen aus der Quelle (Github) in das lokale Repository (wie *git fetch*)
-  und wendet zusätzlich die Änderung auch an. Es ist üblicherweise der erste Befehl, bevor du neuen
-  Code schreibst.
-- **git commit** schreibt die Änderung in das lokale Repository. Es wird noch nichts an Github
-  übertragen. Neu erstellte Dateien müssen mit *git add -A* hinzugefügt werden. Das erledigt aber
-  die IDE automatisch.
-- **git push** übertragt die Änderungen nach Github, aber nur wenn sie vorher mit *commit* auch
-  in das lokale Repository geschrieben wurden.
+- **`git add`** merkt Änderungen für den nächsten Commit vor (englisch *staging*). `git add -A`
+  merkt alle Änderungen vor, auch neue und gelöschte Dateien.
+- **`git commit`** speichert die vorgemerkten Änderungen als neuen Commit im lokalen Repository.
+  Auf GitHub ist danach noch nichts zu sehen.
+- **`git push`** überträgt deine Commits vom lokalen Repository auf GitHub. Änderungen, die du
+  noch nicht committet hast, überträgt `git push` nicht.
+- **`git fetch`** lädt neue Commits von GitHub in das lokale Repository. Deine Dateien ändern sich
+  dabei nicht.
+- **`git pull`** macht zuerst ein `git fetch`. Danach übernimmt es die neuen Commits in deinen
+  aktiven Branch. Jetzt sind auch deine Dateien aktuell.
 
-> **Merke 1:** Bevor du mit der Arbeit beginnst, starte mit *git pull* oder dem entsprechenden Button
-  in deiner IDE. Nachdem du die Arbeit beendet hast, übertrage die Änderungen in das Remote Repository.
+Die Git-Buttons in VS Code und Visual Studio führen genau diese Befehle aus.
 
-> **Merke 2:** Prüfe vor einem Commit immer die Änderungen, die in der IDE oder im Editor in der
-  entsprechenden Git Palette angezeigt werden. So verhinderst du, dass ungewollte Änderungen
-  oder gar heikle Dateien mit Zugangsdaten in das Repository geladen werden.
+> **Merke: der Ablauf bei jeder Arbeit**
+>
+> 1. **Zuerst Pull:** Hole mit `git pull` den aktuellen Stand von GitHub, bevor du etwas änderst.
+> 2. **Arbeiten:** Ändere den Code und committe deine Änderungen.
+> 3. **Dann Push:** Übertrage deine Commits mit `git push` auf GitHub.
+>
+> Gewöhne dir diesen Ablauf von Anfang an. Durch den Pull am Anfang arbeitest du immer mit dem
+> neuesten Stand. So entstehen weniger Konflikte.
 
-Nun wird dieses Plakat schon viel verständlicher:
+## Die ersten Schritte in VS Code
+
+In den folgenden Schritten übst du den Ablauf *Pull → Arbeiten → Push* gleich zum ersten Mal.
+
+### Zuerst: Pull
+
+Starte mit einem Pull, auch wenn du das Repository gerade erst geklont hast. Klicke in VS Code in
+der Ansicht *Source Control* oben auf das Menü *...* und wähle *Pull*. In der Konsole gibst du ein:
+
+```bash
+git pull
+```
+
+### Die Datei `.gitignore` anlegen
+
+Die Datei `.gitignore` legt fest, welche Dateien und Ordner Git **nicht** in das Repository
+aufnimmt. Lege die Datei in VS Code im Hauptordner deines Repositories an. Achte auf den Punkt am
+Anfang des Dateinamens. Kopiere diese Zeilen in die Datei und speichere sie:
+
+```
+**/.vs
+**/.vscode
+**/bin
+**/obj
+.DS_Store
+.env
+```
+
+| Eintrag                  | Warum ignorieren?                                                                 |
+| ------------------------ | --------------------------------------------------------------------------------- |
+| `**/.vs`, `**/.vscode`   | Lokale Einstellungen von Visual Studio und VS Code.                               |
+| `**/bin`, `**/obj`       | Ergebnisse beim Kompilieren. Jede Person erzeugt sie auf ihrem Rechner neu.       |
+| `.DS_Store`              | Eine versteckte Datei, die macOS in Ordnern anlegt.                               |
+| `.env`                   | Enthält oft Passwörter und andere Zugangsdaten.                                   |
+
+`**/` bedeutet: Git ignoriert den Ordner in jedem Unterordner, egal wie tief er liegt.
+
+> **Merke:** Kompilierte Dateien, lokale Einstellungen und Zugangsdaten gehören nie in das
+> Repository.
+
+### Der erste Commit
+
+1. Öffne in VS Code die Ansicht *Source Control*. Dort siehst du die Datei `.gitignore` als Änderung.
+2. Gib als Commit Message `Add .gitignore` ein und klicke auf *Commit*.
+3. VS Code fragt, ob es alle Änderungen vormerken (*stage*) und direkt committen soll. Wähle *Yes*.
+   Mit *Always* fragt VS Code in Zukunft nicht mehr.
+
+Der Commit ist jetzt im lokalen Repository gespeichert, aber noch nicht auf GitHub. Klicke in
+*Source Control* auf das Symbol *Git Graph*. Du siehst, dass dein Branch `main` dem Branch
+`origin/main` um einen Commit voraus ist. Klickst du auf den Commit, siehst du seine Details und
+die geänderten Dateien. Klickst du auf eine Datei, zeigt VS Code die Änderungen an.
+
+![](git_graph_first_commit_2002.png)
+
+> **Merke:** Prüfe vor jedem Commit die Liste der Änderungen, in VS Code unter *Source Control*,
+> in Visual Studio unter *Git Changes*. So verhinderst du, dass ungewollte Dateien oder Dateien mit
+> Zugangsdaten in das Repository kommen. Hast du ein Passwort schon auf GitHub gepusht, ändere das
+> Passwort sofort. Die Datei im nächsten Commit zu löschen reicht nicht, denn das Passwort bleibt in
+> der History.
+
+### Dann: Push
+
+Klicke in *Source Control* oben auf das Menü *...* und wähle *Push*. In der Konsole gibst du ein:
+
+```bash
+git push
+```
+
+Auf GitHub siehst du jetzt die Datei `.gitignore` in deinem Repository.
+
+> **Verwende nicht den Button *Sync Changes*.** Du siehst ihn im Screenshot oben. Er macht Pull und
+> Push in einem Schritt, also erst **nach** deiner Arbeit. Neue Commits von anderen Personen
+> bekommst du dann erst am Ende, und Konflikte fallen erst spät auf. Mache den Pull stattdessen
+> immer **vor** der Arbeit und den Push **danach**.
+
+Jetzt verstehst du auch dieses bekannte Plakat:
 
 ![](in_case_of_fire.png)

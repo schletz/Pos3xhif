@@ -1,142 +1,242 @@
-# Konflikte im Team: der Merge Konflikt
+# Merge Konflikte
 
-Konflikte (im Repository) entstehen, wenn die gleiche Datei von 2 Personen editiert wird.
-Sehen wir uns einen Verlauf an:
+## Wann entsteht ein Merge Konflikt?
 
-| **Aktion**                                                                                        | **Hash von Program.cs in *main* vor der Operation** |
-| ------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
-| A erstellt den Feature Branch *manage-employees* durch checkout von *main*                        | 3e1a3...                                            |
-| B erstellt den Feature Branch *add-inventory* durch checkout von *main*                           | **3e1a3...**                                        |
-| A committed eine neue Version der Datei *Program.cs*                                              | 3e1a3...                                            |
-| B committed eine neue Version der Datei *Program.cs*                                              | 3e1a3...                                            |
-| (Merge 1) Der Feature Branch *manage-employees* wird durch Merge in den *main* Branch integriert. | **3e1a3...**                                        |
-| (Merge 2) Der Feature Branch *add-inventory* wird durch Merge in den *main* Branch integriert.    | **9a621...**                                        |
+Meistens kann Git die Änderungen aus zwei Branches automatisch zusammenführen. Dafür vergleicht
+Git drei Stände einer Datei:
 
-Wird ein Feature Branch erstellt, dann merkt sich das Repository, von welchem Hashwert weg gearbeitet
-wird. Soll nun durch ein Merge eine Änderung integriert werden, so prüft das System, ob sich der
-Hashwert in der Zwischenzeit geändert hat. Der Fall *Merge 1* kann ohne Konflikt durchgeführt werden,
-da sich der Hashwert der Datei *Program.cs* *im Branch main* in der Zwischenzeit nicht verändert hat.
-Keiner hat also die Datei im Branch *main* angerührt. Daher kann sie durch die neue Version
-ohne Bedenken ersetzt werden.
+1. den Stand, von dem beide Branches gestartet sind (der gemeinsame Vorgänger, englisch *merge base*),
+2. den Stand im ersten Branch,
+3. den Stand im zweiten Branch.
 
-Merge 2 findet aber jetzt eine geänderte Datei *Program.cs* in *main*. Es entsteht ein
-**Merge Konflikt**, der behoben werden muss. Github erkennt beim entsprechenden Pull Request diese
-Situation und bietet kein Merge mehr an:
+Git vergleicht die Datei dabei Zeile für Zeile:
+
+- Hat nur **ein** Branch eine Stelle geändert, übernimmt Git diese Änderung automatisch.
+- Haben beide Branches **verschiedene Stellen** derselben Datei geändert, übernimmt Git beide
+  Änderungen automatisch.
+- Haben beide Branches **dieselbe Stelle** unterschiedlich geändert, weiß Git nicht, welche Version
+  richtig ist. Das ist ein **Merge Konflikt**. Diesen Konflikt musst du selbst lösen.
+
+Ein Konflikt entsteht auch, wenn ein Branch eine Datei löscht und der andere Branch sie ändert.
+
+### Ein Beispiel
+
+Wir verwenden das Beispiel aus dem Kapitel [Branches](03_branches.md): A arbeitet im Branch
+`add-inventory`, B im Branch `manage-employees`.
+
+| Schritt | Was passiert?                                                                                              |
+| ------- | ---------------------------------------------------------------------------------------------------------- |
+| 1       | A erstellt den Feature Branch `add-inventory` von `main`.                                                  |
+| 2       | B erstellt den Feature Branch `manage-employees` vom selben Stand von `main`.                              |
+| 3       | A ändert in `Program.cs` eine Zeile und committet.                                                         |
+| 4       | B ändert in `Program.cs` **dieselbe** Zeile, aber anders, und committet.                                   |
+| 5       | Der Pull Request von B wird gemerged. Das klappt ohne Konflikt, weil sich `main` seit Schritt 2 nicht verändert hat. |
+| 6       | A erstellt einen Pull Request. Die Zeile wurde in `main` (von B) und in `add-inventory` (von A) unterschiedlich geändert: **Merge Konflikt**. |
+
+GitHub erkennt den Konflikt im Pull Request von A und bietet keinen Merge an:
 
 ![](merge_pull_request_github_conflict_2204.png)
 
-## Lösen von Merge Konflikten
+## Einen Merge Konflikt lösen: zuerst Rebase, dann die IDE
 
-Am Besten werden Merge Konflikte in der entsprechenden IDE gelöst. Dafür wird zuerst der aktuelle
-Stand des Branches *main* und des Branches *add-inventory* mit *git pull* bzw. *git fetch*
-auf den lokalen Rechner übertragen. Danach kann der Merge Prozess in der IDE gestartet werden.
+> **Die Regel:** Du löst Konflikte immer **in deinem Feature Branch**, nie in `main`.
+> 1. Zuerst startest du in der Konsole einen **Rebase** auf den aktuellen Stand von `main`.
+> 2. Erst dann löst du die Konflikte in der **IDE** (Visual Studio oder VS Code).
 
-In Visual Studio gibt es hierfür im Menü *Git* den Punkt *Manage Branches*. In Visual Studio
-Code kann mit der Extension *git Graph* gearbeitet werden.
+Beim **Rebase** nimmt Git die Commits deines Feature Branches und setzt sie neu auf den aktuellen
+Stand von `main`. Das Ergebnis sieht so aus, als hättest du deinen Branch erst jetzt vom neuesten
+`main` erstellt. Deine Commits bekommen dabei neue Hashes. Findet Git einen Konflikt, hält der
+Rebase an, und du löst den Konflikt in der IDE.
 
-![](merge_conflict_ide_2237.png)
+Das hat mehrere Vorteile:
 
-Nachdem der Merge Prozess gestartet wurde, erkennt die IDE dass ein Merge Konflikt vorliegt. Durch
-Klick auf die entsprechende Datei öffnet sich der *Merge Editor*. Mit dem Merge Editor können wir
-angeben, welche Inhalte übernommen werden sollen.
+- Du löst die Konflikte selbst, in deinem eigenen Branch. Du kennst deinen Code am besten.
+- Danach kann GitHub den Pull Request ohne Konflikt mergen.
+- Die History bleibt übersichtlich, weil kein zusätzlicher Merge Commit im Feature Branch entsteht.
 
-Wenn es im Konflikte in C# Dateien geht, ist der Merge Editor von Visual Studio die bessere
-Wahl. Er "versteht" die Syntax und erkennt, ob z. B. Methoden in der Mitte dazugekommen sind.
+> Mache den Rebase nicht erst, wenn GitHub einen Konflikt meldet. Mache ihn **vor jedem Pull
+> Request** und auch zwischendurch, wenn sich `main` geändert hat.
 
-![](vs_merge_editor_2245.png)
+Die folgende Grafik zeigt den ganzen Ablauf an einem zweiten Beispiel: Die Branches
+`feature/add_customer` und `feature/delete_customer` ändern beide die Datei `ListCustomer.tsx`.
+Teil 1 zeigt, wie der Konflikt entsteht. Teil 2 zeigt die Lösung mit Rebase.
 
-Mit Visual Studio Code kann ebenfalls ein Merge Konflikt gelöst werden. Er ist ein gutes allgemeines
-Werkzeug für alle Dateitypen, die spezifischeren IDEs bieten jedoch in der Regel mehr Möglichkeiten.
+![](git_merge_conflict_rebase.svg)
 
-![](vscode_merge_editor_2248.png)
+### Schritt 1: In den Feature Branch wechseln
 
-## Vermeiden von Konflikten
+Committe vorher alle offenen Änderungen. Sonst startet der Rebase nicht.
 
-Wie du gesehen hast ist das Beheben von Merge Konflikten auch mit IDE Unterstützung eine
-aufwändige Sache. Die Programme müssen nachher schließlich auch durchgetestet werden. Daher ist ein
-Vermeiden im Voraus immer die Beste Strategie.
+```bash
+git checkout add-inventory
+```
 
-Wie auch im realen Leben können Konflikte im Team nie vermieden werden. Auch Merge Konflikte werden
-sich nicht zu 100% verhindern lassen, denn dass jede Datei einen "Eigentümer" hat der sie ändern
-darf ist in Projekten nicht machbar. Es gibt aber Fehler, die oft auftreten und dann zu Problemen
-führen können:
-
-- **Zu frühe Erstellung von Featurebranches.** Bevor Feature Branches angelegt werden, sollte die
-  Projektstruktur soweit aufgebaut sein, dass von der Datenbank bis zum Frontend ein "Durchstich"
-  gemacht wurde. Erst dann können Features unabhängiger implementiert werden.
-- **Arbeit in Schichten statt in Features.** Oft ist die Einteilung in "Backend", "Frontend" und
-  "Datenbank" noch immer in den Köpfen von vielen Schülern und Studierenden. Das setzt aber
-  Voraus, dass die Modelklassen (Datenbank) zu 100% fertig sind, dann ein Merge gemacht wird,
-  und der Nächste arbeitet am Backend. Das ist realitätsfern. Branches werden daher für Features wie
-  z. B. "Manage employees" für die Verwaltung der Mitarbeiter, "View appointments in calendar"
-  für die Anzeige der Termine als Kalender, ... erstellt.
-- **Zu lange offene Branches.** Gerade in Verbindung mit dem vorigen Punkt bleiben Branches im
-  Extremfall über die gesamte Projektlaufzeit "offen", d. h. es findet kein Merge in den main Branch
-  statt. Das erhöht natürlich die Wahrscheinlichkeit von Merge Konflikten.
-- **Zu viele Personen für zu wenig Arbeit.** Dieser Punkt ist sicher schulspezifisch, in der Realität
-  ist es wohl umgekehrt. Gerade bei Schulprojekten finden sich 4 Personen, die eine Webapplikation
-  zum Hinzufügen, Ändern und Löschen von Personen schreiben. Solche Projekte können natürlich nicht
-  vernünftig auf mehrere Personen aufgeteilt werden, da dies ein einziges Feature in einem
-  realen Projekt ist.
-- **Kein durchgeführtes rebase vor dem merge.** Siehe nächster Punkt.
-
-## Änderungen von *main* in den Feature Branch übertragen
-
-Manchmal möchte man auch in die umgekehrte Richtung Änderungen übertragen: Vom Branch *main* in
-den Featurebranch. Um Commits zu kopieren, gibt es den Befehl *git rebase*. Im Gegenstatz zum
-Merge werden alle Commits, die nach der "Abspaltung" stattgefunden haben, in den Branach kopiert.
-
-Um einen Rebase durchzuführen, nehmen wir am Besten die Git Bash. Gehe in den Featurebranch, den
-du aktualisieren möchtest, z. B. mit *git checkout (featurebranch)*. Gib danach den folgenden
-Befehl ein:
+### Schritt 2: Den Rebase in der Konsole starten
 
 ```bash
 git pull origin main --rebase
 ```
 
-Diese Befehle holen sich den neuesten Stand des Branches *main* auf den Rechner. Danach werden
-mit *git rebase main* die Commits *von main in den Feature Branch* kopiert. Falls es Merge Konflikte
-gibt, kannst du sie mit der IDE lösen.
+Der Befehl holt den aktuellen Stand von `main` von GitHub und setzt deine Commits darauf. Dein
+lokaler Branch `main` bleibt dabei **unverändert**.
 
-Nach dem Lösen des Konfliktes kannst du mit folgendem Befehl den nächsten Commit übertragen bzw. den rebase Modus verlassen:
+Gibt es keinen Konflikt, ist der Rebase sofort fertig. Mach dann mit Schritt 5 weiter.
+
+Gibt es einen Konflikt, hält Git beim betroffenen Commit an und meldet:
+
+```
+CONFLICT (content): Merge conflict in first_app/Program.cs
+error: could not apply 1c63378... Add message.
+```
+
+### Schritt 3: Die Konflikte in der IDE lösen
+
+Lass die Konsole offen und wechsle in die IDE. Die IDE zeigt dir die Dateien mit Konflikten an.
+Klickst du auf eine Datei, öffnet sich der **Merge Editor**. Für jeden Konflikt wählst du, welche
+Version du übernimmst: *Incoming*, *Current* oder beide. Unten siehst du das Ergebnis (*Result*).
+Du kannst das Ergebnis dort auch direkt bearbeiten.
+
+> **Achtung, beim Rebase gilt:**
+> - *Current* ist der Stand von `main`, also die Änderungen der anderen Personen.
+> - *Incoming* ist dein eigener Commit, den Git gerade auf `main` setzt.
+>
+> Lies im Merge Editor daher genau, welche Seite von welchem Branch kommt.
+
+**Visual Studio:** Die Dateien stehen im Fenster *Git Changes* unter *Unmerged Changes*. Mit einem
+Doppelklick öffnest du den Merge Editor. Wenn alle Konflikte in der Datei gelöst sind, klickst du
+auf *Accept Merge*.
+
+![](vs_merge_editor_2245.png)
+
+**VS Code:** Die Dateien stehen unter *Source Control* bei *Merge Changes*. Öffne die Datei und
+klicke auf *Resolve in Merge Editor*. Wenn alle Konflikte in der Datei gelöst sind, klickst du auf
+*Complete Merge*.
+
+![](vscode_merge_editor_2248.png)
+
+> Die Screenshots zeigen den Merge Editor bei einem Merge. Beim Rebase sieht er genauso aus und
+> funktioniert gleich. Nur die Seiten *Current* und *Incoming* sind wie oben beschrieben belegt.
+
+#### Was steht in der Datei?
+
+Ohne Merge Editor siehst du den Konflikt direkt in der Datei. Git schreibt beide Versionen hinein
+und markiert sie:
+
+```
+<<<<<<< HEAD
+Console.WriteLine("Hello, World again from branch manage-employees!");
+=======
+Console.WriteLine("Hello, World again from branch add-inventory!");
+>>>>>>> 1c63378 (Add message.)
+```
+
+- Zwischen `<<<<<<<` und `=======` steht der Stand von `main` (*Current*).
+- Zwischen `=======` und `>>>>>>>` steht dein eigener Commit (*Incoming*).
+
+Bearbeite die Datei so, wie sie am Ende aussehen soll. Danach dürfen die Zeilen mit `<<<<<<<`,
+`=======` und `>>>>>>>` nicht mehr in der Datei stehen.
+
+### Schritt 4: Den Rebase in der Konsole fortsetzen
+
+Sind alle Konflikte gelöst, wechselst du zurück in die Konsole:
 
 ```bash
+git add .
 git rebase --continue
 ```
 
-Danach wird der neue feature Branch mit *push --force* an den Server übertragen.
+Git setzt dann den nächsten Commit auf `main`. Gibt es dabei wieder einen Konflikt, wiederholst du
+Schritt 3 und Schritt 4, bis der Rebase fertig ist.
+
+Öffnet Git in VS Code die Commit Message, schließe den Tab einfach. Git verwendet dann die
+vorgeschlagene Message. Wie du VS Code als Editor für Git einstellst, steht im Kapitel
+[Installation](01_installation.md).
+
+### Schritt 5: Testen und auf GitHub übertragen
+
+> **Wichtig:** Kompiliere und teste das Programm, bevor du pushst. Git prüft nur den Text, nicht
+> ob der Code funktioniert. Auch ein Rebase ohne Konflikt kann Code erzeugen, der nicht kompiliert.
+
+Danach überträgst du den neuen Stand auf GitHub:
 
 ```bash
-git push --force
+git push --force-with-lease
 ```
 
-den neuen Stand des Featurebranches nach Github übertragen. Der Parameter *--force* gibt an, dass
-auch übertragen wird, wenn die History nicht deckungsgleich ist.
+Deine Commits haben durch den Rebase neue Hashes. Die History auf GitHub passt daher nicht mehr zu
+deiner lokalen History, und ein normales `git push` wird abgelehnt. Mit `--force-with-lease`
+überschreibst du den Branch auf GitHub. Anders als `--force` bricht `--force-with-lease` ab, wenn
+jemand anderer in der Zwischenzeit in diesen Branch gepusht hat. So überschreibst du nicht aus
+Versehen fremde Commits.
 
-### Rebase in den Feature Branch vor dem Merge
+> **Force Push nur im eigenen Feature Branch!** Verwende ihn nie in `main` oder in Branches, in
+> denen andere Personen arbeiten. Wie du den Force Push in der IDE aktivierst, steht im Kapitel
+> [History](06_history.md).
 
-Die Technik hilft auch, um Konflikte vor dem Pull Request schon lösen zu können. Wenn wie am Anfang
-erwähnt der Entwickler des Branches *add-inventory* ein *git rebase main* abgesetzt hätte, so
-würde er selbst die Merge Konflikte haben und lösen. Wird dann ein Pull Request abgesetzt, kann dieser
-ohne Konflikte verarbeitet werden.
+Jetzt kann GitHub deinen Pull Request ohne Konflikt mergen.
 
-## Änderungen des Feature Branches in main mit *rebase* übertragen
+### Wenn etwas schiefgeht
 
-Bisher haben wir mit dem Pull Request und der Merge Operation eine Möglichkeit kennengelernt, um die Änderungen des Feature Branches in den main Branch zu integrieren.
-Durch diese Operation entsteht ein sogenannter *merge commit* im Branch *main*.
-Die beschriebene Technik des *rebase* kann auch dazu verwendet werden, um die neu dazugekommenen Features aus dem Feature Branch in den main Branch zu integrieren.
-Im Gegensatz zum *merge* werden dabei die einzelnen Commits des Feature Branches in den Branch main integriert.
-Es entsteht also die selbe History, wie wenn du die Änderungen immer direkt in den Branch main commitet hast.
-Viele halten diesen Ansatz für "sauberer", da die History im Branch main dann alle Commits des Feature Branches umfasst.
+- **Du willst den Rebase abbrechen:** Mit `git rebase --abort` ist dein Branch wieder genau so wie
+  vor Schritt 2. Du kannst dann in Ruhe neu beginnen.
+- **Du weißt nicht, in welchem Zustand du bist:** `git status` zeigt dir, ob gerade ein Rebase läuft
+  und welche Dateien noch Konflikte haben.
 
-Um den main Branch mit *rebase* zu aktualisieren, führe folgende Schritte durch:
+> Verwende **nicht** den Button *Resolve conflicts* im Pull Request auf GitHub. Er löst den Konflikt
+> mit einem Merge von `main` in deinen Branch, nicht mit einem Rebase. Außerdem kannst du das
+> Programm im Browser nicht kompilieren und testen.
 
-1. Gehe mit `git checkout main` in den Branch main.
-1. Stelle mit `git pull --rebase` sicher, dass du die neuesten Änderungen aus dem Remote Repository auf deinem Rechner hast.
-   Die Option *rebase* sorgt dafür, dass bei Konflikten kein merge Commit für die Auflösung entsteht.
-2. Danach kannst du mit `git rebase <featurebranch>` die Änderungen in den main Branch integrieren.
-3. Mit `git push` überträgst du den neuen Stand in das Remote Repository.
+## Merge Konflikte vermeiden
 
-> Hinweis: Die Operation `git push --force` sollte im main Branch sehr gut überlegt werden.
-> In vielen Repositories ist diese Operation aus Sicherheitsgründen vom Eigentümer deaktiviert worden.
-> Wenn du wie beschrieben vorher die Änderungen von main in den Feature Branch integrierst, brauchst du diese Operation auch nicht.
+Konflikte zu lösen kostet Zeit. Danach musst du das Programm auch noch testen. Ganz vermeiden kannst
+du Konflikte im Team nicht. Einige typische Fehler führen aber besonders oft zu Konflikten:
+
+- **Feature Branches zu früh erstellen.** Baut zuerst gemeinsam die Grundstruktur des Projekts auf.
+  Ein erstes, kleines Feature soll von der Datenbank bis zur Oberfläche funktionieren (englisch
+  *vertical slice*). Erst danach könnt ihr Features unabhängig voneinander entwickeln.
+- **In Schichten statt in Features arbeiten.** Teilt die Arbeit nicht in "Datenbank", "Backend" und
+  "Frontend" auf. Das setzt voraus, dass zum Beispiel die Modellklassen komplett fertig sind, bevor
+  jemand am Backend arbeitet. In echten Projekten funktioniert das nicht. Erstellt Branches für
+  Features, z. B. `manage-employees` (Mitarbeiter verwalten) oder `view-appointments-calendar`
+  (Termine im Kalender anzeigen). Ein Feature umfasst dabei alle Schichten.
+- **Branches zu lange offen lassen.** Je länger ein Branch nicht in `main` gemerged wird, desto mehr
+  ändert sich in der Zwischenzeit in `main`. Damit steigt das Risiko für Konflikte. Mergt lieber
+  kleine Features und dafür oft.
+- **Keinen Rebase machen.** Mache regelmäßig einen Rebase auf `main`, vor allem vor dem Pull Request.
+  So siehst du Konflikte früh, solange sie noch klein sind.
+- **Zu viele Personen für ein kleines Projekt.** Eine Webapplikation, die nur Personen anlegt, ändert
+  und löscht, ist in echten Projekten *ein einziges* Feature. Vier Personen können daran kaum
+  gleichzeitig arbeiten, ohne sich zu stören. Plant bei Projekten in der Ausbildung genug Features
+  für alle Personen ein.
+
+## Für Fortgeschrittene: eine lineare History in `main`
+
+Beim Button *Merge pull request* entsteht in `main` für jeden Feature Branch ein Merge Commit.
+Manche Teams wollen stattdessen eine **lineare History**: Alle Commits liegen in einer Reihe,
+ohne Merge Commits. Das erreichst du ebenfalls mit Rebase.
+
+**Mit Pull Request (empfohlen):** Mache zuerst den Rebase deines Feature Branches wie oben
+beschrieben. Wähle dann im Pull Request auf GitHub über den Pfeil neben dem Merge-Button die Option
+*Rebase and merge*. GitHub setzt die Commits des Feature Branches dann einzeln auf `main`, ohne
+Merge Commit.
+
+**Ohne Pull Request in der Konsole:**
+
+1. Mache den Rebase deines Feature Branches wie oben beschrieben und pushe ihn. Danach enthält der
+   Feature Branch alle Commits von `main`.
+2. Übernimm den Feature Branch in `main`:
+
+   ```bash
+   git checkout main
+   git pull
+   git merge --ff-only add-inventory
+   git push
+   ```
+
+`--ff-only` erlaubt nur einen Fast-Forward: Git setzt `main` auf den letzten Commit des Feature
+Branches, ohne einen Merge Commit zu erstellen. Ist der Feature Branch nicht aktuell, bricht Git mit
+einem Fehler ab. Mach dann zuerst Schritt 1.
+
+> Ändere die History von `main` nie nachträglich, und verwende in `main` keinen Force Push. Alle
+> anderen Feature Branches bauen auf der History von `main` auf. In vielen Repositories ist ein
+> Force Push auf `main` deshalb gesperrt.

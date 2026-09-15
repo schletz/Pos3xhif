@@ -1,79 +1,209 @@
-# Wir arbeiten nicht alleine: Umgang mit Branches
+# Im Team arbeiten: Branches
 
-Wenn mehrere Leute im Team arbeiten, braucht es noch eine zusätzliches Feature. Folgende Situation
-ist der Alltag in Entwicklerteams: A soll in der Applikation das Feature "Inventar erfassen" implementieren.
-B soll sich in dieser Zeit um das Feature "Mitarbeiter verwalten" kümmern. Da es größere Tasks
-sind, werden A und B sich nicht hinsetzen und den Code in einem Zug schreiben und dann einen
-einzigen Commit ausführen.
+## Wichtige Begriffe
 
-A und B werden also die Arbeit auf mehrere Commits verteilen. Würde jeder Commit direkt automatisch
-bei allen anderen Teammitgliedern sichtbar werden, sorgt das für große Verwirrung. Denn der Stand
-ist natürlich noch nicht "ready for production" sondern ein Zwischenstand am Ende eines Arbeitstages.
+| Begriff                        | Bedeutung                                                                                                          |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| **Commit**                     | Ein gespeicherter Stand deiner Dateien. Jeder Commit hat eine eindeutige ID, den *Hash* (z. B. `a7c90d3`).          |
+| **Parent**                     | Der Vorgänger eines Commits.                                                                                       |
+| **Branch**                     | Ein Name, der auf einen Commit zeigt. Bei jedem neuen Commit im Branch zeigt der Name auf den neuen Commit.         |
+| **`main`**                     | Der Haupt-Branch. Er enthält den fertigen und getesteten Stand des Projekts.                                       |
+| **Feature Branch**             | Ein Branch, in dem du genau ein Feature entwickelst.                                                               |
+| **Remote Repository, `origin`** | Das Repository auf GitHub. `origin` ist der Standardname dafür.                                                   |
+| **Upstream**                   | Der Branch auf GitHub, mit dem dein lokaler Branch verbunden ist (z. B. `origin/add-inventory`).                   |
+| **Merge**                      | Zwei Branches zusammenführen.                                                                                      |
+| **Pull Request (PR)**          | Eine Anfrage auf GitHub, einen Feature Branch in `main` zu mergen.                                                 |
 
-Daher brauchen wir das Konzept der *Branches*. Jede/r, der sich mit Git schon beschäftigt hat,
-hat schon die Darstellung der Commits als *Graph* gesehen.
+## Warum brauchen wir Branches?
+
+In einem Team arbeiten mehrere Personen gleichzeitig am selben Projekt. Ein typisches Beispiel:
+
+- A programmiert das Feature "Inventar erfassen".
+- B programmiert zur selben Zeit das Feature "Mitarbeiter verwalten".
+
+Beide Features sind große Aufgaben. A und B machen daher nicht einen einzigen Commit, sondern
+viele kleine Commits. Am Ende eines Arbeitstages ist der Code oft noch nicht fertig. Trotzdem
+sollen A und B ihre Commits auf GitHub pushen, damit ihre Arbeit gesichert ist.
+
+Pushen A und B direkt in `main`, bekommt das ganze Team diesen unfertigen Code. Vielleicht lässt
+sich das Programm dann nicht mehr kompilieren, und niemand weiß, welcher Stand funktioniert.
+
+Die Lösung sind **Branches**. Die folgende Grafik zeigt Commits und Branches als *Graph*:
 
 ![](git_branches.svg)
 <small>https://www.atlassian.com/git/tutorials/using-branches</small>
 
-Der Sinn von Branches ist der, dass A und B unabhängig an ihren Features arbeiten können, ohne
-andere im Team zu stören. Wenn das Feature fertig getestet ist, wird der Stand in den Main Branch
-integriert. Wir bezeichnen diese Branches daher als **Featurebranches**.
+Jedes Feature bekommt einen eigenen Branch. So arbeiten A und B unabhängig voneinander und stören
+das restliche Team nicht. Ist ein Feature fertig und getestet, kommen seine Änderungen in den
+Branch `main`. Solche Branches heißen **Feature Branches**.
 
-## Anlegen eines Branches
+## Einen Branch anlegen
 
-Ein Branch kann mit VS Code oder in Visual Studio leicht erstellt werden, indem du auf den
-Namen des aktuellen Branches (hier *main*) in der Fußzeile klickst. Falls du ungespeicherte
-Änderungen hast, bieten dir die Programme an, diese Änderungen in den neuen Branch zu übernehmen.
+### In der IDE
+
+In VS Code und in Visual Studio klickst du unten in der Statusleiste auf den Namen des aktiven
+Branches (hier `main`). Danach kannst du einen neuen Branch erstellen.
 
 ![](create_branch_2122.png)
 
-In der Konsole kannst du mit *git checkout -b add-inventory* den Branch *add-inventory* erstellen.
+### In der Konsole
 
-Nun kannst du wie gewohnt deine Commits absetzen, ohne die anderen im Team zu stören. Du kannst jederzeit
-zwischen den Branches hin- und herschalten. Die Änderungen im Branch *add-inventory* sind dann
-im Branch *main* nicht sichtbar. Wenn du wieder zurück wechselst, dann tauschen sie wieder auf.
+In der Git Bash legst du den Branch `add-inventory` mit diesen Befehlen an:
 
-> Branches sind "Sichten" auf das (lokale) Repository. Beim Umschalten siehst du die Dateien
-> des aktiven Branches. Deswegen ist in der Git Bash die Angabe des aktiven Branches sehr wichtig,
-> um nicht aus Versehen im falschen Branch zu arbeiten.
+```bash
+git checkout main
+git pull
+git checkout -b add-inventory
+```
 
-Mit *git branch* kannst du in der Bash alle Branches auflisten.
+- `git checkout main` wechselt in den Branch `main`. Von hier aus soll der neue Branch starten.
+- `git pull` holt den aktuellen Stand von GitHub. So startet dein Branch nicht mit einem alten Stand.
+- `git checkout -b add-inventory` erstellt den Branch `add-inventory` und wechselt sofort hinein.
+  Ohne `-b` wechselt `git checkout` nur in einen Branch, den es schon gibt.
 
-### Übertragen eines Branches nach Github
+> Neuere Git-Versionen haben dafür auch den Befehl `git switch`: `git switch -c add-inventory`
+> erstellt einen Branch, `git switch main` wechselt in einen bestehenden Branch.
 
-Wenn du zum ersten Mal im neuen Branch das *git push* Kommando über die IDE aufrufst, wird der
-neue Branch automatisch in Github erstellt bzw. es gibt einen Button *Puslish Branch*. Wenn
-du mit der Bash arbeitest und *git push* eingibst, kommt ein Hinweis:
+Mit `git branch` siehst du alle lokalen Branches. Der aktive Branch ist mit `*` markiert.
+
+## Zwischen Branches wechseln
+
+Im neuen Branch machst du deine Commits wie gewohnt. Du kannst jederzeit in einen anderen Branch
+wechseln:
+
+```bash
+git checkout main
+git checkout add-inventory
+```
+
+Nach dem Wechsel zeigt Git die Dateien so, wie sie im gewählten Branch gespeichert sind. Die Commits
+aus `add-inventory` siehst du in `main` also nicht. Wechselst du zurück, sind sie wieder da.
+
+> **Achtung:** Das gilt nur für Änderungen, die du schon committet hast. Nicht committete
+> Änderungen nimmt Git beim Wechsel in den anderen Branch mit. Würden dabei Änderungen verloren
+> gehen, bricht Git den Wechsel mit einer Fehlermeldung ab. Committe deine Änderungen daher,
+> bevor du den Branch wechselst.
+
+Die Git Bash zeigt den aktiven Branch in Klammern an, z. B. `(add-inventory)`. Prüfe vor jedem
+Commit, ob du im richtigen Branch bist.
+
+## Einen Branch auf GitHub übertragen
+
+**In der IDE:** Beim ersten Push eines neuen Branches zeigt VS Code den Button *Publish Branch*.
+Visual Studio erstellt den Branch beim Push automatisch auf GitHub.
+
+**In der Konsole:** Hast du Git wie im Kapitel [Installation](01_installation.md) konfiguriert
+(`push.autoSetupRemote`), reicht auch beim ersten Mal:
+
+```bash
+git push
+```
+
+Git legt den Branch dann automatisch auf GitHub an und verbindet deinen lokalen Branch mit dem Branch
+`origin/add-inventory`. Danach funktionieren in diesem Branch `git push` und `git pull`.
+
+Ohne diese Einstellung brauchst du beim ersten Push den Parameter `-u` (lang: `--set-upstream`):
+
+```bash
+git push -u origin add-inventory
+```
+
+Vergisst du `-u`, zeigt Git einen Fehler mit dem richtigen Befehl:
 
 ```
-fatal: The current branch manage-employees has no upstream branch.
+fatal: The current branch add-inventory has no upstream branch.
 To push the current branch and set the remote as upstream, use
 
-    git push --set-upstream origin manage-employees
+    git push --set-upstream origin add-inventory
 ```
 
-Kopiere einfach das Kommando aus der Fehlermeldung, dann kannst du auch in der Bash den Branch
-nach Github übertragen. Im Repo auf https://github.com siehst du nun auf der Webseite deine
-Branches.
+Kopiere den Befehl aus der Fehlermeldung und führe ihn aus. Auf https://github.com siehst du
+danach deinen Branch im Repository.
 
-## Integrieren der Änderungen in den main Branch: Der Pull Request
+## Änderungen in `main` übernehmen: der Pull Request
 
-Das Wort *Pull Request* haben manche vielleicht schon gehört. So wie wir mit *git pull* die Änderungen
-aus Github in unser Repository "hineinziehen" ist der Pull Request eine Anfrage, die Änderungen des
-Featurebranches in den Main Branch "hineinzuziehen".
+Ist dein Feature fertig, sollen die Änderungen in den Branch `main`. Dafür erstellst du einen
+**Pull Request** (kurz *PR*). Ein Pull Request ist eine Anfrage an das Team: "Bitte übernehmt die
+Änderungen aus meinem Feature Branch in `main`." Andere Personen im Team können die Änderungen
+vorher ansehen und kommentieren.
+
+Einen Pull Request kannst du direkt in der IDE erstellen:
 
 ![](pull_request_ide_2145.png)
 
-Nach dem Senden des Pull Requests erscheint er auf Github unter *Pull requests*:
+Danach erscheint der Pull Request auf GitHub unter *Pull requests*:
 
 ![](pull_request_github_2149.png)
 
-Klicken wir auf einen Pull Request, bietet Github mit *Merge pull request* an, die Änderungen
-in den Main Branch aufzunehmen.
+Öffnest du den Pull Request, kannst du ihn mit dem Button *Merge pull request* abschließen.
+GitHub übernimmt dann die Änderungen in `main`.
 
 ![](merge_pull_request_github_2152.png)
 
-Nach dem Merge Vorgang hat dann der Branch *Main* alle Änderungen des Featurebranches integriert.
-Dieses Beispiel hatte (noch) keine Konflikte. Im nächsten Kapitel geht es dann um den Umgang mit
-sogenannten *Merge Konflikten*.
+> Nach dem Merge ist `main` zuerst nur auf GitHub aktuell. Alle im Team (auch du) holen den
+> neuen Stand mit `git checkout main` und `git pull` auf ihren Rechner.
+
+### Der Merge Commit
+
+Beim Merge erstellt GitHub in `main` einen besonderen Commit: den **Merge Commit**.
+
+- Ein normaler Commit hat genau **einen** Parent.
+- Ein Merge Commit hat **zwei** Parents: den letzten Commit von `main` und den letzten Commit des
+  Feature Branches.
+
+Der Merge Commit verbindet also die beiden Branches. Mit `git cat-file -p <hash>` siehst du in der
+Konsole die Parents eines Commits.
+
+![](git_merge_commit.svg)
+
+> Hat sich `main` seit dem Anlegen des Feature Branches nicht verändert, macht `git merge` in der
+> Konsole normalerweise einen **Fast-Forward**: Git setzt `main` einfach auf den letzten Commit des
+> Feature Branches. Dann entsteht kein Merge Commit. Der Button *Merge pull request* auf GitHub
+> erstellt dagegen immer einen Merge Commit.
+
+### Den Feature Branch nach dem Merge löschen
+
+Nach dem Merge zeigt GitHub den Button *Delete branch*. Viele Personen zögern hier, weil sie Angst
+haben, ihre Arbeit zu verlieren. Du verlierst dabei aber keine Daten. Die Grafik oben zeigt, warum:
+
+- **Ein Branch ist nur ein Name für einen Commit.** Git speichert die Commits unabhängig von den
+  Branches. Der Branch `add-inventory` zeigt nur auf seinen letzten Commit (F3).
+- **Jeder Commit kennt seine Parents.** Über die Parents findet Git alle Vorgänger eines Commits.
+  Von F3 kommt Git so zu F2, F1 und M2.
+- **Der Merge Commit verbindet `main` mit dem Feature Branch.** Über *Parent 2* des Merge Commits
+  findet Git von `main` aus den Commit F3 und damit auch F2 und F1. Alle Commits des Feature
+  Branches sind also Teil der History von `main`.
+
+Beim Löschen des Branches entfernt Git daher nur den Namen `add-inventory`. Die Commits F1 bis F3
+bleiben erhalten. Du findest sie mit `git log` im Branch `main`.
+
+Lösche Feature Branches nach dem Merge. So bleibt die Liste der Branches übersichtlich, und niemand
+arbeitet aus Versehen im alten Branch weiter. Für das nächste Feature legst du einen neuen Branch
+von `main` an.
+
+Um den Branch auch auf deinem Rechner zu löschen, gibst du in der Git Bash diese Befehle ein:
+
+```bash
+git checkout main
+git pull
+git branch -d add-inventory
+git fetch --prune
+```
+
+- `git pull` holt den Merge Commit von GitHub auf deinen Rechner. Erst dann enthält dein lokaler
+  Branch `main` die Commits des Feature Branches.
+- `git branch -d add-inventory` löscht den lokalen Branch. Der Parameter `-d` schützt dich: Git
+  löscht den Branch nur, wenn seine Commits schon gemerged sind. Sonst bricht der Befehl mit der
+  Meldung `error: the branch 'add-inventory' is not fully merged` ab.
+- `git fetch --prune` entfernt die lokale Referenz `origin/add-inventory`, wenn der Branch auf
+  GitHub schon gelöscht ist. Hast du ihn auf GitHub noch nicht gelöscht, geht das mit
+  `git push origin --delete add-inventory`.
+
+> Wurde der Pull Request mit *Squash and merge* oder *Rebase and merge* abgeschlossen, gibt es
+> keinen Merge Commit, der auf F3 zeigt. GitHub hat die Änderungen als neue Commits in `main`
+> geschrieben. `git branch -d` meldet dann `not fully merged`, obwohl die Änderungen in `main` sind.
+> Prüfe in diesem Fall auf GitHub, ob der Pull Request wirklich gemerged wurde. Lösche den Branch
+> erst dann mit `git branch -D add-inventory`.
+
+In diesem Beispiel gab es keine Konflikte. Im nächsten Kapitel [Merge Konflikte](04_conflicts.md)
+lernst du, was du bei Konflikten machst.

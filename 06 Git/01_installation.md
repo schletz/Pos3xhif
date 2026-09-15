@@ -1,145 +1,145 @@
-# Installation und Konfiguration von git
+# Git installieren und einrichten
 
-## Installation
+## Git installieren
 
-Git ist im Kern ein Kommandozeilentool, mit dessen Hilfe ein Repository verwaltet werden kann.
-Falls du git noch nicht installiert hast, kannst du das Programm von https://git-scm.com/downloads
-laden. Verwende bei allen Dialogen die Standardeinstellung.
+Git ist ein Programm für die Kommandozeile. Damit verwaltest du ein Repository.
 
-## Konfiguration von git
+- **Windows:** Lade Git von https://git-scm.com/downloads und installiere es. Du kannst bei allen
+  Dialogen die Standardeinstellung verwenden.
+- **macOS:** Gib im Terminal `git --version` ein. Ist Git noch nicht installiert, bietet macOS an,
+  die *Command Line Developer Tools* zu installieren. Diese enthalten Git.
 
-Bei Commits wird dein Name angeführt. Setze daher deinen echten Namen in der Konfiguration des
-*git* Tools:
+Prüfe danach in einer neuen Konsole, ob Git funktioniert:
 
+```bash
+git --version
 ```
-git config --global user.name "Vorname NachnameOhneNachdenkenKopiert"
-git config --global user.email "ich_habe_ohne_hirn_kopiert@spengergasse.at"
+
+## Git konfigurieren
+
+Gib in der Konsole diese Befehle ein. Ersetze vorher die Werte in spitzen Klammern `< >` durch
+deine eigenen Daten:
+
+```bash
+git config --global user.name "<Vorname> <Nachname>"
+git config --global user.email "<deine E-Mail-Adresse>"
 git config --global init.defaultBranch main
-git config --global push.forceWithLease true
+git config --global pull.rebase true
+git config --global push.autoSetupRemote true
+git config --global core.editor "code --wait"
 ```
 
-Details sind auf [Git Commands - Setup and Config](https://git-scm.com/book/en/v2/Appendix-C%3A-Git-Commands-Setup-and-Config) nachzulesen.
+| Einstellung                 | Bedeutung                                                                                                  |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `user.name`                 | Dein echter Name. Git speichert ihn in jedem Commit.                                                        |
+| `user.email`                | Deine E-Mail-Adresse. Verwende dieselbe Adresse wie bei GitHub. Dann verknüpft GitHub die Commits mit deinem Account. |
+| `init.defaultBranch`        | Neue Repositories, die du mit `git init` anlegst, starten mit dem Branch `main`.                            |
+| `pull.rebase`               | `git pull` macht einen Rebase statt eines Merge. Ohne diese Einstellung bricht `git pull` mit einem Fehler ab, wenn dein lokaler Branch und der Branch auf GitHub unterschiedliche Commits haben. |
+| `push.autoSetupRemote`      | Beim ersten `git push` eines neuen Branches legt Git den Branch automatisch auf GitHub an. Du brauchst dann kein `git push -u origin <branch>`. |
+| `core.editor`               | Braucht Git einen Editor (z. B. für eine Commit Message), öffnet es VS Code. Schließe den Tab, wenn du fertig bist. Ohne diese Einstellung öffnet Git oft den Editor *Vim*, der für Anfänger schwer zu bedienen ist. |
 
-## Die Git Bash
+Mit `git config --global --list` siehst du alle Einstellungen. Details findest du unter
+[Git Commands - Setup and Config](https://git-scm.com/book/en/v2/Appendix-C%3A-Git-Commands-Setup-and-Config).
 
-Wenn du git von https://git-scm.com/downloads heruntergeladen und mit den Standardeinstellungen
-installiert hast, dann hast du im Kontextmenü des Windows Explorers (mit der rechten Maustaste
-in den freien Bereich klicken) 2 neue Symbole:
+> Die Einstellung `core.editor` funktioniert nur, wenn VS Code installiert ist und der Befehl `code`
+> in der Konsole funktioniert (siehe Kapitel [Arbeiten mit Git](02_work_with_git.md)).
+
+## Die Git Bash (Windows)
+
+Unter Windows installiert Git auch die **Git Bash**. Das ist eine Konsole mit der Shell *Bash*.
+Die Bash ist die Standard-Shell unter Linux. Unter macOS verwendest du stattdessen das Programm
+*Terminal*. Die Befehle in diesem Kurs funktionieren dort genauso.
+
+### Die Git Bash öffnen
+
+Klicke im Windows Explorer mit der rechten Maustaste in einen freien Bereich eines Ordners und wähle
+*Git Bash Here*. Die Git Bash startet dann direkt in diesem Ordner.
 
 ![](git_bash_1803.png)
 
-Der Punkt *Git Bash Here* öffnet eine Shell, die macOS oder Linux User sehr bekannt ist: Die *Bash*.
-Wir werden hier nicht den Umgang mit der Bash besprechen, dafür gibt es sehr viele Materialien.
-Wer schon mit der Windows Kommandozeile (CMD.exe) gearbeitet hat, kennt sicher schon die Befehle
-zum Wecheln von Verzeichnissen, Kopieren von Dateien, etc. In der Bash heißen die Befehle etwas
-anders, wie die Tabelle zeigt:
+> Unter Windows 11 findest du *Git Bash Here* eventuell erst unter *Weitere Optionen anzeigen*.
 
-| **CMD.exe**        | **Bash** | **Description**                                             |
-| ------------------ | -------- | ----------------------------------------------------------- |
-| dir                | ls       | Displays a list of files and subdirectories in a directory. |
-| md                 | mkdir    | Creates a directory.                                        |
-| cd (with param)    | cd       | Changes the current directory.                              |
-| copy, xcopy        | cp       | Copies one or more files to another location.               |
-| ren                | mv       | Renames a file or files.                                    |
-| cd (without param) | pwd      | Displays the name of the current directory.                 |
-| del                | rm       | Deletes one or more files.                                  |
-| rd /S              | rm -r    | Removes (deletes) a directory.                              |
+Du kannst die Git Bash auch über das Startmenü öffnen (Suche nach *Git Bash*).
 
-Du kannst mit dem Befehl *C:\Program Files\Git\bin\sh.exe* unter *Start - Ausführen* (*&#8862; + R*)
-die Shell ebenfalls öffnen.
+### Befehle in der Bash
 
-## Vorteile der Shell Git Bash
+Wir besprechen hier nicht alle Befehle der Bash, dafür gibt es viele Anleitungen im Internet. Kennst
+du die Windows-Kommandozeile (`cmd.exe`), hilft dir diese Tabelle. In der Bash heißen viele Befehle
+anders:
 
-- Du siehst im Prompt, in welchem Branch des Repositories du bist.
-- Du kannst Shellskripts (*.sh*) Dateien erstellen und ausführen. Sie sind viel mächtiger
-  als *bat* Dateien unter Windows.
-- Die Shellskripts lassen sich auch unter macOS und Linux ausführen. Du kannst daher besser mit
-  anderen im Team zusammenarbeiten.
-- Du sammelst Erfahrungen im Umgang mit der Bash, der am weitesten verbreiteten Shell in der Informatik.
+| **cmd.exe**            | **Bash**   | **Bedeutung**                                    |
+| ---------------------- | ---------- | ------------------------------------------------ |
+| `dir`                  | `ls`       | Dateien und Ordner im aktuellen Ordner anzeigen. |
+| `cd` (ohne Parameter)  | `pwd`      | Den aktuellen Ordner anzeigen.                   |
+| `cd <ordner>`          | `cd <ordner>` | In einen anderen Ordner wechseln.             |
+| `md <ordner>`          | `mkdir <ordner>` | Einen Ordner erstellen.                    |
+| `copy`, `xcopy`        | `cp`       | Dateien kopieren.                                |
+| `move`, `ren`          | `mv`       | Dateien verschieben oder umbenennen.             |
+| `del`                  | `rm`       | Dateien löschen.                                 |
+| `rd /S`                | `rm -r`    | Einen Ordner mit Inhalt löschen.                 |
+| `type`                 | `cat`      | Den Inhalt einer Datei anzeigen.                 |
+| `cls`                  | `clear`    | Die Konsole leeren.                              |
 
-Die Git Bash ist kein "echtes Linux". Die Git Bash hat die eingebauten Kommandos der
-Bash portiert. Wenn ein Linux Shellskript jedoch andere Programme aufruft, wird das Skript unter
-Windows nicht funktionieren.
+### Warum die Git Bash?
 
-### Shellskripts im Explorer starten
+- Die Git Bash zeigt im Prompt an, in welchem Branch du gerade bist.
+- Du kannst Shellskripte (`.sh`-Dateien) schreiben und ausführen. Sie können viel mehr als
+  `.bat`-Dateien unter Windows.
+- Shellskripte laufen auch unter macOS und Linux. So kann das ganze Team dieselben Skripte
+  verwenden.
+- Die Bash ist sehr verbreitet, z. B. auf Linux-Servern, in Docker-Containern und in CI-Pipelines.
+  Was du hier lernst, brauchst du später oft.
 
-Wenn du eine *.sh* Datei ausführen möchtest, kannst du im Explorer mit der rechten Maustaste
-auf die Datei klicken. Bei *Öffnen mit* kannst du *Git for Windows* auswählen. Manche Skripts
-brauchen allerdings Parameter. In diesem Fall musst du das Skript in der Git Bash mit dem Namen
-und den entsprechenden Parametern aufrufen.
+> Die Git Bash ist kein vollständiges Linux. Sie enthält die Bash und viele typische Programme wie
+> `grep`, `sed` oder `curl`. Ruft ein Skript Programme auf, die es nur unter Linux gibt
+> (z. B. `apt`), funktioniert es in der Git Bash nicht.
 
-## Anpassen des Prompts
+### Shellskripte im Explorer starten
 
-Der Prompt (die Information links des Cursors) ist in der Standardeinstellung recht detailliert.
-Es wird der Branch, der Rechnername, etc. ausgegeben. Wer einen kompakteren Prompt haben möchte,
-muss folgendes machen:
+Klicke im Explorer mit der rechten Maustaste auf eine `.sh`-Datei. Wähle bei *Öffnen mit* den Punkt
+*Git for Windows*. Braucht ein Skript Parameter, starte es stattdessen in der Git Bash, z. B. mit
+`bash script.sh <parameter>`.
 
-- Öffne den Editor als Administrator.
-- Öffne die Datei *C:\Program Files\Git\etc\profile.d\git-prompt.sh*
-- Ersetze den Inhalt durch den untenstehenden Inhalt und speichere.
+## Die Git Bash als Terminal in VS Code
 
-<details>
-<summary><strong>Inhalt von git-prompt.sh anzeigen</strong></summary>
+VS Code hat ein eingebautes Terminal. So stellst du die Git Bash als Standard ein:
 
-```bash
-if test -f /etc/profile.d/git-sdk.sh
-then
-	TITLEPREFIX=SDK-${MSYSTEM#MINGW}
-else
-	TITLEPREFIX=$MSYSTEM
-fi
+1. Öffne in VS Code mit *F1* oder *Ctrl + Shift + P* die Command Palette.
+2. Gib `Terminal: Select Default Profile` ein und wähle den Befehl aus.
+3. Wähle *Git Bash*.
 
-if test -f ~/.config/git/git-prompt.sh
-then
-	. ~/.config/git/git-prompt.sh
-else
-	PS1='\[\033]0;$TITLEPREFIX:$PWD\007\]' # set window title
-	PS1="$PS1"'\n'                 # new line
-	if test -z "$WINELOADERNOEXEC"
-	then
-		GIT_EXEC_PATH="$(git --exec-path 2>/dev/null)"
-		COMPLETION_PATH="${GIT_EXEC_PATH%/libexec/git-core}"
-		COMPLETION_PATH="${COMPLETION_PATH%/lib/git-core}"
-		COMPLETION_PATH="$COMPLETION_PATH/share/git/completion"
-		if test -f "$COMPLETION_PATH/git-prompt.sh"
-		then
-			. "$COMPLETION_PATH/git-completion.bash"
-			. "$COMPLETION_PATH/git-prompt.sh"
-			PS1="$PS1"'\[\033[36m\]'  # change color to cyan
-			PS1="$PS1"'`__git_ps1`'   # bash function
-		fi
-	fi
-	PS1="$PS1"'@'
-	PS1="$PS1"'\w'                 # current working directory
-	PS1="$PS1"'>'                  # prompt: always $
-	PS1="$PS1"'\[\033[0m\]'        # change color
-fi
+Neue Terminals in VS Code (*Terminal → New Terminal*) starten danach mit der Git Bash.
 
-MSYS2_PS1="$PS1"               # for detection by MSYS2 SDK's bash.basrc
+## Optional: einen kürzeren Prompt einstellen
 
-# Evaluate all user-specific Bash completion scripts (if any)
-if test -z "$WINELOADERNOEXEC"
-then
-	for c in "$HOME"/bash_completion.d/*.bash
-	do
-		# Handle absence of any scripts (or the folder) gracefully
-		test ! -f "$c" ||
-		. "$c"
-	done
-fi
-```
-</details>
+Der Prompt ist der Text links vom Cursor. In der Git Bash zeigt er standardmäßig Benutzer,
+Rechnername, Ordner und Branch an und braucht dafür zwei Zeilen. Möchtest du einen kürzeren Prompt
+wie `(main)@/c/Github/first_repo>`, gehe so vor:
 
-Nach erneutem Öffnen der Shell erscheint dann ein kompakterer Prompt wie z. B.
-`(main)@/c/Github/Pos3xhif>`.
+1. Erstelle in der Git Bash den Ordner für die Einstellung und öffne die Datei in VS Code:
 
-## Verwenden der Git Bash in VS Code als Standardshell
+   ```bash
+   mkdir -p ~/.config/git
+   code ~/.config/git/git-prompt.sh
+   ```
 
-Öffne in Visual Studio Code das Commands Fenster mit *F1* oder *Ctrl+Shift+P*). Gib *preferences*
-ein und wähle den Punkt *Preferences: Open User Settings (JSON)*. Trage dann die folgende Zeile in
-die JSON Datei ein:
+2. Kopiere diesen Inhalt in die Datei und speichere sie:
 
-```javascript
-"terminal.integrated.defaultProfile.windows": "Git Bash",
-```
+   ```bash
+   # Compact Git Bash prompt, e.g. (main)@/c/Github/first_repo>
+   COMPLETION_PATH="$(git --exec-path)"
+   COMPLETION_PATH="${COMPLETION_PATH%/libexec/git-core}/share/git/completion"
+   . "$COMPLETION_PATH/git-completion.bash"
+   . "$COMPLETION_PATH/git-prompt.sh"
 
+   PS1='\[\033]0;$MSYSTEM:$PWD\007\]'   # window title
+   PS1="$PS1"'\n\[\033[36m\]'           # new line, cyan
+   PS1="$PS1"'`__git_ps1 "(%s)"`@\w>'   # (branch)@directory>
+   PS1="$PS1"'\[\033[0m\]'              # reset color
+   ```
+
+3. Öffne die Git Bash neu.
+
+Die Git Bash lädt diese Datei automatisch, wenn es sie gibt. Du brauchst dafür keine
+Administratorrechte, und die Einstellung bleibt auch nach einem Update von Git erhalten. Willst du
+wieder den normalen Prompt, lösche die Datei.
