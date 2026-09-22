@@ -14,7 +14,7 @@ md PropertiesDemo.Application
 cd PropertiesDemo.Application
 dotnet new console
 cd ..
-dotnet new sln
+dotnet new sln -f sln
 dotnet sln add PropertiesDemo.Application
 start PropertiesDemo.sln
 
@@ -29,7 +29,7 @@ start PropertiesDemo.sln
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
