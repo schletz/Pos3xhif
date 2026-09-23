@@ -243,6 +243,13 @@ class Student
 }
 ```
 
+### Überblick: Getter und Setter in Java vs. Properties in C#
+
+Die folgende Grafik fasst die Arten von Properties zusammen und stellt sie dem gleichwertigen
+Java Code gegenüber.
+
+![](properties_java_csharp.svg)
+
 ## Verwendung der Properties, Initializer
 
 Der große Vorteil von Properties liegt in ihrer eleganten Verwendung. Folgende Anweisungen sind
@@ -261,7 +268,16 @@ Instanzierung zu initialisieren.
 
 Da die set Methoden durchlaufen werden, wird die Datenprüfung natürlich auch im Initializer ausgeführt.
 
-## Übung
+### Target-typed new (C# 9)
+
+In den bisherigen Beispielen steht der Typ *Student* zweimal in der Zeile. Ist der Typ der Variable
+schon bekannt, kann er bei *new* weggelassen werden:
+
+```c#
+Student student = new(firstname: "VN1", lastname: "ZN1") { Email = "test@mail.at" };
+```
+
+## Übung 1: Rectangle und Teacher
 
 Erstelle wie oben beschrieben die Solution *PropertiesDemo*. Es sind 2 Klassen zu implementieren:
 *Rectangle* und *Teacher*.
@@ -315,7 +331,7 @@ TESTS FÜR RECTANGLE
 TESTS FÜR TEACHER
 ********************************************************************************
 1 Kein default Konstruktor OK
-2 Vor- und Lastname sind immutable: OK
+2 Vor- und Zuname sind immutable: OK
 3 Longname OK
 4 Shortname OK
 5 NetSalary OK
@@ -407,6 +423,232 @@ namespace PropertiesDemo.Application
             if (typeof(Teacher).GetProperty(nameof(Teacher.IsSchoolEmail))?.CanWrite == false
                 && !t1.IsSchoolEmail && t2.IsSchoolEmail) { Console.WriteLine("7 IsSchoolEmail OK"); }
         }
+    }
+}
+```
+
+## Übung 2: Charaktere für ein Rollenspiel
+
+Erstelle wie oben beschrieben eine Solution *RpgDemo* mit dem Projekt *RpgDemo.Application*. Es sind
+2 Klassen zu implementieren: *Weapon* und *Character*. Die Übung kombiniert alle Arten von
+Properties aus diesem Kapitel.
+
+Für die Klasse *Weapon* gelten folgende Regeln:
+- Die Klasse hat einen Konstruktor mit den Parametern *name* (string) und *damage* (int).
+- Die Properties *Name* und *Damage* werden im Konstruktor gesetzt und sind immutable.
+- Ist *damage* nicht größer als 0, wird mittels *throw new ArgumentException("Ungültiger Schaden")*
+  eine Exception geworfen.
+- Das Property *DisplayName* ist read-only und liefert den Namen und den Schaden in der Form
+  *Schwert (+15)*.
+
+Für die Klasse *Character* gelten folgende Regeln:
+- Die Klasse hat einen Konstruktor mit den Parametern *name* (string), *maxHealth* (int) und
+  *strength* (int).
+- Die Properties *Name*, *MaxHealth* und *Strength* werden im Konstruktor gesetzt und sind immutable.
+  Ist *maxHealth* nicht größer als 0, wird eine *ArgumentException* geworfen.
+- Das int Property *Health* hat am Anfang den Wert von *MaxHealth*. Es darf nur in der Klasse
+  gesetzt werden. Die set Methode stellt sicher, dass der Wert immer zwischen 0 und *MaxHealth* liegt.
+  Zu kleine Werte werden also auf 0, zu große auf *MaxHealth* gesetzt. Verwende dafür eine private
+  Variable und die Methode *Math.Clamp(value, min, max)*. Achte im Konstruktor auf die Reihenfolge
+  der Zuweisungen.
+- Das Property *IsAlive* ist read-only und liefert true, wenn *Health* größer als 0 ist.
+- Das Property *Weapon* speichert die Waffe des Charakters. Ein Charakter muss keine Waffe haben,
+  die Waffe kann aber jederzeit gesetzt werden. Überlege dir den Datentyp.
+- Das Property *AttackPower* ist read-only und liefert *Strength* plus *Damage* der Waffe. Hat der
+  Charakter keine Waffe, ist es nur *Strength*.
+- Das int Property *Experience* hat am Anfang den Wert 0 und darf nur in der Klasse gesetzt werden.
+- Das Property *Level* ist read-only und wird mit *1 + Experience / 100* berechnet. Ein Charakter mit
+  250 Erfahrungspunkten hat also Level 3.
+- Die Methode *TakeDamage(int damage)* verringert *Health* um den übergebenen Wert. Bei einem
+  negativen Wert wird eine *ArgumentException* geworfen.
+- Die Methode *Heal(int amount)* erhöht *Health* um den übergebenen Wert. Ist der Charakter nicht
+  mehr am Leben, passiert nichts.
+- Die Methode *GainExperience(int points)* erhöht *Experience*. Bei einem negativen Wert wird eine
+  *ArgumentException* geworfen.
+- Die Methode *Attack(Character target)* fügt dem Ziel Schaden in der Höhe von *AttackPower* zu.
+  Stirbt das Ziel durch diesen Angriff, bekommt der Angreifer 50 Erfahrungspunkte. Ist der Angreifer
+  oder das Ziel nicht mehr am Leben, passiert nichts.
+
+Überlege dir bei jedem Property, ob du *get*, *set* oder *private set* brauchst und ob der Wert
+gespeichert oder berechnet werden soll. Die Prüfung von *Health* in *TakeDamage()* und *Heal()*
+ist nicht nötig, das erledigt die set Methode.
+
+Die Ausgabe des Programmes muss am Ende so lauten:
+
+```
+********************************************************************************
+TESTS FÜR WEAPON
+********************************************************************************
+1 Kein default Konstruktor OK
+2 Name und Damage sind immutable OK
+3 DisplayName OK
+4 Exception bei ungültigem Schaden OK
+********************************************************************************
+TESTS FÜR CHARACTER
+********************************************************************************
+1 Kein default Konstruktor OK
+2 Name, MaxHealth und Strength sind immutable OK
+3 Werte aus dem Konstruktor, Health startet mit MaxHealth OK
+4 Health und Experience sind von außen nicht setzbar OK
+5 Exception bei ungültiger MaxHealth OK
+6 TakeDamage OK
+7 Exception bei negativem Schaden OK
+8 Heal OK
+9 Health wird nicht negativ, Tote werden nicht geheilt OK
+10 AttackPower OK
+11 Experience und Level OK
+12 Exception bei negativer Erfahrung OK
+13 Attack OK
+```
+
+### Program.cs
+```c#
+using System;
+using System.Reflection;
+
+namespace RpgDemo.Application;
+
+class Weapon
+{
+    // TODO: Implementierung von Weapon
+}
+
+class Character
+{
+    // TODO: Implementierung von Character
+}
+
+class Program
+{
+    // DON'T TOUCH!
+    private static void Main(string[] args)
+    {
+        Console.WriteLine("********************************************************************************");
+        Console.WriteLine("TESTS FÜR WEAPON");
+        Console.WriteLine("********************************************************************************");
+        if (typeof(Weapon).GetConstructor(Type.EmptyTypes) is null) { Console.WriteLine("1 Kein default Konstruktor OK"); }
+        if (IsReadOnly(typeof(Weapon), nameof(Weapon.Name)) && IsReadOnly(typeof(Weapon), nameof(Weapon.Damage)))
+        {
+            Console.WriteLine("2 Name und Damage sind immutable OK");
+        }
+        Weapon sword = new Weapon(name: "Schwert", damage: 15);
+        if (IsReadOnly(typeof(Weapon), nameof(Weapon.DisplayName)) && sword.DisplayName == "Schwert (+15)")
+        {
+            Console.WriteLine("3 DisplayName OK");
+        }
+        try
+        {
+            Weapon stick = new Weapon(name: "Stock", damage: 0);
+        }
+        catch (ArgumentException)
+        {
+            Console.WriteLine("4 Exception bei ungültigem Schaden OK");
+        }
+
+        Console.WriteLine("********************************************************************************");
+        Console.WriteLine("TESTS FÜR CHARACTER");
+        Console.WriteLine("********************************************************************************");
+        if (typeof(Character).GetConstructor(Type.EmptyTypes) is null) { Console.WriteLine("1 Kein default Konstruktor OK"); }
+        if (IsReadOnly(typeof(Character), nameof(Character.Name))
+            && IsReadOnly(typeof(Character), nameof(Character.MaxHealth))
+            && IsReadOnly(typeof(Character), nameof(Character.Strength)))
+        {
+            Console.WriteLine("2 Name, MaxHealth und Strength sind immutable OK");
+        }
+        Character hero = new Character(name: "Link", maxHealth: 100, strength: 10);
+        if (hero.Name == "Link" && hero.MaxHealth == 100 && hero.Strength == 10 && hero.Health == 100 && hero.IsAlive)
+        {
+            Console.WriteLine("3 Werte aus dem Konstruktor, Health startet mit MaxHealth OK");
+        }
+        if (HasPrivateSetter(typeof(Character), nameof(Character.Health))
+            && HasPrivateSetter(typeof(Character), nameof(Character.Experience)))
+        {
+            Console.WriteLine("4 Health und Experience sind von außen nicht setzbar OK");
+        }
+        try
+        {
+            Character ghost = new Character(name: "Ghost", maxHealth: 0, strength: 10);
+        }
+        catch (ArgumentException)
+        {
+            Console.WriteLine("5 Exception bei ungültiger MaxHealth OK");
+        }
+
+        hero.TakeDamage(30);
+        if (hero.Health == 70) { Console.WriteLine("6 TakeDamage OK"); }
+        try
+        {
+            hero.TakeDamage(-10);
+        }
+        catch (ArgumentException)
+        {
+            if (hero.Health == 70) { Console.WriteLine("7 Exception bei negativem Schaden OK"); }
+        }
+        hero.Heal(20);
+        int healthAfterSmallHeal = hero.Health;
+        hero.Heal(500);
+        if (healthAfterSmallHeal == 90 && hero.Health == 100) { Console.WriteLine("8 Heal OK"); }
+
+        Character dummy = new Character(name: "Dummy", maxHealth: 50, strength: 10);
+        dummy.TakeDamage(80);
+        dummy.Heal(10);
+        if (dummy.Health == 0 && !dummy.IsAlive && IsReadOnly(typeof(Character), nameof(Character.IsAlive)))
+        {
+            Console.WriteLine("9 Health wird nicht negativ, Tote werden nicht geheilt OK");
+        }
+
+        int attackPowerWithoutWeapon = hero.AttackPower;
+        hero.Weapon = sword;
+        if (IsReadOnly(typeof(Character), nameof(Character.AttackPower))
+            && attackPowerWithoutWeapon == 10 && hero.AttackPower == 25)
+        {
+            Console.WriteLine("10 AttackPower OK");
+        }
+
+        hero.GainExperience(250);
+        if (IsReadOnly(typeof(Character), nameof(Character.Level)) && hero.Experience == 250 && hero.Level == 3)
+        {
+            Console.WriteLine("11 Experience und Level OK");
+        }
+        try
+        {
+            hero.GainExperience(-1);
+        }
+        catch (ArgumentException)
+        {
+            Console.WriteLine("12 Exception bei negativer Erfahrung OK");
+        }
+
+        // The hero hits the orc 3 times with an attack power of 25 (60 -> 35 -> 10 -> 0).
+        Character orc = new Character(name: "Ork", maxHealth: 60, strength: 25);
+        hero.Attack(orc);
+        int orcHealthAfterFirstAttack = orc.Health;
+        hero.Attack(orc);
+        hero.Attack(orc);
+        // A dead orc cannot be attacked, so the hero gets the 50 points only once.
+        hero.Attack(orc);
+        if (orcHealthAfterFirstAttack == 35 && !orc.IsAlive && hero.Experience == 300)
+        {
+            Console.WriteLine("13 Attack OK");
+        }
+    }
+
+    /// <summary>
+    /// Returns true if the property exists and has no set method at all.
+    /// </summary>
+    private static bool IsReadOnly(Type type, string propertyName)
+    {
+        PropertyInfo? property = type.GetProperty(propertyName);
+        return property is not null && !property.CanWrite;
+    }
+
+    /// <summary>
+    /// Returns true if the property has a set method that cannot be called from outside the class.
+    /// </summary>
+    private static bool HasPrivateSetter(Type type, string propertyName)
+    {
+        PropertyInfo? property = type.GetProperty(propertyName);
+        return property is not null && property.SetMethod is not null && !property.SetMethod.IsPublic;
     }
 }
 ```

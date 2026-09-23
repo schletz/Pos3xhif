@@ -1,0 +1,185 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="1743" viewBox="0 0 1320 1743" role="img" aria-label="Properties in C# im Vergleich mit Gettern und Settern in Java">
+<rect width="1320" height="1743" fill="#f6f7fb"/>
+<text x="24" y="54" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="28" font-weight="700" fill="#1d2330">Properties in C# – der Vergleich mit Java</text>
+<text x="24" y="82" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="15" fill="#5b6475">Von außen sieht ein Property aus wie eine Variable. Innen besteht es aus einer get und einer set Methode.</text>
+<rect x="24" y="104" width="1272" height="58" rx="10" fill="#f5f0ff" stroke="#ddd0fb"/>
+<text x="44" y="128" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="14" fill="#1d2330"><tspan font-weight="700">Unter der Haube:</tspan> Aus <tspan font-family="Consolas, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" fill="#6d28d9">public int Age { get; set; }</tspan> erzeugt der Compiler die Methoden <tspan font-family="Consolas, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" fill="#6d28d9">get_Age()</tspan> und <tspan font-family="Consolas, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" fill="#6d28d9">set_Age(int value)</tspan>.</text>
+<text x="44" y="148" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="14" fill="#1d2330">Das sind genau die Getter und Setter, die du in Java selbst schreibst. In C# schreibt sie der Compiler für dich.</text>
+<text x="24" y="212" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="1" fill="#5b6475">ART DES PROPERTIES</text>
+<rect x="290" y="188" width="500" height="36" rx="8" fill="#fff4ec"/><circle cx="310" cy="206" r="6" fill="#c2410c"/><text x="324" y="212" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" fill="#c2410c">Java: Getter und Setter</text>
+<rect x="806" y="188" width="490" height="36" rx="8" fill="#f5f0ff"/><circle cx="826" cy="206" r="6" fill="#6d28d9"/><text x="840" y="212" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" fill="#6d28d9">C#: Property</text>
+<rect x="16" y="238" width="1288" height="331" rx="12" fill="#ffffff" stroke="#dde1ea"/>
+<text x="30" y="274" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#5b6475">1</text>
+<text x="48" y="274" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="700" fill="#1d2330">Property mit Logik</text>
+<text x="30" y="300" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" fill="#5b6475">Eigene private Variable,</text>
+<text x="30" y="319" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" fill="#5b6475">set prüft den Wert.</text>
+<text x="30" y="338" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" fill="#5b6475">value enthält den</text>
+<text x="30" y="357" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" fill="#5b6475">zugewiesenen Wert.</text>
+<text x="30" y="386" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="0.8" fill="#5b6475">VON AUSSEN</text>
+<rect x="30" y="394" width="64" height="22" rx="11" fill="#e7f6ec"/><text x="40" y="409" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#15803d">✓ lesen</text>
+<rect x="30" y="422" width="91" height="22" rx="11" fill="#e7f6ec"/><text x="40" y="437" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#15803d">✓ schreiben</text>
+<text x="292" y="268" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#5b6475">Klasse Student</text>
+<text x="788" y="268" text-anchor="end" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#c2410c">10 Zeilen</text>
+<text x="808" y="268" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#5b6475">Klasse Student</text>
+<text x="1294" y="268" text-anchor="end" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#6d28d9">10 Zeilen</text>
+<rect x="290" y="278" width="500" height="233" rx="8" fill="#fbfbfd" stroke="#dde1ea"/>
+<text x="306" y="305" font-family="Consolas, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="13" fill="#1d2330" xml:space="preserve">
+<tspan x="306" y="305"><tspan fill="#1d4ed8">private</tspan> <tspan fill="#1d4ed8">int</tspan> age;</tspan>
+<tspan x="306" y="324"></tspan>
+<tspan x="306" y="343"><tspan fill="#1d4ed8">public</tspan> <tspan fill="#1d4ed8">int</tspan> getAge() {</tspan>
+<tspan x="306" y="362">    <tspan fill="#1d4ed8">return</tspan> age;</tspan>
+<tspan x="306" y="381">}</tspan>
+<tspan x="306" y="400"><tspan fill="#1d4ed8">public</tspan> <tspan fill="#1d4ed8">void</tspan> setAge(<tspan fill="#1d4ed8">int</tspan> age) {</tspan>
+<tspan x="306" y="419">    <tspan fill="#1d4ed8">if</tspan> (age &lt; <tspan fill="#9a5b00">0</tspan>) {</tspan>
+<tspan x="306" y="438">        <tspan fill="#1d4ed8">throw</tspan> <tspan fill="#1d4ed8">new</tspan> IllegalArgumentException();</tspan>
+<tspan x="306" y="457">    }</tspan>
+<tspan x="306" y="476">    <tspan fill="#1d4ed8">this</tspan>.age = age;</tspan>
+<tspan x="306" y="495">}</tspan>
+</text>
+<rect x="806" y="278" width="490" height="233" rx="8" fill="#fbfbfd" stroke="#dde1ea"/>
+<text x="822" y="305" font-family="Consolas, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="13" fill="#1d2330" xml:space="preserve">
+<tspan x="822" y="305"><tspan fill="#1d4ed8">private</tspan> <tspan fill="#1d4ed8">int</tspan> age;</tspan>
+<tspan x="822" y="324"></tspan>
+<tspan x="822" y="343"><tspan fill="#1d4ed8">public</tspan> <tspan fill="#1d4ed8">int</tspan> Age</tspan>
+<tspan x="822" y="362">{</tspan>
+<tspan x="822" y="381">    <tspan fill="#1d4ed8">get</tspan> { <tspan fill="#1d4ed8">return</tspan> age; }</tspan>
+<tspan x="822" y="400">    <tspan fill="#1d4ed8">set</tspan></tspan>
+<tspan x="822" y="419">    {</tspan>
+<tspan x="822" y="438">        <tspan fill="#1d4ed8">if</tspan> (<tspan fill="#be185d">value</tspan> &lt; <tspan fill="#9a5b00">0</tspan>) { <tspan fill="#1d4ed8">throw</tspan> <tspan fill="#1d4ed8">new</tspan> ArgumentException(); }</tspan>
+<tspan x="822" y="457">        age = <tspan fill="#be185d">value</tspan>;</tspan>
+<tspan x="822" y="476">    }</tspan>
+<tspan x="822" y="495">}</tspan>
+</text>
+<rect x="290" y="521" width="500" height="30" rx="6" fill="#fff4ec"/><rect x="290" y="521" width="4" height="30" fill="#c2410c"/><text x="306" y="541" font-family="Consolas, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="13" fill="#1d2330" xml:space="preserve">s.setAge(s.getAge() + <tspan fill="#9a5b00">1</tspan>);</text>
+<rect x="806" y="521" width="490" height="30" rx="6" fill="#f5f0ff"/><rect x="806" y="521" width="4" height="30" fill="#6d28d9"/><text x="822" y="541" font-family="Consolas, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="13" fill="#1d2330" xml:space="preserve">s.Age++;   <tspan fill="#3f7d3a">// ruft get und set auf</tspan></text>
+<rect x="16" y="583" width="1288" height="274" rx="12" fill="#ffffff" stroke="#dde1ea"/>
+<text x="30" y="619" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#5b6475">2</text>
+<text x="48" y="619" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="700" fill="#1d2330">Default Property</text>
+<text x="30" y="645" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" fill="#5b6475">Nur 1:1 lesen und</text>
+<text x="30" y="664" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" fill="#5b6475">schreiben. Das backing</text>
+<text x="30" y="683" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" fill="#5b6475">field legt der Compiler</text>
+<text x="30" y="702" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" fill="#5b6475">selbst an.</text>
+<text x="30" y="731" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="0.8" fill="#5b6475">VON AUSSEN</text>
+<rect x="30" y="739" width="64" height="22" rx="11" fill="#e7f6ec"/><text x="40" y="754" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#15803d">✓ lesen</text>
+<rect x="30" y="767" width="91" height="22" rx="11" fill="#e7f6ec"/><text x="40" y="782" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#15803d">✓ schreiben</text>
+<text x="292" y="613" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#5b6475">Klasse Student</text>
+<text x="788" y="613" text-anchor="end" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#c2410c">7 Zeilen</text>
+<text x="808" y="613" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#5b6475">Klasse Student</text>
+<text x="1294" y="613" text-anchor="end" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#6d28d9">1 Zeile</text>
+<rect x="290" y="623" width="500" height="176" rx="8" fill="#fbfbfd" stroke="#dde1ea"/>
+<text x="306" y="650" font-family="Consolas, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="13" fill="#1d2330" xml:space="preserve">
+<tspan x="306" y="650"><tspan fill="#1d4ed8">private</tspan> <tspan fill="#1d4ed8">String</tspan> email;</tspan>
+<tspan x="306" y="669"></tspan>
+<tspan x="306" y="688"><tspan fill="#1d4ed8">public</tspan> <tspan fill="#1d4ed8">String</tspan> getEmail() {</tspan>
+<tspan x="306" y="707">    <tspan fill="#1d4ed8">return</tspan> email;</tspan>
+<tspan x="306" y="726">}</tspan>
+<tspan x="306" y="745"><tspan fill="#1d4ed8">public</tspan> <tspan fill="#1d4ed8">void</tspan> setEmail(<tspan fill="#1d4ed8">String</tspan> email) {</tspan>
+<tspan x="306" y="764">    <tspan fill="#1d4ed8">this</tspan>.email = email;</tspan>
+<tspan x="306" y="783">}</tspan>
+</text>
+<rect x="806" y="623" width="490" height="176" rx="8" fill="#fbfbfd" stroke="#dde1ea"/>
+<text x="822" y="650" font-family="Consolas, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="13" fill="#1d2330" xml:space="preserve">
+<tspan x="822" y="650"><tspan fill="#1d4ed8">public</tspan> <tspan fill="#1d4ed8">string</tspan>? Email { <tspan fill="#1d4ed8">get</tspan>; <tspan fill="#1d4ed8">set</tspan>; }</tspan>
+</text>
+<rect x="290" y="809" width="500" height="30" rx="6" fill="#fff4ec"/><rect x="290" y="809" width="4" height="30" fill="#c2410c"/><text x="306" y="829" font-family="Consolas, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="13" fill="#1d2330" xml:space="preserve">s.setEmail(<tspan fill="#a3161a">&quot;test@mail.at&quot;</tspan>);</text>
+<rect x="806" y="809" width="490" height="30" rx="6" fill="#f5f0ff"/><rect x="806" y="809" width="4" height="30" fill="#6d28d9"/><text x="822" y="829" font-family="Consolas, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="13" fill="#1d2330" xml:space="preserve">s.Email = <tspan fill="#a3161a">&quot;test@mail.at&quot;</tspan>;</text>
+<rect x="16" y="871" width="1288" height="274" rx="12" fill="#ffffff" stroke="#dde1ea"/>
+<text x="30" y="907" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#5b6475">3</text>
+<text x="48" y="907" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="700" fill="#1d2330">Read-only: immutable</text>
+<text x="30" y="933" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" fill="#5b6475">Nur get. Der Wert wird</text>
+<text x="30" y="952" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" fill="#5b6475">im Konstruktor gesetzt</text>
+<text x="30" y="971" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" fill="#5b6475">und ist danach</text>
+<text x="30" y="990" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" fill="#5b6475">unveränderlich.</text>
+<text x="30" y="1019" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="0.8" fill="#5b6475">VON AUSSEN</text>
+<rect x="30" y="1027" width="64" height="22" rx="11" fill="#e7f6ec"/><text x="40" y="1042" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#15803d">✓ lesen</text>
+<rect x="30" y="1055" width="203" height="22" rx="11" fill="#fdf5e1"/><text x="40" y="1070" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#a16207">◐ schreiben: nur Konstruktor</text>
+<text x="292" y="901" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#5b6475">Klasse Student</text>
+<text x="788" y="901" text-anchor="end" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#c2410c">7 Zeilen</text>
+<text x="808" y="901" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#5b6475">Klasse Student</text>
+<text x="1294" y="901" text-anchor="end" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#6d28d9">5 Zeilen</text>
+<rect x="290" y="911" width="500" height="176" rx="8" fill="#fbfbfd" stroke="#dde1ea"/>
+<text x="306" y="938" font-family="Consolas, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="13" fill="#1d2330" xml:space="preserve">
+<tspan x="306" y="938"><tspan fill="#1d4ed8">private</tspan> <tspan fill="#1d4ed8">final</tspan> <tspan fill="#1d4ed8">String</tspan> firstname;</tspan>
+<tspan x="306" y="957"></tspan>
+<tspan x="306" y="976"><tspan fill="#1d4ed8">public</tspan> Student(<tspan fill="#1d4ed8">String</tspan> firstname) {</tspan>
+<tspan x="306" y="995">    <tspan fill="#1d4ed8">this</tspan>.firstname = firstname;</tspan>
+<tspan x="306" y="1014">}</tspan>
+<tspan x="306" y="1033"><tspan fill="#1d4ed8">public</tspan> <tspan fill="#1d4ed8">String</tspan> getFirstname() {</tspan>
+<tspan x="306" y="1052">    <tspan fill="#1d4ed8">return</tspan> firstname;</tspan>
+<tspan x="306" y="1071">}</tspan>
+</text>
+<rect x="806" y="911" width="490" height="176" rx="8" fill="#fbfbfd" stroke="#dde1ea"/>
+<text x="822" y="938" font-family="Consolas, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="13" fill="#1d2330" xml:space="preserve">
+<tspan x="822" y="938"><tspan fill="#1d4ed8">public</tspan> Student(<tspan fill="#1d4ed8">string</tspan> firstname)</tspan>
+<tspan x="822" y="957">{</tspan>
+<tspan x="822" y="976">    Firstname = firstname;</tspan>
+<tspan x="822" y="995">}</tspan>
+<tspan x="822" y="1014"><tspan fill="#1d4ed8">public</tspan> <tspan fill="#1d4ed8">string</tspan> Firstname { <tspan fill="#1d4ed8">get</tspan>; }</tspan>
+</text>
+<rect x="290" y="1097" width="500" height="30" rx="6" fill="#fff4ec"/><rect x="290" y="1097" width="4" height="30" fill="#c2410c"/><text x="306" y="1117" font-family="Consolas, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="13" fill="#1d2330" xml:space="preserve">s.setFirstname(<tspan fill="#a3161a">&quot;X&quot;</tspan>);  <tspan fill="#b91c1c">// Fehler: cannot find symbol</tspan></text>
+<rect x="806" y="1097" width="490" height="30" rx="6" fill="#f5f0ff"/><rect x="806" y="1097" width="4" height="30" fill="#6d28d9"/><text x="822" y="1117" font-family="Consolas, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="13" fill="#1d2330" xml:space="preserve">s.Firstname = <tspan fill="#a3161a">&quot;X&quot;</tspan>;  <tspan fill="#b91c1c">// Fehler CS0200</tspan></text>
+<rect x="16" y="1159" width="1288" height="191" rx="12" fill="#ffffff" stroke="#dde1ea"/>
+<text x="30" y="1195" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#5b6475">4</text>
+<text x="48" y="1195" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="700" fill="#1d2330">Read-only: berechnet</text>
+<text x="30" y="1221" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" fill="#5b6475">Kein gespeicherter Wert.</text>
+<text x="30" y="1240" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" fill="#5b6475">get rechnet bei jedem</text>
+<text x="30" y="1259" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" fill="#5b6475">Zugriff neu.</text>
+<text x="30" y="1288" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="0.8" fill="#5b6475">VON AUSSEN</text>
+<rect x="30" y="1296" width="64" height="22" rx="11" fill="#e7f6ec"/><text x="40" y="1311" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#15803d">✓ lesen</text>
+<rect x="30" y="1324" width="91" height="22" rx="11" fill="#fdecec"/><text x="40" y="1339" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#b91c1c">✗ schreiben</text>
+<text x="292" y="1189" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#5b6475">Klasse Student</text>
+<text x="788" y="1189" text-anchor="end" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#c2410c">3 Zeilen</text>
+<text x="808" y="1189" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#5b6475">Klasse Student</text>
+<text x="1294" y="1189" text-anchor="end" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#6d28d9">1 Zeile</text>
+<rect x="290" y="1199" width="500" height="81" rx="8" fill="#fbfbfd" stroke="#dde1ea"/>
+<text x="306" y="1226" font-family="Consolas, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="13" fill="#1d2330" xml:space="preserve">
+<tspan x="306" y="1226"><tspan fill="#1d4ed8">public</tspan> <tspan fill="#1d4ed8">String</tspan> getLongname() {</tspan>
+<tspan x="306" y="1245">    <tspan fill="#1d4ed8">return</tspan> firstname + <tspan fill="#a3161a">&quot; &quot;</tspan> + lastname;</tspan>
+<tspan x="306" y="1264">}</tspan>
+</text>
+<rect x="806" y="1199" width="490" height="81" rx="8" fill="#fbfbfd" stroke="#dde1ea"/>
+<text x="822" y="1226" font-family="Consolas, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="13" fill="#1d2330" xml:space="preserve">
+<tspan x="822" y="1226"><tspan fill="#1d4ed8">public</tspan> <tspan fill="#1d4ed8">string</tspan> Longname =&gt; <tspan fill="#a3161a">$&quot;{Firstname} {Lastname}&quot;</tspan>;</tspan>
+</text>
+<rect x="290" y="1290" width="500" height="30" rx="6" fill="#fff4ec"/><rect x="290" y="1290" width="4" height="30" fill="#c2410c"/><text x="306" y="1310" font-family="Consolas, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="13" fill="#1d2330" xml:space="preserve"><tspan fill="#1d4ed8">String</tspan> name = s.getLongname();</text>
+<rect x="806" y="1290" width="490" height="30" rx="6" fill="#f5f0ff"/><rect x="806" y="1290" width="4" height="30" fill="#6d28d9"/><text x="822" y="1310" font-family="Consolas, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="13" fill="#1d2330" xml:space="preserve"><tspan fill="#1d4ed8">string</tspan> name = s.Longname;</text>
+<rect x="16" y="1364" width="1288" height="331" rx="12" fill="#ffffff" stroke="#dde1ea"/>
+<text x="30" y="1400" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#5b6475">5</text>
+<text x="48" y="1400" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="700" fill="#1d2330">private set</text>
+<text x="30" y="1426" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" fill="#5b6475">Von außen nur lesbar,</text>
+<text x="30" y="1445" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" fill="#5b6475">innerhalb der Klasse</text>
+<text x="30" y="1464" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" fill="#5b6475">auch schreibbar.</text>
+<text x="30" y="1493" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="0.8" fill="#5b6475">VON AUSSEN</text>
+<rect x="30" y="1501" width="64" height="22" rx="11" fill="#e7f6ec"/><text x="40" y="1516" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#15803d">✓ lesen</text>
+<rect x="30" y="1529" width="216" height="22" rx="11" fill="#fdf5e1"/><text x="40" y="1544" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#a16207">◐ schreiben: nur in der Klasse</text>
+<text x="292" y="1394" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#5b6475">Klasse Student</text>
+<text x="788" y="1394" text-anchor="end" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#c2410c">10 Zeilen</text>
+<text x="808" y="1394" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#5b6475">Klasse Student</text>
+<text x="1294" y="1394" text-anchor="end" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#6d28d9">5 Zeilen</text>
+<rect x="290" y="1404" width="500" height="233" rx="8" fill="#fbfbfd" stroke="#dde1ea"/>
+<text x="306" y="1431" font-family="Consolas, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="13" fill="#1d2330" xml:space="preserve">
+<tspan x="306" y="1431"><tspan fill="#1d4ed8">private</tspan> <tspan fill="#1d4ed8">int</tspan> id;</tspan>
+<tspan x="306" y="1450"></tspan>
+<tspan x="306" y="1469"><tspan fill="#1d4ed8">public</tspan> <tspan fill="#1d4ed8">int</tspan> getId() {</tspan>
+<tspan x="306" y="1488">    <tspan fill="#1d4ed8">return</tspan> id;</tspan>
+<tspan x="306" y="1507">}</tspan>
+<tspan x="306" y="1526"><tspan fill="#1d4ed8">private</tspan> <tspan fill="#1d4ed8">void</tspan> setId(<tspan fill="#1d4ed8">int</tspan> id) {</tspan>
+<tspan x="306" y="1545">    <tspan fill="#1d4ed8">this</tspan>.id = id;</tspan>
+<tspan x="306" y="1564">}</tspan>
+<tspan x="306" y="1583"><tspan fill="#1d4ed8">public</tspan> <tspan fill="#1d4ed8">void</tspan> generateId() {</tspan>
+<tspan x="306" y="1602">    setId(<tspan fill="#1d4ed8">new</tspan> Random().nextInt());</tspan>
+<tspan x="306" y="1621">}</tspan>
+</text>
+<rect x="806" y="1404" width="490" height="233" rx="8" fill="#fbfbfd" stroke="#dde1ea"/>
+<text x="822" y="1431" font-family="Consolas, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="13" fill="#1d2330" xml:space="preserve">
+<tspan x="822" y="1431"><tspan fill="#1d4ed8">public</tspan> <tspan fill="#1d4ed8">int</tspan> Id { <tspan fill="#1d4ed8">get</tspan>; <tspan fill="#1d4ed8">private</tspan> <tspan fill="#1d4ed8">set</tspan>; }</tspan>
+<tspan x="822" y="1450"></tspan>
+<tspan x="822" y="1469"><tspan fill="#1d4ed8">public</tspan> <tspan fill="#1d4ed8">void</tspan> GenerateId()</tspan>
+<tspan x="822" y="1488">{</tspan>
+<tspan x="822" y="1507">    Id = <tspan fill="#1d4ed8">new</tspan> Random().Next();</tspan>
+<tspan x="822" y="1526">}</tspan>
+</text>
+<rect x="290" y="1647" width="500" height="30" rx="6" fill="#fff4ec"/><rect x="290" y="1647" width="4" height="30" fill="#c2410c"/><text x="306" y="1667" font-family="Consolas, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="13" fill="#1d2330" xml:space="preserve">s.setId(<tspan fill="#9a5b00">1</tspan>);  <tspan fill="#b91c1c">// Fehler: setId(int) has private access</tspan></text>
+<rect x="806" y="1647" width="490" height="30" rx="6" fill="#f5f0ff"/><rect x="806" y="1647" width="4" height="30" fill="#6d28d9"/><text x="822" y="1667" font-family="Consolas, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="13" fill="#1d2330" xml:space="preserve">s.Id = <tspan fill="#9a5b00">1</tspan>;  <tspan fill="#b91c1c">// Fehler CS0272</tspan></text>
+<text x="24" y="1723" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" fill="#5b6475">Die farbige Zeile unter dem Code zeigt den Zugriff von außen, also z. B. aus der Main Methode (s ist eine Variable vom Typ Student).</text>
+</svg>
