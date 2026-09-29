@@ -4,4 +4,6 @@
 **/obj
 *.htm*
 *.user
+*.suo
+.idea/
 .DS_Store
