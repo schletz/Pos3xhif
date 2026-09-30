@@ -305,6 +305,88 @@ der Contains Methode verwendet, da es eine binäre Suche bietet.
 if (teacherHashSet.Contains("SZ")) { ... }
 ```
 
+## Read-only Collections: IReadOnlyList, IReadOnlySet und IReadOnlyDictionary
+
+Oft verwaltet eine Klasse intern eine Collection, die von außen nur gelesen werden soll. Die
+folgende Klasse *Course* prüft beim Hinzufügen, ob der Kurs schon voll ist. Wäre die Liste als
+*List&lt;Person&gt;* public, könnte jeder mit *course.Persons.Add()* diese Prüfung umgehen.
+
+```c#
+class Course
+{
+    private readonly List<Person> _persons = new();
+    public IReadOnlyList<Person> Persons => _persons.AsReadOnly();
+
+    public void AddPerson(Person person)
+    {
+        if (_persons.Count >= 20) { throw new InvalidOperationException("Der Kurs ist voll."); }
+        _persons.Add(person);
+    }
+}
+```
+
+Die Liste selbst ist *private readonly*. Nach außen gibt das Property nur ein Interface zurück, das
+ausschließlich lesende Methoden definiert. Für die 3 besprochenen Collections gibt es jeweils ein
+passendes Interface:
+
+| Collection                      | Read-only Interface                        | Was ist erlaubt?                                      |
+| ------------------------------- | ------------------------------------------ | ----------------------------------------------------- |
+| *List&lt;T&gt;*                 | *IReadOnlyList&lt;T&gt;*                   | *Count*, Indexer [], *foreach*                        |
+| *HashSet&lt;T&gt;*              | *IReadOnlySet&lt;T&gt;*                    | *Count*, *Contains()*, *foreach*                      |
+| *Dictionary&lt;TKey, TValue&gt;* | *IReadOnlyDictionary&lt;TKey, TValue&gt;* | *Count*, Indexer [], *ContainsKey()*, *TryGetValue()*, *Keys*, *Values*, *foreach* |
+
+Methoden wie *Add()*, *Remove()* oder *Clear()* sind in diesen Interfaces nicht definiert. Ein
+Aufruf führt daher schon zu einem Compilerfehler.
+
+### Warum AsReadOnly() und kein Typecast?
+
+Da *List&lt;T&gt;* das Interface *IReadOnlyList&lt;T&gt;* implementiert, würde auch ein impliziter
+Typecast kompilieren:
+
+```c#
+public IReadOnlyList<Person> Persons => _persons;   // Typecast, nicht empfohlen!
+```
+
+Das Problem: Der Typecast ändert nur den Typ der Variable, nicht das Objekt im Speicher. Hinter
+*Persons* steht immer noch die interne Liste. Mit einem gegenläufigen (expliziten) Typecast wird
+sie wieder bearbeitbar und die Prüfung in *AddPerson()* ist umgangen:
+
+```c#
+List<Person> hacked = (List<Person>)course.Persons;   // Funktioniert!
+hacked.Add(new Person(id: 99, firstname: "FN99", lastname: "LN99"));
+hacked.Clear();                                       // Die interne Liste der Klasse ist leer.
+```
+
+*AsReadOnly()* erzeugt dagegen ein eigenes Objekt vom Typ *ReadOnlyCollection&lt;T&gt;*
+(Namespace *System.Collections.ObjectModel*). Es umhüllt die interne Liste und leitet nur lesende
+Zugriffe weiter. Der Typecast auf *List&lt;Person&gt;* ist nicht mehr möglich:
+
+```c#
+List<Person> hacked = (List<Person>)course.Persons;   // InvalidCastException
+IList<Person> list = (IList<Person>)course.Persons;   // OK, aber...
+list.Add(new Person(id: 99, firstname: "FN99", lastname: "LN99"));  // NotSupportedException
+```
+
+*AsReadOnly()* kopiert die Daten nicht. Der Wrapper ist nur eine Sicht auf die interne Liste,
+deshalb sind spätere Änderungen durch *AddPerson()* auch über *Persons* sichtbar. Der Aufruf ist
+also günstig und kann direkt im Property stehen.
+
+Die Methode gibt es für alle 3 Collections:
+
+```c#
+private readonly List<Person> _persons = new();
+private readonly HashSet<string> _cities = new();
+private readonly Dictionary<int, Person> _personsById = new();
+
+public IReadOnlyList<Person> Persons => _persons.AsReadOnly();                       // ReadOnlyCollection<T>
+public IReadOnlySet<string> Cities => _cities.AsReadOnly();                          // ReadOnlySet<T>
+public IReadOnlyDictionary<int, Person> PersonsById => _personsById.AsReadOnly();    // ReadOnlyDictionary<TKey, TValue>
+```
+
+> Read-only bezieht sich nur auf die Collection, nicht auf die gespeicherten Objekte. Über
+> *course.Persons[0].Lastname = "X"* kann die Person trotzdem verändert werden, wenn das Property
+> *Lastname* einen public Setter hat.
+
 ## Übung
 
 Erstelle ein Projekt mit dem Namen *CollectionDemo* wie oben beschrieben. Ersetze danach den Inhalt
@@ -622,3 +704,332 @@ zum Zählen der gesetzten Bits.
 > Achte zudem auf die Rangfolge der Operatoren. Der Vergleich wird ohne entsprechende Klammerung
 > vor bitweisem UND bzw. ODER ausgeführt.
 
+## Übung 3: Eine Heldengruppe für das Rollenspiel
+
+Diese Übung ist die Fortsetzung der Übung *Charaktere für ein Rollenspiel* aus dem Kapitel
+[Properties](03_Properties.md). Verwende die Solution *RpgDemo* weiter und kopiere deine Klassen
+*Weapon* und *Character* in die untenstehende Program.cs. Die Klasse *Weapon* bleibt unverändert,
+*Character* wird erweitert und die Klasse *Party* kommt neu dazu.
+
+Jede Collection soll intern in einer *private readonly* Variable gespeichert werden. Nach außen
+gibt ein read-only Property nur ein Interface zurück, das keine Änderungen erlaubt
+(*IReadOnlyList&lt;T&gt;*, *IReadOnlySet&lt;T&gt;* oder *IReadOnlyDictionary&lt;TKey, TValue&gt;*).
+Die Collection wird also nur über die Methoden der Klasse verändert. Verwende dafür *AsReadOnly()*
+und keinen Typecast (siehe Kapitel *Read-only Collections*). Die Tests prüfen das.
+
+Für die Waffen der Klasse *Character* (List) gelten folgende Regeln:
+- Das Property *Weapon* aus Übung 2 speichert weiterhin die ausgerüstete Waffe. Es darf aber nur
+  noch in der Klasse gesetzt werden. Ausgerüstet wird über die folgenden Methoden.
+- Der Charakter hat ein Inventar mit beliebig vielen Waffen. Das Property *Weapons* liefert es als
+  *IReadOnlyList&lt;Weapon&gt;*. Am Anfang ist das Inventar leer.
+- Die Methode *PickUp(Weapon weapon)* fügt die Waffe hinten an das Inventar an. Hat der Charakter
+  noch keine Waffe ausgerüstet, wird die aufgehobene Waffe gleich ausgerüstet.
+- Die Methode *Equip(Weapon weapon)* rüstet die übergebene Waffe aus. Ist sie nicht im Inventar,
+  wird eine *ArgumentException* geworfen.
+- Die Methode *EquipStrongestWeapon()* rüstet die Waffe mit dem größten *Damage* aus dem Inventar
+  aus. Ist das Inventar leer, passiert nichts.
+- Die Methode *Drop(Weapon weapon)* entfernt die Waffe aus dem Inventar und liefert true. War sie
+  ausgerüstet, hat der Charakter danach keine Waffe mehr. Ist die Waffe nicht im Inventar, wird
+  false geliefert.
+
+Für die Fähigkeiten der Klasse *Character* (HashSet) gelten folgende Regeln:
+- Ein Charakter kann Fähigkeiten wie *Feuerball* oder *Heilen* lernen. Jede Fähigkeit kommt dabei
+  nur einmal vor. Das Property *Skills* liefert sie als *IReadOnlySet&lt;string&gt;*.
+- Die Methode *LearnSkill(string skill)* fügt die Fähigkeit hinzu. Sie liefert true, wenn die
+  Fähigkeit neu ist und false, wenn der Charakter sie schon beherrscht. Sieh dir dafür den
+  Rückgabewert von *HashSet.Add()* an.
+- Die Methode *HasSkill(string skill)* liefert true, wenn der Charakter die Fähigkeit beherrscht.
+
+Für die Klasse *Party* (Dictionary) gelten folgende Regeln:
+- Die Klasse hat einen Konstruktor mit dem Parameter *name* (string). Das Property *Name* ist
+  immutable.
+- Die Mitglieder werden in einem Dictionary mit dem Namen des Charakters als Key gespeichert.
+  Das Property *Members* liefert es als *IReadOnlyDictionary&lt;string, Character&gt;*.
+- Die Methode *AddMember(Character character)* fügt den Charakter hinzu und liefert true. Gibt es
+  schon ein Mitglied mit diesem Namen oder hat die Party schon 4 Mitglieder, wird der Charakter
+  nicht aufgenommen und false geliefert.
+- Die Methode *RemoveMember(string name)* entfernt das Mitglied mit diesem Namen. Sie liefert
+  true, wenn es gefunden wurde, sonst false.
+- Die Methode *FindMember(string name)* liefert das Mitglied mit diesem Namen oder null, wenn es
+  nicht gefunden wurde. Verwende *TryGetValue()* und überlege dir den Rückgabetyp.
+- Das Property *AliveMembers* ist read-only und liefert eine neue *List&lt;Character&gt;* mit allen
+  Mitgliedern, die noch am Leben sind.
+- Das Property *Skills* ist read-only und liefert ein neues *HashSet&lt;string&gt;* mit allen
+  Fähigkeiten, die in der Party vorkommen. Beherrschen mehrere Mitglieder die gleiche Fähigkeit,
+  kommt sie trotzdem nur einmal vor. Die Methode *UnionWith()* kann hier verwendet werden.
+- Die Party hat gemeinsame Vorräte wie Heiltränke oder Fackeln. Sie werden in einem Dictionary
+  mit dem Namen des Gegenstandes als Key und der Anzahl als Value gespeichert. Das Property
+  *Supplies* liefert es als *IReadOnlyDictionary&lt;string, int&gt;*.
+- Die Methode *AddSupply(string item, int count)* erhöht die Anzahl des Gegenstandes um *count*.
+  Ist der Gegenstand noch nicht vorhanden, wird er mit dieser Anzahl angelegt. Ist *count* nicht
+  größer als 0, wird eine *ArgumentException* geworfen.
+- Die Methode *GetSupplyCount(string item)* liefert die Anzahl des Gegenstandes oder 0, wenn er
+  nicht vorhanden ist.
+- Die Methode *UseSupply(string item)* verringert die Anzahl um 1 und liefert true. Ist der
+  Gegenstand nicht vorhanden, wird false geliefert. Wird der letzte Gegenstand verbraucht, wird
+  der Key aus dem Dictionary entfernt.
+- Die Methode *AttackTogether(Character enemy)* lässt alle lebenden Mitglieder den Gegner mit
+  *Attack()* angreifen.
+
+Überlege dir bei jeder Methode, welche Methode der Collection die Arbeit schon erledigt. Viele
+Methoden lassen sich dann in einer Zeile schreiben. Beachte, dass *Contains()* und *Remove()* bei
+einer Liste von Objekten die Referenzen vergleichen (siehe Kapitel über *List&lt;T&gt;*).
+
+Die Ausgabe des Programmes muss am Ende so lauten:
+
+```
+********************************************************************************
+TESTS FÜR DIE WAFFEN EINES CHARAKTERS (LIST)
+********************************************************************************
+1 Weapons ist eine schreibgeschützte IReadOnlyList<Weapon> OK
+2 Weapon ist von außen nicht setzbar OK
+3 PickUp OK
+4 Equip OK
+5 Exception bei Equip einer Waffe, die nicht im Inventar ist OK
+6 EquipStrongestWeapon OK
+7 Drop OK
+********************************************************************************
+TESTS FÜR DIE FÄHIGKEITEN EINES CHARAKTERS (HASHSET)
+********************************************************************************
+1 Skills ist ein schreibgeschütztes IReadOnlySet<string> OK
+2 LearnSkill ignoriert doppelte Fähigkeiten OK
+3 HasSkill OK
+********************************************************************************
+TESTS FÜR PARTY (DICTIONARY)
+********************************************************************************
+1 Kein default Konstruktor OK
+2 Members und Supplies sind ein schreibgeschütztes IReadOnlyDictionary OK
+3 AddMember OK
+4 Keine doppelten Namen in der Party OK
+5 Maximal 4 Mitglieder OK
+6 FindMember OK
+7 RemoveMember OK
+8 AliveMembers OK
+9 Skills der Party ohne Duplikate OK
+10 AddSupply und GetSupplyCount OK
+11 Exception bei ungültiger Anzahl OK
+12 UseSupply entfernt aufgebrauchte Gegenstände OK
+13 AttackTogether OK
+```
+
+### Program.cs
+```c#
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+
+namespace RpgDemo.Application;
+
+class Weapon
+{
+    // TODO: Kopiere deine Implementierung aus Übung 2
+}
+
+class Character
+{
+    // TODO: Kopiere deine Implementierung aus Übung 2 und erweitere sie
+}
+
+class Party
+{
+    // TODO: Implementierung von Party
+}
+
+class Program
+{
+    // DON'T TOUCH!
+    private static void Main(string[] args)
+    {
+        Console.WriteLine("********************************************************************************");
+        Console.WriteLine("TESTS FÜR DIE WAFFEN EINES CHARAKTERS (LIST)");
+        Console.WriteLine("********************************************************************************");
+        Character hero = new Character(name: "Link", maxHealth: 100, strength: 10);
+        Weapon dagger = new Weapon(name: "Dolch", damage: 5);
+        Weapon sword = new Weapon(name: "Schwert", damage: 15);
+        Weapon axe = new Weapon(name: "Axt", damage: 25);
+        if (IsReadOnly(typeof(Character), nameof(Character.Weapons))
+            && HasType(typeof(Character), nameof(Character.Weapons), typeof(IReadOnlyList<Weapon>))
+            && hero.Weapons is not List<Weapon> && hero.Weapons.Count == 0)
+        {
+            Console.WriteLine("1 Weapons ist eine schreibgeschützte IReadOnlyList<Weapon> OK");
+        }
+        if (HasPrivateSetter(typeof(Character), nameof(Character.Weapon)) && hero.Weapon is null)
+        {
+            Console.WriteLine("2 Weapon ist von außen nicht setzbar OK");
+        }
+        hero.PickUp(dagger);
+        Weapon? weaponAfterFirstPickUp = hero.Weapon;
+        hero.PickUp(sword);
+        if (weaponAfterFirstPickUp == dagger && hero.Weapon == dagger
+            && hero.Weapons.Count == 2 && hero.Weapons[0] == dagger && hero.Weapons[1] == sword)
+        {
+            Console.WriteLine("3 PickUp OK");
+        }
+        hero.Equip(sword);
+        if (hero.Weapon == sword && hero.AttackPower == 25) { Console.WriteLine("4 Equip OK"); }
+        try
+        {
+            hero.Equip(axe);
+        }
+        catch (ArgumentException)
+        {
+            if (hero.Weapon == sword) { Console.WriteLine("5 Exception bei Equip einer Waffe, die nicht im Inventar ist OK"); }
+        }
+        Character farmer = new Character(name: "Bauer", maxHealth: 20, strength: 2);
+        farmer.EquipStrongestWeapon();
+        hero.PickUp(axe);
+        hero.Equip(dagger);
+        hero.EquipStrongestWeapon();
+        if (farmer.Weapon is null && hero.Weapon == axe && hero.AttackPower == 35)
+        {
+            Console.WriteLine("6 EquipStrongestWeapon OK");
+        }
+        bool firstDrop = hero.Drop(axe);
+        bool secondDrop = hero.Drop(axe);
+        if (firstDrop && !secondDrop && hero.Weapon is null && hero.Weapons.Count == 2)
+        {
+            Console.WriteLine("7 Drop OK");
+        }
+
+        Console.WriteLine("********************************************************************************");
+        Console.WriteLine("TESTS FÜR DIE FÄHIGKEITEN EINES CHARAKTERS (HASHSET)");
+        Console.WriteLine("********************************************************************************");
+        if (IsReadOnly(typeof(Character), nameof(Character.Skills))
+            && HasType(typeof(Character), nameof(Character.Skills), typeof(IReadOnlySet<string>))
+            && hero.Skills is not HashSet<string> && hero.Skills.Count == 0)
+        {
+            Console.WriteLine("1 Skills ist ein schreibgeschütztes IReadOnlySet<string> OK");
+        }
+        bool learnedFireball = hero.LearnSkill("Feuerball");
+        bool learnedFireballAgain = hero.LearnSkill("Feuerball");
+        bool learnedHealing = hero.LearnSkill("Heilen");
+        if (learnedFireball && !learnedFireballAgain && learnedHealing && hero.Skills.Count == 2)
+        {
+            Console.WriteLine("2 LearnSkill ignoriert doppelte Fähigkeiten OK");
+        }
+        if (hero.HasSkill("Heilen") && !hero.HasSkill("Teleport")) { Console.WriteLine("3 HasSkill OK"); }
+
+        Console.WriteLine("********************************************************************************");
+        Console.WriteLine("TESTS FÜR PARTY (DICTIONARY)");
+        Console.WriteLine("********************************************************************************");
+        if (typeof(Party).GetConstructor(Type.EmptyTypes) is null) { Console.WriteLine("1 Kein default Konstruktor OK"); }
+        Party party = new Party(name: "Die Gefährten");
+        if (IsReadOnly(typeof(Party), nameof(Party.Members))
+            && HasType(typeof(Party), nameof(Party.Members), typeof(IReadOnlyDictionary<string, Character>))
+            && IsReadOnly(typeof(Party), nameof(Party.Supplies))
+            && HasType(typeof(Party), nameof(Party.Supplies), typeof(IReadOnlyDictionary<string, int>))
+            && party.Members is not Dictionary<string, Character> && party.Supplies is not Dictionary<string, int>
+            && party.Name == "Die Gefährten" && party.Members.Count == 0)
+        {
+            Console.WriteLine("2 Members und Supplies sind ein schreibgeschütztes IReadOnlyDictionary OK");
+        }
+        Character mage = new Character(name: "Zelda", maxHealth: 60, strength: 20);
+        Character archer = new Character(name: "Robin", maxHealth: 80, strength: 30);
+        Character healer = new Character(name: "Mercy", maxHealth: 50, strength: 5);
+        bool heroAdded = party.AddMember(hero);
+        bool mageAdded = party.AddMember(mage);
+        if (heroAdded && mageAdded && party.Members.Count == 2 && party.Members["Link"] == hero)
+        {
+            Console.WriteLine("3 AddMember OK");
+        }
+        if (!party.AddMember(new Character(name: "Link", maxHealth: 10, strength: 1)) && party.Members["Link"] == hero)
+        {
+            Console.WriteLine("4 Keine doppelten Namen in der Party OK");
+        }
+        party.AddMember(archer);
+        party.AddMember(healer);
+        if (!party.AddMember(new Character(name: "Epona", maxHealth: 10, strength: 1)) && party.Members.Count == 4)
+        {
+            Console.WriteLine("5 Maximal 4 Mitglieder OK");
+        }
+        if (party.FindMember("Zelda") == mage && party.FindMember("Ganon") is null)
+        {
+            Console.WriteLine("6 FindMember OK");
+        }
+        bool firstRemove = party.RemoveMember("Mercy");
+        bool secondRemove = party.RemoveMember("Mercy");
+        if (firstRemove && !secondRemove && party.Members.Count == 3 && party.FindMember("Mercy") is null)
+        {
+            Console.WriteLine("7 RemoveMember OK");
+        }
+        archer.TakeDamage(1000);
+        List<Character> aliveMembers = party.AliveMembers;
+        if (IsReadOnly(typeof(Party), nameof(Party.AliveMembers))
+            && aliveMembers.Count == 2 && aliveMembers.Contains(hero) && aliveMembers.Contains(mage))
+        {
+            Console.WriteLine("8 AliveMembers OK");
+        }
+        mage.LearnSkill("Feuerball");
+        mage.LearnSkill("Teleport");
+        HashSet<string> partySkills = party.Skills;
+        if (IsReadOnly(typeof(Party), nameof(Party.Skills))
+            && partySkills.Count == 3 && partySkills.Contains("Heilen") && partySkills.Contains("Teleport"))
+        {
+            Console.WriteLine("9 Skills der Party ohne Duplikate OK");
+        }
+        party.AddSupply("Heiltrank", 3);
+        party.AddSupply("Heiltrank", 2);
+        party.AddSupply("Fackel", 1);
+        if (party.GetSupplyCount("Heiltrank") == 5 && party.GetSupplyCount("Fackel") == 1
+            && party.GetSupplyCount("Seil") == 0 && party.Supplies.Count == 2)
+        {
+            Console.WriteLine("10 AddSupply und GetSupplyCount OK");
+        }
+        try
+        {
+            party.AddSupply("Seil", 0);
+        }
+        catch (ArgumentException)
+        {
+            if (!party.Supplies.ContainsKey("Seil")) { Console.WriteLine("11 Exception bei ungültiger Anzahl OK"); }
+        }
+        bool usedTorch = party.UseSupply("Fackel");
+        bool usedTorchAgain = party.UseSupply("Fackel");
+        bool usedPotion = party.UseSupply("Heiltrank");
+        if (usedTorch && !usedTorchAgain && usedPotion
+            && !party.Supplies.ContainsKey("Fackel") && party.GetSupplyCount("Heiltrank") == 4)
+        {
+            Console.WriteLine("12 UseSupply entfernt aufgebrauchte Gegenstände OK");
+        }
+        // Link (10 + 15) and Zelda (20) hit the dragon (50 -> 5). Robin is dead and must not attack.
+        hero.Equip(sword);
+        Character dragon = new Character(name: "Drache", maxHealth: 50, strength: 40);
+        party.AttackTogether(dragon);
+        int dragonHealthAfterFirstAttack = dragon.Health;
+        party.AttackTogether(dragon);
+        // Only the member who kills the dragon gets the 50 experience points.
+        if (dragonHealthAfterFirstAttack == 5 && !dragon.IsAlive
+            && hero.Experience + mage.Experience == 50 && archer.Experience == 0)
+        {
+            Console.WriteLine("13 AttackTogether OK");
+        }
+    }
+
+    /// <summary>
+    /// Returns true if the property exists and has no set method at all.
+    /// </summary>
+    private static bool IsReadOnly(Type type, string propertyName)
+    {
+        PropertyInfo? property = type.GetProperty(propertyName);
+        return property is not null && !property.CanWrite;
+    }
+
+    /// <summary>
+    /// Returns true if the property has a set method that cannot be called from outside the class.
+    /// </summary>
+    private static bool HasPrivateSetter(Type type, string propertyName)
+    {
+        PropertyInfo? property = type.GetProperty(propertyName);
+        return property is not null && property.SetMethod is not null && !property.SetMethod.IsPublic;
+    }
+
+    /// <summary>
+    /// Returns true if the property is declared with exactly the given type.
+    /// </summary>
+    private static bool HasType(Type type, string propertyName, Type expectedType)
+    {
+        PropertyInfo? property = type.GetProperty(propertyName);
+        return property is not null && property.PropertyType == expectedType;
+    }
+}
+```
