@@ -14,7 +14,7 @@ md CollectionDemo.Application
 cd CollectionDemo.Application
 dotnet new console
 cd ..
-dotnet new sln
+dotnet new sln -f sln
 dotnet sln add CollectionDemo.Application
 start CollectionDemo.sln
 
@@ -29,7 +29,7 @@ start CollectionDemo.sln
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
