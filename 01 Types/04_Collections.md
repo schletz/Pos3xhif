@@ -1,10 +1,9 @@
 # Collections in .NET
 
-## Erstellen einer Visual Studio Solution
+## Projekt anlegen
 
-Um die Beispiele mitmachen zu können, muss eine .NET Konsolenapplikation erstellt werden. Führe
-dafür die folgenden Befehle in der Konsole aus. Unter macOs müssen md und rd durch die entsprechenden
-Befehle ersetzt werden.
+Für die Beispiele brauchst du eine .NET Konsolenapplikation. Führe dafür die folgenden Befehle in
+der Konsole aus. Unter macOS und Linux ersetzt du *rd /S /Q* durch *rm -rf* und *md* durch *mkdir*.
 
 ```text
 rd /S /Q CollectionDemo
@@ -20,9 +19,9 @@ start CollectionDemo.sln
 
 ```
 
-Öffne danach durch Doppelklick auf das Projekt (*CollectionDemo.Application*) die Datei
-*CollectionDemo.Application.csproj* und füge die Optionen für
-*Nullable* und *TreatWarningsAsError* hinzu. Die gesamte Konfiguration muss nun so aussehen:
+Öffne danach die Datei *CollectionDemo.Application.csproj*. In Visual Studio geht das mit einem
+Doppelklick auf das Projekt *CollectionDemo.Application*. Ergänze die Optionen *Nullable* und
+*TreatWarningsAsErrors*. Die Datei sieht dann so aus:
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
@@ -39,11 +38,9 @@ start CollectionDemo.sln
 
 ## Das Array als einfachste Collection
 
-Wie in Java können mehrere Elemente des gleichen Typs als Array deklariert werden. Natürlich können
-auch Referenztypen wie eigene Klassen, ... in Arrays verwaltet werden. Durch den *new* Operator
-ist erkennbar, dass diese Datenstruktur am Heap angelegt wird. Das bedeutet, dass der Garbage
-Collector diese Daten wieder entfernen muss. Daher macht es einen Unterschied, ob 2 getrennte
-Werte wie *int x; int y;* oder ein zweidimensionales Array verwendet wird.
+Ein Array speichert mehrere Elemente vom gleichen Typ, so wie in Java. Die Elemente können auch
+Referenztypen sein, z. B. Objekte deiner eigenen Klassen. Ein Array wird mit *new* erzeugt. Es liegt
+daher am Heap und wird später vom Garbage Collector entfernt.
 
 ```c#
 int length = 6;
@@ -53,23 +50,35 @@ int[] numbers2 = new int[length];   // (2)
 int[] numbersDrawn = new int[] { 1, 2, 3, 4, 5, 6 };  // (3)
 ```
 
-- **(1)** Wird ein Array mit einer fixen Größe definiert, werden alle Elemente mit dem default
-  Wert initialisiert. Numbers hat daher den Inhalt [0, 0, 0, 0, 0, 0].
-- **(2)** Es kann auch eine Variable zur Definition der Länge verwendet werden, sie muss nicht statisch
-  sein.
-- **(3)** Stehen die zu speichernden Elemente bereits fest, so kann der Initializer das Array befüllen.
-  Eine Längenangabe ist dann überflüssig (und führt zu einen Fehler wenn die angegebene Länge der
-  Anzahl der Elemente widerspricht).
+- **(1)** Gibst du nur die Länge an, bekommen alle Elemente den Default-Wert. *numbers* enthält
+  daher [0, 0, 0, 0, 0, 0].
+- **(2)** Die Länge kann auch in einer Variable stehen. Sie muss nicht beim Kompilieren feststehen.
+- **(3)** Kennst du die Werte schon, befüllst du das Array mit einem Initializer. Die Länge musst du
+  dann nicht angeben. Gibst du sie trotzdem an und passt sie nicht zur Anzahl der Werte, meldet der
+  Compiler einen Fehler.
+
+### Stack und Heap
+
+Lokale Variablen liegen am *Stack*. Bei Wertetypen wie *int* steht dort direkt der Wert. Bei
+Referenztypen steht dort nur die Adresse (8 Byte) des Objekts. Der *Stackpointer* zeigt auf das Ende
+des belegten Bereichs.
+
+Speicher am *Heap* wird nur mit *new* reserviert. Jedes *new* im Code (orange Nummer in der Grafik)
+erzeugt genau ein Objekt am Heap. Auch eine Liste ist ein Objekt. Sie verwaltet intern ein Array, das
+nur Referenzen auf die Personen speichert. Die Zuweisung *first = persons[0]* kopiert daher nur die
+Adresse. Es entsteht keine neue Person.
+
+![](stack_heap_memory.svg)
 
 ### Jagged Arrays
 
-Fälschlich als "mehrdimensionales" Array wird das aus Java bekannte *jagged array*
-bezeichnet. In Wirklichkeit ist es ein Array, welches auf weitere Arrays im Heap verweist.
+Das *jagged array* kennst du schon aus Java. Es wird oft "mehrdimensionales Array" genannt, das ist
+aber nicht ganz richtig: Es ist ein Array, dessen Elemente auf weitere Arrays am Heap verweisen.
 
 ![](https://media.geeksforgeeks.org/wp-content/uploads/20201202202711/Untitled4-660x306.png)
 <small>Quelle: https://media.geeksforgeeks.org/wp-content/uploads/20201202202711/Untitled4-660x306.png</small>
 
-Dadurch können die Elemente auch unterschiedliche Längen haben, wie folgendes Beispiel zeigt:
+Deshalb können die inneren Arrays unterschiedlich lang sein:
 
 ```c#
 int[][] quickTipp = new int[][]
@@ -91,11 +100,10 @@ for (int i = 0; i < quickTipp.Length; i++)
 
 ### "Echte" mehrdimensionale Arrays
 
-Ein "echtes" mehrdimensionales Array besteht aus Elementen, die im Speicher linear aufeinanderfolgend
-vorliegen. Die Position wird einfach mittels *row x length + col* berechnet. Die erste (äußere)
-Dimension ist meist die Zeile, sodass in der inneren Schleife aufeinanderfolgende Speicherbereiche
-gelesen werden können. Dies erhöht die Performance, da der CPU Cache nachfolgende Elemente
-einliest.
+Bei einem "echten" mehrdimensionalen Array liegen alle Elemente direkt hintereinander im Speicher.
+Die Position eines Elements ist *row × Anzahl der Spalten + col*. Die erste Dimension ist meist die
+Zeile. Die innere Schleife geht dann über die Spalten und liest Speicherstellen, die direkt
+nebeneinander liegen. Das ist schnell, weil der CPU-Cache die nächsten Elemente schon mitlädt.
 
 ```c#
 int[,] matrix = new int[,]
@@ -113,30 +121,36 @@ for (int row = 0; row < matrix.GetLength(0); row++)
 }
 ```
 
-> **Hinweis:** Das mehrdimensionale Array ist ein sehr spezieller Typ und sollte nur
-> dann verwendet werden, wenn die Organisation im Speicher aus Performancegründen wesentlich ist.
-> OpenCV z. B. speichert seine Transformationsmatrizen als "echte" zweidimensionale Arrays.
+> **Hinweis:** Mehrdimensionale Arrays brauchst du selten. Verwende sie nur, wenn die Anordnung im
+> Speicher für die Performance wichtig ist. Die Bibliothek OpenCV speichert z. B. ihre
+> Transformationsmatrizen so.
 
-## List&lt;T&gt; als flexiblerer Ersatz für Arrays
+## List&lt;T&gt; als flexibler Ersatz für Arrays
 
-Arrays haben einen Nachteil: Sie können in der Größe nicht mehr verändert werden, d. h. es gibt
-keine *Add()* oder *Remove()* Methode. Daher findet sich in den meisten Programmen der Typ
-*List&lt;T&gt;*. Der Zugang zu Collections im Allgemeinen führt über den Namespace
-*System.Collections.Generic*. Er muss mit *using* eingebunden werden:
+Ein Array hat eine feste Länge. Es gibt keine Methoden *Add()* oder *Remove()*. Deshalb verwenden
+die meisten Programme den Typ *List&lt;T&gt;*. Die Collections liegen im Namespace
+*System.Collections.Generic*. Du bindest ihn mit *using* ein:
 
 ```c#
 using System.Collections.Generic;
 ```
 
+### Interner Aufbau
 
-## Interner Aufbau der Klasse List&lt;T&gt;
+*List&lt;T&gt;* speichert die Daten intern in einem Array. Eine neue, leere Liste hat ein leeres
+Array. Beim ersten *Add()* bekommt das Array 4 Plätze. Ist das Array voll, legt *Add()* ein neues
+Array mit doppelter Größe an und kopiert alle Elemente hinein. Das alte Array entfernt der Garbage
+Collector. Der Zugriff über den Index ist deshalb genauso schnell wie bei einem Array.
 
-Der Typ *List&lt;T&gt;* verwendet im Inneren ein Array zur Verwaltung der Daten. Es wird zu Beginn mit
-4 Stellen definiert. Werden durch *Add()* mehr Elemente benötigt, wird ein neues internes Array
-mit doppelt so vielen Elementen definiert und der Speicher muss kopiert werden. Der Zugriff auf
-Elemente ist daher genauso schnell wie bei einem Array.
+*Count* liefert die Anzahl der Elemente, *Capacity* die Länge des internen Arrays. Die Grafik zeigt
+die ersten 9 Aufrufe von *Add()*:
 
-Für unsere Beispiele verwenden wir die Klasse Person, eine datenhaltende Klasse mit 3 Properties:
+![](list_capacity.svg)
+
+### Eine Liste anlegen
+
+Für die Beispiele verwenden wir die Klasse *Person* mit 3 Properties:
+
 ```c#
 class Person
 {
@@ -155,14 +169,14 @@ class Person
 }
 ```
 
-Listen werden generisch durch Angabe des zu speichernden Typs erstellt. Nützlich in C#:
-Auch der Initializer kann verwendet werden.
+Den Typ der Elemente gibst du in spitzen Klammern an. Mit einem Initializer kannst du die Liste
+gleich befüllen:
 
 ```c#
 // using System.Collections.Generic;
-List<Person> persons1 = new List<Person>();
-// kürzer: var persons2 = new List<Person>()
-List<Person> persons2 = new List<Person>()
+List<Person> emptyList = new List<Person>();
+// kürzer: var persons = new List<Person>()
+List<Person> persons = new List<Person>()
 {
     new Person(id: 1, firstname: "FN1", lastname: "LN1"),
     new Person(id: 2, firstname: "FN2", lastname: "LN2"),
@@ -170,11 +184,10 @@ List<Person> persons2 = new List<Person>()
 };
 ```
 
-### Abfragen, Hinzufügen und Löschen von Elementen
+### Elemente lesen, hinzufügen und löschen
 
-Der Indexer ([]) greift - wie bei einem Array - nullbasierend auf das n-te Element zu. Mit der Methode
-*Add()* wird ein neues Element in die Liste eingefügt. Natürlich kann auch mit *foreach* durch die Liste
-iteriert werden.
+*Add()* fügt ein Element am Ende ein. Der Indexer [] liest ein Element an einer Position, wie bei
+einem Array. Der erste Index ist 0. Mit *foreach* gehst du durch alle Elemente.
 
 ```c#
 persons.Add(new Person(id: 4, firstname: "FN4", lastname: "LN4"));
@@ -188,44 +201,29 @@ foreach (Person p in persons)                           // (4)
 }
 ```
 
-- **(1)** Mit dem Index Operator [] kann auf ein Element zugegriffen werden.
-- **(2)** Da eine Liste nur Referenzen auf die mit new erzeugen Objekte, aber nicht die Objekte
-  selbst (bei Referenztypen) beinhaltet, wird auch bei der Ausgabe "Other Name" zu sehen sein.
-- **(3)** Das Property *Count* liefert die Anzahl der Elemente in der Liste.
-- **(4)** Die Liste implementiert das Interface *IEnumerable&lt;T&gt;*. Dadurch kann mit foreach die
-  Liste durchgegangen werden.
+- **(1)** *persons[2]* liefert das dritte Element.
+- **(2)** Bei Referenztypen speichert die Liste nur Referenzen, nicht die Objekte selbst.
+  *thirdPerson* zeigt also auf dasselbe Objekt wie *persons[2]*. Die Ausgabe zeigt daher auch
+  "Other Name".
+- **(3)** *Count* liefert die Anzahl der Elemente.
+- **(4)** *List&lt;T&gt;* implementiert das Interface *IEnumerable&lt;T&gt;*. Deshalb funktioniert
+  *foreach*.
 
-Werden Elemente gelöscht, wird über die *Equals()* Methode nach Elementen in der Liste gesucht. Daher wird
-die Person mit der ID 1 nicht gelöscht, da toDelete eine andere Rerefenzadresse besitzt.
+*Remove()* löscht ein Element aus der Liste. Die Klasse *Person* überschreibt *Equals()* nicht.
+*Remove()* vergleicht daher nur die Referenzen (Adressen). Willst du eine Person löschen, brauchst du
+die Referenz auf genau das Objekt in der Liste, z. B. *persons.Remove(thirdPerson)*. Ein neues Objekt
+mit denselben Werten hat eine andere Adresse und wird nicht gefunden.
 
-```c#
-// kürzer: var toDelete = ...
-Person toDelete = new Person(id: 1, firstname: "FN1", lastname: "LN1");
-persons.Remove(toDelete);
-Console.WriteLine($"Found {persons.Count} Persons");
+## Dictionary&lt;TKey, TValue&gt; (HashMap in Java)
 
-persons.Remove(thirdPerson);
-Console.WriteLine($"Found {persons.Count} Persons");
-```
+In einer Liste greifst du über den Index zu. Suchst du z. B. die Person mit der ID 2, musst du die
+Liste durchlaufen. Im schlechtesten Fall (das Element ist nicht vorhanden) sind das n Vergleiche.
 
-Dieses etwas seltsame verhalten wird schnell klarer, wenn wir uns den Speicher ansehen. Es wurde
-4x mit *new* eine Person erzeugt. Dadurch sind 4 Instanzen im Heap. Die Referenzen darauf sehen
-so aus:
+Ein *Dictionary* speichert Paare aus *Key* und *Value*. Jeder Key darf nur einmal vorkommen. Über
+den Key findest du den Value direkt, ohne die Collection zu durchlaufen. Als Key kannst du jeden
+Typ verwenden, auch eigene Klassen.
 
-![](list_memory.png)
-
-## Das Dictionary (HashMap in Java)
-
-Der Zugriff auf Elemente einer Liste erfolgt über den Index. Möchten wir z. B. nach einer Person
-mit der ID 2 suchen, so müssen wir die Liste durchlaufen. Im schlechtesten Fall (Element wird nicht
-gefunden) benötigt dies n Vergleiche.
-
-Das *Dictionary* hat die Möglichkeit, einen Key zu definieren. Er muss eindeutig sein und
-über den Indexer ist ein Zugriff über den Key möglich. Es kann jeder Datentyp als Key (auch eigene
-Typen) verwendet werden.
-
-Das folgende Beispiel erstellt ein Dictionary mit einem *string* Feld als Key und einer Person als Wert.
-Es kann auch hier der Indexer verwendet werden.
+Das Beispiel verwendet einen *string* als Key und eine *Person* als Value:
 
 ```c#
 // kürzer: var personsDict = new Dictionary<string, Person>()
@@ -240,36 +238,44 @@ Dictionary<string, Person> personsDict = new Dictionary<string, Person>()
 personsDict.Add("D", new Person(id: 4, firstname: "FN4", lastname: "LN4"));
 ```
 
-#### Zugriff auf Elemente
+### Zugriff auf Elemente
 
-Über den Indexoperator kann die Person B ausgelesen werden. Mit *foreach* kann das Dictionary
-durchlaufen werden. Es wird dann ein KeyValuePair zurückgegeben, welches den Key im Dictionary und
-das eigentliche Objekt im Property *Value* enthält.
+Der Indexer liefert den Value zu einem Key, hier die Person mit dem Key "B". Mit *foreach* bekommst
+du Objekte vom Typ *KeyValuePair*. Sie enthalten den Key im Property *Key* und das Objekt im
+Property *Value*.
+
 ```c#
 Person personB = personsDict["B"];
-foreach (KeyValuePair<string, Person> p in personsDict)  // kürzer: foreach (var p in personDict)
+foreach (KeyValuePair<string, Person> p in personsDict)  // kürzer: foreach (var p in personsDict)
 {
     Console.WriteLine($"Person {p.Key} hat den Zunamen {p.Value.Lastname}");
 }
 ```
 
-Das Löschen von Elementen wird mit *Remove()* über den Key durchgeführt:
+*Remove()* löscht ein Element über seinen Key:
+
 ```c#
-personDict.Remove("A");
+personsDict.Remove("A");
 ```
 
-#### TryGetValue() und TryAdd()
+### TryGetValue() und TryAdd()
 
-Wird in einem Dictionary versucht, einen bestehenden Key hinzuzufügen, wird eine *ArgumentException
-(An item with the same key has already been added)* ausgelöst. Der Zugriff auf einen nicht
-vorhandenen Index führt ebenso zu einer Exception.
+In zwei Fällen wirft ein Dictionary eine Exception:
+
+- *Add()* mit einem Key, den es schon gibt: *ArgumentException (An item with the same key has
+  already been added)*.
+- Lesen über den Indexer mit einem Key, den es nicht gibt: *KeyNotFoundException*.
+
 ```c#
 // ArgumentException: An item with the same key has already been added
-personDict.Add("D", new Person(id: 5, firstname: "FN5", lastname: "LN5"));
-Person notFound = personDict["Z"];
+personsDict.Add("D", new Person(id: 5, firstname: "FN5", lastname: "LN5"));
+// KeyNotFoundException
+Person notFound = personsDict["Z"];
 ```
 
-Daher gibt es bessere Methoden, um Daten zu suchen oder zu schreiben:
+Besser sind daher *TryGetValue()* und *TryAdd()*. Sie liefern *true* oder *false* und werfen keine
+Exception:
+
 ```c#
 if (personsDict.TryGetValue("C", out Person? found))
 {
@@ -281,12 +287,12 @@ if (!personsDict.TryAdd("D", new Person(id: 4, firstname: "FN4", lastname: "LN4"
 }
 ```
 
+## HashSet&lt;T&gt; (HashSet in Java)
 
-## HashSet (HashSet in Java)
+Ein *HashSet* speichert jeden Wert nur einmal, ähnlich wie *DISTINCT* in SQL. *Add()* fügt nur den
+ersten Wert ein. Gleiche Werte danach werden ignoriert. Ob zwei Werte gleich sind, prüft das
+HashSet mit *Equals()* und *GetHashCode()*.
 
-Einen Spezialfall stellt das Hashset dar. Oft sollen - wie bei *DISTINCT* in SQL - doppelte Werte entfernt
-werden. Das Hashset speichert durch *Add()* nur den ersten Wert, nachfolgende idente Werte werden ignoriert.
-Die Gleichheit wird bei Referenztypen auch über *Equals()* ermittelt.
 ```c#
 HashSet<string> teacherHashSet = new HashSet<string>();
 teacherHashSet.Add("SZ");
@@ -295,11 +301,12 @@ teacherHashSet.Add("SZ");
 foreach(string teacher in teacherHashSet)
 {
     Console.WriteLine(teacher);                // Gibt 1x SZ aus.
-}            
+}
 ```
 
-Das HashSet bietet keinen direkten Zugriff auf die Elemente. Oft wird es im Zusammenhang mit
-der Contains Methode verwendet, da es eine binäre Suche bietet.
+Ein HashSet hat keinen Index. Du kannst also nicht auf das n-te Element zugreifen. Meist verwendest
+du es mit *Contains()*. Diese Suche ist sehr schnell: Das HashSet berechnet aus dem Hashcode direkt
+die Stelle, an der der Wert liegen muss. Es muss nicht alle Elemente durchlaufen.
 
 ```c#
 if (teacherHashSet.Contains("SZ")) { ... }
@@ -307,9 +314,9 @@ if (teacherHashSet.Contains("SZ")) { ... }
 
 ## Read-only Collections: IReadOnlyList, IReadOnlySet und IReadOnlyDictionary
 
-Oft verwaltet eine Klasse intern eine Collection, die von außen nur gelesen werden soll. Die
-folgende Klasse *Course* prüft beim Hinzufügen, ob der Kurs schon voll ist. Wäre die Liste als
-*List&lt;Person&gt;* public, könnte jeder mit *course.Persons.Add()* diese Prüfung umgehen.
+Oft verwaltet eine Klasse intern eine Collection, die man von außen nur lesen soll. Die Klasse
+*Course* prüft beim Hinzufügen, ob der Kurs schon voll ist. Wäre die Liste als public
+*List&lt;Person&gt;* sichtbar, könnte jeder mit *course.Persons.Add()* diese Prüfung umgehen.
 
 ```c#
 class Course
@@ -325,9 +332,9 @@ class Course
 }
 ```
 
-Die Liste selbst ist *private readonly*. Nach außen gibt das Property nur ein Interface zurück, das
-ausschließlich lesende Methoden definiert. Für die 3 besprochenen Collections gibt es jeweils ein
-passendes Interface:
+Die Liste selbst ist *private readonly*. Das Property gibt nach außen nur ein Interface zurück.
+Dieses Interface hat nur Methoden zum Lesen. Für jede der 3 Collections gibt es ein passendes
+Interface:
 
 | Collection                      | Read-only Interface                        | Was ist erlaubt?                                      |
 | ------------------------------- | ------------------------------------------ | ----------------------------------------------------- |
@@ -335,21 +342,22 @@ passendes Interface:
 | *HashSet&lt;T&gt;*              | *IReadOnlySet&lt;T&gt;*                    | *Count*, *Contains()*, *foreach*                      |
 | *Dictionary&lt;TKey, TValue&gt;* | *IReadOnlyDictionary&lt;TKey, TValue&gt;* | *Count*, Indexer [], *ContainsKey()*, *TryGetValue()*, *Keys*, *Values*, *foreach* |
 
-Methoden wie *Add()*, *Remove()* oder *Clear()* sind in diesen Interfaces nicht definiert. Ein
-Aufruf führt daher schon zu einem Compilerfehler.
+*Add()*, *Remove()* oder *Clear()* gibt es in diesen Interfaces nicht. Rufst du sie trotzdem auf,
+meldet schon der Compiler einen Fehler.
 
 ### Warum AsReadOnly() und kein Typecast?
 
-Da *List&lt;T&gt;* das Interface *IReadOnlyList&lt;T&gt;* implementiert, würde auch ein impliziter
-Typecast kompilieren:
+*List&lt;T&gt;* implementiert *IReadOnlyList&lt;T&gt;*. Deshalb kompiliert auch ein impliziter
+Typecast:
 
 ```c#
 public IReadOnlyList<Person> Persons => _persons;   // Typecast, nicht empfohlen!
 ```
 
-Das Problem: Der Typecast ändert nur den Typ der Variable, nicht das Objekt im Speicher. Hinter
-*Persons* steht immer noch die interne Liste. Mit einem gegenläufigen (expliziten) Typecast wird
-sie wieder bearbeitbar und die Prüfung in *AddPerson()* ist umgangen:
+Das Problem: Ein Typecast ändert nur den Typ der Variable, nicht das Objekt im Speicher. Hinter
+*Persons* steht weiterhin die interne Liste. Mit einem expliziten Typecast zurück auf
+*List&lt;Person&gt;* kann man sie wieder verändern. Die Prüfung in *AddPerson()* ist dann
+wirkungslos:
 
 ```c#
 List<Person> hacked = (List<Person>)course.Persons;   // Funktioniert!
@@ -357,9 +365,9 @@ hacked.Add(new Person(id: 99, firstname: "FN99", lastname: "LN99"));
 hacked.Clear();                                       // Die interne Liste der Klasse ist leer.
 ```
 
-*AsReadOnly()* erzeugt dagegen ein eigenes Objekt vom Typ *ReadOnlyCollection&lt;T&gt;*
-(Namespace *System.Collections.ObjectModel*). Es umhüllt die interne Liste und leitet nur lesende
-Zugriffe weiter. Der Typecast auf *List&lt;Person&gt;* ist nicht mehr möglich:
+*AsReadOnly()* erzeugt dagegen ein neues Objekt vom Typ *ReadOnlyCollection&lt;T&gt;* (Namespace
+*System.Collections.ObjectModel*). Dieses Objekt ist ein *Wrapper*: Es umhüllt die interne Liste und
+erlaubt nur lesende Zugriffe. Ein Typecast auf *List&lt;Person&gt;* ist nicht mehr möglich:
 
 ```c#
 List<Person> hacked = (List<Person>)course.Persons;   // InvalidCastException
@@ -367,9 +375,9 @@ IList<Person> list = (IList<Person>)course.Persons;   // OK, aber...
 list.Add(new Person(id: 99, firstname: "FN99", lastname: "LN99"));  // NotSupportedException
 ```
 
-*AsReadOnly()* kopiert die Daten nicht. Der Wrapper ist nur eine Sicht auf die interne Liste,
-deshalb sind spätere Änderungen durch *AddPerson()* auch über *Persons* sichtbar. Der Aufruf ist
-also günstig und kann direkt im Property stehen.
+*AsReadOnly()* kopiert die Daten nicht. Der Wrapper zeigt immer auf die interne Liste. Spätere
+Änderungen durch *AddPerson()* siehst du daher auch über *Persons*. Der Aufruf kostet kaum Zeit
+und kann direkt im Property stehen.
 
 Die Methode gibt es für alle 3 Collections:
 
@@ -383,15 +391,15 @@ public IReadOnlySet<string> Cities => _cities.AsReadOnly();                     
 public IReadOnlyDictionary<int, Person> PersonsById => _personsById.AsReadOnly();    // ReadOnlyDictionary<TKey, TValue>
 ```
 
-> Read-only bezieht sich nur auf die Collection, nicht auf die gespeicherten Objekte. Über
-> *course.Persons[0].Lastname = "X"* kann die Person trotzdem verändert werden, wenn das Property
-> *Lastname* einen public Setter hat.
+> Read-only gilt nur für die Collection, nicht für die Objekte darin. Mit
+> *course.Persons[0].Lastname = "X"* kannst du die Person trotzdem ändern, wenn *Lastname* einen
+> public Setter hat.
 
 ## Übung
 
-Erstelle ein Projekt mit dem Namen *CollectionDemo* wie oben beschrieben. Ersetze danach den Inhalt
-von Program.cs durch die untenstehende Version. Vervollständige die 2 Klassen 
-*SchoolClass* und *Student* so, dass die Ausgaben des Programmes korrekt sind.
+Erstelle ein Projekt mit dem Namen *CollectionDemo*, wie oben beschrieben. Ersetze dann den Inhalt
+von *Program.cs* durch den folgenden Code. Ergänze die Klassen *SchoolClass* und *Student*, sodass
+das Programm die unten gezeigte Ausgabe liefert.
 
 ```c#
 using System;
@@ -502,22 +510,19 @@ s sitzt in der Klasse 3BHIF mit dem KV KV2.
 
 ## Übung 2
 
-Erstelle ein Projekt mit dem Namen *LottoDemo* wie oben beschrieben. Ersetze danach den Inhalt
-von Program.cs durch die untenstehende Version.
+Erstelle ein Projekt mit dem Namen *LottoDemo*, wie oben beschrieben. Ersetze dann den Inhalt von
+*Program.cs* durch den folgenden Code.
 
-Mit der Klasse *LottoTipp* soll ein Lottoschein implementiert werden. Beim Zahlenlotto werden
-6 Zahlen zwischen 1 und 45 gezogen, wobei keine Zahl doppelt vorkommen darf (Ziehen ohne
-zurücklegen). Weiters soll die Möglichkeit bestenen, Quicktipps zu generieren. Hier generiert
-der Zufallszahlengenerator 6 zufällige Zahlen zwischen 1 und 45.
+Die Klasse *LottoTipp* bildet einen Lottoschein ab. Beim Lotto werden 6 Zahlen zwischen 1 und 45
+gezogen. Keine Zahl darf doppelt vorkommen (Ziehen ohne Zurücklegen). Die Klasse soll Quicktipps
+erzeugen: Der Zufallszahlengenerator wählt dabei 6 Zahlen zwischen 1 und 45.
 
-Die Tipps sollen in einer internen Liste verwaltet werden. Diese Liste kann die einzelnen
-Tipps aufnehmen. Sie muss *private* sein!
+Speichere die Tipps in einer internen Liste. Diese Liste muss *private* sein!
 
-Die angezeigten Zahlen in der Musterausgabe sollen auch in deinem Programm erscheinen. Da der
-Zufallszahlengenerator mit einem fixen Seed (906) verwendet wird, liefert er immer die gleiche
-Sequenz an Werten. Verwende in der Klasse *_random.Next(1, 46)* zum Generieren der Zahlen. Damit
-Duplikate vermieden werden, musst du bei jeder generierten Zahl nachsehen, ob sie nicht schon
-im Array vorhanden ist. Wenn ja, wird einfach eine neue nächste Zahl generiert.
+Dein Programm soll genau die Zahlen aus der Musterausgabe liefern. Das funktioniert, weil der
+Zufallszahlengenerator einen fixen Seed (906) hat. Er liefert daher immer dieselbe Folge von
+Zahlen. Erzeuge die Zahlen mit *_random.Next(1, 46)*. Prüfe bei jeder neuen Zahl, ob sie schon im
+Array vorkommt. Wenn ja, erzeuge einfach die nächste Zahl.
 
 **Program.cs**
 ```c#
@@ -564,7 +569,7 @@ using System.Linq;
 }
 
 {
-    Console.WriteLine($"Generiere 1 000 000 Tipps und zähle die 6er, 5er, ...");
+    Console.WriteLine($"Generiere 1 000 000 Tipps und zähle die 6er und 5er.");
     var usedMemory = GC.GetTotalMemory(forceFullCollection: true);
     var lottoTipp = new LottoTipp();
     lottoTipp = new LottoTipp();
@@ -677,105 +682,102 @@ Berechnung nach 81 ms beendet.
 
 ### Für echte Profis
 
-Die Tipps werden in einer Liste von int Arrays verwaltet. Ein einzelner Tipp wird als int
-Array gespeichert und benötigt daher 6x4 = 24 Bytes am Heap. Zudem muss beim Generieren das
-Array auf schon vorhandene Zahlen geprüft werden. Beim Prüfen, wie viele Zahlen "richtig" sind (also im
-übergebenen Array vorkommen), müssen wir immer durch das Array iterieren und prüfen, ob die Zahl
-im Array des Tipps vorkommt.
+Bis jetzt liegen die Tipps in einer Liste von *int* Arrays. Ein Tipp braucht daher 6 × 4 = 24 Bytes
+für die Zahlen am Heap. Außerdem musst du die Arrays oft durchsuchen:
 
-Daher verfolgen wir folgende Idee: Der Tipp könnte auch als *Bitmaske* gespeichert werden.
-1 bedeutet, dass die Zahl gezogen wurde. Somit können wir mit 45 Bits ebenfalls einen Lottotipp
-speichern. Ein *long* Wert in C# hat 64 Bits. Daher kann ein ganzer Tipp mit einem Wert vom Typ *long*
-gespeichert werden:
+- Beim Erzeugen prüfst du, ob eine Zahl schon im Array ist.
+- Beim Prüfen der "Richtigen" suchst du jede gezogene Zahl im Array des Tipps.
+
+Ein Tipp lässt sich auch als *Bitmaske* speichern: Jede Zahl von 1 bis 45 bekommt ein Bit. Ein
+gesetztes Bit (1) bedeutet, dass die Zahl getippt wurde. Du brauchst also 45 Bits. Ein *long* hat
+64 Bits, daher reicht ein einziger *long* Wert für einen Tipp:
 
 ![](lotto_bitwise.svg)
 
-Implementiere nun deine Klasse so, dass sie als interne Struktur eine Liste von long Werten
-zum Speichern der Tipps verwendet. Die Funktionsparameter der public Methoden dürfen natürlich
-nicht verändert werden, d. h. das Musterprogramm muss weiterhin funktionieren. Je nach Generierung
-können die generierten Zufallszahlen allerdings abweichen. Überlege dabei auch folgendes: Die
-Bestimmung, wie viele Zahlen "richtig" (also im übergebenen Array sind) kann bitweise,
-also auch performanter, ermittelt werden. Verwende geeignete Operationen und
+Ändere deine Klasse so, dass sie die Tipps intern in einer Liste von *long* Werten speichert. Die
+Parameter der public Methoden bleiben gleich, das Musterprogramm muss also weiterhin funktionieren.
+Die erzeugten Zufallszahlen können sich je nach Implementierung von der Musterausgabe unterscheiden.
+
+Auch die Anzahl der richtigen Zahlen kannst du mit Bitoperationen schneller berechnen. Verwende
+passende Operatoren und
 [Brian Kernighan's Algorithm](https://iq.opengenus.org/brian-kernighan-algorithm/#:~:text=The%20main%20idea%20behind%20this,binary%20representation%20of%20these%20numbers.)
 zum Zählen der gesetzten Bits.
 
-> Beachte, dass bei Bitshifts, die einen Wert vom Typ *long* als Ergebnis haben, das Literal **1L** statt
-> 1 geschrieben werden muss. Sonst würde ein Wert vom Typ *int* entstehen, der abgeschnitten wird.
-> Achte zudem auf die Rangfolge der Operatoren. Der Vergleich wird ohne entsprechende Klammerung
-> vor bitweisem UND bzw. ODER ausgeführt.
+> Brauchst du bei einem Bitshift ein Ergebnis vom Typ *long*, schreibe **1L** statt 1. Sonst
+> rechnet C# mit *int* (nur 32 Bits) und das Ergebnis ist falsch.
+> Achte auch auf die Rangfolge der Operatoren: Vergleiche (*==*, *!=*) werden vor *&* und *|*
+> ausgeführt. Setze daher Klammern, z. B. *(mask & bit) != 0*.
 
 ## Übung 3: Eine Heldengruppe für das Rollenspiel
 
-Diese Übung ist die Fortsetzung der Übung *Charaktere für ein Rollenspiel* aus dem Kapitel
-[Properties](03_Properties.md). Verwende die Solution *RpgDemo* weiter und kopiere deine Klassen
-*Weapon* und *Character* in die untenstehende Program.cs. Die Klasse *Weapon* bleibt unverändert,
-*Character* wird erweitert und die Klasse *Party* kommt neu dazu.
+Diese Übung setzt die Übung *Charaktere für ein Rollenspiel* aus dem Kapitel
+[Properties](03_Properties.md) fort. Verwende weiter die Solution *RpgDemo*. Kopiere deine Klassen
+*Weapon* und *Character* in die *Program.cs* unten. *Weapon* bleibt gleich, *Character* wird
+erweitert und die Klasse *Party* ist neu.
 
-Jede Collection soll intern in einer *private readonly* Variable gespeichert werden. Nach außen
-gibt ein read-only Property nur ein Interface zurück, das keine Änderungen erlaubt
-(*IReadOnlyList&lt;T&gt;*, *IReadOnlySet&lt;T&gt;* oder *IReadOnlyDictionary&lt;TKey, TValue&gt;*).
-Die Collection wird also nur über die Methoden der Klasse verändert. Verwende dafür *AsReadOnly()*
-und keinen Typecast (siehe Kapitel *Read-only Collections*). Die Tests prüfen das.
+Speichere jede Collection intern in einer *private readonly* Variable. Das Property nach außen ist
+read-only und liefert nur ein Interface ohne ändernde Methoden (*IReadOnlyList&lt;T&gt;*,
+*IReadOnlySet&lt;T&gt;* oder *IReadOnlyDictionary&lt;TKey, TValue&gt;*). Die Collection ändert sich
+also nur über die Methoden der Klasse. Verwende *AsReadOnly()* und keinen Typecast (siehe Abschnitt
+*Read-only Collections*). Die Tests prüfen das.
 
-Für die Waffen der Klasse *Character* (List) gelten folgende Regeln:
-- Das Property *Weapon* aus Übung 2 speichert weiterhin die ausgerüstete Waffe. Es darf aber nur
-  noch in der Klasse gesetzt werden. Ausgerüstet wird über die folgenden Methoden.
+Regeln für die Waffen in *Character* (List):
+- Das Property *Weapon* aus dem Kapitel Properties speichert weiterhin die ausgerüstete Waffe. Es
+  darf aber nur noch innerhalb der Klasse gesetzt werden. Zum Ausrüsten gibt es die folgenden
+  Methoden.
 - Der Charakter hat ein Inventar mit beliebig vielen Waffen. Das Property *Weapons* liefert es als
   *IReadOnlyList&lt;Weapon&gt;*. Am Anfang ist das Inventar leer.
-- Die Methode *PickUp(Weapon weapon)* fügt die Waffe hinten an das Inventar an. Hat der Charakter
-  noch keine Waffe ausgerüstet, wird die aufgehobene Waffe gleich ausgerüstet.
-- Die Methode *Equip(Weapon weapon)* rüstet die übergebene Waffe aus. Ist sie nicht im Inventar,
-  wird eine *ArgumentException* geworfen.
-- Die Methode *EquipStrongestWeapon()* rüstet die Waffe mit dem größten *Damage* aus dem Inventar
-  aus. Ist das Inventar leer, passiert nichts.
-- Die Methode *Drop(Weapon weapon)* entfernt die Waffe aus dem Inventar und liefert true. War sie
-  ausgerüstet, hat der Charakter danach keine Waffe mehr. Ist die Waffe nicht im Inventar, wird
-  false geliefert.
+- *PickUp(Weapon weapon)* fügt die Waffe am Ende des Inventars ein. Hat der Charakter noch keine
+  Waffe ausgerüstet, wird diese Waffe sofort ausgerüstet.
+- *Equip(Weapon weapon)* rüstet die Waffe aus. Ist sie nicht im Inventar, wirft die Methode eine
+  *ArgumentException*.
+- *EquipStrongestWeapon()* rüstet die Waffe mit dem höchsten *Damage* aus dem Inventar aus. Ist das
+  Inventar leer, passiert nichts.
+- *Drop(Weapon weapon)* entfernt die Waffe aus dem Inventar und liefert true. War sie ausgerüstet,
+  hat der Charakter danach keine Waffe mehr. Ist die Waffe nicht im Inventar, liefert die Methode
+  false.
 
-Für die Fähigkeiten der Klasse *Character* (HashSet) gelten folgende Regeln:
-- Ein Charakter kann Fähigkeiten wie *Feuerball* oder *Heilen* lernen. Jede Fähigkeit kommt dabei
-  nur einmal vor. Das Property *Skills* liefert sie als *IReadOnlySet&lt;string&gt;*.
-- Die Methode *LearnSkill(string skill)* fügt die Fähigkeit hinzu. Sie liefert true, wenn die
-  Fähigkeit neu ist und false, wenn der Charakter sie schon beherrscht. Sieh dir dafür den
-  Rückgabewert von *HashSet.Add()* an.
-- Die Methode *HasSkill(string skill)* liefert true, wenn der Charakter die Fähigkeit beherrscht.
+Regeln für die Fähigkeiten in *Character* (HashSet):
+- Ein Charakter kann Fähigkeiten wie *Feuerball* oder *Heilen* lernen. Jede Fähigkeit kommt nur
+  einmal vor. Das Property *Skills* liefert sie als *IReadOnlySet&lt;string&gt;*.
+- *LearnSkill(string skill)* fügt die Fähigkeit hinzu. Die Methode liefert true, wenn die Fähigkeit
+  neu ist, sonst false. Tipp: Sieh dir den Rückgabewert von *HashSet.Add()* an.
+- *HasSkill(string skill)* liefert true, wenn der Charakter die Fähigkeit beherrscht.
 
-Für die Klasse *Party* (Dictionary) gelten folgende Regeln:
+Regeln für die Klasse *Party* (Dictionary):
 - Die Klasse hat einen Konstruktor mit dem Parameter *name* (string). Das Property *Name* ist
-  immutable.
-- Die Mitglieder werden in einem Dictionary mit dem Namen des Charakters als Key gespeichert.
-  Das Property *Members* liefert es als *IReadOnlyDictionary&lt;string, Character&gt;*.
-- Die Methode *AddMember(Character character)* fügt den Charakter hinzu und liefert true. Gibt es
-  schon ein Mitglied mit diesem Namen oder hat die Party schon 4 Mitglieder, wird der Charakter
-  nicht aufgenommen und false geliefert.
-- Die Methode *RemoveMember(string name)* entfernt das Mitglied mit diesem Namen. Sie liefert
-  true, wenn es gefunden wurde, sonst false.
-- Die Methode *FindMember(string name)* liefert das Mitglied mit diesem Namen oder null, wenn es
-  nicht gefunden wurde. Verwende *TryGetValue()* und überlege dir den Rückgabetyp.
-- Das Property *AliveMembers* ist read-only und liefert eine neue *List&lt;Character&gt;* mit allen
-  Mitgliedern, die noch am Leben sind.
-- Das Property *Skills* ist read-only und liefert ein neues *HashSet&lt;string&gt;* mit allen
-  Fähigkeiten, die in der Party vorkommen. Beherrschen mehrere Mitglieder die gleiche Fähigkeit,
-  kommt sie trotzdem nur einmal vor. Die Methode *UnionWith()* kann hier verwendet werden.
-- Die Party hat gemeinsame Vorräte wie Heiltränke oder Fackeln. Sie werden in einem Dictionary
-  mit dem Namen des Gegenstandes als Key und der Anzahl als Value gespeichert. Das Property
-  *Supplies* liefert es als *IReadOnlyDictionary&lt;string, int&gt;*.
-- Die Methode *AddSupply(string item, int count)* erhöht die Anzahl des Gegenstandes um *count*.
-  Ist der Gegenstand noch nicht vorhanden, wird er mit dieser Anzahl angelegt. Ist *count* nicht
-  größer als 0, wird eine *ArgumentException* geworfen.
-- Die Methode *GetSupplyCount(string item)* liefert die Anzahl des Gegenstandes oder 0, wenn er
-  nicht vorhanden ist.
-- Die Methode *UseSupply(string item)* verringert die Anzahl um 1 und liefert true. Ist der
-  Gegenstand nicht vorhanden, wird false geliefert. Wird der letzte Gegenstand verbraucht, wird
-  der Key aus dem Dictionary entfernt.
-- Die Methode *AttackTogether(Character enemy)* lässt alle lebenden Mitglieder den Gegner mit
-  *Attack()* angreifen.
+  immutable (nicht änderbar).
+- Die Mitglieder liegen in einem Dictionary. Der Key ist der Name des Charakters. Das Property
+  *Members* liefert es als *IReadOnlyDictionary&lt;string, Character&gt;*.
+- *AddMember(Character character)* fügt den Charakter hinzu und liefert true. Gibt es schon ein
+  Mitglied mit diesem Namen oder hat die Party schon 4 Mitglieder, fügt die Methode nichts hinzu
+  und liefert false.
+- *RemoveMember(string name)* entfernt das Mitglied mit diesem Namen. Die Methode liefert true,
+  wenn es gefunden wurde, sonst false.
+- *FindMember(string name)* liefert das Mitglied mit diesem Namen oder null. Verwende
+  *TryGetValue()*. Überlege, welchen Rückgabetyp die Methode braucht.
+- Das Property *AliveMembers* ist read-only. Es liefert eine neue *List&lt;Character&gt;* mit allen
+  Mitgliedern, die noch leben.
+- Das Property *Skills* ist read-only. Es liefert ein neues *HashSet&lt;string&gt;* mit allen
+  Fähigkeiten der Mitglieder. Beherrschen mehrere Mitglieder dieselbe Fähigkeit, kommt sie trotzdem
+  nur einmal vor. Tipp: *UnionWith()*.
+- Die Party hat gemeinsame Vorräte, z. B. Heiltränke oder Fackeln. Sie liegen in einem Dictionary:
+  Der Key ist der Name des Gegenstands, der Value die Anzahl. Das Property *Supplies* liefert es als
+  *IReadOnlyDictionary&lt;string, int&gt;*.
+- *AddSupply(string item, int count)* erhöht die Anzahl des Gegenstands um *count*. Gibt es den
+  Gegenstand noch nicht, wird er mit dieser Anzahl angelegt. Ist *count* kleiner oder gleich 0,
+  wirft die Methode eine *ArgumentException*.
+- *GetSupplyCount(string item)* liefert die Anzahl des Gegenstands oder 0, wenn es ihn nicht gibt.
+- *UseSupply(string item)* verringert die Anzahl um 1 und liefert true. Gibt es den Gegenstand
+  nicht, liefert die Methode false. Ist danach keiner mehr übrig, entfernt sie den Key aus dem
+  Dictionary.
+- *AttackTogether(Character enemy)*: Alle lebenden Mitglieder greifen den Gegner mit *Attack()* an.
 
-Überlege dir bei jeder Methode, welche Methode der Collection die Arbeit schon erledigt. Viele
-Methoden lassen sich dann in einer Zeile schreiben. Beachte, dass *Contains()* und *Remove()* bei
-einer Liste von Objekten die Referenzen vergleichen (siehe Kapitel über *List&lt;T&gt;*).
+Überlege bei jeder Methode, welche Methode der Collection die Arbeit schon erledigt. Viele Methoden
+brauchen dann nur eine Zeile. Achtung: *Contains()* und *Remove()* vergleichen bei einer Liste von
+Objekten die Referenzen (siehe Abschnitt zu *List&lt;T&gt;*).
 
-Die Ausgabe des Programmes muss am Ende so lauten:
+Am Ende muss das Programm diese Ausgabe liefern:
 
 ```
 ********************************************************************************
@@ -822,12 +824,12 @@ namespace RpgDemo.Application;
 
 class Weapon
 {
-    // TODO: Kopiere deine Implementierung aus Übung 2
+    // TODO: Kopiere deine Implementierung aus Übung 2 des Kapitels Properties
 }
 
 class Character
 {
-    // TODO: Kopiere deine Implementierung aus Übung 2 und erweitere sie
+    // TODO: Kopiere deine Implementierung aus Übung 2 des Kapitels Properties und erweitere sie
 }
 
 class Party
