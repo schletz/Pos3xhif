@@ -1,94 +1,150 @@
 # Interfaces und Dependencies
 
-## Was sind Dependencies (Abhängigkeiten) in der Softwareentwicklung?
+## Was sind Dependencies (Abhängigkeiten)?
 
-Die Übersetzung von dependencies (Abhängigkeiten) gibt schon Aufschluss darüber, was sich hinter
-diesem Wort verbirgt. Dependencies im Klassenmodell bedeuten, dass eine Klasse eine andere 
-Klasse verwendet, also von ihr abhängig ist. Dependencies im Klassenmodell zeigen sich also
-durch Assoziationen oder Vererbung. Allgemein gesprochen: Brauche ich Klasse B, um die Klasse A
-kompilieren zu können, besteht eine dependency zwischen diesen Klassen.
+Klasse A ist von Klasse B **abhängig**, wenn A die Klasse B braucht, um zu kompilieren.
+Das ist der Fall, wenn A den Typ B verwendet: als Feld, Property, Parameter, Rückgabewert,
+lokale Variable oder Basisklasse.
 
-## Arten von Assoziationen
+**Warum ist das wichtig?** Jede Abhängigkeit ist eine Verbindung im Code. Ändert sich B, muss
+eventuell auch A geändert werden. Viele Abhängigkeiten machen Software schwer änderbar und schwer
+testbar. Man spricht von **starker Kopplung**. Ein Ziel guter Software ist daher **lose Kopplung**:
+wenige Abhängigkeiten, und zwar zu Typen, die sich selten ändern. Interfaces sind dafür das
+wichtigste Werkzeug in C#.
 
-Betrachten wir ein kleines Klassenmodell, wie wir es vom vorigen Beispiel schon kennen.
-Wir sehen 3 Arten von Pfeilen: Pfeile ohne Diamond wie zwischen *Order* und *Product*. Pfeile
-mit weißem Diamond wie zwischen *Order* und *PaymentProvider* und Pfeile mit gefülltem
-Diamond wie zwischen *Order* und *OrderItem*.
+## Beziehungsarten im Klassendiagramm
+
+Für die Praxis sind 3 Beziehungsarten wichtig. Du erkennst sie im Code, und sie haben echte
+Konsequenzen. Sie sind nach Stärke der Bindung sortiert, die schwächste steht oben:
+
+| Beziehung        | Symbol                             | Im Code erkennbar an                                  | Konsequenz                                          |
+| ---------------- | ---------------------------------- | ----------------------------------------------------- | --------------------------------------------------- |
+| **Abhängigkeit** | gestrichelter Pfeil `..>`          | B nur als Parameter, Rückgabewert oder lokale Variable | A muss neu kompiliert werden, wenn sich B ändert.  |
+| **Assoziation**  | Pfeil `-->`                        | B als Feld oder Property                              | A hält eine Referenz auf B. B lebt unabhängig von A. |
+| **Komposition**  | gefüllte (schwarze) Raute `*-->`   | A erzeugt B selbst mit *new* und gibt B nicht zum Ändern heraus | B gehört nur A. B lebt und stirbt mit A.  |
+
+### Beispiel: Bestellung
+
+Wir verwenden *Product* und *PaymentProvider* aus der Übung im Kapitel
+[Vererbung](05_Vererbung.md). Eine Bestellung (*Order*) besteht aus Positionen (*OrderItem*).
+Jede Position verweist auf ein Produkt und hat eine Menge.
 
 ![](assoziationen.svg)
-<sup>
-https://www.plantuml.com/plantuml/uml/RP7HIiOm38Nl-nIvtDI-WCYOU2K8paSeQy7Yrius7OpXknj9rytoxsRqoqbo3kaZge1fdiGugHXXKDji70x1hrQR87OGuYVN2EeqejWBUG-aUKKp4mFwxhC47Wynuu-a75hSY5l7J4h9jJAZEPgNXpyLVEUcbjOL4NWfkpByQkEmK2MWbHMfraPIlDc8JuLqSCDXKyzT_hzRrgxUQdZMEZiyC_6_JdRsl7oQySidR4fSk2Hbmk7hE5owezBb7hrncgxw2m00
-</sup>
 
-### Assoziation
+<sup>PlantUML Quelle: [assoziationen.puml](assoziationen.puml)</sup>
 
-Beschreibt, dass eine Klasse eine Andere verwendet. Dies ist am Typ der Felder, der
-Methodenparameter oder Rückgabewerte erkennbar. Die Klasse *Order* verwendet den Typ *Product*, da in *AddProduct()* der Typ *Product* verwendet wird.
-Daher besteht eine Assotiation zwischen *OrderItem* und *Product*. Es ist die allgemeinste Form,
-alle hier abgebildeten Pfeile sind Assoziationen.
+**OrderItem.cs**
+```c#
+class OrderItem
+{
+    public OrderItem(Product product, int quantity)
+    {
+        Product = product;
+        Quantity = quantity;
+    }
 
-Das Product wird aber nicht in den Properties der Klasse gespeichert. Das ist zur Unterscheidung
-zur Aggregation (nächster Punkt) wichtig.
+    public Product Product { get; }   // (1)
+    public int Quantity { get; }
+}
+```
 
-### Aggregation
+**Order.cs**
+```c#
+using System.Collections.Generic;
+using System.Linq;
 
-Die Aggregation ist eine Teilmenge der Assoziation. Es bedeutet *ist Teil von* oder *hat*.
-Klasse B speichert also Instanzen von Klasse A als Feld oder Property.
-Konkret bedeutet dies, dass wir uns die
-Properties ansehen. Die Klasse *OrderItem* hat *Product* als Property. *OrderItem* speichert
-also eine Instanz von *Product*, daher ist die Klasse *Product* Teil der Klasse *OrderItem*.
+class Order
+{
+    private readonly List<OrderItem> _orderItems = new();
 
-*Product* wird als Parameter im Konstruktor übergeben. Es wird also *extern instanziert*.
-Gibt es die Instanz von *OrderItem* nicht mehr, existiert die Instanz von Product weiter.
-Das ist für die Unterscheidung zum nächsten Punkt (Komposition) wichtig.
+    public Order(PaymentProvider paymentProvider)
+    {
+        PaymentProvider = paymentProvider;
+    }
 
-Jede Aggregation ist auch eine Assoziation. Im Klassendiagramm erkennen wir
-die Aggregation durch das weiß gefüllte Diamond Symbol.
+    public PaymentProvider PaymentProvider { get; }                    // (2)
+    public IReadOnlyList<OrderItem> OrderItems => _orderItems;         // (3)
+    public decimal TotalAmount => _orderItems.Sum(i => i.Product.Price * i.Quantity);
 
-### Komposition
+    public void AddProduct(Product product, int quantity)              // (4)
+    {
+        _orderItems.Add(new OrderItem(product, quantity));             // (3)
+    }
 
-Die Komposition ist eine Teilmenge der Aggregation und die stärkste Bindungsart. Sie bedeutet
-*existenzabhängig*. Konkret bedeutet das, dass die Instanzen von Klasse B innerhalb der Klassenmethoden von Klasse A mit new erzeugt werden. Klasse B kann daher nicht ohne Klasse A
-existieren, da nur diese Klasse die Referenzen auf die Instanzen von B enthält (also
-"existenzabhängig" ist).
+    public bool Checkout() => PaymentProvider.Pay(TotalAmount);
+}
+```
 
-In unserem Modell gilt diese Beziehung zwischen *Order* und *OrderItem*. In der Methode
-*AddProduct()* wird mit new ein *OrderItem* erzeugt. *OrderItem* wird nicht von extern
-über einen Konstruktor oder eine Methode hinzugegeben, sonst würden wir diesen Typ
-als Parameter in den Klassenmethoden sehen. Gibt es die Instanz von *Order*
-nicht mehr, sind auch alle *OrderItem* Instanzen nicht mehr zugreifbar und werden vom
-Garbage Collector entfernt.
+- **(1) Assoziation OrderItem → Product:** *OrderItem* speichert ein *Product*. Das Produkt
+  existiert unabhängig davon im Katalog, und viele Positionen verweisen auf dasselbe Produkt.
+- **(2) Assoziation Order → PaymentProvider:** *Order* speichert den Payment Provider. Eine
+  Kreditkarte bezahlt viele Bestellungen und existiert auch ohne sie.
+- **(3) Komposition Order → OrderItem:** *Order* erzeugt die Positionen selbst mit *new*. Von außen
+  kann niemand eine Position hinzufügen, denn *OrderItems* ist eine *IReadOnlyList*. Eine Position
+  gehört also immer zu genau einer Bestellung. Gibt es die Bestellung nicht mehr, hat niemand mehr
+  eine Referenz auf ihre Positionen. Der Garbage Collector entfernt sie.
+- **(4) Abhängigkeit Order → Product:** *Order* verwendet *Product* nur als Parameter. Es speichert
+  kein Produkt in einem eigenen Feld.
 
-Jede Komposition ist auch eine Aggregation und eine Assoziation. Im Klassendiagramm
-erkennen wir die Komposition durch das rot gefüllte Diamond Symbol.
+### Multiplizität: Muss es das Objekt geben?
 
-### Pfeilrichtung beachten
+Die Zahlen an den Pfeilenden sind die **Multiplizität**. Sie haben direkte Folgen für den Code
+und für die Datenbank:
 
-Der Pfeil bedeutet *Navigierbarkeit*. Ich kann von *OrderItem* über das Property
-*Product* zur Instanz des Produktes gelangen. Man bezeichnet das Property *Product* 
-daher auch als *navigation property*. Der Diamond liegt auf der Seite des 
-navigation property.
+| Multiplizität | Bedeutung                 | C#                                          | Datenbank                    |
+| ------------- | ------------------------- | ------------------------------------------- | ---------------------------- |
+| **1**         | genau eines, Pflicht      | Konstruktorparameter, nicht nullable (*PaymentProvider*) | Fremdschlüssel *NOT NULL* |
+| **0..1**      | höchstens eines, optional | nullable Property (*PaymentProvider?*)      | Fremdschlüssel *NULL*        |
+| **\***        | beliebig viele            | Collection (*IReadOnlyList&lt;OrderItem&gt;*) | Fremdschlüssel in der anderen Tabelle |
+
+*Order* kann ohne *PaymentProvider* nicht erstellt werden. Das drückt die **1** am Pfeil zu
+*PaymentProvider* aus, **nicht** eine Komposition.
+
+### Komposition: Wann ist das wichtig?
+
+> [!WARNING]
+> **Verwechslungsgefahr:** Komposition heißt nicht „A braucht B“. Komposition heißt
+> „B lebt und stirbt mit A“. Stelle dir 2 Fragen:
+> 1. Verschwindet B, wenn A verschwindet?
+> 2. Gehört B nur zu diesem einen A?
+>
+> Nur wenn beide Antworten *ja* sind, ist es eine Komposition. Bei *Order → OrderItem* ist das
+> so. Bei *Order → PaymentProvider* nicht, denn die Kreditkarte gibt es weiter.
+
+Die Komposition hat in der Praxis diese Konsequenzen:
+- **Kapselung:** Positionen werden nur über *Order* geändert (*AddProduct()*). So kann *Order*
+  Regeln prüfen, z. B. eine maximale Anzahl an Positionen.
+- **Datenbank:** Wird eine Bestellung gelöscht, werden ihre Positionen mitgelöscht
+  (*ON DELETE CASCADE*). Die Produkte bleiben.
+- **Domain-Driven Design:** Eine Gruppe von Objekten, die nur über ein Hauptobjekt geändert wird,
+  heißt dort *Aggregate*. Das Hauptobjekt (hier *Order*) heißt *Aggregate Root*.
+
+### Pfeilrichtung
+
+Der Pfeil zeigt die **Navigierbarkeit**: Von *OrderItem* kommst du über das Property *Product* zum
+Produkt. Umgekehrt geht das nicht. Ein solches Property heißt *navigation property*. Bei der
+Komposition liegt die Raute beim **Ganzen** (*Order*).
+
+> [!TIP]
+> **Und die Aggregation (leere Raute `o-->`)?** Du wirst sie in manchen Diagrammen sehen. Sie soll
+> eine Teil-Ganzes Beziehung zeigen, bei der das Teil unabhängig existiert. Im Code sieht sie aber
+> genau wie eine Assoziation aus und hat keine eigenen Konsequenzen. Selbst die UML Spezifikation
+> legt ihre Bedeutung nicht genau fest. Behandle sie daher wie eine Assoziation und verwende
+> sie selbst nicht.
 
 ## Interfaces als Contract (Vertrag)
 
-Betrachten wir eine Beispielimplementierung von *Checkout()* in der Klasse Order.
+Sieh dir *Checkout()* in *Order* an:
 
 ```c#
-public void Checkout()
-{
-    if (!paymentProvider.Pay(totalAmount)) { /* payment failed */ }
-    /* payment succeeded */
-}
+public bool Checkout() => PaymentProvider.Pay(TotalAmount);
 ```
 
-Wir sind eigentlich nur an der Methode *Pay()* interessiert, die uns der
-PaymentProvider bietet. Wie sie konkret implementiert ist, kann uns egal sein.
-Solange die Methode einen bool Wert zurückgibt und einen Parameter (Rechnungsbetrag) benötigt,
-können wir sie auch ohne konkrete Implementierung nutzen.
+*Order* braucht vom Payment Provider nur **eine** Sache: die Methode *Pay()*. Wie sie bezahlt, ist
+für *Order* egal. Trotzdem hängt *Order* von der Klasse *PaymentProvider* ab, also von einer
+konkreten Klasse mit Feldern (*Limit*) und Logik.
 
-Wir fordern aber im Konstruktor eine konkrete Implementierung (also eine Instanz)
-von PaymentProvider an. Eigentlich ist das nicht nötig. Daher können wir ein Interface
-*IPaymentProvider* implementieren:
+Besser: Wir beschreiben nur, **was** *Order* braucht. Dafür definieren wir ein Interface:
 
 ```c#
 interface IPaymentProvider
@@ -97,37 +153,33 @@ interface IPaymentProvider
 }
 ```
 
-Interfaces beginnen in .NET als Konvention mit einem großen I. Die Methoden haben
-keine Sichtbarkeit, da bei einem Interface ohnehin klar ist, dass die Methode
-öffentlich (public) sein muss. Sonst macht der "Vertrag" keinen Sinn, da ein Vertrag
-ja auch zwischen 2 Personen ausgehandelt wird.
+- Interfaces beginnen in .NET mit einem großen **I** (Konvention).
+- Alle Members sind automatisch *public*. Ein Vertrag muss für alle sichtbar sein.
+- Ein Interface enthält keine Felder, also keinen Zustand.
+- Wie in Java ab Version 8 kann ein Interface seit C# 8 auch Default-Implementierungen haben.
+  Das brauchst du aber selten.
 
-Nun können wir die Dependencies der Klasse Order besser gestalten:
+*Order* verwendet jetzt nur noch das Interface:
+
+```c#
+public Order(IPaymentProvider paymentProvider)
+{
+    PaymentProvider = paymentProvider;
+}
+
+public IPaymentProvider PaymentProvider { get; }
+```
 
 ![](iPaymentProvider.svg)
-<sup>
-https://www.plantuml.com/plantuml/uml/POzTIaCn48NVPnNpcABPW4Yf-5GGx1PYPae7yrEJIQ68UpVcYjxUcvT3JhvpChEhwegs6E0an2X9kHoTPpmA1we0_yx-uAwHanvAldIsm2TWFtTlEGViRuROItG1NSmjwGQ-07nmjU9hcU6B5dnO5mzkXFRAiNRaHQe-_ZbR78YrTeQQPGsUR--R2Rva8NmYwZOrh-PNyJpfFKfI_6WkgUXrdda-iN_FJStFPkDBpDPkr-FlE56BuHi0
-</sup>
 
-Order verlangt nun im Konstruktor ein Argument vom Typ *IPaymentProvider*. Wie es
-implementiert wird, kann der Orderklasse egal sein. Natürlich speichert dann das
-Property *Order.PaymentProvider* ebenfalls den Typ *IPaymentProvider*.
+<sup>PlantUML Quelle: [iPaymentProvider.puml](iPaymentProvider.puml)</sup>
 
-Was bringt das nun?
-- Ich kann - sobald ich das Interface *IPaymentProvider* implementiert habe (was ja
-  schnell geht) - schon mit der Implementierung von Order beginnen.
-- Im Team kann parallel dazu ein anderer Entwickler eine konkrete Implementierung von
-  *IPaymentProvider* vornehmen.
+Die Klassen *CreditCard*, *PrepaidCard* usw. **implementieren** (realisieren) das Interface. Im
+Diagramm ist das der gestrichelte Pfeil mit leerem Dreieck. *Order* kennt keine dieser Klassen.
 
-Die konkrete Implementierung eines Interfaces könnte nun so aussehen. Dass *CreditCard*
-als *PaymentProvider* ein Limit und ein Gültigkeitsdatum hat, ist für die *Checkout()* Methode
-in *Order* ohne Bedeutung. Sie ruft nur die *Pay()* Methode auf.
-
+**CreditCard.cs**
 ```c#
-interface IPaymentProvider
-{
-    bool Pay(decimal amount);
-}
+using System;
 
 class CreditCard : IPaymentProvider
 {
@@ -149,9 +201,64 @@ class CreditCard : IPaymentProvider
 }
 ```
 
-Interfaces können natürlich auch Properties enthalten. Wir können *get*, *set* oder
-beides ins Interface legen. Häufig kommt die *get* Methode ins Interface, die Implementierung
-hat dann auch eine set Methode.
+Limit und Ablaufdatum sind Details von *CreditCard*. *Order* sieht davon nichts.
+
+### Warum Interfaces?
+
+| Vorteil                 | Erklärung                                                                 |
+| ----------------------- | ------------------------------------------------------------------------- |
+| **Austauschbarkeit**    | Eine neue Zahlungsart (z. B. PayPal) ist eine neue Klasse. *Order* bleibt unverändert. Das ist das *Open/Closed Principle* (offen für Erweiterung, geschlossen für Änderung). |
+| **Testbarkeit**         | Im Unit Test übergeben wir eine einfache Fake-Klasse. Wir brauchen keine echte Kreditkarte. |
+| **Lose Kopplung**       | *Order* hängt nur von einem kleinen, stabilen Interface ab, nicht von Details. Das ist das *Dependency Inversion Principle*: Klassen mit Geschäftslogik hängen von Abstraktionen (Interfaces) ab, nicht von technischen Details. |
+| **Paralleles Arbeiten** | Das Interface ist schnell geschrieben. Danach kann ein Entwickler *Order* programmieren und ein anderer *CreditCard*. |
+
+Ein Fake für Tests ist nur ein paar Zeilen lang:
+
+```c#
+class AlwaysPayingPaymentProvider : IPaymentProvider
+{
+    public bool Pay(decimal amount) => true;
+}
+
+Order order = new Order(new AlwaysPayingPaymentProvider());
+```
+
+Wie die richtige Implementierung zur Laufzeit in die Klasse kommt, lernst du im Kapitel
+[Dependency Injection](08_DependencyInjection.md).
+
+> [!WARNING]
+> Erstelle nicht für jede Klasse ein Interface. Ein Interface lohnt sich, wenn es
+> mehrere Implementierungen gibt oder geben wird. Das gilt auch für einen Fake im Test.
+
+### Interface oder abstrakte Klasse?
+
+|                          | Interface                          | Abstrakte Klasse                       |
+| ------------------------ | ---------------------------------- | -------------------------------------- |
+| Bedeutung                | *kann* (Fähigkeit, Vertrag)        | *ist ein* (gemeinsame Basis)           |
+| Felder / Zustand         | nein                               | ja                                     |
+| Konstruktor              | nein                               | ja                                     |
+| Anzahl pro Klasse        | beliebig viele                     | nur 1 Basisklasse                      |
+| Verwende es, wenn ...    | Klassen dasselbe *können* sollen   | Klassen gemeinsamen *Code* teilen      |
+
+Beides lässt sich kombinieren. Die Limitprüfung aus der Übung im Kapitel Vererbung bleibt in
+einer abstrakten Klasse. Diese implementiert das Interface:
+
+```c#
+abstract class PaymentProvider : IPaymentProvider
+{
+    protected PaymentProvider(decimal limit) { Limit = limit; }
+    public decimal Limit { get; }
+    public virtual bool Pay(decimal amount) => amount <= Limit;
+}
+```
+
+*Order* kennt trotzdem nur *IPaymentProvider*. Ob eine Implementierung von *PaymentProvider* erbt
+oder nicht, ist für *Order* egal.
+
+### Properties in Interfaces
+
+Interfaces können auch Properties enthalten. Oft steht nur *get* im Interface. Die Implementierung
+darf zusätzlich ein *set* haben:
 
 ```c#
 interface IPaymentProvider
@@ -163,19 +270,22 @@ interface IPaymentProvider
 class CreditCard : IPaymentProvider
 {
     /* ... */
-    public string NotificationEmail { get; private set;  }
-    public bool Pay(decimal amount) { /* omitted for clarity */ }
+    public string NotificationEmail { get; private set; } = string.Empty;
+    public bool Pay(decimal amount) { /* ... */ }
 }
 ```
 
-## Das Interface segregation principle
+## Das Interface Segregation Principle
 
-Das I in SOLID <sup>https://en.wikipedia.org/wiki/SOLID</sup> bedeutet
-*Interface segregation principle*.
+Das **I** in [SOLID](https://en.wikipedia.org/wiki/SOLID) steht für das
+*Interface Segregation Principle*:
+
 > "Many client-specific interfaces are better than one general-purpose interface."
 
-Was bedeutet das? Sehen wir uns die Definition der Klasse *List&lt;T&gt;* in
-System.Collections.Generic mit *F12* in Visual Studio genauer an.
+Das bedeutet: Eine Klasse soll nur von den Methoden abhängen, die sie wirklich braucht. Daher
+sind mehrere kleine Interfaces besser als ein großes.
+
+Ein Beispiel ist *List&lt;T&gt;*. Drücke in Visual Studio *F12* auf *List*:
 
 ```c#
 public class List<T> : IList<T>, IReadOnlyList<T> // ...
@@ -184,174 +294,190 @@ public class List<T> : IList<T>, IReadOnlyList<T> // ...
 }
 ```
 
-*List&lt;T&gt;* implementiert also mehrere Interfaces, unter anderem *IList&lt;T&gt;* und
-*IReadOnlyList&lt;T&gt;*. Welchen Sinn hat das? Bereits im vorigen Beispiel haben wir intern
-eine Liste zur Speicherung der
-Produkte verwendet. Damit nicht ohne Prüfung Produkte eingefügt werden können, wurde ein public
-Property vom Typ *IReadOnlyList&lt;T&gt;* definiert. 
+*List&lt;T&gt;* implementiert mehrere Interfaces. Jedes beschreibt eine andere Fähigkeit:
 
-Im Klassendiagramm könnte sich die Situation so darstellen (die Methoden in *IReadOnlyList&lt;T&gt;* sind andere, zur Veranschaulichung wird ElementAt definiert):
+| Interface                         | Fähigkeit                                  | Brauchst du für ...                  |
+| --------------------------------- | ------------------------------------------ | ------------------------------------ |
+| *IEnumerable&lt;T&gt;*            | Elemente durchlaufen                       | *foreach*, LINQ                      |
+| *IReadOnlyCollection&lt;T&gt;*    | + Anzahl (*Count*)                         | Anzahl abfragen                      |
+| *IReadOnlyList&lt;T&gt;*          | + Zugriff über Index (*list[0]*)           | Lesen an einer Position              |
+| *IList&lt;T&gt;*                  | + Ändern (*Add*, *Remove*, ...)            | Liste verändern                      |
+
+Daraus folgen zwei Regeln:
+- **Parameter:** Verlange das kleinste Interface, das du brauchst. Eine Methode, die nur mit
+  *foreach* durchläuft, nimmt *IEnumerable&lt;T&gt;*. Dann kann der Aufrufer ein Array, eine Liste,
+  ein Set, ... übergeben.
+- **Rückgabe:** Gib nur so viel preis, wie der Aufrufer darf. Deshalb liefert *Order.Products*
+  eine *IReadOnlyList&lt;Product&gt;* und keine *List&lt;Product&gt;*.
 
 ![](ireadonlylist.svg)
-<sup>
-https://www.plantuml.com/plantuml/uml/XP31IWCn48RlUOgXfoubnRDAQH4HGQZKVO6Op6fmabsIYLYqxsvC8qktWha4vf__usFMaLNWv4YyMeDWFMFeb4ReB9A9Ob3wJRqWp9xsaT4jRteYr6nx7vTtw35OFHEV0l8Rk_SxL6RhQVzW8r-tgnBdfVg6z4nMGmktX0uzRtYUkxblyAEvAck7AV5lqc9ZpBm5o-XAiKvtwFftF0qEedoQL8pmFsqAEv-FyXVDw5pG8DCWlrQdTpXFopHx7PssmM2efrmyXjuapH4k9yUimL5TIYb-nMimhpyCpG-wGFCUOSTIJet46hr9Zhu1
-</sup>
 
-Durch den Typecast regeln wir also die Funktionalität, die nach außen gegeben wird. Da die Liste
-das Interface *IReadOnlyList&lt;Product&gt;* definiert, ist ein impliziter Typecast möglich.
+<sup>PlantUML Quelle: [ireadonlylist.puml](ireadonlylist.puml)</sup>
+
+*List&lt;Product&gt;* implementiert *IReadOnlyList&lt;Product&gt;*. Daher wandelt der Compiler
+den Typ automatisch um (implizite Konvertierung):
+
 ```c#
-class Product { /* ... */ }
 class Order
 {
     private readonly List<Product> _products = new();
     public IReadOnlyList<Product> Products => _products;
+    public void AddProduct(Product product) => _products.Add(product);
 }
 
 Order order = new Order();
-Product product = new Product(ean: "1001");
+Product product = new Product(ean: "1001", name: "Apple iPhone", price: 1800);
 order.AddProduct(product);
-order.Products.Remove(product);  // Compilerfehler: IReadOnlyList definiert kein Remove.
-Product product2 = order.ElementAt(0);  // OK
+Product first = order.Products[0];   // OK: IReadOnlyList has an indexer.
+order.Products.Remove(product);      // Compiler error: IReadOnlyList has no Remove().
 ```
+
+> [!NOTE]
+> Mit einem Cast (*(List&lt;Product&gt;)order.Products*) kann man das umgehen.
+> Ein Interface ist also kein Schutz vor Absicht. Es zeigt aber klar, wie die Klasse
+> verwendet werden soll, und verhindert Fehler aus Versehen.
 
 ## Praktisches Beispiel: Fluent API
 
-Folgendes Beispiel definiert eine Fluent API für eine Lottoziehung. Dabei sollen folgende
-Punkte berücksichtigt werden:
-- Im initialisierten Zustand sollen nur Tipps mit *AddTipp()* abgegeben werden.
-- Nach *DrawNumbers()* dürfen keine Tipps mehr abgegeben werden. Dafür steht mit *CountTipps()*
-  eine Methode zur Verfügung, die die richtigen Tipps zählt. Diese Methode darf vor der
-  Ziehung nicht aufgerufen werden.
+Interfaces können auch **Zustände** abbilden. Der Compiler prüft dann, ob Methoden in der
+richtigen Reihenfolge aufgerufen werden.
 
-Erstelle in Visual Studio eine Konsolenapplikation und ersetze die Datei Program.cs durch
-den untenstehenden Code. Eine Livedemo ist auf https://dotnetfiddle.net/bZUw4h abrufbar.
+Beispiel: Eine Lottoziehung.
+- **Vor der Ziehung:** Nur *AddTip()* und *DrawNumbers()* sind erlaubt → Interface *ITippableLottery*.
+- **Nach der Ziehung:** Keine neuen Tipps mehr. Nur *CountTips()* und die Ergebnisse sind erlaubt →
+  Interface *IDrawnLottery*.
 
-Prüfe nach, ob vor *DrawNumbers()* in der Mainmethode es möglich wäre, *CountTipps()* aufzurufen.
+Die Klasse *Lottery* implementiert beide Interfaces. Jede Methode liefert das Interface für den
+nächsten Zustand zurück. So kannst du die Aufrufe verketten (*Fluent API*).
+
+Erstelle eine Konsolenapplikation und ersetze *Program.cs* durch den folgenden Code. Prüfe:
+Kannst du in *Main()* vor *DrawNumbers()* die Methode *CountTips()* aufrufen?
 
 ```c#
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 
-namespace LotteryDemo.Application
+namespace LotteryDemo.Application;
+
+interface ITippableLottery
 {
-    interface ITippableLottery
+    ITippableLottery AddTip(IEnumerable<int> numbers);
+    IDrawnLottery DrawNumbers();
+}
+
+interface IDrawnLottery
+{
+    IReadOnlyList<IReadOnlySet<int>> Tips { get; }
+    IReadOnlySet<int> DrawnNumbers { get; }
+    int CountTips(int correctNumbers);
+}
+
+class Lottery : ITippableLottery, IDrawnLottery
+{
+    private readonly List<HashSet<int>> _tips = new();
+    private readonly HashSet<int> _drawnNumbers = new(6);
+    private readonly Random _rnd;
+
+    /// <summary>
+    /// Factory method. Starts a new drawing in the state "tippable".
+    /// </summary>
+    public static ITippableLottery NewDrawing(int seed) => new Lottery(new Random(seed));
+
+    /// <summary>
+    /// Private, so callers cannot create an instance with new and call every method.
+    /// </summary>
+    private Lottery(Random rnd)
     {
-        ITippableLottery AddTip(IEnumerable<int> numbers);
-        IDrawnLottery DrawNumbers();
+        _rnd = rnd;
     }
 
-    interface IDrawnLottery
+    /// <summary>
+    /// List of HashSet can be returned as list of IReadOnlySet because
+    /// IReadOnlyList&lt;out T&gt; is covariant (see the out keyword):
+    /// https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/out-generic-modifier
+    /// </summary>
+    public IReadOnlyList<IReadOnlySet<int>> Tips => _tips;
+
+    /// <summary>
+    /// The drawn numbers. Only accessible after DrawNumbers().
+    /// </summary>
+    public IReadOnlySet<int> DrawnNumbers => _drawnNumbers;
+
+    /// <summary>
+    /// Adds a tip. Accepts the weakest collection type (IEnumerable), so arrays, lists, ...
+    /// can be passed. Tips without 6 different numbers are ignored.
+    /// </summary>
+    public ITippableLottery AddTip(IEnumerable<int> numbers)
     {
-        IReadOnlyList<IReadOnlySet<int>> Tipps { get; }
-        IReadOnlySet<int> DrawnNumbers { get; }
-        int CountTipps(int correctNumbers);
+        var set = numbers.ToHashSet();   // Removes duplicate numbers.
+        if (set.Count == 6) { _tips.Add(set); }
+        return this;
     }
 
-    class Lottery : ITippableLottery, IDrawnLottery
+    /// <summary>
+    /// Draws 6 different numbers between 1 and 45. Random numbers can repeat,
+    /// so we add to a HashSet until it contains 6 numbers.
+    /// </summary>
+    public IDrawnLottery DrawNumbers()
     {
-        private readonly List<HashSet<int>> _tipps = new();
-        private readonly HashSet<int> _drawnNumbers = new(6);
-        private readonly Random _rnd;
-
-        /// <summary>
-        /// Factory Methode für Lottery. Initialisiert mit einem Zufallszahlengenerator.
-        /// </summary>
-        public static ITippableLottery NewDrawing(int seed) => new Lottery(new Random(seed));
-
-        /// <summary>
-        /// Private Konstruktor, da sonst extern mit new eine neue Instanz erzeugt
-        /// und jede Methode aufgerufen werden kann.
-        /// </summary>
-        private Lottery(Random rnd)
+        while (_drawnNumbers.Count != 6)
         {
-            _rnd = rnd;
+            _drawnNumbers.Add(_rnd.Next(1, 46));
         }
-
-        /// <summary>
-        /// Dieser Typecast des generischen Typs von HashSet in IReadOnlySet ist möglich,
-        /// da IReadOnlyList<out T> (mit out) definiert wurde. Siehe covariance
-        /// https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/out-generic-modifier
-        /// </summary>
-        public IReadOnlyList<IReadOnlySet<int>> Tipps => _tipps;
-
-        /// <summary>
-        /// Die gezogenen Zahlen. Sind nur nach einer Ziehung (DrawNumbers) zugreifbar.
-        /// </summary>
-        public IReadOnlySet<int> DrawnNumbers => _drawnNumbers;
-
-        /// <summary>
-        /// Fügt einen Tipp zu den abgegebenen Tipps hinzu. Wir verlangen die schwächste aller
-        /// Collectiontypen: IEnumerable. Dieses Interface wird von Arrays, Lists, ... implementiert.
-        /// </summary>
-        public ITippableLottery AddTip(IEnumerable<int> numbers)
-        {
-            var set = numbers.ToHashSet();             // Doppelte Zahlen entfernen.
-            if (set.Count == 6) { _tipps.Add(set); }
-            return this;
-        }
-
-        /// <summary>
-        /// Zieht 6 zufällige Zahlen. Da sich die Zahlen wiederholen können, wird ein HashSet
-        /// zur Speicherung verwendet. Wir bekommen dann 6 unterschiedliche Zahlen zwischen 1 und
-        /// 45.
-        /// </summary>
-        public IDrawnLottery DrawNumbers()
-        {
-            while (_drawnNumbers.Count != 6)
-            {
-                _drawnNumbers.Add(_rnd.Next(1, 46));
-            }
-            return this;
-        }
-
-        /// <summary>
-        /// Zählt die Abgegebenen Tipps, die die übergebene Anzahl an richtigen Zahlen enthalten.
-        /// </summary>
-        public int CountTipps(int correctNumbers)
-        {
-            int count = 0;
-            foreach (var tipp in _tipps)
-            {
-                // LINQ, siehe nächstes Kapitel. Wie viele Zahlen in Tipp sind in _drawnNumbers
-                // enthalten?
-                if (tipp.Count(t => _drawnNumbers.Contains(t)) == correctNumbers)
-                {
-                    count++;
-                }
-            }
-            return count;
-        }
+        return this;
     }
 
-    class Program
+    /// <summary>
+    /// Counts the tips with exactly the given number of correct numbers.
+    /// </summary>
+    public int CountTips(int correctNumbers)
     {
-        public static void Main()
+        int count = 0;
+        foreach (var tip in _tips)
         {
-            // Ein fixes Seed liefert bei jedem Programmstart gleiche Werte. Das macht das
-            // Ergebnis reproduzierbar und somit testbar. Es ist ein beliebiger int Wert.
-            IDrawnLottery drawing = Lottery
-                .NewDrawing(2022)
-                .AddTip(new int[] { 1, 2, 3, 4, 5, 6 })
-                .AddTip(new int[] { 7, 8, 9, 10, 11, 12 })
-                .AddTip(new int[] { 4, 5, 6, 7, 27, 40 })
-                .DrawNumbers();
-
-            Console.WriteLine("Abgegebene Tipps:");
-            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(drawing.Tipps));
-
-            Console.WriteLine("Gezogene Zahlen:");
-            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(drawing.DrawnNumbers));
-
-            foreach (var i in Enumerable.Range(1, 6))
+            // LINQ, see next chapter: How many numbers of the tip were drawn?
+            if (tip.Count(t => _drawnNumbers.Contains(t)) == correctNumbers)
             {
-                Console.WriteLine($"{i} richtige: {drawing.CountTipps(i)} abgegebene Tipps");
+                count++;
             }
+        }
+        return count;
+    }
+}
+
+class Program
+{
+    public static void Main()
+    {
+        // A fixed seed returns the same numbers on every run. This makes the result
+        // reproducible and testable.
+        IDrawnLottery drawing = Lottery
+            .NewDrawing(2022)
+            .AddTip(new int[] { 1, 2, 3, 4, 5, 6 })
+            .AddTip(new int[] { 7, 8, 9, 10, 11, 12 })
+            .AddTip(new int[] { 4, 5, 6, 7, 27, 40 })
+            .DrawNumbers();
+
+        Console.WriteLine("Abgegebene Tipps:");
+        Console.WriteLine(JsonSerializer.Serialize(drawing.Tips));
+
+        Console.WriteLine("Gezogene Zahlen:");
+        Console.WriteLine(JsonSerializer.Serialize(drawing.DrawnNumbers));
+
+        foreach (var i in Enumerable.Range(1, 6))
+        {
+            Console.WriteLine($"{i} richtige: {drawing.CountTips(i)} abgegebene Tipps");
         }
     }
 }
 ```
 
+**Lösung:** Nein. *NewDrawing()* und *AddTip()* liefern *ITippableLottery*. Dieses Interface hat
+keine Methode *CountTips()*. Der Compiler verhindert also den falschen Aufruf.
+
 ## Übung
-Im Kapitel [Dependency Injection](08_DependencyInjection.md) gibt es eine Aufgabe für den
-"echten" Zweck von Interfaces zu lösen.
+
+Im Kapitel [Dependency Injection](08_DependencyInjection.md) gibt es eine Aufgabe zum "echten"
+Zweck von Interfaces.

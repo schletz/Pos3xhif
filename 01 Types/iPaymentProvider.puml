@@ -1,0 +1,49 @@
+@startuml
+hide interface fields
+
+interface IPaymentProvider
+{
+    +bool Pay(decimal amount)
+}
+
+class Order
+{
+    +PaymentProvider : IPaymentProvider
+    +OrderItems : IReadOnlyList<OrderItem>
+    +TotalAmount : decimal
+    ---
+    +Order(IPaymentProvider paymentProvider)
+    +void AddProduct(Product product, int quantity)
+    +bool Checkout()
+}
+
+class CreditCard
+{
+    +Limit : decimal
+    +Expiration : DateTime
+    ---
+    +bool Pay(decimal amount)
+}
+
+class PrepaidCard
+{
+    +Credit : decimal
+    ---
+    +void Charge(decimal amount)
+    +bool Pay(decimal amount)
+}
+
+class AlwaysPayingPaymentProvider
+{
+    +bool Pay(decimal amount)
+}
+
+Order -right-> "1" IPaymentProvider
+CreditCard .up.|> IPaymentProvider
+PrepaidCard .up.|> IPaymentProvider
+AlwaysPayingPaymentProvider .up.|> IPaymentProvider
+
+note bottom of AlwaysPayingPaymentProvider
+    Fake für Unit Tests
+end note
+@enduml

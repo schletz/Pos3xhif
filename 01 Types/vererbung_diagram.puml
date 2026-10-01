@@ -14,7 +14,7 @@ abstract class Person <<abstract>>
     +virtual string GetEmail()
     +override string ToString()
 }
-Person o--> Salutation
+Person --> "1" Salutation
 
 class Teacher
 {
@@ -53,7 +53,7 @@ class School
     +void PrintSga()
 }
 
-School --> Teacher
-School --> Student
-School --> Person
+School "1" --> "*" Teacher
+School "1" --> "*" Student
+School "1" --> "0..6" Person : Sga
 @enduml

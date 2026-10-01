@@ -43,6 +43,6 @@ class Order
     +void AddProduct(Product p)
     +bool Checkout()
 }
-Order --> Product
-Order o--> PaymentProvider
+Order --> "*" Product
+Order --> "1" PaymentProvider
 @enduml

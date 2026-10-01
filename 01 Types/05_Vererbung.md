@@ -36,7 +36,7 @@ Die Datei sieht dann so aus:
 </Project>
 ```
 
-> **Wichtig:**
+> [!IMPORTANT]
 > - Durch *TreatWarningsAsErrors* ist jede Warnung ein Fehler. Das Programm lässt sich dann
 >   nicht kompilieren.
 > - Ohne *ImplicitUsings* musst du jeden Namespace selbst mit *using* einbinden
@@ -78,14 +78,17 @@ So liest du das Diagramm:
 | *kursiv*                        | Abstraktes Member, z. B. *Accountname*                            |
 | **E** im Kreis                  | Enum, z. B. *Salutation* (= Anrede)                               |
 | Pfeil mit leerem Dreieck        | Vererbung. Der Pfeil zeigt zur Basisklasse.                       |
-| Einfacher Pfeil                 | Navigierbarkeit: *School* hat eine Liste *Teachers*. Du kannst also von *School* zu *Teacher* navigieren. Der Pfeil sagt **nichts** über die Anzahl (1:n) aus. |
-| Leere Raute (Aggregation)       | *Person* verwendet *Salutation* als Typ eines Properties.         |
+| Einfacher Pfeil (Assoziation)   | *School* speichert Teacher in einem Property (*Teachers*). Der Pfeil zeigt die Navigierbarkeit: Von *School* kommst du zu *Teacher*, aber nicht umgekehrt. |
+| Zahlen an den Pfeilenden        | Multiplizität: *1 School* hat *\* (beliebig viele) Teacher*. *0..6* heißt 0 bis 6. |
 | **+** / **#**                   | *public* / *protected*                                            |
 | *virtual*, *override*           | C# Schlüsselwörter der Methode, z. B. *virtual string GetEmail()* |
 
 Das ist kein reines UML: Im Diagramm stehen C# Datentypen (*string*, *bool*, ...) statt der UML Typen
 (*String*, *Boolean*, ...). Auch *virtual* und *override* gibt es in UML nicht. Wir schreiben sie dazu,
 damit du siehst, welche Methoden überschrieben werden.
+
+Weitere Beziehungsarten (Abhängigkeit, Komposition) lernst du im Kapitel
+[Interfaces](06_Interfaces.md#beziehungsarten-im-klassendiagramm) kennen.
 
 ## Die Klasse Person
 
