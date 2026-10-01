@@ -1,0 +1,59 @@
+@startuml
+enum Salutation
+{
+    Female, Male
+}
+abstract class Person <<abstract>>
+{
+    +Firstname : string
+    +Lastname : string
+    +Salutation : Salutation
+    +{abstract} Accountname : string
+    ---
+    #Person(string firstname, string lastname, Salutation salutation)
+    +virtual string GetEmail()
+    +override string ToString()
+}
+Person o--> Salutation
+
+class Teacher
+{
+    +Shortname : string
+    +override Accountname : string
+    ---
+    +Teacher(string firstname, string lastname, Salutation salutation, string shortname)
+    +override string GetEmail()
+    +override string ToString()
+}
+
+class Student
+{
+    +PupilId : int
+    +Class : string?
+    +override Accountname : string
+    ---
+    +Student(string firstname, string lastname, Salutation salutation, int pupilId, string? class)
+    +Student(string firstname, string lastname, Salutation salutation, int pupilId)
+    +override string ToString()
+}
+
+Teacher -up-|> Person
+Student -up-|> Person
+
+class School
+{
+    +Teachers : List<Teacher>
+    +Students : List<Student>
+    +Sga : IReadOnlyList<Person>
+    +SgaStudentsCount : int
+    +SgaTeachersCount : int
+    +IsValidSga : bool
+    ---
+    +bool AddToSga(Person p)
+    +void PrintSga()
+}
+
+School --> Teacher
+School --> Student
+School --> Person
+@enduml

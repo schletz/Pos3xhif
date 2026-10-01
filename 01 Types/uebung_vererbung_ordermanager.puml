@@ -1,0 +1,48 @@
+@startuml
+class Product
+{
+    +Ean : string
+    +Name : string
+    +Price : decimal
+    ---
+    +Product(string ean, string name, decimal price)
+}
+
+abstract class PaymentProvider <<abstract>>
+{
+    +Limit : decimal
+    ---
+    #PaymentProvider(decimal limit)
+    +virtual bool Pay(decimal amount)
+}
+
+class CreditCard
+{
+    +Number : string
+    ---
+    +CreditCard(decimal limit, string number)
+}
+CreditCard -up-|> PaymentProvider
+
+class PrepaidCard
+{
+    +Credit : decimal
+    ---
+    +PrepaidCard(decimal limit, decimal credit)
+    +void Charge(decimal amount)
+    +override bool Pay(decimal amount)
+}
+PrepaidCard -up-|> PaymentProvider
+
+class Order
+{
+    +Products : IReadOnlyList<Product>
+    +InvoiceAmount : decimal
+    ---
+    +Order(PaymentProvider paymentProvider)
+    +void AddProduct(Product p)
+    +bool Checkout()
+}
+Order --> Product
+Order o--> PaymentProvider
+@enduml

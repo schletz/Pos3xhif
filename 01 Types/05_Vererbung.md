@@ -1,10 +1,9 @@
 # Vererbung 1: Implementierung in C#
 
-## Erstellen einer Visual Studio Solution
+## Projekt anlegen
 
-Um die Beispiele mitmachen zu können, muss eine .NET Konsolenapplikation erstellt werden. Führe
-dafür die folgenden Befehle in der Konsole aus. Unter macOs müssen md und rd durch die entsprechenden
-Befehle ersetzt werden.
+Für die Beispiele brauchst du eine .NET Konsolenapplikation. Führe diese Befehle in der Konsole
+aus. Unter macOS ersetzt du *rd* und *md* durch *rm -rf* und *mkdir*.
 
 ```text
 rd /S /Q InheritanceDemo
@@ -14,22 +13,22 @@ md InheritanceDemo.Application
 cd InheritanceDemo.Application
 dotnet new console
 cd ..
-dotnet new sln
+dotnet new sln -f sln
 dotnet sln add InheritanceDemo.Application
 start InheritanceDemo.sln
 
 ```
 
-Öffne danach durch Doppelklick auf das Projekt (*InheritanceDemo.Application*) die Datei
-*InheritanceDemo.Application.csproj* und füge die Optionen für
-*Nullable* und *TreatWarningsAsError* hinzu. Die gesamte Konfiguration muss nun so aussehen:
+Öffne danach die Projektdatei *InheritanceDemo.Application.csproj* (Doppelklick auf das Projekt).
+Entferne die Zeile *ImplicitUsings* und füge *TreatWarningsAsErrors* hinzu.
+Die Datei sieht dann so aus:
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
@@ -37,43 +36,71 @@ start InheritanceDemo.sln
 </Project>
 ```
 
+> **Wichtig:**
+> - Durch *TreatWarningsAsErrors* ist jede Warnung ein Fehler. Das Programm lässt sich dann
+>   nicht kompilieren.
+> - Ohne *ImplicitUsings* musst du jeden Namespace selbst mit *using* einbinden
+>   (z. B. *using System;* für *Console*). So siehst du genau, woher eine Klasse kommt.
+
 ## Unterschiede zu Java
-Die Vererbung wird in C# in weiten Teilen wie in Java implementiert. Einige Besonderheiten treten
-allerdings auf:
-- Vererbung wird durch den Doppelpunkt gekennzeichnet. Es gibt keinen Unterschied zwischen Klassen und Interfaces, also zwischen *extends* und *implements*.
-- Es kann genauso wie in Java nur von 1 Klasse geerbt werden, es können jedoch beliebig viele Interfaces implementiert werden.
-- Properties sind im Prinzip auch nur Methoden, daher können sie natürlich auch vererbt werden.
-- Das Schlüsselwort virtual erlaubt das Überschreiben dieser Methode in den nachfolgenden Klassen.
-- Das Schlüsselwort override überschreibt eine mit virtual gekennzeichnete Methode.
-- Das Schlüsselwort new blendet eine Methode aus.
 
-Die Funktionsweise ist in den Kommentaren des nachfolgenden Codes erklärt.
+Vererbung funktioniert in C# fast wie in Java. Es gibt aber einige Unterschiede:
 
-## Ein kleines UML Klassendiagramm
+| Java                                         | C#                                       |
+| -------------------------------------------- | ---------------------------------------- |
+| `class B extends A implements I`             | `class B : A, I`                         |
+| Jede Methode kann überschrieben werden.      | Nur Methoden mit `virtual` (oder `abstract`) können überschrieben werden. |
+| `@Override` ist optional.                    | `override` ist Pflicht.                  |
+| `super(...)` im Konstruktor                  | `: base(...)` nach dem Konstruktorkopf   |
+| `super.method()`                             | `base.Method()`                          |
+| `this(...)` im Konstruktor                   | `: this(...)` nach dem Konstruktorkopf   |
+| `final class`                                | `sealed class`                           |
 
-- Abstrakte Klassen wie die Klasse *Person* werden mit A gekennzeichnet.
-- Abstrakte Methoden oder Felder sind kursiv wie *IsFullAge* (ist volljährig)
-- Enumerations werden mit einem E gekennzeichnet so wie in *Salutation* (= Anrede)
-- Die großen Pfeile bedeuten Vererbung und zeigen Richtung Basisklasse.
-- Spitze Pfeile wie von School nach Teacher bedeuten *Navigierbarkeit* (nicht 1:n!). Ich kann
-  von der Schule über die Liste Teachers in den Teacher *navigieren*. Erkennbar auch an der
-  Verwendung des Typs Teacher in der Klasse *School*.
-- Der weiße Diamond bedeutet Aggregation. Person kann ohne Salutation nicht erzeugt werden,
-  es ist daher "existenzabhängig". Erkennbar an der Verwendung des Typs im Konstruktor von *Person*.
+Gleich wie in Java:
+- Eine Klasse kann nur von **1 Klasse** erben, aber **beliebig viele Interfaces** implementieren.
+- `abstract` hat dieselbe Bedeutung.
 
-UML sieht Basistypen wie *String*, *Boolean*, ... vor, zur konkreteren Darstellung werden aber 
-C# Datentypen verwendet.
+Neu in C#:
+- **Properties** sind intern Methoden. Sie können daher auch `virtual`, `abstract` oder `override` sein.
+- `new` vor einer Methode **verdeckt** eine Methode der Basisklasse (siehe Teacher, Punkt 4).
+
+## Das UML Klassendiagramm
 
 ![](vererbung_diagram.svg)
 
-<sup>https://www.plantuml.com/plantuml/uml/fLB1QW8n4BtdA-QerFq1aKMHMWGBWj9xt4qra4sMJTABzT-RxSpOB9NMKW-oUMyoyzxBp7sGNOYD4Sh61dRIn223TXR4MK3whLGZZPh0S_eN5o4FFdIo2b0PwJriLUTJxMp6U5dIlOULxdomib4mXSHfUqHy8s_2sUHf9WF9CxU_mAAgNBGtEXH5WSMeQOGKlBAC2H1Y90FPJ7_z76CNAdvIuR6Hseo6yDxXHu8lWa9mHL7coWL6j5UoEgcEOzcTN7VB_zgleZ6BOuyVd3E8_kwMsjzXbm7F2lxib2tjGgoL3Mnf6rjjrdKIg6r0QFbPnuhlzK9zx_6I9a6BSvd5bHp_fzLFrYbeA69Rl9Uq-OBc3D5hJjMfVydpuANwM3RQXncTou7WAqjdPe-I2HpnXVF5PHyklG5pFF8Rj_OlqkWQs-AwvG_H8x2ewxrB5IES22sby-Pq3TikzKeaPeD6q_sIrps7I646SKvpPUlOc0y0
-</sup>
+<sup>PlantUML Quelle: [vererbung_diagram.puml](vererbung_diagram.puml)</sup>
 
+So liest du das Diagramm:
 
-## Implementierung der Klasse Person
+| Element                         | Bedeutung                                                         |
+| ------------------------------- | ----------------------------------------------------------------- |
+| **A** im Kreis, *«abstract»*    | Abstrakte Klasse, z. B. *Person*                                  |
+| *kursiv*                        | Abstraktes Member, z. B. *Accountname*                            |
+| **E** im Kreis                  | Enum, z. B. *Salutation* (= Anrede)                               |
+| Pfeil mit leerem Dreieck        | Vererbung. Der Pfeil zeigt zur Basisklasse.                       |
+| Einfacher Pfeil                 | Navigierbarkeit: *School* hat eine Liste *Teachers*. Du kannst also von *School* zu *Teacher* navigieren. Der Pfeil sagt **nichts** über die Anzahl (1:n) aus. |
+| Leere Raute (Aggregation)       | *Person* verwendet *Salutation* als Typ eines Properties.         |
+| **+** / **#**                   | *public* / *protected*                                            |
+| *virtual*, *override*           | C# Schlüsselwörter der Methode, z. B. *virtual string GetEmail()* |
 
+Das ist kein reines UML: Im Diagramm stehen C# Datentypen (*string*, *bool*, ...) statt der UML Typen
+(*String*, *Boolean*, ...). Auch *virtual* und *override* gibt es in UML nicht. Wir schreiben sie dazu,
+damit du siehst, welche Methoden überschrieben werden.
+
+## Die Klasse Person
+
+Jede Klasse kommt in eine eigene Datei. Der Namespace entspricht dem Projektnamen.
+
+**Salutation.cs**
 ```c#
+namespace InheritanceDemo.Application;
+
 enum Salutation { Female = 1, Male }   // (1)
+```
+
+**Person.cs**
+```c#
+namespace InheritanceDemo.Application;
 
 abstract class Person   // (2a)
 {
@@ -92,23 +119,25 @@ abstract class Person   // (2a)
 	public override string ToString() => $"{Firstname} {Lastname}";         // (4)
 }
 ```
-- **(1)** Ein enum ist ein symbolischer Wert für einen integer Wert. Wir beginnen mit 1, damit
-          der Defaultwert (0) kein gültiger Wert ist. Sonst wären alle nicht initialisierte Werte
-		  automatisch *Female*.
-- **(2)** Das read-only Property *Accountname* ist abstrakt. Es hat keine Implementierung und muss
-          in den abgeleiteten Klassen - wenn diese nicht selbst abstrakt sind - überschrieben werden.
-		  Um ein abstraktes Property zu definieren, muss auch die Klasse als abstrakt gekennzeichnet
-		  werden (2a).
-- **(3)** Die Methode *GetEmail()* ist selbst nicht abstrakt, kann aber ein abstraktes Property wie
-          *Accountname* verwenden. Es wird dann immer der entsprechende Accountname verwendet.
-		  *virtual* kennzeichnet die Methode als Überschreibbar. Sie kann - muss aber nicht - in den 
-		  abgeleiteten Klassen mit *override* überschrieben werden.
-- **(4)** ToString ist in System.Object als virtual gekennzeichnet und kann daher mit override
-          überschrieben werden.
 
-## Implementierung der Klasse Teacher
+- **(1)** Ein *enum* gibt einem *int* Wert einen Namen. Wir beginnen mit 1. So ist der
+  Defaultwert 0 kein gültiger Wert. Sonst wäre jeder nicht initialisierte Wert automatisch *Female*.
+- **(2)** *Accountname* ist ein abstraktes read-only Property. Es hat keine Implementierung.
+  Jede abgeleitete Klasse muss es überschreiben (außer sie ist selbst abstrakt).
+  Eine Klasse mit abstrakten Membern muss selbst *abstract* sein **(2a)**.
+- **(3)** *GetEmail()* ist nicht abstrakt, kann aber das abstrakte Property *Accountname* verwenden.
+  Zur Laufzeit wird immer der *Accountname* des echten Objekts (Teacher oder Student) verwendet.
+  *virtual* bedeutet: Abgeleitete Klassen **können** die Methode mit *override* überschreiben.
+  Sie **müssen** es aber nicht.
+- **(4)** *ToString()* ist in *System.Object* als *virtual* definiert. Daher können wir sie
+  mit *override* überschreiben.
 
+## Die Klasse Teacher
+
+**Teacher.cs**
 ```c#
+namespace InheritanceDemo.Application;
+
 class Teacher : Person   // (1)
 {
 	public Teacher(string firstname, string lastname, Salutation salutation, string shortname)   // (2)
@@ -124,25 +153,35 @@ class Teacher : Person   // (1)
 }
 ```
 
-- **(1)** Mit dem Doppelpunkt wird die Vererbung gekennzeichnet. Es gibt keine Unterscheidung zwischen
-          *implements* und *extends*.
-- **(2)** Die Klasse Person hat keinen Defaultkonstruktor. Um einen Teacher anlegen zu können, muss
-          der Compiler aber auch eine Person anlegen (ein Lehrer ist ja eine Person und erbt alle Felder).
-		  Daher müssen wir sagen, wie eine Person anzulegen ist, da es ja keinen Default Konstruktor
-		  gibt. Mit *base()* können wir den Konstruktor "weiterleiten". Es ist vergleichbar mit
-		  *super()* in Java.
-- **(3)** *Accountname* ist abstrakt und muss daher mit *override* überschrieben werden. Ohne
-          override ist der Code nicht gültig.
-- **(4)** *GetEmail()* ist virtual und kann daher überschrieben werden. Ohne *override* entsteht
-          eine Warnung, dass die Methode die Methode *GetEmail()* aus Person "versteckt". Das bedeutet,
-		  dass beim Cast auf Person die Methode *GetEmail()* von Person aufgerufen wird. Das ist aber
-		  in den seltensten Fällen sinnvoll.
-- **(5)** *ToString()* ist zwar in Person nicht als virtual gekennzeichnet, wir können sie aber
-          dennoch überschreiben. Sie ist nämlich in System.Object als virtual definiert. virtual
-		  Methoden können also mehrmals überschrieben werden.
+- **(1)** Der Doppelpunkt kennzeichnet die Vererbung. Es gibt kein *extends* oder *implements*.
+- **(2)** Ein Teacher ist auch eine Person. Beim Erstellen eines Teachers muss daher auch der
+  Person-Teil erstellt werden. *Person* hat keinen Defaultkonstruktor. Mit *base(...)* rufen wir
+  den Konstruktor von *Person* auf (wie *super(...)* in Java).
+- **(3)** *Accountname* ist abstrakt. Wir **müssen** es mit *override* überschreiben.
+- **(4)** *GetEmail()* ist *virtual*. Wir **können** sie mit *override* überschreiben.
+  Was passiert ohne *override*?
+  - Der Compiler meldet eine Warnung: Die Methode **verdeckt** *Person.GetEmail()*.
+    Wegen *TreatWarningsAsErrors* ist das ein Fehler.
+  - Mit dem Schlüsselwort *new* (`public new string GetEmail()`) verschwindet die Warnung.
+    Die Methode wird dann aber nicht überschrieben, sondern nur verdeckt:
+    ```c#
+    Person p = teacher;
+    p.GetEmail();   // Calls Person.GetEmail(), not Teacher.GetEmail()!
+    ```
+    Das ist fast nie gewünscht. Verwende daher *override*.
 
-## Implementierung der Klasse Student
+  ![](override_vs_new.svg)
+
+  <sup>PlantUML Quelle: [override_vs_new.puml](override_vs_new.puml)</sup>
+- **(5)** *Person* überschreibt *ToString()* bereits. Eine *override* Methode ist selbst wieder
+  *virtual*. Daher kann *Teacher* sie noch einmal überschreiben.
+
+## Die Klasse Student
+
+**Student.cs**
 ```c#
+namespace InheritanceDemo.Application;
+
 class Student : Person
 {
 	public Student(string firstname, string lastname, Salutation salutation, int pupilId, string? @class)
@@ -165,14 +204,25 @@ class Student : Person
 }
 ```
 
-- **(1)** Mit dem @ Zeichen in C# reservierte Wörter wie *class* verwendet werden.
-- **(2)** Die Klasse *Student* hat 2 Konstruktoren. Um den Initialisierungscode nicht kopieren zu
-          müssen, leiten wir mit *this()* die Argumente an den anderen Konstruktor weiter. Statt
-		  der optionalen Klasse wird *null* übergeben.
-- **(3)** Mit *base.ToString()* können wir die Implementierung der Basisklasse (Person) aufrufen.
+- **(1)** *class* ist ein reserviertes Wort. Mit dem Zeichen *@* davor (*@class*) können wir es
+  trotzdem als Variablenname verwenden.
+- **(2)** *Student* hat 2 Konstruktoren. Mit *this(...)* leiten wir die Argumente an den anderen
+  Konstruktor weiter. So müssen wir den Code nicht kopieren. Für die fehlende Klasse übergeben
+  wir *null*.
+- **(3)** Mit *base.ToString()* rufen wir die Implementierung der Basisklasse (*Person*) auf.
 
-## Implementierung der Klasse School
+## Die Klasse School
+
+Der SGA (Schulgemeinschaftsausschuss) ist ein Gremium der Schule. Er hat 9 Mitglieder.
+In unserem Beispiel verwalten wir nur die 3 Lehrer- und die 3 Schülervertreter.
+
+**School.cs**
 ```c#
+using System;                       // (7)
+using System.Collections.Generic;
+
+namespace InheritanceDemo.Application;
+
 class School
 {
 	private readonly List<Person> _sga = new(9);              // (1)
@@ -192,53 +242,58 @@ class School
 
 	public void PrintSga()
 	{
-		foreach (Person p in Sga)   // (5)
+		foreach (Person p in Sga)
 		{
-			if (p is Teacher)
+			if (p is Teacher)   // (5)
 			{
 				Console.WriteLine($"Lehrervertreter {p.Lastname}, Email: {p.GetEmail()}");
 			}
-			if (p is Student)
+			if (p is Student s)   // (6)
 			{
-				Student s = (Student)p;
 				Console.WriteLine($"Schülervertreter {p.Lastname} in der Klasse {s.Class ?? "?"}, Email: {p.GetEmail()}");
 			}
 		}
 	}
-```  
+}
+```
 
-- **(1)** Die Liste für den SGA (Schulgemeinschaftsausschuss) ist private. *readonly* bedeudet,
-          dass die Variable *_sga* nicht neu gesetzt werden kann. Es ist aber sehr wohl möglich,
-		  Add(), ... aufzurufen! In C# 9 kann new() verwendet werden, wenn der Typ auf der linken
-		  Seite definiert wurde. Es wird dann *new List<Person>()* vom Compiler angenommen.
-		  Da der SGA 9 Vertreter hat, definieren wir die initiale Größe der Liste mit 9 Elementen.
-- **(2)** Wir möchten nicht, dass die SGA Liste extern nach Belieben verändert werden kann. Sonst
-          könnten z. B. 10 Schülervertreter eingefügt werden. List&lt;Person&gt; implementiert das Interface
-		  *IReadOnlyList&lt;Person&gt;*. Durch diesen typecast stehen nur die Lesemethoden, aber nicht die
-		  Schreibmethoden von List&lt;Person&gt; zur Verfügung. 
-- **(3)** Die Anzahl der Vertreter kann außen gelesen werden, aber natürlich darf sie nur in der
-          School Klasse verändert werden.
-- **(4)** Intern können wir auf die ursprüngliche _sga Liste zugreifen und daher mit dieser Methode
-          Daten einfügen. Es dürfen maximal 3 Schüler- und 3 Lehrervertreter in den SGA.
-- **(5)** Die SGA Liste kann Personen (also Lehrer wie Schüler) enthalten. Mit *is* fragen wir ab,
-          welchen Typ das entsprechende Element der Liste hat. Für *GetEmail()* müssen wir keinen
-		  Typecast durchführen, da die Methode in Teacher überschrieben wird und daher - auch
-		  wenn der Lehrer zur Person wurde - die korrekte Mailadresse ausgegeben wird.
-		  Möchten wir auf Properties von Student zugreifen, brauchen wir natürlich einen Typecast.
+- **(1)** *readonly*: Die Variable *_sga* kann nicht neu zugewiesen werden. *Add()*, *Remove()*, ...
+  sind aber trotzdem möglich!
+  *new(9)* ist die Kurzform von *new List&lt;Person&gt;(9)*. Der Compiler kennt den Typ von der
+  linken Seite. Die 9 ist die Anfangsgröße (Capacity) der Liste.
+- **(2)** Von außen soll niemand die Liste ändern können (z. B. 10 Schülervertreter einfügen).
+  *List&lt;Person&gt;* implementiert das Interface *IReadOnlyList&lt;Person&gt;*. Das Property
+  liefert die Liste als *IReadOnlyList&lt;Person&gt;*. Der Aufrufer sieht daher nur die Lesemethoden.
+- **(3)** Die Anzahl kann von außen gelesen werden (*get*). Ändern kann sie nur die Klasse *School*
+  (*private set*).
+- **(4)** Nur über diese Methode kommen Personen in den SGA. So können wir prüfen, dass es
+  maximal 3 Schüler- und 3 Lehrervertreter gibt.
+- **(5)** Die Liste enthält Personen, also Lehrer **und** Schüler. Mit *is* prüfen wir den Typ.
+  Für *GetEmail()* brauchen wir keinen Cast. Die Methode ist überschrieben. Daher wird auch über eine
+  Variable vom Typ *Person* die Methode von *Teacher* aufgerufen.
+- **(6)** Für *Class* brauchen wir ein *Student* Objekt. *p is Student s* prüft den Typ und
+  castet in einem Schritt. Das kennst du aus Java: `if (p instanceof Student s)`.
+- **(7)** *Console* liegt im Namespace *System*, *List&lt;T&gt;* und *IReadOnlyList&lt;T&gt;* liegen in
+  *System.Collections.Generic*. Ohne diese *using* Anweisungen kompiliert der Code nicht.
 
 ## Testprogramm und Ausgabe
+
+**Program.cs**
 ```c#
+namespace InheritanceDemo.Application;
+
 class Program
 {
 	private static void Main(string[] args)
 	{
 		Teacher teacher = new Teacher(firstname: "Eva", lastname: "Testlehrerin", salutation: Salutation.Female, shortname: "TES");
-		Student student = new Student(firstname: "Stefan", lastname: "Eifrig", salutation: Salutation.Male, 1001, @class: "3AHIF");
-		Student student2 = new Student(firstname: "Lukas", lastname: "Abschreiber", salutation: Salutation.Male, 1002);
+		Student student = new Student(firstname: "Stefan", lastname: "Eifrig", salutation: Salutation.Male, pupilId: 1001, @class: "3AHIF");
+		Student student2 = new Student(firstname: "Lukas", lastname: "Abschreiber", salutation: Salutation.Male, pupilId: 1002);
 
 		School school = new School();
 		school.Teachers.Add(teacher);
 		school.Students.Add(student);
+		school.Students.Add(student2);
 		school.AddToSga(teacher);
 		school.AddToSga(student);
 		school.AddToSga(student2);
@@ -256,116 +311,118 @@ Schülervertreter Abschreiber in der Klasse ?, Email: abs001002@spengergasse.at
 
 ## Übung
 
-Das folgende Klassendiagramm bildet ein kleines Bestellsystem ab. Es verwaltet die bestellten
-Produkte in der Klasse *Order*. Beim Anlegen einer Bestellung muss ein Payment Provider
-im Konstruktor übergeben werden. Dieser ist entweder eine Kreditkarte oder eine Prepaid
-Karte mit entsprechendem Guthaben.
-
+Das Klassendiagramm zeigt ein kleines Bestellsystem. Eine Bestellung (*Order*) enthält Produkte.
+Beim Erstellen einer Bestellung übergibst du einen Payment Provider. Das ist entweder eine
+Kreditkarte (*CreditCard*) oder eine Prepaid Karte (*PrepaidCard*) mit Guthaben.
 
 ![](uebung_vererbung_ordermanager.svg)
-	
-<small>
-https://www.plantuml.com/plantuml/uml/XL9BRi8m45tZKtWPL7o12aKWr0KI0jGR3FQ8MlKdScmaH7ltsawSb6J1Afh9-yoRyQRru7pGYd05RKlFpeh0FNcGnTi76FfEM--akSRo21h_rsSdUMe8v5A38Wl6M6vdXQh3KGIpwZdKWCPLmTCcyPVabn2uH01mJ_iPuAxH-2Xqam8TNQyBeAxpO0UffPyxJtXLCL89leo0YxKggGz_GDjWV9wXizuv5DBlm8biT0pwWcu8NOn6rBF763Jpaku8fImqxAUUfYF3uh41AGRhZhYOXnnnK_DIyaJDWMzM2hhx0dV5IUONwoWkh-S-kLGyniEtSLtxJmHnCkf-aArVzp_gYDcRE1B7RJQQNp2BLTFxDy_r46mhH7bi_PSs9LTCZVpR1b-bE5cNCbOFxxlhsDoQ1DkW4K6hFm00
-</small>
 
-- **Order** repräsentiert die Bestellung, die aus mehreren Produkten besteht. Beim
-  Instanzieren ist ein Payment Provider zu übergeben. Speichere eventuell benötigte
-  interne Felder als *private readonly* (wenn möglich).
-- **Order.Products** ist eine *IReadOnlyList&lt;Product&gt;*. In die Liste der Produkte darf von außen nicht
-  geschrieben werden können.
-- **Order.InvoiceAmount** liefert den Gesamtbetrag (Summe der Produktpreise) als read-only
-  Property.
-- **Order.AddProduct()** fügt ein Produkt zur internen Liste der Produkte hinzu.
-- **Order.Checkout()** ruft die Methode *Pay()* des Payment Providers auf. Liefert die
-  *Pay()* Methode false, so liefert auch Checkout false. Liefert sie true, so ist die
-  Liste der Produkte zu leeren (verwende die *Clear()* Methode der Liste).
+<sup>PlantUML Quelle: [uebung_vererbung_ordermanager.puml](uebung_vererbung_ordermanager.puml)</sup>
 
-- **PaymentProvider.Pay()** versucht eine Zahlung vorzunehmen. Die allgemeine Implementierung
-  besteht aus einer Prüfung, ob der Betrag über dem Limit liegt. Wenn ja, liefert sie false.
-  Ansonsten liefert die Methode true.
-- **PrepaidCard.Pay()** ist eine speziellere Implementierung und soll Pay überschreiben. 
-  Zusätzlich zur Limitprüfung muss noch das Guthaben geprüft werden. Ist nicht genug Guthaben
-  vorhanden, liefert die Methode false. Ist alles OK, wird das Guthaben um den übergebenen
-  Betrag verringert und die Methode liefert true zurück. Für die Prüfung des Limits soll
-  die Methode Pay der Basisklasse verwendet werden.
-- **PrepaidCard.Charge()** fügt den übergebenen Betrag dem Gutheben (*Credit*) hinzu.
+### Order
 
-Erstelle wie oben beschrieben eine Visual Studio Solution *InheritanceDemo* und kopiere
-den nachfolgenden Code in die Datei *Program.cs*. Implementiere deine Klassen in eigene
-Dateien. Das Testprogramm muss nach dem Starten die unten angeführten Ausgaben zeigen.
+- **Konstruktor:** Bekommt den Payment Provider. Speichere interne Felder wenn möglich als
+  *private readonly*.
+- **Products:** Typ *IReadOnlyList&lt;Product&gt;*. Von außen darf niemand in die Liste schreiben.
+- **InvoiceAmount:** Read-only Property. Liefert die Summe der Produktpreise.
+- **AddProduct():** Fügt ein Produkt zur internen Liste hinzu.
+- **Checkout():** Ruft *Pay()* des Payment Providers auf.
+  - *Pay()* liefert *false* → *Checkout()* liefert *false*.
+  - *Pay()* liefert *true* → Leere die Produktliste (*Clear()*) und liefere *true*.
+
+### PaymentProvider
+
+- **Konstruktor:** *protected*, denn nur abgeleitete Klassen rufen ihn auf.
+- **Pay():** *virtual*, damit *PrepaidCard* die Methode überschreiben kann. Prüft, ob der Betrag
+  über dem Limit liegt.
+  - Betrag > Limit → *false*
+  - sonst → *true*
+
+### PrepaidCard
+
+- **Pay():** Überschreibt *Pay()* der Basisklasse. Prüfe der Reihe nach:
+  1. Limit: Verwende dafür *Pay()* der Basisklasse.
+  2. Guthaben (*Credit*): Ist zu wenig Guthaben da, liefere *false*.
+  3. Alles OK: Verringere das Guthaben um den Betrag und liefere *true*.
+- **Charge():** Addiert den Betrag zum Guthaben (*Credit*).
+
+### Testprogramm
+
+Erstelle wie oben beschrieben die Solution *InheritanceDemo*. Kopiere den folgenden Code in die
+Datei *Program.cs*. Schreibe jede Klasse in eine eigene Datei. Nach dem Start muss das Programm
+die Ausgabe darunter zeigen.
 
 ```c#
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace InheritanceDemo.Application
+namespace InheritanceDemo.Application;
+
+class Program
 {
-    class Program
+    private static int _testCount = 0;
+    private static int _testsSucceeded = 0;
+
+    private static void Main(string[] args)
     {
-        private static int _testCount = 0;
-        private static int _testsSucceeded = 0;
+        Console.WriteLine("Teste Klassenimplementierung.");
+        CheckAndWrite(() => typeof(Product).GetProperties().Any() && typeof(Product).GetProperties().All(p => p.CanWrite == false), "Alle Properties in Product sind read only");
+        CheckAndWrite(() => typeof(Order).GetProperties().Any() && typeof(Order).GetProperties().All(p => p.CanWrite == false), "Alle Properties in Order sind read only");
+        CheckAndWrite(() => typeof(PaymentProvider).GetProperties().Any() && typeof(PaymentProvider).GetProperties().All(p => p.CanWrite == false), "Alle Properties in PaymentProvider sind read only");
+        CheckAndWrite(() => typeof(CreditCard).GetProperties().Any() && typeof(CreditCard).GetProperties().All(p => p.CanWrite == false), "Alle Properties in CreditCard sind read only");
 
-        private static void Main(string[] args)
+        CheckAndWrite(() => typeof(PaymentProvider).GetConstructor(Type.EmptyTypes) is null, "Kein Defaultkonstruktor in PaymentProvider");
+        CheckAndWrite(() => typeof(PaymentProvider).IsAbstract, "PaymentProvider ist abstrakt");
+        CheckAndWrite(() => typeof(Order).GetProperty(nameof(Order.Products))?.PropertyType == typeof(IReadOnlyList<Product>), "Order.Products ist IReadOnlyList<Product>");
+        CheckAndWrite(() => typeof(PrepaidCard).GetProperty(nameof(PrepaidCard.Credit))?.GetSetMethod() is null, "Credit kann nicht öffentlich gesetzt werden");
+
+        Product p1 = new Product("1001", "Apple iPhone 13 Pro Max 1TB gold", 1800);
+        Product p2 = new Product("1002", "Samsung Galaxy Z Fold 3 5G F926B/DS 512GB Phantom Black", 1600);
+
         {
-            Console.WriteLine("Teste Klassenimplementierung.");
-            CheckAndWrite(() => typeof(Product).GetProperties().Any() && typeof(Product).GetProperties().All(p => p.CanWrite == false), "Alle Properties in Product sind read only");
-            CheckAndWrite(() => typeof(Order).GetProperties().Any() && typeof(Order).GetProperties().All(p => p.CanWrite == false), "Alle Properties in Order sind read only");
-            CheckAndWrite(() => typeof(PaymentProvider).GetProperties().Any() && typeof(PaymentProvider).GetProperties().All(p => p.CanWrite == false), "Alle Properties in PaymentProvider sind read only");
-            CheckAndWrite(() => typeof(CreditCard).GetProperties().Any() && typeof(CreditCard).GetProperties().All(p => p.CanWrite == false), "Alle Properties in CreditCard sind read only");
-
-            CheckAndWrite(() => typeof(PaymentProvider).GetConstructor(Type.EmptyTypes) is null, "Kein Defaultkonstruktor in PaymentProvider");
-            CheckAndWrite(() => typeof(PaymentProvider).IsAbstract, "PaymentProvider ist abstrakt");
-            CheckAndWrite(() => typeof(Order).GetProperty(nameof(Order.Products))?.PropertyType == typeof(IReadOnlyList<Product>), "Order.Products ist IReadOnlyList<Product>");
-            CheckAndWrite(() => typeof(PrepaidCard).GetProperty(nameof(PrepaidCard.Credit))?.GetSetMethod() is null, "Credit kann nicht öffentlich gesetzt werden");
-
-            Product p1 = new Product("1001", "Apple iPhone 13 Pro Max 1TB gold", 1800);
-            Product p2 = new Product("1002", "Samsung Galaxy Z Fold 3 5G F926B/DS 512GB Phantom Black", 1600);
-
-            {
-                Console.WriteLine("Tests mit CreditCard als PaymentProdiver.");
-                CreditCard creditCard = new CreditCard(limit: 3500, number: "123456789");
-                CheckAndWrite(() => creditCard.Limit == 3500, "Limit ist 3500");
-                Order order = new Order(paymentProvider: creditCard);
-                order.AddProduct(p1);
-                order.AddProduct(p2);
-                CheckAndWrite(() => order.InvoiceAmount == 3400, "InvoiveAmount ist 3400");
-                CheckAndWrite(() => order.Checkout() && order.Products.Count() == 0, "Checkout true und Produktliste leer");
-            }
-            {
-                Console.WriteLine("Teste Limit.");
-                CreditCard creditCard = new CreditCard(limit: 100, number: "123456789");
-                Order order = new Order(paymentProvider: creditCard);
-                order.AddProduct(p1);
-                CheckAndWrite(() => !order.Checkout(), "Checkout false wenn amount > limit");
-            }
-
-            {
-                Console.WriteLine("Tests mit PrepaidCard als PaymentProdiver.");
-                PrepaidCard prepaidCard = new PrepaidCard(limit: 2000, credit: 1000);
-                Order order = new Order(paymentProvider: prepaidCard);
-                order.AddProduct(p1);
-                CheckAndWrite(() => !order.Checkout(), "Checkout false wenn credit < amount");
-                prepaidCard.Charge(900);
-                CheckAndWrite(() => order.Checkout() && order.Products.Count() == 0, "Checkout true und Produktliste leer");
-                CheckAndWrite(() => (prepaidCard.Credit == 100), "Credit = 100");
-            }
-            Console.WriteLine($"{_testsSucceeded} von {_testCount} Punkte erreicht.");
+            Console.WriteLine("Tests mit CreditCard als PaymentProvider.");
+            CreditCard creditCard = new CreditCard(limit: 3500, number: "123456789");
+            CheckAndWrite(() => creditCard.Limit == 3500, "Limit ist 3500");
+            Order order = new Order(paymentProvider: creditCard);
+            order.AddProduct(p1);
+            order.AddProduct(p2);
+            CheckAndWrite(() => order.InvoiceAmount == 3400, "InvoiceAmount ist 3400");
+            CheckAndWrite(() => order.Checkout() && order.Products.Count() == 0, "Checkout true und Produktliste leer");
+        }
+        {
+            Console.WriteLine("Teste Limit.");
+            CreditCard creditCard = new CreditCard(limit: 100, number: "123456789");
+            Order order = new Order(paymentProvider: creditCard);
+            order.AddProduct(p1);
+            CheckAndWrite(() => !order.Checkout(), "Checkout false wenn amount > limit");
         }
 
-        private static void CheckAndWrite(Func<bool> predicate, string message)
         {
-            _testCount++;
-            if (predicate())
-            {
-                Console.WriteLine($"   {_testCount} OK: {message}");
-                _testsSucceeded++;
-                return;
-            }
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"   {_testCount} Nicht erfüllt: {message}");
-            Console.ResetColor();
+            Console.WriteLine("Tests mit PrepaidCard als PaymentProvider.");
+            PrepaidCard prepaidCard = new PrepaidCard(limit: 2000, credit: 1000);
+            Order order = new Order(paymentProvider: prepaidCard);
+            order.AddProduct(p1);
+            CheckAndWrite(() => !order.Checkout(), "Checkout false wenn credit < amount");
+            prepaidCard.Charge(900);
+            CheckAndWrite(() => order.Checkout() && order.Products.Count() == 0, "Checkout true und Produktliste leer");
+            CheckAndWrite(() => (prepaidCard.Credit == 100), "Credit = 100");
         }
+        Console.WriteLine($"{_testsSucceeded} von {_testCount} Punkte erreicht.");
+    }
+
+    private static void CheckAndWrite(Func<bool> predicate, string message)
+    {
+        _testCount++;
+        if (predicate())
+        {
+            Console.WriteLine($"   {_testCount} OK: {message}");
+            _testsSucceeded++;
+            return;
+        }
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine($"   {_testCount} Nicht erfüllt: {message}");
+        Console.ResetColor();
     }
 }
 ```
@@ -380,13 +437,13 @@ Teste Klassenimplementierung.
    6 OK: PaymentProvider ist abstrakt
    7 OK: Order.Products ist IReadOnlyList<Product>
    8 OK: Credit kann nicht öffentlich gesetzt werden
-Tests mit CreditCard als PaymentProdiver.
+Tests mit CreditCard als PaymentProvider.
    9 OK: Limit ist 3500
-   10 OK: InvoiveAmount ist 3400
+   10 OK: InvoiceAmount ist 3400
    11 OK: Checkout true und Produktliste leer
 Teste Limit.
    12 OK: Checkout false wenn amount > limit
-Tests mit PrepaidCard als PaymentProdiver.
+Tests mit PrepaidCard als PaymentProvider.
    13 OK: Checkout false wenn credit < amount
    14 OK: Checkout true und Produktliste leer
    15 OK: Credit = 100
