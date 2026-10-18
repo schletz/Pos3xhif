@@ -1,0 +1,44 @@
+﻿<Window x:Class="UserControlApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UserControlApp"
+        xmlns:vm="clr-namespace:UserControlApp.ViewModels"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <!-- Viewmodel mit dem Menümanagement -->
+    <Window.DataContext>
+        <vm:MainViewModel />
+    </Window.DataContext>
+    <Window.Resources>
+        <!-- Konvertiert den ausgewählten Menüpunkt in Visibility Informationen der Controls. -->
+        <local:MenuVisibilityConverter x:Key="MenuVisibilityConverter" />
+    </Window.Resources>
+    <DockPanel>
+        <!-- Details zur Gestaltung von Menüs sind auf 
+             https://www.c-sharpcorner.com/UploadFile/mahesh/menus-in-wpf/  zu finden. -->
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="Add Person" Command="{Binding ActivateMenuitem}" CommandParameter="Add" />
+                <MenuItem Header="Edit Person" Command="{Binding ActivateMenuitem}" CommandParameter="Edit" />
+                <Separator />
+                <MenuItem x:Name="Exit" Header="Exit"  Click="Exit_Click"/>
+            </MenuItem>
+        </Menu>
+        <!-- Funktionsprinzip: Im Viewmodel ist in ActiveMenuitem:string der aktuell ausgewählte
+             Menüpunkt hinterlegt. Der ConverterParameter gibt an, wann der Converter Visible liefern soll,
+             also wann das ContentControl angezeigt werden soll. So kann der Converter generisch 
+             programmiert werden. -->
+        <ContentControl Visibility="{Binding ActiveMenuitem, ConverterParameter=Add, Converter={StaticResource MenuVisibilityConverter}}">
+            <ContentControl.Content>
+                <local:AddPersonControl/>
+            </ContentControl.Content>
+        </ContentControl>
+        <ContentControl Visibility="{Binding ActiveMenuitem, ConverterParameter=Edit, Converter={StaticResource MenuVisibilityConverter}}">
+            <ContentControl.Content>
+                <local:EditPersonControl/>
+            </ContentControl.Content>
+        </ContentControl>        
+    </DockPanel>
+</Window>

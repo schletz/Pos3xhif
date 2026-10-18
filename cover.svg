@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="210mm" height="297mm" viewBox="0 0 210 297">
+  <!-- Cover of dotnet_book.pdf (DIN A4, units in mm). make_cover.py replaces {revdate}. -->
+  <defs>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a1e2c"/>
+      <stop offset="1" stop-color="#123c58"/>
+    </linearGradient>
+    <!-- Opaque glow: the colors are pre-blended with the panel, because the Ghostscript
+         step in render_book.cmd breaks gradients with transparency. -->
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#8c6520"/>
+      <stop offset="0.5" stop-color="#3a4436"/>
+      <stop offset="1" stop-color="#103149"/>
+    </radialGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="3.2" markerHeight="3.2" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#f39000"/>
+    </marker>
+  </defs>
+
+  <rect width="210" height="297" fill="#ffffff"/>
+
+  <!-- Dark panel with a slanted lower edge -->
+  <polygon points="0,0 210,0 210,172 0,196" fill="url(#panel)"/>
+
+  <!-- Faint C# code in the background -->
+  <g font-family="Cascadia Code, Consolas, monospace" font-size="3.6" fill="#ffffff" fill-opacity="0.09">
+    <text x="12" y="34">public record Edge(Node From, Node To, int Weight);</text>
+    <text x="12" y="43">var path = graph.ShortestPath(start, goal);</text>
+    <text x="12" y="52">public interface IPaymentService { bool Pay(decimal amount); }</text>
+    <text x="12" y="61">builder.Services.AddScoped&lt;IOrderService, OrderService&gt;();</text>
+    <text x="12" y="70">var shows = db.Shows.Where(s =&gt; s.Date &gt;= today).ToList();</text>
+    <text x="12" y="79">Assert.Equal(42, calculator.Add(40, 2));</text>
+    <text x="12" y="88">modelBuilder.Entity&lt;Customer&gt;().OwnsOne(c =&gt; c.Address);</text>
+    <text x="12" y="97">expr = term { ("+" | "-") term } ;</text>
+    <text x="12" y="106">public override bool Equals(object? other) =&gt; other is Point p;</text>
+    <text x="12" y="115">foreach (var next in graph.Neighbours(current)) queue.Enqueue(next);</text>
+    <text x="12" y="124">public sealed class Money(decimal amount, string currency);</text>
+    <text x="12" y="133">^(?&lt;day&gt;[0-9]{2})\.(?&lt;month&gt;[0-9]{2})\.(?&lt;year&gt;[0-9]{4})$</text>
+    <text x="12" y="142">if (memo.TryGetValue(n, out var cached)) return cached;</text>
+    <text x="12" y="151">[Fact] public void SellTicket_ThrowsWhenSoldOut() { }</text>
+    <text x="12" y="160">var groups = tickets.GroupBy(t =&gt; t.Contingent.Type);</text>
+  </g>
+
+  <!-- Glow behind the goal node, drawn first so edges and arrows stay on top -->
+  <circle cx="164" cy="154" r="14" fill="url(#glow)"/>
+
+  <!-- Graph: edges -->
+  <g stroke="#4f8db0" stroke-opacity="0.75" stroke-width="0.55" fill="none">
+    <line x1="34" y1="44" x2="72" y2="28"/>
+    <line x1="72" y1="28" x2="114" y2="50"/>
+    <line x1="72" y1="28" x2="56" y2="88"/>
+    <line x1="114" y1="50" x2="156" y2="32"/>
+    <line x1="114" y1="50" x2="100" y2="102"/>
+    <line x1="114" y1="50" x2="142" y2="86"/>
+    <line x1="156" y1="32" x2="186" y2="66"/>
+    <line x1="156" y1="32" x2="142" y2="86"/>
+    <line x1="186" y1="66" x2="142" y2="86"/>
+    <line x1="56" y1="88" x2="30" y2="134"/>
+    <line x1="100" y1="102" x2="78" y2="146"/>
+    <line x1="100" y1="102" x2="124" y2="142"/>
+    <line x1="142" y1="86" x2="124" y2="142"/>
+    <line x1="30" y1="134" x2="78" y2="146"/>
+    <line x1="78" y1="146" x2="124" y2="142"/>
+    <line x1="124" y1="142" x2="164" y2="154"/>
+    <line x1="186" y1="66" x2="180" y2="118"/>
+  </g>
+
+  <!-- Graph: highlighted path from start (green) to goal (orange) -->
+  <g stroke="#f39000" stroke-width="1.5" fill="none" stroke-linecap="round" marker-end="url(#arrow)">
+    <line x1="37.2" y1="50.4" x2="53.1" y2="82.3"/>
+    <line x1="61.9" y1="89.9" x2="93.9" y2="100.1"/>
+    <line x1="105.8" y1="99.8" x2="136.0" y2="88.3"/>
+    <line x1="146.7" y1="90.0" x2="175.1" y2="113.9"/>
+    <line x1="177.5" y1="123.7" x2="167.2" y2="146.8"/>
+  </g>
+
+  <!-- Graph: nodes -->
+  <g stroke-width="0.8">
+    <circle cx="72" cy="28" r="4" fill="#0a1e2c" stroke="#6cc1b0"/>
+    <circle cx="114" cy="50" r="5" fill="#0090d4" stroke="#d1ebf7"/>
+    <circle cx="156" cy="32" r="4" fill="#0a1e2c" stroke="#6cc1b0"/>
+    <circle cx="186" cy="66" r="4.5" fill="#6cc1b0" stroke="#e5f4f1"/>
+    <circle cx="30" cy="134" r="4" fill="#0a1e2c" stroke="#6cc1b0"/>
+    <circle cx="78" cy="146" r="4.5" fill="#0090d4" stroke="#d1ebf7"/>
+    <circle cx="124" cy="142" r="4" fill="#0a1e2c" stroke="#6cc1b0"/>
+    <circle cx="56" cy="88" r="5" fill="#fdebd1" stroke="#f39000" stroke-width="1.2"/>
+    <circle cx="100" cy="102" r="5" fill="#fdebd1" stroke="#f39000" stroke-width="1.2"/>
+    <circle cx="142" cy="86" r="5" fill="#fdebd1" stroke="#f39000" stroke-width="1.2"/>
+    <circle cx="180" cy="118" r="5" fill="#fdebd1" stroke="#f39000" stroke-width="1.2"/>
+    <circle cx="34" cy="44" r="6" fill="#71af2e" stroke="#e5f1d9" stroke-width="1.2"/>
+    <circle cx="164" cy="154" r="6.5" fill="#f39000" stroke="#ffffff" stroke-width="1.2"/>
+  </g>
+
+  <!-- School line on the panel -->
+  <text x="20" y="16" font-family="Segoe UI, Arial, sans-serif" font-size="3.4" font-weight="600"
+        letter-spacing="0.9" fill="#ffffff" fill-opacity="0.8">HTL SPENGERGASSE · WIEN</text>
+
+  <!-- Title block -->
+  <rect x="20" y="210" width="26" height="1.8" fill="#f39000"/>
+  <text font-family="Segoe UI, Arial, sans-serif" font-weight="700" fill="#1d1d1b" font-size="14">
+    <tspan x="19" y="230">Softwareentwicklung</tspan>
+    <tspan x="19" y="247">mit <tspan fill="#0090d4">.NET</tspan></tspan>
+  </text>
+  <text x="20" y="261" font-family="Segoe UI, Arial, sans-serif" font-size="4.4" fill="#5f5f5e">C# · Unittests · SOLID · EF Core · LINQ · Theoretische Informatik</text>
+
+  <line x1="20" y1="272" x2="190" y2="272" stroke="#9d9d9c" stroke-width="0.3"/>
+  <text x="20" y="281" font-family="Segoe UI, Arial, sans-serif" font-size="4.4" font-weight="600" fill="#1d1d1b">Michael Schletz</text>
+  <text x="190" y="281" text-anchor="end" font-family="Segoe UI, Arial, sans-serif" font-size="3.8" fill="#5f5f5e">Version {revdate}</text>
+</svg>

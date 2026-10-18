@@ -1,0 +1,279 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1006" height="438" viewBox="0 0 1006 438">
+  <rect x="0.5" y="0.5" width="1005" height="437" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <rect x="20" y="20" width="60" height="34" fill="#f3f4f6" stroke="#d1d5db"/>
+  <rect x="80" y="20" width="150" height="34" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="50.0" y="42" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle" font-weight="bold">Schritt</text>
+  <text x="155.0" y="42" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle" font-weight="bold">entnommen</text>
+  <rect x="230" y="20" width="84" height="34" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="272.0" y="42" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle" font-weight="bold">Graz</text>
+  <rect x="314" y="20" width="84" height="34" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="356.0" y="42" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle" font-weight="bold">Klagenfurt</text>
+  <rect x="398" y="20" width="84" height="34" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="440.0" y="42" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle" font-weight="bold">Eisenstadt</text>
+  <rect x="482" y="20" width="84" height="34" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="524.0" y="42" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle" font-weight="bold">Wien</text>
+  <rect x="566" y="20" width="84" height="34" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="608.0" y="42" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle" font-weight="bold">Linz</text>
+  <rect x="650" y="20" width="84" height="34" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="692.0" y="42" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle" font-weight="bold">St. Pölten</text>
+  <rect x="734" y="20" width="84" height="34" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="776.0" y="42" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle" font-weight="bold">Salzburg</text>
+  <rect x="818" y="20" width="84" height="34" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="860.0" y="42" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle" font-weight="bold">Innsbruck</text>
+  <rect x="902" y="20" width="84" height="34" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="944.0" y="42" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle" font-weight="bold">Bregenz</text>
+  <rect x="20" y="54" width="60" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="50.0" y="73" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Start</text>
+  <rect x="80" y="54" width="150" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="155.0" y="73" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">–</text>
+  <rect x="230" y="54" width="84" height="28" fill="#ffedd5" stroke="#ea580c"/>
+  <text x="272.0" y="73" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">0</text>
+  <rect x="314" y="54" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="356.0" y="73" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">∞</text>
+  <rect x="398" y="54" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="440.0" y="73" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">∞</text>
+  <rect x="482" y="54" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="524.0" y="73" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">∞</text>
+  <rect x="566" y="54" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="608.0" y="73" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">∞</text>
+  <rect x="650" y="54" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="692.0" y="73" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">∞</text>
+  <rect x="734" y="54" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="776.0" y="73" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">∞</text>
+  <rect x="818" y="54" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="860.0" y="73" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">∞</text>
+  <rect x="902" y="54" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="944.0" y="73" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">∞</text>
+  <rect x="20" y="82" width="60" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="50.0" y="101" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">1</text>
+  <rect x="80" y="82" width="150" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="155.0" y="101" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Graz (0)</text>
+  <rect x="230" y="82" width="84" height="28" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="272.0" y="101" font-family="Consolas, Menlo, monospace" font-size="14" fill="#16a34a" text-anchor="middle" font-weight="bold">0</text>
+  <rect x="314" y="82" width="84" height="28" fill="#ffedd5" stroke="#ea580c"/>
+  <text x="356.0" y="101" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">140</text>
+  <rect x="398" y="82" width="84" height="28" fill="#ffedd5" stroke="#ea580c"/>
+  <text x="440.0" y="101" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">165</text>
+  <rect x="482" y="82" width="84" height="28" fill="#ffedd5" stroke="#ea580c"/>
+  <text x="524.0" y="101" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">200</text>
+  <rect x="566" y="82" width="84" height="28" fill="#ffedd5" stroke="#ea580c"/>
+  <text x="608.0" y="101" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">220</text>
+  <rect x="650" y="82" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="692.0" y="101" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">∞</text>
+  <rect x="734" y="82" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="776.0" y="101" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">∞</text>
+  <rect x="818" y="82" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="860.0" y="101" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">∞</text>
+  <rect x="902" y="82" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="944.0" y="101" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">∞</text>
+  <rect x="20" y="110" width="60" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="50.0" y="129" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">2</text>
+  <rect x="80" y="110" width="150" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="155.0" y="129" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Klagenfurt (140)</text>
+  <rect x="230" y="110" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="272.0" y="129" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">0</text>
+  <rect x="314" y="110" width="84" height="28" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="356.0" y="129" font-family="Consolas, Menlo, monospace" font-size="14" fill="#16a34a" text-anchor="middle" font-weight="bold">140</text>
+  <rect x="398" y="110" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="440.0" y="129" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">165</text>
+  <rect x="482" y="110" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="524.0" y="129" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">200</text>
+  <rect x="566" y="110" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="608.0" y="129" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">220</text>
+  <rect x="650" y="110" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="692.0" y="129" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">∞</text>
+  <rect x="734" y="110" width="84" height="28" fill="#ffedd5" stroke="#ea580c"/>
+  <text x="776.0" y="129" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">365</text>
+  <rect x="818" y="110" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="860.0" y="129" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">∞</text>
+  <rect x="902" y="110" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="944.0" y="129" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">∞</text>
+  <rect x="20" y="138" width="60" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="50.0" y="157" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">3</text>
+  <rect x="80" y="138" width="150" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="155.0" y="157" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Eisenstadt (165)</text>
+  <rect x="230" y="138" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="272.0" y="157" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">0</text>
+  <rect x="314" y="138" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="356.0" y="157" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">140</text>
+  <rect x="398" y="138" width="84" height="28" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="440.0" y="157" font-family="Consolas, Menlo, monospace" font-size="14" fill="#16a34a" text-anchor="middle" font-weight="bold">165</text>
+  <rect x="482" y="138" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="524.0" y="157" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">200</text>
+  <rect x="566" y="138" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="608.0" y="157" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">220</text>
+  <rect x="650" y="138" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="692.0" y="157" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">∞</text>
+  <rect x="734" y="138" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="776.0" y="157" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">365</text>
+  <rect x="818" y="138" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="860.0" y="157" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">∞</text>
+  <rect x="902" y="138" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="944.0" y="157" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">∞</text>
+  <rect x="20" y="166" width="60" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="50.0" y="185" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">4</text>
+  <rect x="80" y="166" width="150" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="155.0" y="185" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Wien (200)</text>
+  <rect x="230" y="166" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="272.0" y="185" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">0</text>
+  <rect x="314" y="166" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="356.0" y="185" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">140</text>
+  <rect x="398" y="166" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="440.0" y="185" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">165</text>
+  <rect x="482" y="166" width="84" height="28" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="524.0" y="185" font-family="Consolas, Menlo, monospace" font-size="14" fill="#16a34a" text-anchor="middle" font-weight="bold">200</text>
+  <rect x="566" y="166" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="608.0" y="185" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">220</text>
+  <rect x="650" y="166" width="84" height="28" fill="#ffedd5" stroke="#ea580c"/>
+  <text x="692.0" y="185" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">265</text>
+  <rect x="734" y="166" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="776.0" y="185" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">365</text>
+  <rect x="818" y="166" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="860.0" y="185" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">∞</text>
+  <rect x="902" y="166" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="944.0" y="185" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">∞</text>
+  <rect x="20" y="194" width="60" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="50.0" y="213" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">5</text>
+  <rect x="80" y="194" width="150" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="155.0" y="213" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Linz (220)</text>
+  <rect x="230" y="194" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="272.0" y="213" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">0</text>
+  <rect x="314" y="194" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="356.0" y="213" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">140</text>
+  <rect x="398" y="194" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="440.0" y="213" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">165</text>
+  <rect x="482" y="194" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="524.0" y="213" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">200</text>
+  <rect x="566" y="194" width="84" height="28" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="608.0" y="213" font-family="Consolas, Menlo, monospace" font-size="14" fill="#16a34a" text-anchor="middle" font-weight="bold">220</text>
+  <rect x="650" y="194" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="692.0" y="213" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">265</text>
+  <rect x="734" y="194" width="84" height="28" fill="#ffedd5" stroke="#ea580c"/>
+  <text x="776.0" y="213" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">350</text>
+  <rect x="818" y="194" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="860.0" y="213" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">∞</text>
+  <rect x="902" y="194" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="944.0" y="213" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">∞</text>
+  <rect x="20" y="222" width="60" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="50.0" y="241" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">6</text>
+  <rect x="80" y="222" width="150" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="155.0" y="241" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">St. Pölten (265)</text>
+  <rect x="230" y="222" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="272.0" y="241" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">0</text>
+  <rect x="314" y="222" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="356.0" y="241" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">140</text>
+  <rect x="398" y="222" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="440.0" y="241" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">165</text>
+  <rect x="482" y="222" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="524.0" y="241" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">200</text>
+  <rect x="566" y="222" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="608.0" y="241" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">220</text>
+  <rect x="650" y="222" width="84" height="28" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="692.0" y="241" font-family="Consolas, Menlo, monospace" font-size="14" fill="#16a34a" text-anchor="middle" font-weight="bold">265</text>
+  <rect x="734" y="222" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="776.0" y="241" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">350</text>
+  <rect x="818" y="222" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="860.0" y="241" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">∞</text>
+  <rect x="902" y="222" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="944.0" y="241" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">∞</text>
+  <rect x="20" y="250" width="60" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="50.0" y="269" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">7</text>
+  <rect x="80" y="250" width="150" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="155.0" y="269" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Salzburg (350)</text>
+  <rect x="230" y="250" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="272.0" y="269" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">0</text>
+  <rect x="314" y="250" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="356.0" y="269" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">140</text>
+  <rect x="398" y="250" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="440.0" y="269" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">165</text>
+  <rect x="482" y="250" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="524.0" y="269" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">200</text>
+  <rect x="566" y="250" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="608.0" y="269" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">220</text>
+  <rect x="650" y="250" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="692.0" y="269" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">265</text>
+  <rect x="734" y="250" width="84" height="28" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="776.0" y="269" font-family="Consolas, Menlo, monospace" font-size="14" fill="#16a34a" text-anchor="middle" font-weight="bold">350</text>
+  <rect x="818" y="250" width="84" height="28" fill="#ffedd5" stroke="#ea580c"/>
+  <text x="860.0" y="269" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">535</text>
+  <rect x="902" y="250" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="944.0" y="269" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">∞</text>
+  <rect x="20" y="278" width="60" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="50.0" y="297" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">8</text>
+  <rect x="80" y="278" width="150" height="28" fill="#fee2e2" stroke="#d1d5db"/>
+  <text x="155.0" y="297" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#dc2626" text-anchor="middle">Salzburg (365)</text>
+  <rect x="230" y="278" width="756" height="28" fill="#fee2e2" stroke="#d1d5db"/>
+  <text x="608.0" y="297" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#dc2626" text-anchor="middle" font-style="italic">veralteter Eintrag: 365 &gt; 350 in der Tabelle, wird übersprungen</text>
+  <rect x="20" y="306" width="60" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="50.0" y="325" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">9</text>
+  <rect x="80" y="306" width="150" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="155.0" y="325" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Innsbruck (535)</text>
+  <rect x="230" y="306" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="272.0" y="325" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">0</text>
+  <rect x="314" y="306" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="356.0" y="325" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">140</text>
+  <rect x="398" y="306" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="440.0" y="325" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">165</text>
+  <rect x="482" y="306" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="524.0" y="325" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">200</text>
+  <rect x="566" y="306" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="608.0" y="325" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">220</text>
+  <rect x="650" y="306" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="692.0" y="325" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">265</text>
+  <rect x="734" y="306" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="776.0" y="325" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">350</text>
+  <rect x="818" y="306" width="84" height="28" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="860.0" y="325" font-family="Consolas, Menlo, monospace" font-size="14" fill="#16a34a" text-anchor="middle" font-weight="bold">535</text>
+  <rect x="902" y="306" width="84" height="28" fill="#ffedd5" stroke="#ea580c"/>
+  <text x="944.0" y="325" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">730</text>
+  <rect x="20" y="334" width="60" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="50.0" y="353" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">10</text>
+  <rect x="80" y="334" width="150" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="155.0" y="353" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Bregenz (730)</text>
+  <rect x="230" y="334" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="272.0" y="353" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">0</text>
+  <rect x="314" y="334" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="356.0" y="353" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">140</text>
+  <rect x="398" y="334" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="440.0" y="353" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">165</text>
+  <rect x="482" y="334" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="524.0" y="353" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">200</text>
+  <rect x="566" y="334" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="608.0" y="353" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">220</text>
+  <rect x="650" y="334" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="692.0" y="353" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">265</text>
+  <rect x="734" y="334" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="776.0" y="353" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">350</text>
+  <rect x="818" y="334" width="84" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="860.0" y="353" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">535</text>
+  <rect x="902" y="334" width="84" height="28" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="944.0" y="353" font-family="Consolas, Menlo, monospace" font-size="14" fill="#16a34a" text-anchor="middle" font-weight="bold">730</text>
+  <rect x="20" y="368" width="210" height="28" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="125.0" y="387" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle" font-weight="bold">Vorgänger</text>
+  <rect x="230" y="368" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="272.0" y="387" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">–</text>
+  <rect x="314" y="368" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="356.0" y="387" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Graz</text>
+  <rect x="398" y="368" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="440.0" y="387" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Graz</text>
+  <rect x="482" y="368" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="524.0" y="387" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Graz</text>
+  <rect x="566" y="368" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="608.0" y="387" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Graz</text>
+  <rect x="650" y="368" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="692.0" y="387" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Wien</text>
+  <rect x="734" y="368" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="776.0" y="387" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Linz</text>
+  <rect x="818" y="368" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="860.0" y="387" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Salzburg</text>
+  <rect x="902" y="368" width="84" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="944.0" y="387" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Innsbruck</text>
+  <rect x="20" y="406" width="22" height="16" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="50" y="419" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">wird in diesem Schritt fertig</text>
+  <rect x="287" y="406" width="22" height="16" fill="#ffedd5" stroke="#ea580c"/>
+  <text x="317" y="419" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">neue oder verbesserte Distanz</text>
+  <rect x="554" y="406" width="22" height="16" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="584" y="419" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">schon fertig</text>
+  <rect x="702" y="406" width="22" height="16" fill="#fee2e2" stroke="#d1d5db"/>
+  <text x="732" y="419" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">veralteter Eintrag</text>
+</svg>

@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="556" viewBox="0 0 1000 556">
+  <rect x="0.5" y="0.5" width="999" height="555" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/>
+    </marker>
+    <marker id="arrowRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/>
+    </marker>
+  </defs>
+  <text x="20" y="28" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#6b7280">Pfeil A → B: A muss vor B erledigt sein</text>
+  <line x1="158.0" y1="93.9" x2="222.0" y2="76.1" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="146.3" y1="128.0" x2="233.7" y2="162.0" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="338.0" y1="60.0" x2="402.0" y2="60.0" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="518.0" y1="60.0" x2="582.0" y2="60.0" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="658.0" y1="78.0" x2="742.0" y2="162.0" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="338.0" y1="180.0" x2="702.0" y2="180.0" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="788.0" y1="198.0" x2="872.0" y2="252.0" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="158.0" y1="270.0" x2="842.0" y2="270.0" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <rect x="44.0" y="94.0" width="112" height="32" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="100" y="115" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">Grundlagen</text>
+  <rect x="224.0" y="44.0" width="112" height="32" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="280" y="65" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">OOP</text>
+  <rect x="224.0" y="164.0" width="112" height="32" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="280" y="185" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">SQL</text>
+  <rect x="404.0" y="44.0" width="112" height="32" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="460" y="65" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">Collections</text>
+  <rect x="584.0" y="44.0" width="112" height="32" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="640" y="65" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">LINQ</text>
+  <rect x="704.0" y="164.0" width="112" height="32" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="760" y="185" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">EF Core</text>
+  <rect x="44.0" y="254.0" width="112" height="32" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="100" y="275" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">HTTP</text>
+  <rect x="844.0" y="254.0" width="112" height="32" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="900" y="275" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">Web-API</text>
+  <line x1="20" y1="330" x2="980" y2="330" stroke="#d1d5db"/>
+  <text x="20" y="356" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1f2937">Eine topologische Ordnung: In einer Reihe zeigen alle Pfeile nach rechts.</text>
+  <path d="M89,482.0 C89,420.0 303,420.0 303,482.0" fill="none" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <path d="M89,482.0 C89,404.0 424,404.0 424,482.0" fill="none" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <path d="M331,482.0 C331,420.0 545,420.0 545,482.0" fill="none" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <path d="M573,482.0 C573,436.0 666,436.0 666,482.0" fill="none" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <path d="M694,482.0 C694,436.0 787,436.0 787,482.0" fill="none" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <path d="M452,482.0 C452,404.0 787,404.0 787,482.0" fill="none" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <path d="M815,482.0 C815,436.0 908,436.0 908,482.0" fill="none" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <path d="M210,482.0 C210,356.0 908,356.0 908,482.0" fill="none" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <rect x="21.0" y="484.0" width="108" height="32" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="75" y="505" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">Grundlagen</text>
+  <text x="75" y="538" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#6b7280" text-anchor="middle">1.</text>
+  <rect x="142.0" y="484.0" width="108" height="32" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="196" y="505" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">HTTP</text>
+  <text x="196" y="538" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#6b7280" text-anchor="middle">2.</text>
+  <rect x="263.0" y="484.0" width="108" height="32" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="317" y="505" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">OOP</text>
+  <text x="317" y="538" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#6b7280" text-anchor="middle">3.</text>
+  <rect x="384.0" y="484.0" width="108" height="32" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="438" y="505" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">SQL</text>
+  <text x="438" y="538" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#6b7280" text-anchor="middle">4.</text>
+  <rect x="505.0" y="484.0" width="108" height="32" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="559" y="505" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">Collections</text>
+  <text x="559" y="538" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#6b7280" text-anchor="middle">5.</text>
+  <rect x="626.0" y="484.0" width="108" height="32" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="680" y="505" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">LINQ</text>
+  <text x="680" y="538" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#6b7280" text-anchor="middle">6.</text>
+  <rect x="747.0" y="484.0" width="108" height="32" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="801" y="505" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">EF Core</text>
+  <text x="801" y="538" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#6b7280" text-anchor="middle">7.</text>
+  <rect x="868.0" y="484.0" width="108" height="32" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="922" y="505" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">Web-API</text>
+  <text x="922" y="538" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#6b7280" text-anchor="middle">8.</text>
+</svg>

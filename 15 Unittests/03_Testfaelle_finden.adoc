@@ -1,0 +1,313 @@
+= Testfälle finden
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Der Notenrechner aus dem Kapitel link:{github_url}/15%20Unittests/02_xUnit.adoc[Unit Tests mit xUnit] hat Tests für 90 %, 87,5 % und 87,49 %.
+Reicht das?
+Zehn Tests?
+Hundert?
+In diesem Kapitel leitest du die nötigen Testfälle systematisch ab, statt sie zu raten.
+Du erfährst, was Code Coverage aussagt und was nicht.
+Außerdem machst du Code testbar, der von der Uhrzeit abhängt.
+
+== Projekt anlegen
+
+Du arbeitest in der Solution _UnittestDemo_ aus dem Kapitel link:{github_url}/15%20Unittests/02_xUnit.adoc#projekt-anlegen[Unit Tests mit xUnit] weiter.
+Die Klasse _GradeCalculator_ bleibt unverändert.
+Im Abschnitt _Deterministische Tests_ kommen die Dateien _CreditCard.cs_ (Application) und _FixedTimeProvider.cs_ (Tests) dazu.
+
+== Wie viele Tests brauche ich?
+
+Alle möglichen Prozentwerte zu testen, geht nicht.
+Allein zwischen 0 und 100 gibt es mit zwei Kommastellen 10 001 Werte.
+Zwei Techniken liefern eine kleine, aber vollständige Auswahl.
+
+=== Äquivalenzklassen
+
+Eine *Äquivalenzklasse* ist eine Menge von Eingaben, bei denen sich der Code gleich verhält.
+Ob du 90 % oder 95 % testest, ist egal: Beide liefern die Note 1 über dieselbe Zeile im Code.
+Daher reicht *ein Wert pro Klasse*.
+Ungültige Eingaben bilden eigene Klassen.
+
+image::{root_dir}/images/03_aequivalenzklassen.svg[Äquivalenzklassen und Grenzwerte des Notenrechners]
+
+[%header]
+|===
+|Klasse |Bereich |Erwartet
+|ungültig, zu klein |unter 0 |`ArgumentOutOfRangeException`
+|Note 5 |0 bis unter 50 |5
+|Note 4 |50 bis unter 62,5 |4
+|Note 3 |62,5 bis unter 75 |3
+|Note 2 |75 bis unter 87,5 |2
+|Note 1 |87,5 bis 100 |1
+|ungültig, zu groß |über 100 |`ArgumentOutOfRangeException`
+|===
+
+=== Grenzwertanalyse
+
+Die meisten Fehler entstehen an den Grenzen der Klassen: `+>+` statt `+>=+` oder ein Tippfehler in einer Grenze.
+Daher testest du an *jeder Grenze* den Wert genau darauf und den Wert knapp daneben.
+Wir nehmen an, dass Prozent höchstens zwei Kommastellen haben.
+„Knapp daneben“ ist dann 0,01 entfernt.
+Beim Notenrechner ergibt das 12 Grenzwerte (die orangen Zahlen in der Grafik).
+Liegt ein Grenzwert schon in einer Klasse, brauchst du für diese Klasse keinen eigenen Wert mehr.
+
+[source,csharp]
+----
+[Theory]
+[InlineData(0, 5)]
+[InlineData(49.99, 5)]
+[InlineData(50, 4)]
+[InlineData(62.49, 4)]
+[InlineData(62.5, 3)]
+[InlineData(74.99, 3)]
+[InlineData(75, 2)]
+[InlineData(87.49, 2)]
+[InlineData(87.5, 1)]
+[InlineData(100, 1)]
+public void CalculateGrade_AtBoundary_ReturnsExpectedGrade(decimal percent, int expected)
+{
+    Assert.Equal(expected, GradeCalculator.CalculateGrade(percent));
+}
+
+[Theory]
+[InlineData(-0.01)]
+[InlineData(100.01)]
+public void CalculateGrade_OutOfRange_ThrowsArgumentOutOfRangeException(decimal percent)
+{
+    Assert.Throws<ArgumentOutOfRangeException>(() => GradeCalculator.CalculateGrade(percent));
+}
+----
+
+12 Testfälle prüfen den Notenrechner vollständig.
+Das ist die Antwort auf „Wie viele Tests?“: *Jede Äquivalenzklasse und jede Grenze kommt mindestens einmal vor.*
+
+=== Code Coverage
+
+*Code Coverage* (Testabdeckung) misst, welcher Teil des Codes beim Ausführen der Tests durchlaufen wurde:
+
+[%header,cols="1,3"]
+|===
+|Maß |Frage
+|*Line Coverage* |Wie viele Zeilen wurden mindestens einmal ausgeführt?
+|*Branch Coverage* |Wurde jede Verzweigung in _beide_ Richtungen durchlaufen? Bei `if` also einmal `true` und einmal `false`.
+|===
+
+Testest du den Notenrechner nur mit 90 % und 30 %, laufen diese Zeilen:
+
+[source,csharp]
+----
+if (percent < 0 || percent > 100)                // ✓ executed, but always false
+{
+    throw new ArgumentOutOfRangeException(...);  // ✗ never executed
+}
+if (percent >= 87.5m) { return 1; }              // ✓ true (90) and false (30)
+if (percent >= 75m) { return 2; }                // ✗ "return 2" never executed
+if (percent >= 62.5m) { return 3; }              // ✗ "return 3" never executed
+if (percent >= 50m) { return 4; }                // ✗ "return 4" never executed
+return 5;                                        // ✓ executed (30)
+----
+
+Coverage zeigt dir also, welche Fälle *fehlen*.
+Werkzeuge dafür sind in Visual Studio, Rider und `dotnet test` eingebaut.
+Wichtig ist, die Zahl richtig zu deuten.
+
+=== 100 % Coverage heißt nicht fehlerfrei
+
+Angenommen, im Code steht `+percent > 87.5m+` statt `+percent >= 87.5m+`.
+Diese Tests führen jede Zeile und jede Verzweigung aus:
+
+[source,text]
+----
+90 → 1,  80 → 2,  70 → 3,  55 → 4,  30 → 5,  -1 → Exception,  101 → Exception
+----
+
+Line und Branch Coverage sind 100 %, alle Tests sind grün.
+Trotzdem liefert 87,5 % die Note 2. Der Fehler sitzt an einer Grenze, und keine Grenze wurde getestet.
+Coverage kann außerdem Code nicht messen, der *fehlt*.
+Hätte jemand die Prüfung auf `+> 100+` vergessen, gäbe es auch keine Zeile, die als „nicht ausgeführt“ auffällt.
+
+[%header]
+|===
+|Werkzeug |Beantwortet
+|Äquivalenzklassen {plus} Grenzwerte |Welche Tests *brauche* ich?
+|Code Coverage |Welchen Code habe ich *noch nicht* getestet?
+|===
+
+[[deterministische-tests]]
+== Deterministische Tests
+
+Ein Test muss bei jedem Lauf dasselbe Ergebnis liefern (das _R_ aus FIRST).
+Erinnere dich an _CreditCard_ aus dem Kapitel link:{github_url}/01%20Types/06_Interfaces.adoc[Interfaces]:
+
+[source,csharp]
+----
+if (Expiration < DateTime.UtcNow) { return false; }
+----
+
+Ein Test mit einer Karte, die am 31.12.2030 abläuft, ist heute grün.
+Ab 2031 wird er rot, obwohl niemand den Code geändert hat.
+Und den Fall „Karte läuft genau heute ab“ kannst du gar nicht gezielt testen.
+`DateTime.UtcNow` ist eine *versteckte Abhängigkeit*: _CreditCard_ holt sich die Zeit selbst, und der Test kann sie nicht beeinflussen.
+
+Die Lösung: Die Klasse holt sich die Zeit nicht selbst.
+Sie bekommt ein Objekt, das die Zeit liefert, als Parameter im Konstruktor.
+Im Programm ist das die echte Uhr, im Test eine feste Zeit.
+Diese Technik heißt *Dependency Injection*.
+Mehr dazu steht im Kapitel link:{github_url}/16%20SOLID/08_Dependency_Inversion.adoc[D: Dependency Inversion]. .NET hat dafür die abstrakte Klasse `TimeProvider`.
+_CreditCard_ bekommt sie im Konstruktor und fragt sie nach der Zeit:
+
+*CreditCard.cs* (im Projekt _UnittestDemo.Application_)
+
+[source,csharp]
+----
+using System;
+
+namespace UnittestDemo.Application;
+
+public class CreditCard
+{
+    private readonly TimeProvider _timeProvider;
+
+    public CreditCard(decimal limit, DateTime expiration, TimeProvider timeProvider)
+    {
+        Limit = limit;
+        Expiration = expiration;
+        _timeProvider = timeProvider;
+    }
+
+    public decimal Limit { get; }
+    public DateTime Expiration { get; }
+
+    public bool Pay(decimal amount)
+    {
+        if (amount > Limit) { return false; }
+        if (Expiration < _timeProvider.GetUtcNow().UtcDateTime) { return false; }
+        return true;
+    }
+}
+----
+
+Im Programm übergibst du `TimeProvider.System`, das liefert die echte Uhrzeit.
+Im Test übergibst du einen Fake, der immer dieselbe Zeit liefert:
+
+*FixedTimeProvider.cs* (im Projekt _UnittestDemo.Tests_)
+
+[source,csharp]
+----
+using System;
+
+namespace UnittestDemo.Tests;
+
+public class FixedTimeProvider : TimeProvider
+{
+    private readonly DateTimeOffset _now;
+
+    public FixedTimeProvider(DateTimeOffset now)
+    {
+        _now = now;
+    }
+
+    public override DateTimeOffset GetUtcNow() => _now;
+}
+----
+
+[source,csharp]
+----
+[Fact]
+public void Pay_AfterExpiration_ReturnsFalse()
+{
+    TimeProvider afterExpiration = new FixedTimeProvider(new DateTimeOffset(2031, 1, 1, 0, 0, 0, TimeSpan.Zero));
+    CreditCard card = new CreditCard(limit: 1000, expiration: new DateTime(2030, 12, 31), afterExpiration);
+
+    bool success = card.Pay(100);
+
+    Assert.False(success);
+}
+----
+
+Dieser Test liefert heute und in zehn Jahren dasselbe Ergebnis.
+Dasselbe gilt für Zufallszahlen: Eine Klasse, die `new Random()` selbst erzeugt, ist nicht testbar.
+Bekommt sie das `Random`-Objekt von außen, übergibt der Test eines mit festem Startwert (`new Random(42)`).
+Dann ist die Folge der Zufallszahlen bei jedem Lauf gleich.
+
+== Test Driven Development
+
+Bisher hast du zuerst den Code geschrieben und dann die Tests.
+Beim *Test Driven Development* (TDD) ist es umgekehrt.
+Du arbeitest in kurzen Zyklen:
+
+[%header,cols="1,4"]
+|===
+|Schritt |Was du tust
+|*Red* |Schreibe einen Test für das nächste kleine Verhalten. Er ist rot, denn der Code fehlt noch.
+|*Green* |Schreibe gerade so viel Code, dass der Test grün wird.
+|*Refactor* |Räume den Code auf. Die Tests zeigen, dass dabei nichts kaputtgeht.
+|===
+
+Der Vorteil: Du denkst zuerst darüber nach, _was_ der Code tun soll, und erst danach, _wie_.
+Die Übungsprojekte dieses Kurses funktionieren ähnlich: Die Tests sind schon rot, du machst sie grün.
+
+// tag::pdf_exclude[]
+== Übungen
+
+. *Kinoticket (TDD):* Lege eine neue Solution _CinemaDemo_ mit Application und Testprojekt an (wie im Kapitel link:{github_url}/15%20Unittests/02_xUnit.adoc#projekt-anlegen[Unit Tests mit xUnit]).
+Füge diese Klasse in die Application ein:
++
+[source,csharp]
+----
+using System;
+
+namespace CinemaDemo.Application;
+
+public static class TicketPriceCalculator
+{
+    public static decimal CalculatePrice(int age)
+    {
+        throw new NotImplementedException();
+    }
+}
+----
++
+Die Preise:
++
+[%header]
+|===
+|Alter |Preis
+|0 bis 5 Jahre |0,00 €
+|6 bis 17 Jahre |6,50 €
+|18 bis 64 Jahre |11,00 €
+|ab 65 Jahren |8,00 €
+|unter 0 oder über 120 |`ArgumentOutOfRangeException`
+|===
+
+* Schreibe zuerst eine Tabelle mit allen Äquivalenzklassen und Grenzwerten.
+* Schreibe danach die Tests mit `+[Theory]+` und `+[InlineData]+`.
+Sie müssen alle rot sein.
+* Implementiere erst dann `CalculatePrice`, bis alle Tests grün sind.
+* Baue absichtlich einen Off-by-one-Fehler ein (zum Beispiel `+<+` statt `+<=+`).
+Welcher Test wird rot?
+Wird keiner rot, fehlt dir ein Grenzwert.
+. *Grenzwerte bei CreditCard:* Schreibe Tests für `CreditCard.Pay` mit dem _FixedTimeProvider_.
+Finde die Grenzen beim Limit und beim Ablaufdatum.
+Was soll passieren, wenn der Betrag genau dem Limit entspricht?
+Und wenn die aktuelle Zeit genau dem Ablaufdatum entspricht?
+Lies dazu den Code genau und halte das Verhalten in Tests fest.
+. *Fehlersuche mit Tests:* Im Übungsprojekt link:{github_url}/15%20Unittests/Uebungen/BugHunt.7z[BugHunt.7z] findest du einen fertigen Parkgaragenrechner mit versteckten Fehlern.
+Finde sie nur mit Tests.
+Die Angabe steht im Archiv in der Datei _README.md_.
+
+// end::pdf_exclude[]

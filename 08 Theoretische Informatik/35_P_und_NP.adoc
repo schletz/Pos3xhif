@@ -1,0 +1,296 @@
+= P und NP
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Ein Paketdienst hat 20 Adressen und sucht die kürzeste Route, die alle Adressen besucht und zum Lager zurückführt.
+Das klingt nach einer Aufgabe für eine Schleife über alle Möglichkeiten.
+Leider gibt es so viele Möglichkeiten, dass kein Computer der Welt sie rechtzeitig durchprobiert.
+Und bis heute kennt niemand einen Algorithmus, der dieses Problem immer optimal _und_ schnell löst.
+Dieses Kapitel erklärt informell, warum das so ist, was die Klassen P und NP bedeuten und wie man in der Praxis trotzdem gute Routen findet.
+
+== Entscheidungs- und Optimierungsprobleme
+
+Das Problem des Paketdienstes heißt *Problem des Handlungsreisenden* (englisch _Traveling Salesperson Problem_, TSP).
+Es gibt davon zwei Varianten:
+
+* *Optimierungsproblem:* Finde die kürzeste Rundreise durch alle Städte.
+* *Entscheidungsproblem:* Gibt es eine Rundreise, die höchstens K Kilometer lang ist?
+Die Antwort ist nur _ja_ oder _nein_.
+
+Dasselbe gilt für das *Rucksackproblem* aus der dynamischen Programmierung.
+Die Optimierungsvariante fragt nach dem größten Wert, der in den Rucksack passt.
+Die Entscheidungsvariante fragt: Gibt es eine Auswahl mit Gewicht höchstens W und Wert mindestens V?
+
+Die Theorie arbeitet mit Entscheidungsproblemen, weil sich Ja/Nein-Fragen leichter vergleichen lassen.
+Für die Praxis ist das keine Einschränkung.
+Kannst du die Ja/Nein-Frage schnell beantworten, findest du auch die optimale Länge schnell: Du fragst einfach mit verschiedenen Werten für K, ähnlich wie bei der binären Suche.
+
+== Die Klasse P
+
+Ein Problem gehört zur Klasse *P*, wenn es einen Algorithmus gibt, der es in _polynomieller Zeit_ löst, also in O(nᵏ) für eine feste Zahl k. Viele Algorithmen, die du schon kennst, liegen in P:
+
+* Sortieren mit Mergesort: O(n log n)
+* Breitensuche in einem Graphen: O(V {plus} E)
+* Kürzeste Wege mit Dijkstra: O((V {plus} E) log V)
+* Ein Wort mit einem endlichen Automaten prüfen: O(n)
+
+Als Faustregel gilt: Polynomiell heißt _effizient lösbar_.
+Ein O(n¹⁰⁰)-Algorithmus wäre zwar in der Praxis nutzlos, solche Fälle kommen aber kaum vor.
+Der eigentliche Unterschied zeigt sich gegenüber exponentiellem Wachstum.
+Bei 1 ns pro Schritt:
+
+[cols=">,>,>",options="header"]
+|===
+|n |n³ Schritte |2ⁿ Schritte
+|10 |1 µs |1 µs
+|20 |8 µs |1 ms
+|40 |64 µs |18 Minuten
+|60 |0,2 ms |36 Jahre
+|100 |1 ms |rund 40 Billionen Jahre
+|===
+
+Bei kleinen Eingaben ist der Unterschied unsichtbar.
+Ab einer bestimmten Größe hilft aber auch ein tausendmal schnellerer Computer nicht mehr: Er schafft bei 2ⁿ gerade einmal zehn Elemente mehr, denn 2¹⁰ ≈ 1000.
+
+== Die Klasse NP: Lösungen schnell prüfen
+
+Für das TSP, das Rucksackproblem und viele andere kennt niemand einen polynomiellen Algorithmus.
+Sie haben aber eine gemeinsame Eigenschaft: *Wenn dir jemand eine Lösung vorlegt, kannst du sie schnell prüfen.*
+
+* *Sudoku:* Ein Rätsel zu lösen kann lange dauern, beim Backtracking probierst du viele Ziffern durch.
+Ein ausgefülltes Gitter zu prüfen ist dagegen einfach: Jede Zeile, jede Spalte und jeder Block muss jede Ziffer genau einmal enthalten.
+* *TSP:* Ist eine vorgelegte Reihenfolge der Städte eine Rundreise mit Länge höchstens K?
+Du prüfst, ob jede Stadt genau einmal vorkommt, und addierst n Strecken.
+* *Rucksack:* Ist eine vorgelegte Auswahl höchstens W schwer und mindestens V wert?
+Du addierst Gewichte und Werte.
+
+Ein Problem gehört zur Klasse *NP*, wenn sich jede Ja-Antwort mit einem passenden Nachweis (einer vorgelegten Lösung) in polynomieller Zeit prüfen lässt.
+Achtung: NP steht nicht für „nicht polynomiell“, sondern für _nichtdeterministisch polynomiell_.
+Ein gedachter Rechner, der wie ein link:{github_url}/08%20Theoretische%20Informatik/13_Endliche_Automaten.adoc[NEA] die richtige Lösung _raten_ darf, müsste sie nur noch prüfen.
+
+Beim Sudoku ist eine Feinheit wichtig: Ein 9×9-Sudoku hat eine feste Größe, das löst jeder Rechner in Sekundenbruchteilen.
+Die Theorie betrachtet Sudokus der Größe n² × n², also 4×4, 9×9, 16×16, 25×25 und so weiter, und fragt, wie der Aufwand mit n wächst.
+
+=== Prüfen gegen Lösen in C#
+
+Das folgende Programm zeigt den Unterschied am Rucksackproblem.
+`IsSolution` prüft eine vorgelegte Auswahl in einem Durchlauf.
+`FindSolution` kennt keinen besseren Weg, als alle Auswahlen durchzuprobieren.
+
+[source,csharp]
+----
+Item[] items =
+[
+    new("Laptop", 3, 9),
+    new("Kamera", 1, 4),
+    new("Zelt", 4, 8),
+    new("Buch", 2, 3),
+    new("Jacke", 2, 5),
+];
+int capacity = 7;
+
+bool[] proposal = [true, true, false, false, true];
+Console.WriteLine($"Vorschlag {Describe(items, proposal)}, Wert 18: "
+    + $"{IsSolution(items, proposal, capacity, 18)}");
+
+foreach (int minValue in new[] { 18, 19 })
+{
+    (bool[]? selection, long tested) = FindSolution(items, capacity, minValue);
+    string result = selection is null ? "keine Lösung" : Describe(items, selection);
+    Console.WriteLine($"Wert {minValue}: {result} ({tested} von {1L << items.Length} geprüft)");
+}
+
+static bool IsSolution(Item[] items, bool[] selection, int capacity, int minValue)
+{
+    int weight = 0;
+    int value = 0;
+    for (int i = 0; i < items.Length; i++)                              // (1)
+    {
+        if (selection[i])
+        {
+            weight += items[i].Weight;
+            value += items[i].Value;
+        }
+    }
+    return weight <= capacity && value >= minValue;
+}
+
+static (bool[]? Selection, long Tested) FindSolution(Item[] items, int capacity, int minValue)
+{
+    long count = 1L << items.Length;                                    // (2)
+    for (long mask = 0; mask < count; mask++)
+    {
+        bool[] selection = new bool[items.Length];
+        for (int i = 0; i < items.Length; i++)
+        {
+            selection[i] = (mask & (1L << i)) != 0;                     // (3)
+        }
+        if (IsSolution(items, selection, capacity, minValue)) { return (selection, mask + 1); }
+    }
+    return (null, count);
+}
+
+static string Describe(Item[] items, bool[] selection) =>
+    string.Join(", ", items.Where((item, i) => selection[i]).Select(item => item.Name));
+
+record Item(string Name, int Weight, int Value);
+----
+
+[source,text]
+----
+Vorschlag Laptop, Kamera, Jacke, Wert 18: True
+Wert 18: Laptop, Kamera, Jacke (20 von 32 geprüft)
+Wert 19: keine Lösung (32 von 32 geprüft)
+----
+
+* *(1)* Das Prüfen braucht einen Durchlauf über die Gegenstände, also O(n).
+* *(2)* Bei n Gegenständen gibt es 2ⁿ Auswahlen, denn jeder Gegenstand ist dabei oder nicht.
+* *(3)* Die Bits von `mask` legen fest, welche Gegenstände ausgewählt sind.
+Bit i steht für Gegenstand i.
+
+Für eine Ja-Antwort hat die Suche hier Glück und findet nach 20 Versuchen eine Auswahl.
+Für die Nein-Antwort muss sie alle 32 Auswahlen prüfen, denn erst dann steht fest, dass es keine gibt.
+Mit 60 Gegenständen wären das 2⁶⁰ Auswahlen, bei 1 ns pro Auswahl laut der Tabelle oben rund 36 Jahre.
+
+Vielleicht wendest du ein, dass die Tabelle aus der link:{github_url}/08%20Theoretische%20Informatik/27_Dynamische_Programmierung.adoc[dynamischen Programmierung] den Rucksack doch schnell löst.
+Sie hat n · W Zellen.
+W ist aber eine _Zahl_ in der Eingabe, keine Anzahl von Elementen.
+Bei einer Kapazität von 10¹⁵ Gramm wird die Tabelle viel zu groß, obwohl die Eingabe nur ein paar Zahlen enthält.
+Man nennt so einen Algorithmus _pseudopolynomiell_.
+
+=== P liegt in NP
+
+Jedes Problem aus P liegt auch in NP.
+Wenn du ein Problem schnell lösen kannst, kannst du eine vorgelegte Lösung auch schnell prüfen: Du löst es einfach selbst und vergleichst.
+Es gilt also P ⊆ NP.
+
+== NP-vollständige Probleme
+
+Manche Probleme lassen sich in andere _übersetzen_.
+Wer zum Beispiel einen Stundenplan ohne Überschneidungen sucht, kann das als Färbung eines Graphen formulieren: Jede Lehrveranstaltung ist ein Knoten.
+Eine Kante verbindet zwei Lehrveranstaltungen, die nicht gleichzeitig stattfinden dürfen, etwa weil dieselbe Klasse sie besucht.
+Jede Farbe ist eine Zeitstunde.
+Ist die Übersetzung selbst schnell (polynomiell), nennt man sie eine *Reduktion*.
+Dann gilt: Wer das zweite Problem schnell löst, löst auch das erste schnell.
+
+1971 zeigte Stephen Cook (unabhängig davon auch Leonid Levin) etwas Erstaunliches: Es gibt ein Problem in NP, auf das sich _jedes_ andere Problem in NP reduzieren lässt.
+Es heißt SAT und fragt, ob man die Variablen einer logischen Formel so mit `true` und `false` belegen kann, dass die Formel wahr wird.
+Ein Jahr später zeigte Richard Karp dasselbe für 21 weitere Probleme.
+Heute kennt man tausende davon.
+
+Ein Problem heißt *NP-vollständig*, wenn es in NP liegt und sich jedes Problem aus NP darauf reduzieren lässt.
+Die NP-vollständigen Probleme sind damit die schwersten Probleme in NP.
+Beispiele (jeweils als Ja/Nein-Frage):
+
+* SAT
+* TSP: Gibt es eine Rundreise mit Länge höchstens K?
+* Rucksack: Gibt es eine Auswahl mit Gewicht höchstens W und Wert mindestens V?
+* Sudoku der Größe n² × n²: Hat das Rätsel eine Lösung?
+* Graphfärbung: Lässt sich ein Graph mit k Farben färben (Stundenpläne, Registerbelegung in Compilern)?
+
+Die Optimierungsvarianten wie „Finde die kürzeste Rundreise“ sind keine Ja/Nein-Fragen.
+Sie sind mindestens so schwer und heißen *NP-schwer*.
+
+image::{root_dir}/images/35_klassen.svg[]
+
+== Die Frage P = NP
+
+Die NP-vollständigen Probleme hängen alle zusammen.
+Findet jemand für ein einziges davon einen polynomiellen Algorithmus, sind sie alle in P, und es gilt P = NP.
+Beweist umgekehrt jemand, dass eines davon nicht in P liegt, gilt das für alle.
+
+Bis heute ist keines von beiden gelungen.
+*Ob P = NP gilt, ist eine der bekanntesten offenen Fragen der Informatik.*
+Das Clay Mathematics Institute hat im Jahr 2000 ein Preisgeld von einer Million US-Dollar für die Antwort ausgeschrieben.
+Die meisten Fachleute vermuten P ≠ NP, weil trotz jahrzehntelanger Suche niemand einen schnellen Algorithmus für ein NP-vollständiges Problem gefunden hat.
+Eine Vermutung ist aber kein Beweis.
+Die Grafik oben ist deshalb unter der Annahme P ≠ NP gezeichnet.
+
+Die Frage ist nicht nur theoretisch.
+Viele Verschlüsselungsverfahren beruhen darauf, dass sich ein Schlüssel leicht prüfen, aber nur sehr schwer finden lässt.
+Ein praktikabler Algorithmus für NP-vollständige Probleme würde viele davon unsicher machen.
+
+== Was das für die Praxis bedeutet
+
+Erkennst du ein Problem als NP-vollständig oder NP-schwer, kannst du dir die Suche nach einem Algorithmus sparen, der _immer_ optimal _und_ schnell ist.
+Das heißt aber nicht, dass das Problem unlösbar ist.
+Es gibt mehrere Auswege.
+
+=== Die Eingabe klein halten
+
+Bei kleinen Eingaben ist exponentielle Laufzeit kein Problem.
+Ein 9×9-Sudoku löst link:{github_url}/08%20Theoretische%20Informatik/25_Backtracking.adoc[Backtracking] meist in Sekundenbruchteilen.
+Oft lässt sich ein großes Problem in kleine zerlegen: Ein Paketdienst plant nicht eine Route für 2000 Pakete, sondern teilt die Pakete auf Fahrzeuge und Bezirke auf.
+Pro Fahrzeug bleiben dann vielleicht zehn Stopps, und die kann man exakt optimieren.
+
+=== Heuristiken
+
+Eine *Heuristik* ist ein Verfahren, das schnell eine _gute_, aber nicht unbedingt die _beste_ Lösung findet.
+Beim TSP ist die einfachste Heuristik *Nearest Neighbour* (nächster Nachbar): Starte in einer Stadt und fahre immer zur nächstgelegenen Stadt, die du noch nicht besucht hast.
+Am Ende kehrst du zum Start zurück.
+Das ist ein link:{github_url}/08%20Theoretische%20Informatik/26_Greedy.adoc[Greedy-Algorithmus] und braucht nur O(n²) Schritte.
+
+image::{root_dir}/images/35_tsp.svg[]
+
+Die Grafik zeigt acht Städte.
+Nearest Neighbour beginnt in A und besucht die Städte in der Reihenfolge A, G, E, B, D, H, C, F. Die ersten Schritte sind kurz.
+Am Ende ist nur noch F übrig, das weit weg liegt, und von dort geht es den ganzen Weg zurück nach A. Die Rundreise ist 309,1 km lang.
+Die optimale Rundreise A, C, H, F, D, B, E, G hat nur 240,6 km.
+Die Heuristik liegt damit 28,5 % über dem Optimum.
+Um das Optimum zu finden, hat ein kleines Programm alle Rundreisen durchprobiert.
+
+Zwei Dinge fallen auf:
+
+* Die Nearest-Neighbour-Tour kreuzt sich selbst (F → A schneidet D → H).
+Eine optimale Tour hat nie Kreuzungen.
+Das Verfahren _2-Opt_ nutzt das: Es löst Kreuzungen auf, indem es zwei Kanten austauscht, solange die Tour dadurch kürzer wird.
+* Das Ergebnis hängt von der Startstadt ab.
+Startet Nearest Neighbour in D, F oder H, findet es bei diesen Städten zufällig das Optimum.
+Alle Startstädte durchzuprobieren kostet nur den Faktor n.
+
+=== Näherungsverfahren mit Garantie
+
+Eine Heuristik verspricht nichts.
+Ein *Näherungsverfahren* (Approximationsalgorithmus) gibt dagegen eine Garantie.
+Der Algorithmus von Christofides findet zum Beispiel für das TSP, bei dem die Entfernungen wie auf einer Landkarte die Dreiecksungleichung erfüllen, in polynomieller Zeit immer eine Rundreise, die höchstens 50 % länger als die optimale ist.
+Für das Rucksackproblem gibt es Verfahren, die beliebig nahe an das Optimum herankommen.
+Je näher, desto länger rechnen sie.
+
+=== Fertige Solver
+
+Für viele NP-schwere Probleme gibt es hoch optimierte Programmbibliotheken, sogenannte _Solver_.
+Sie kombinieren geschicktes Backtracking, Pruning und Heuristiken und lösen in der Praxis oft Eingaben mit tausenden Variablen.
+Beispiele sind SAT-Solver, Solver für lineare Optimierung und Google OR-Tools, das auch ein NuGet-Paket für .NET anbietet.
+Bevor du selbst ein NP-schweres Problem implementierst, lohnt sich ein Blick auf solche Werkzeuge.
+
+== Ausblick
+
+Es gibt sogar Probleme, die _kein_ Algorithmus lösen kann, egal wie viel Zeit er hat: Das bekannteste ist das _Halteproblem_, also die Frage, ob ein beliebiges Programm bei einer bestimmten Eingabe irgendwann anhält.
+
+// tag::pdf_exclude[]
+== Übungen
+
+. Schreibe ein Programm, das für 8 Städte mit zufälligen Koordinaten die kürzeste Rundreise mit Brute Force und eine Rundreise mit Nearest Neighbour berechnet.
+Wiederhole das für 100 zufällige Instanzen.
+Um wie viel Prozent ist die Nearest-Neighbour-Tour im Mittel länger, und wie groß ist der schlechteste Fall?
+. Schreibe eine Methode `+bool IsValidSolution(int[,] grid)+`, die prüft, ob ein ausgefülltes 9×9-Sudoku eine gültige Lösung ist.
+Bestimme ihre Laufzeit für ein Sudoku der Größe n² × n².
+Begründe in wenigen Sätzen, warum das Prüfen leichter ist als das Lösen.
+. Schätze ab, wie lange die Brute Force aus Übung 1 für 10, 15 und 20 Städte braucht.
+Gehe dabei von deiner Messung für 8 Städte aus.
+Ab wie vielen Städten dauert die Rechnung länger als einen Tag?
+
+// end::pdf_exclude[]

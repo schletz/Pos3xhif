@@ -1,0 +1,242 @@
+= Erweiterte LINQ Techniken
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Der Veranstalter aus dem Eventmanager möchte Statistiken.
+Wie viele Tickets gibt es pro Kontingent-Typ?
+Welche Gäste waren bei einem Event, egal bei welcher Show?
+Welche Shows fallen auf einen Feiertag, wenn die Feiertage aus einer Datei kommen?
+Mit `Where`, `Select` und `Any` kommst du hier nicht weiter.
+Du brauchst *GroupBy*, *SelectMany*, *Join* und *Aggregate*.
+Aus SQL kennst du `GROUP BY` und `JOIN` schon.
+In diesem Kapitel siehst du, wie sie in LINQ aussehen.
+
+[NOTE]
+====
+Dieses Kapitel ist für das *Selbststudium* gedacht.
+Es setzt die Kapitel link:{github_url}/17%20Serviceklassen/02_Linq_Where_Select_Any.adoc[LINQ: Where&#44; Select und Any] und link:{github_url}/17%20Serviceklassen/03_Serviceklassen.adoc[Serviceklassen mit EF Core] voraus.
+====
+
+== Projekt anlegen
+
+Du verwendest das Demoprojekt aus den vorigen Kapiteln.
+Lade link:{github_url}/17%20Serviceklassen/Uebungen/Eventmanager.7z[Eventmanager.7z] herunter, falls du es noch nicht hast.
+Die Beschreibung steht im Archiv in der Datei _README.md_.
+Alle Beispiele dieses Kapitels stehen in _Eventmanager.Tests/LinqAdvancedTests.cs_.
+
+== GroupBy: Gruppen bilden
+
+Wir wollen pro Kontingent-Typ (Floor, Rang, Stands) wissen, wie viele Tickets es gibt und für wie viele Personen sie gelten.
+In SQL schreibst du `GROUP BY`.
+In LINQ heißt die Methode `GroupBy`:
+
+image::{root_dir}/images/04_groupby.svg[GroupBy bildet Gruppen mit einem Schlüssel]
+
+[source,csharp]
+----
+var personsPerType = _db.Tickets
+    .GroupBy(t => t.Contingent.ContingentType)
+    .Select(g => new
+    {
+        ContingentType = g.Key,
+        Tickets = g.Count(),
+        Persons = g.Sum(t => t.Pax + 1)
+    })
+    .ToList();
+----
+
+[source,sql]
+----
+SELECT "c"."ContingentType", COUNT(*) AS "Tickets", COALESCE(SUM("t"."Pax" + 1), 0) AS "Persons"
+FROM "Tickets" AS "t"
+INNER JOIN "Contingents" AS "c" ON "t"."ContingentId" = "c"."Id"
+GROUP BY "c"."ContingentType"
+----
+
+`GroupBy` bekommt eine Lambda, die den *Schlüssel* (Key) liefert.
+Das Ergebnis ist eine Folge von Gruppen vom Typ `+IGrouping<ContingentType, Ticket>+`.
+Jede Gruppe hat ein Property `Key` und ist selbst eine Liste ihrer Elemente.
+Deshalb funktionieren `g.Count()` und `+g.Sum(...)+` wie bei jeder anderen Liste.
+Das `Select` danach entspricht der SELECT-Liste mit den Aggregatfunktionen.
+
+Brauchst du *mehrere Schlüssel*, verwendest du einen anonymen Typ, wie `GROUP BY Year, Month`:
+
+[source,csharp]
+----
+var showsPerMonth = _db.Shows
+    .GroupBy(s => new { s.Date.Year, s.Date.Month })
+    .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
+    .Select(g => new { g.Key.Year, g.Key.Month, Count = g.Count() })
+    .ToList();
+----
+
+Zwei Regeln für EF Core:
+
+* Nach `GroupBy` sollte ein `Select` mit Aggregatfunktionen (`Count`, `Sum`, `Max` ...) folgen.
+Nur das kann SQL direkt berechnen.
+* Sortiere *vor* einem `Select`, das einen Record mit Konstruktor erzeugt (`+.OrderBy(g => g.Key).Select(g => new MyDto(...))+`).
+Ein `OrderBy` auf die Properties des Records danach kann EF Core nicht übersetzen.
+Bei anonymen Typen funktioniert beides.
+
+=== Oft brauchst du gar kein GroupBy
+
+Wie viele Shows hat jedes Event?
+Das geht mit `GroupBy` über die Shows.
+Mit der Navigation `e.Shows` ist es einfacher, und Events *ohne* Shows kommen mit 0 ins Ergebnis:
+
+[source,csharp]
+----
+var showsPerEvent = _db.Events
+    .Select(e => new { e.Name, Count = e.Shows.Count })
+    .ToList();
+----
+
+`+_db.Shows.GroupBy(s => s.Event.Name)+` würde Events ohne Shows nicht liefern, denn es gibt keine Show, die eine Gruppe für sie bilden könnte.
+Gruppiere daher nur, wenn es keine passende Navigation gibt (z. B. nach einem Enum, einem Datum oder einem Wert wie der Stadt).
+
+== SelectMany: Listen von Listen flach machen
+
+Welche Gäste waren bei einem Event?
+Ein Event hat Shows, eine Show hat Kontingente, ein Kontingent hat Tickets.
+Mit `+Select(e => e.Shows)+` bekommst du eine *Liste von Listen*.
+`SelectMany` macht daraus eine einzige Liste:
+
+image::{root_dir}/images/04_selectmany.svg[Select liefert eine Liste von Listen, SelectMany eine flache Liste]
+
+[source,csharp]
+----
+List<string> guestNames = _db.Events
+    .Where(e => e.Id == 1)
+    .SelectMany(e => e.Shows)
+    .SelectMany(s => s.Contingents)
+    .SelectMany(c => c.Tickets)
+    .Select(t => t.Guest.Lastname)
+    .Distinct()
+    .OrderBy(n => n)
+    .ToList();
+----
+
+[source,sql]
+----
+SELECT DISTINCT "g"."Lastname"
+FROM "Events" AS "e"
+INNER JOIN "Shows" AS "s" ON "e"."Id" = "s"."EventId"
+INNER JOIN "Contingents" AS "c" ON "s"."Id" = "c"."ShowId"
+INNER JOIN "Tickets" AS "t" ON "c"."Id" = "t"."ContingentId"
+INNER JOIN "Guests" AS "g" ON "t"."GuestId" = "g"."Id"
+WHERE "e"."Id" = 1
+----
+
+Jedes `SelectMany` über eine Navigation wird zu einem `INNER JOIN`.
+Du schreibst die JOINs nicht selbst, du gehst einfach den Navigationen entlang.
+
+== Join: Verbinden ohne Navigation
+
+In EF Core brauchst du `Join` fast nie, denn die Navigationen erzeugen die JOINs.
+`Join` brauchst du, wenn es *keine Beziehung* gibt.
+Ein Beispiel: Die Feiertage kommen aus einer Datei oder einem Webservice.
+Sie haben keinen Fremdschlüssel zu den Shows.
+Das Einzige, was sie verbindet, ist das Datum.
+
+image::{root_dir}/images/04_join.svg[Join verbindet zwei Listen über einen gleichen Schlüssel]
+
+[source,csharp]
+----
+private record Holiday(DateOnly Date, string Name);
+
+var shows = _db.Shows
+    .Select(s => new { s.Id, s.Date, EventName = s.Event.Name })
+    .ToList();
+
+var showsOnHolidays = shows
+    .Join(holidays,                          // the second list
+        s => DateOnly.FromDateTime(s.Date),  // key of a show
+        h => h.Date,                         // key of a holiday
+        (s, h) => new { s.EventName, s.Date, Holiday = h.Name })   // result of a pair
+    .ToList();
+----
+
+`Join` liefert nur die Paare, bei denen die Schlüssel gleich sind, wie ein `INNER JOIN`.
+Seit .NET 10 gibt es auch *`LeftJoin`*.
+Dabei bleibt jedes Element der ersten Liste im Ergebnis.
+Gibt es keinen Partner, ist das zweite Element `null`:
+
+[source,csharp]
+----
+var allShows = shows
+    .LeftJoin(holidays,
+        s => DateOnly.FromDateTime(s.Date),
+        h => h.Date,
+        (s, h) => new { s.EventName, s.Date, Holiday = h?.Name })
+    .ToList();
+----
+
+Liegen beide Tabellen in der Datenbank (zwei DbSets ohne Beziehung), übersetzt EF Core `Join` in einen `INNER JOIN` und `LeftJoin` in einen `LEFT JOIN`.
+Die Holidays im Beispiel sind dagegen eine Liste im Speicher.
+Deshalb laden wir die Shows zuerst mit `ToList()`.
+
+== Aggregate: Eine Liste zu einem Wert zusammenfassen
+
+In JavaScript kennst du `reduce`.
+In .NET heißt die Methode `Aggregate`.
+Sie geht die Liste Element für Element durch und reicht einen Zwischenwert (Akkumulator) weiter:
+
+image::{root_dir}/images/04_aggregate.svg[Aggregate fasst eine Liste schrittweise zu einem Wert zusammen]
+
+[%header]
+|===
+|JavaScript |C#
+|`+names.reduce((sum, n) => sum + n.length, 0)+` |`+names.Aggregate(0, (sum, n) => sum + n.Length)+`
+|`+names.reduce((text, n) => text + ", " + n)+` |`+names.Aggregate((text, n) => text + ", " + n)+`
+|===
+
+Beachte die Reihenfolge der Parameter: In C# kommt der Startwert *zuerst*.
+Ohne Startwert beginnt `Aggregate` mit dem ersten Element.
+Bei einer leeren Liste wirft es dann eine `InvalidOperationException`.
+Mit Startwert liefert es bei einer leeren Liste den Startwert.
+
+Für viele Fälle gibt es fertige Methoden: `Sum`, `Max`, `string.Join`.
+`Aggregate` lohnt sich, wenn es keine passende Methode gibt.
+Ein Beispiel: `Sum` gibt es nicht für `TimeSpan`.
+
+[source,csharp]
+----
+TimeSpan total = durations.Aggregate(TimeSpan.Zero, (sum, d) => sum + d);
+----
+
+[WARNING]
+====
+EF Core übersetzt `Aggregate` nicht in SQL.
+Lade die Daten zuerst mit `ToList()` und rufe `Aggregate` danach auf.
+====
+
+// tag::pdf_exclude[]
+== Übungen
+
+. *BusStatistics:* Erstelle Statistiken für einen automatisierten Linienbus: Eingriffe pro Grund und Tag, Fahrgäste pro Linie, Haltestellen eines Fahrzeugs und Eingriffe pro Wetterlage über Wetterdaten ohne Fremdschlüssel.
+Vorgegebene Unit Tests prüfen deine Lösung.
+Lade dazu link:{github_url}/17%20Serviceklassen/Uebungen/BusStatistics.7z[BusStatistics.7z] herunter.
+Die Angabe steht im Archiv in der Datei _README.md_.
+. *Statistiken für den Eventmanager:* Schreibe die Abfragen in _LinqAdvancedTests.cs_ und vergleiche das erzeugte SQL mit deiner Erwartung.
+* Anzahl der Shows pro Wochentag (`DayOfWeek`), sortiert nach dem Wochentag.
+* Pro Gast die Anzahl der Tickets und die Summe der Personen.
+Auch Gäste ohne Tickets sollen vorkommen.
+Brauchst du dafür `GroupBy`?
+* Alle Kontingent-Typen, die bei einem bestimmten Event vorkommen (ohne Duplikate).
+* Die Namen aller Events als ein String, getrennt durch `+|+`.
+Löse es einmal mit `Aggregate` und einmal mit `string.Join`.
+
+// end::pdf_exclude[]

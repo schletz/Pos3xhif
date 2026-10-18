@@ -1,0 +1,2186 @@
+[
+  {
+    "ID": 11395,
+    "NAME": "ANDAU",
+    "BUNDESLAND": "BGL",
+    "LAENGE": 17.0333,
+    "BREITE": 47.7725,
+    "HOEHE": 118
+  },
+  {
+    "ID": 11193,
+    "NAME": "BAD TATZMANNSDORF ",
+    "BUNDESLAND": "BGL",
+    "LAENGE": 16.225,
+    "BREITE": 47.3381,
+    "HOEHE": 347
+  },
+  {
+    "ID": 11197,
+    "NAME": "BERNSTEIN",
+    "BUNDESLAND": "BGL",
+    "LAENGE": 16.2614,
+    "BREITE": 47.4083,
+    "HOEHE": 631
+  },
+  {
+    "ID": 11394,
+    "NAME": "BRUCKNEUDORF",
+    "BUNDESLAND": "BGL",
+    "LAENGE": 16.845,
+    "BREITE": 48.0128,
+    "HOEHE": 166
+  },
+  {
+    "ID": 11190,
+    "NAME": "EISENSTADT-NORDOST",
+    "BUNDESLAND": "BGL",
+    "LAENGE": 16.5383,
+    "BREITE": 47.8542,
+    "HOEHE": 184
+  },
+  {
+    "ID": 11198,
+    "NAME": "GÜSSING",
+    "BUNDESLAND": "BGL",
+    "LAENGE": 16.3219,
+    "BREITE": 47.0625,
+    "HOEHE": 215
+  },
+  {
+    "ID": 11192,
+    "NAME": "KLEINZICKEN",
+    "BUNDESLAND": "BGL",
+    "LAENGE": 16.3356,
+    "BREITE": 47.2075,
+    "HOEHE": 265
+  },
+  {
+    "ID": 8989042,
+    "NAME": "KROISEGG",
+    "BUNDESLAND": "BGL",
+    "LAENGE": 16.0422,
+    "BREITE": 47.3786,
+    "HOEHE": 444
+  },
+  {
+    "ID": 11393,
+    "NAME": "LUTZMANNSBURG",
+    "BUNDESLAND": "BGL",
+    "LAENGE": 16.6456,
+    "BREITE": 47.4653,
+    "HOEHE": 201
+  },
+  {
+    "ID": 11189,
+    "NAME": "MATTERSBURG",
+    "BUNDESLAND": "BGL",
+    "LAENGE": 16.3892,
+    "BREITE": 47.745,
+    "HOEHE": 284
+  },
+  {
+    "ID": 11258,
+    "NAME": "NEUDORF/LANDSEE",
+    "BUNDESLAND": "BGL",
+    "LAENGE": 16.3814,
+    "BREITE": 47.5628,
+    "HOEHE": 429
+  },
+  {
+    "ID": 11194,
+    "NAME": "NEUSIEDL",
+    "BUNDESLAND": "BGL",
+    "LAENGE": 16.8417,
+    "BREITE": 47.9508,
+    "HOEHE": 148
+  },
+  {
+    "ID": 11072,
+    "NAME": "NEUSIEDL/SEE ",
+    "BUNDESLAND": "BGL",
+    "LAENGE": 16.8289,
+    "BREITE": 47.9492,
+    "HOEHE": 117
+  },
+  {
+    "ID": 11084,
+    "NAME": "PODERSDORF",
+    "BUNDESLAND": "BGL",
+    "LAENGE": 16.8344,
+    "BREITE": 47.8661,
+    "HOEHE": 116
+  },
+  {
+    "ID": 11396,
+    "NAME": "RECHNITZ  ",
+    "BUNDESLAND": "BGL",
+    "LAENGE": 16.4542,
+    "BREITE": 47.3014,
+    "HOEHE": 308
+  },
+  {
+    "ID": 11392,
+    "NAME": "WÖRTERBERG",
+    "BUNDESLAND": "BGL",
+    "LAENGE": 16.0967,
+    "BREITE": 47.2261,
+    "HOEHE": 404
+  },
+  {
+    "ID": 11275,
+    "NAME": "ARRIACH",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 13.8525,
+    "BREITE": 46.7278,
+    "HOEHE": 890
+  },
+  {
+    "ID": 11218,
+    "NAME": "BAD BLEIBERG",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 13.6844,
+    "BREITE": 46.6253,
+    "HOEHE": 909
+  },
+  {
+    "ID": 11234,
+    "NAME": "BAD EISENKAPPEL",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 14.5933,
+    "BREITE": 46.4906,
+    "HOEHE": 623
+  },
+  {
+    "ID": 11270,
+    "NAME": "DELLACH",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 13.0828,
+    "BREITE": 46.7419,
+    "HOEHE": 628
+  },
+  {
+    "ID": 11206,
+    "NAME": "DÖLLACH",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 12.9025,
+    "BREITE": 46.9581,
+    "HOEHE": 1071
+  },
+  {
+    "ID": 11232,
+    "NAME": "FEISTRITZ ob BLEIBURG",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 14.7667,
+    "BREITE": 46.5589,
+    "HOEHE": 532
+  },
+  {
+    "ID": 11227,
+    "NAME": "FELDKIRCHEN",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 14.0969,
+    "BREITE": 46.7219,
+    "HOEHE": 546
+  },
+  {
+    "ID": 11235,
+    "NAME": "FERLACH",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 14.3142,
+    "BREITE": 46.5311,
+    "HOEHE": 459
+  },
+  {
+    "ID": 11222,
+    "NAME": "FLATTNITZ",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 14.0361,
+    "BREITE": 46.9408,
+    "HOEHE": 1437
+  },
+  {
+    "ID": 11226,
+    "NAME": "FRESACH",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 13.6853,
+    "BREITE": 46.7153,
+    "HOEHE": 683
+  },
+  {
+    "ID": 11228,
+    "NAME": "FRIESACH",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 14.4058,
+    "BREITE": 46.9586,
+    "HOEHE": 640
+  },
+  {
+    "ID": 11273,
+    "NAME": "GMÜND",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 13.5342,
+    "BREITE": 46.9028,
+    "HOEHE": 738
+  },
+  {
+    "ID": 11259,
+    "NAME": "HERMAGOR",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 13.4922,
+    "BREITE": 46.6097,
+    "HOEHE": 562
+  },
+  {
+    "ID": 11216,
+    "NAME": "KANZELHÖHE",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 13.9019,
+    "BREITE": 46.6772,
+    "HOEHE": 1520
+  },
+  {
+    "ID": 11349,
+    "NAME": "KATSCHBERG",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 13.6147,
+    "BREITE": 47.0606,
+    "HOEHE": 1635
+  },
+  {
+    "ID": 11231,
+    "NAME": "KLAGENFURT-FLUGHAFEN",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 14.3183,
+    "BREITE": 46.6483,
+    "HOEHE": 450
+  },
+  {
+    "ID": 11086,
+    "NAME": "KORNAT",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 12.8889,
+    "BREITE": 46.685,
+    "HOEHE": 990
+  },
+  {
+    "ID": 11255,
+    "NAME": "KÖTSCHACH-MAUTHEN",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 12.9972,
+    "BREITE": 46.6772,
+    "HOEHE": 722
+  },
+  {
+    "ID": 11217,
+    "NAME": "LOIBL/TUNNEL",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 14.2492,
+    "BREITE": 46.4439,
+    "HOEHE": 1097
+  },
+  {
+    "ID": 11260,
+    "NAME": "MALLNITZ",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 13.1667,
+    "BREITE": 46.9919,
+    "HOEHE": 1197
+  },
+  {
+    "ID": 11215,
+    "NAME": "MILLSTATT",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 13.5728,
+    "BREITE": 46.8081,
+    "HOEHE": 721
+  },
+  {
+    "ID": 11262,
+    "NAME": "OBERVELLACH",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 13.1944,
+    "BREITE": 46.9353,
+    "HOEHE": 688
+  },
+  {
+    "ID": 11278,
+    "NAME": "PÖRTSCHACH",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 14.1653,
+    "BREITE": 46.6308,
+    "HOEHE": 450
+  },
+  {
+    "ID": 11214,
+    "NAME": "PREITENEGG",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 14.915,
+    "BREITE": 46.9381,
+    "HOEHE": 1034
+  },
+  {
+    "ID": 11272,
+    "NAME": "SPITTAL/DRAU",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 13.4872,
+    "BREITE": 46.7906,
+    "HOEHE": 542
+  },
+  {
+    "ID": 11229,
+    "NAME": "ST.ANDRÄ/LAVANTTAL",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 14.8281,
+    "BREITE": 46.7642,
+    "HOEHE": 403
+  },
+  {
+    "ID": 11237,
+    "NAME": "ST.VEIT/GLAN",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 14.3856,
+    "BREITE": 46.7392,
+    "HOEHE": 463
+  },
+  {
+    "ID": 11265,
+    "NAME": "VILLACHER ALPE",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 13.6728,
+    "BREITE": 46.6036,
+    "HOEHE": 2117
+  },
+  {
+    "ID": 11213,
+    "NAME": "VILLACH-STADT",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 13.8739,
+    "BREITE": 46.6181,
+    "HOEHE": 493
+  },
+  {
+    "ID": 11257,
+    "NAME": "VÖLKERMARKT-GOLDBRUNNHOF",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 14.6392,
+    "BREITE": 46.6708,
+    "HOEHE": 466
+  },
+  {
+    "ID": 11263,
+    "NAME": "WEISSENSEE-GATSCHACH",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 13.2858,
+    "BREITE": 46.7186,
+    "HOEHE": 949
+  },
+  {
+    "ID": 11225,
+    "NAME": "WEITENSFELD",
+    "BUNDESLAND": "KNT",
+    "LAENGE": 14.1908,
+    "BREITE": 46.8492,
+    "HOEHE": 704
+  },
+  {
+    "ID": 11019,
+    "NAME": "ALLENTSTEIG",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 15.3669,
+    "BREITE": 48.6908,
+    "HOEHE": 599
+  },
+  {
+    "ID": 11018,
+    "NAME": "AMSTETTEN",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 14.895,
+    "BREITE": 48.1089,
+    "HOEHE": 266
+  },
+  {
+    "ID": 11188,
+    "NAME": "ASPANG",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 16.1014,
+    "BREITE": 47.575,
+    "HOEHE": 454
+  },
+  {
+    "ID": 11046,
+    "NAME": "BAD DEUTSCH-ALTENBURG ",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 16.9067,
+    "BREITE": 48.1364,
+    "HOEHE": 169
+  },
+  {
+    "ID": 11367,
+    "NAME": "BÄRNKOPF",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 15.0028,
+    "BREITE": 48.3911,
+    "HOEHE": 969
+  },
+  {
+    "ID": 11079,
+    "NAME": "BERNDORF",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 16.1011,
+    "BREITE": 47.9392,
+    "HOEHE": 337
+  },
+  {
+    "ID": 11077,
+    "NAME": "BRUNN AM GEBIRGE",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 16.27,
+    "BREITE": 48.1069,
+    "HOEHE": 291
+  },
+  {
+    "ID": 11066,
+    "NAME": "BUCHBERG",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 15.945,
+    "BREITE": 48.2136,
+    "HOEHE": 460
+  },
+  {
+    "ID": 11048,
+    "NAME": "GÄNSERNDORF",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 16.7136,
+    "BREITE": 48.3378,
+    "HOEHE": 163
+  },
+  {
+    "ID": 11064,
+    "NAME": "GARS/KAMP",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 15.7,
+    "BREITE": 48.5919,
+    "HOEHE": 273
+  },
+  {
+    "ID": 11037,
+    "NAME": "GROSS-ENZERSDORF",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 16.5592,
+    "BREITE": 48.1997,
+    "HOEHE": 154
+  },
+  {
+    "ID": 11082,
+    "NAME": "GUMPOLDSKIRCHEN",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 16.2808,
+    "BREITE": 48.0358,
+    "HOEHE": 212
+  },
+  {
+    "ID": 11378,
+    "NAME": "GUTENSTEIN/MARIAHILFBERG",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 15.8761,
+    "BREITE": 47.8714,
+    "HOEHE": 709
+  },
+  {
+    "ID": 11384,
+    "NAME": "HIRSCHENKOGEL",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 15.8333,
+    "BREITE": 47.6233,
+    "HOEHE": 1318
+  },
+  {
+    "ID": 11385,
+    "NAME": "HOHE WAND/HOCHKOGELHAUS",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 16.035,
+    "BREITE": 47.8222,
+    "HOEHE": 937
+  },
+  {
+    "ID": 11333,
+    "NAME": "HOHENAU",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 16.9044,
+    "BREITE": 48.6164,
+    "HOEHE": 154
+  },
+  {
+    "ID": 11388,
+    "NAME": "HORN",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 15.6536,
+    "BREITE": 48.6706,
+    "HOEHE": 318
+  },
+  {
+    "ID": 11024,
+    "NAME": "JAUERLING",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 15.3392,
+    "BREITE": 48.3344,
+    "HOEHE": 955
+  },
+  {
+    "ID": 11391,
+    "NAME": "KLAUSEN-LEOPOLDSDORF",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 16.0017,
+    "BREITE": 48.0886,
+    "HOEHE": 389
+  },
+  {
+    "ID": 11070,
+    "NAME": "KREMS",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 15.6214,
+    "BREITE": 48.4183,
+    "HOEHE": 203
+  },
+  {
+    "ID": 11386,
+    "NAME": "KRUMBACH  ",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 16.1867,
+    "BREITE": 47.5281,
+    "HOEHE": 545
+  },
+  {
+    "ID": 11335,
+    "NAME": "LAA/TH.KLÄRANLAGE",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 16.3897,
+    "BREITE": 48.7314,
+    "HOEHE": 184
+  },
+  {
+    "ID": 11030,
+    "NAME": "LANGENLEBARN",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 16.1181,
+    "BREITE": 48.3239,
+    "HOEHE": 175
+  },
+  {
+    "ID": 11075,
+    "NAME": "LANGENLOIS",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 15.6972,
+    "BREITE": 48.4725,
+    "HOEHE": 207
+  },
+  {
+    "ID": 11083,
+    "NAME": "LEISER BERGE",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 16.3717,
+    "BREITE": 48.5589,
+    "HOEHE": 457
+  },
+  {
+    "ID": 11078,
+    "NAME": "LILIENFELD-TARSCHBERG",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 15.5875,
+    "BREITE": 48.0281,
+    "HOEHE": 696
+  },
+  {
+    "ID": 11021,
+    "NAME": "LITSCHAU",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 15.0383,
+    "BREITE": 48.9547,
+    "HOEHE": 558
+  },
+  {
+    "ID": 11170,
+    "NAME": "LUNZ AM SEE",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 15.0675,
+    "BREITE": 47.8544,
+    "HOEHE": 612
+  },
+  {
+    "ID": 11054,
+    "NAME": "MELK",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 15.3314,
+    "BREITE": 48.2097,
+    "HOEHE": 307
+  },
+  {
+    "ID": 11332,
+    "NAME": "MISTELBACH",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 16.6094,
+    "BREITE": 48.5708,
+    "HOEHE": 191
+  },
+  {
+    "ID": 11185,
+    "NAME": "MÖNICHKIRCHEN",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 16.0333,
+    "BREITE": 47.5111,
+    "HOEHE": 991
+  },
+  {
+    "ID": 11376,
+    "NAME": "OBERNDORF/MELK",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 15.2139,
+    "BREITE": 48.0625,
+    "HOEHE": 295
+  },
+  {
+    "ID": 11381,
+    "NAME": "POTTSCHACH",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 16.0081,
+    "BREITE": 47.7008,
+    "HOEHE": 416
+  },
+  {
+    "ID": 11032,
+    "NAME": "POYSDORF-OST",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 16.6375,
+    "BREITE": 48.6692,
+    "HOEHE": 198
+  },
+  {
+    "ID": 11382,
+    "NAME": "PUCHBERG/SCHNEEBERG",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 15.9069,
+    "BREITE": 47.7903,
+    "HOEHE": 583
+  },
+  {
+    "ID": 11047,
+    "NAME": "RAABS/THAYA",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 15.5019,
+    "BREITE": 48.8481,
+    "HOEHE": 459
+  },
+  {
+    "ID": 11180,
+    "NAME": "RAX/SEILBAHNBERGSTATION",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 15.7786,
+    "BREITE": 47.7175,
+    "HOEHE": 1547
+  },
+  {
+    "ID": 11380,
+    "NAME": "REICHENAU/RAX",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 15.8369,
+    "BREITE": 47.6997,
+    "HOEHE": 488
+  },
+  {
+    "ID": 11022,
+    "NAME": "RETZ/WINDMÜHLE",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 15.9417,
+    "BREITE": 48.7611,
+    "HOEHE": 320
+  },
+  {
+    "ID": 11334,
+    "NAME": "SCHÖNGRABERN",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 16.0617,
+    "BREITE": 48.6033,
+    "HOEHE": 253
+  },
+  {
+    "ID": 11036,
+    "NAME": "SCHWECHAT",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 16.5814,
+    "BREITE": 48.1175,
+    "HOEHE": 183
+  },
+  {
+    "ID": 11387,
+    "NAME": "SEIBERSDORF",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 16.505,
+    "BREITE": 47.9764,
+    "HOEHE": 185
+  },
+  {
+    "ID": 11383,
+    "NAME": "SEMMERING",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 15.8283,
+    "BREITE": 47.6333,
+    "HOEHE": 988
+  },
+  {
+    "ID": 11389,
+    "NAME": "ST.PÖLTEN/LANDHAUS",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 15.6311,
+    "BREITE": 48.1997,
+    "HOEHE": 274
+  },
+  {
+    "ID": 11020,
+    "NAME": "STIFT ZWETTL",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 15.2036,
+    "BREITE": 48.6178,
+    "HOEHE": 502
+  },
+  {
+    "ID": 11027,
+    "NAME": "STOCKERAU",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 16.1925,
+    "BREITE": 48.3969,
+    "HOEHE": 203
+  },
+  {
+    "ID": 11374,
+    "NAME": "WACHTBERG BEI STEYR",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 14.4611,
+    "BREITE": 48.0475,
+    "HOEHE": 384
+  },
+  {
+    "ID": 11071,
+    "NAME": "WAIDHOFEN/YBBS",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 14.8097,
+    "BREITE": 47.9456,
+    "HOEHE": 384
+  },
+  {
+    "ID": 11368,
+    "NAME": "WAIDHOFEN/YBBS-ZENTRUM ",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 14.7844,
+    "BREITE": 47.9578,
+    "HOEHE": 365
+  },
+  {
+    "ID": 11025,
+    "NAME": "WEITRA",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 14.8986,
+    "BREITE": 48.7022,
+    "HOEHE": 572
+  },
+  {
+    "ID": 11379,
+    "NAME": "WIESELBURG",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 15.1467,
+    "BREITE": 48.1272,
+    "HOEHE": 259
+  },
+  {
+    "ID": 11045,
+    "NAME": "WOLKERSDORF",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 16.5075,
+    "BREITE": 48.3803,
+    "HOEHE": 185
+  },
+  {
+    "ID": 11182,
+    "NAME": "WR.NEUSTADT/FLUGPLATZ",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 16.2314,
+    "BREITE": 47.8322,
+    "HOEHE": 275
+  },
+  {
+    "ID": 11085,
+    "NAME": "ZWERNDORF",
+    "BUNDESLAND": "NOE",
+    "LAENGE": 16.8314,
+    "BREITE": 48.3381,
+    "HOEHE": 144
+  },
+  {
+    "ID": 11254,
+    "NAME": "ALTMÜNSTER",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 13.7733,
+    "BREITE": 47.8792,
+    "HOEHE": 438
+  },
+  {
+    "ID": 11062,
+    "NAME": "ASPACH",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 13.3,
+    "BREITE": 48.1831,
+    "HOEHE": 427
+  },
+  {
+    "ID": 11256,
+    "NAME": "BAD GOISERN",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 13.6447,
+    "BREITE": 47.6219,
+    "HOEHE": 538
+  },
+  {
+    "ID": 11361,
+    "NAME": "BAD ISCHL",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 13.6472,
+    "BREITE": 47.7061,
+    "HOEHE": 507
+  },
+  {
+    "ID": 11057,
+    "NAME": "BAD ZELL",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 14.6636,
+    "BREITE": 48.355,
+    "HOEHE": 554
+  },
+  {
+    "ID": 11051,
+    "NAME": "BRAUNAU/RANSHOFEN",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 13.0283,
+    "BREITE": 48.2242,
+    "HOEHE": 382
+  },
+  {
+    "ID": 11267,
+    "NAME": "DACHSTEIN/HUNERKOGEL",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 13.6264,
+    "BREITE": 47.4678,
+    "HOEHE": 2700
+  },
+  {
+    "ID": 11268,
+    "NAME": "DACHSTEIN/SCHLADMINGER GLETSCHER",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 13.6325,
+    "BREITE": 47.4744,
+    "HOEHE": 2520
+  },
+  {
+    "ID": 11002,
+    "NAME": "ENNS",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 14.4503,
+    "BREITE": 48.1958,
+    "HOEHE": 317
+  },
+  {
+    "ID": 11155,
+    "NAME": "FEUERKOGEL",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 13.7178,
+    "BREITE": 47.8167,
+    "HOEHE": 1618
+  },
+  {
+    "ID": 11068,
+    "NAME": "FREISTADT",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 14.5064,
+    "BREITE": 48.4947,
+    "HOEHE": 539
+  },
+  {
+    "ID": 11067,
+    "NAME": "GALLSPACH ",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 13.825,
+    "BREITE": 48.2042,
+    "HOEHE": 426
+  },
+  {
+    "ID": 11010,
+    "NAME": "HÖRSCHING",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 14.1881,
+    "BREITE": 48.2353,
+    "HOEHE": 298
+  },
+  {
+    "ID": 11007,
+    "NAME": "KOLLERSCHLAG",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 13.8392,
+    "BREITE": 48.6028,
+    "HOEHE": 714
+  },
+  {
+    "ID": 11012,
+    "NAME": "KREMSMÜNSTER ",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 14.1311,
+    "BREITE": 48.055,
+    "HOEHE": 382
+  },
+  {
+    "ID": 11060,
+    "NAME": "LINZ-STADT",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 14.2853,
+    "BREITE": 48.2964,
+    "HOEHE": 262
+  },
+  {
+    "ID": 11049,
+    "NAME": "MATTIGHOFEN",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 13.1511,
+    "BREITE": 48.0972,
+    "HOEHE": 460
+  },
+  {
+    "ID": 11347,
+    "NAME": "MICHELDORF",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 14.1344,
+    "BREITE": 47.8831,
+    "HOEHE": 459
+  },
+  {
+    "ID": 11153,
+    "NAME": "MONDSEE",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 13.3472,
+    "BREITE": 47.8508,
+    "HOEHE": 481
+  },
+  {
+    "ID": 11061,
+    "NAME": "OSTERMIETHING",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 12.8317,
+    "BREITE": 48.0531,
+    "HOEHE": 412
+  },
+  {
+    "ID": 11050,
+    "NAME": "REICHENAU/MÜHLKREIS",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 14.3456,
+    "BREITE": 48.4592,
+    "HOEHE": 689
+  },
+  {
+    "ID": 11004,
+    "NAME": "REICHERSBERG",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 13.3761,
+    "BREITE": 48.3311,
+    "HOEHE": 351
+  },
+  {
+    "ID": 11053,
+    "NAME": "RIED IM INNKREIS",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 13.475,
+    "BREITE": 48.2172,
+    "HOEHE": 427
+  },
+  {
+    "ID": 11008,
+    "NAME": "ROHRBACH",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 13.9942,
+    "BREITE": 48.5697,
+    "HOEHE": 597
+  },
+  {
+    "ID": 11055,
+    "NAME": "SCHÄRDING",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 13.4344,
+    "BREITE": 48.4642,
+    "HOEHE": 307
+  },
+  {
+    "ID": 11357,
+    "NAME": "ST.WOLFGANG",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 13.4419,
+    "BREITE": 47.7403,
+    "HOEHE": 544
+  },
+  {
+    "ID": 11056,
+    "NAME": "VÖCKLABRUCK",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 13.6456,
+    "BREITE": 48.0067,
+    "HOEHE": 432
+  },
+  {
+    "ID": 11058,
+    "NAME": "WAIZENKIRCHEN",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 13.8647,
+    "BREITE": 48.3267,
+    "HOEHE": 400
+  },
+  {
+    "ID": 11059,
+    "NAME": "WELS-SCHLEISSHEIM",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 14.0714,
+    "BREITE": 48.1628,
+    "HOEHE": 309
+  },
+  {
+    "ID": 11341,
+    "NAME": "WEYER",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 14.6658,
+    "BREITE": 47.8572,
+    "HOEHE": 426
+  },
+  {
+    "ID": 11355,
+    "NAME": "WINDISCHGARSTEN",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 14.3261,
+    "BREITE": 47.7203,
+    "HOEHE": 600
+  },
+  {
+    "ID": 11001,
+    "NAME": "WOLFSEGG",
+    "BUNDESLAND": "OOE",
+    "LAENGE": 13.6708,
+    "BREITE": 48.1056,
+    "HOEHE": 635
+  },
+  {
+    "ID": 11369,
+    "NAME": "ABTENAU",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 13.3433,
+    "BREITE": 47.5667,
+    "HOEHE": 709
+  },
+  {
+    "ID": 11372,
+    "NAME": "BAD GASTEIN",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 13.1333,
+    "BREITE": 47.1106,
+    "HOEHE": 1092
+  },
+  {
+    "ID": 11141,
+    "NAME": "BISCHOFSHOFEN",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 13.2211,
+    "BREITE": 47.4067,
+    "HOEHE": 550
+  },
+  {
+    "ID": 11371,
+    "NAME": "GOLLING",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 13.1817,
+    "BREITE": 47.5911,
+    "HOEHE": 490
+  },
+  {
+    "ID": 11179,
+    "NAME": "GROSSARLTAL",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 13.1947,
+    "BREITE": 47.2414,
+    "HOEHE": 882
+  },
+  {
+    "ID": 11344,
+    "NAME": "KOLM SAIGURN",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 12.9847,
+    "BREITE": 47.0694,
+    "HOEHE": 1626
+  },
+  {
+    "ID": 11373,
+    "NAME": "KOLOMANSBERG",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 13.2753,
+    "BREITE": 47.8778,
+    "HOEHE": 1113
+  },
+  {
+    "ID": 11136,
+    "NAME": "KRIMML",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 12.1819,
+    "BREITE": 47.2292,
+    "HOEHE": 1009
+  },
+  {
+    "ID": 11140,
+    "NAME": "LOFER/ORT",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 12.6953,
+    "BREITE": 47.5844,
+    "HOEHE": 622
+  },
+  {
+    "ID": 11337,
+    "NAME": "LOFERER ALM",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 12.6453,
+    "BREITE": 47.5972,
+    "HOEHE": 1620
+  },
+  {
+    "ID": 11137,
+    "NAME": "MARIA ALM",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 12.8983,
+    "BREITE": 47.4061,
+    "HOEHE": 792
+  },
+  {
+    "ID": 11348,
+    "NAME": "MARIAPFARR",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 13.745,
+    "BREITE": 47.1522,
+    "HOEHE": 1151
+  },
+  {
+    "ID": 11152,
+    "NAME": "MATTSEE",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 13.1056,
+    "BREITE": 47.9772,
+    "HOEHE": 502
+  },
+  {
+    "ID": 11073,
+    "NAME": "MITTERSILL",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 12.4958,
+    "BREITE": 47.2792,
+    "HOEHE": 783
+  },
+  {
+    "ID": 11149,
+    "NAME": "OBERTAUERN",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 13.5597,
+    "BREITE": 47.2489,
+    "HOEHE": 1772
+  },
+  {
+    "ID": 11208,
+    "NAME": "RADSTADT-TANDALIER",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 13.4408,
+    "BREITE": 47.38,
+    "HOEHE": 835
+  },
+  {
+    "ID": 11346,
+    "NAME": "RAURIS",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 12.9925,
+    "BREITE": 47.2236,
+    "HOEHE": 934
+  },
+  {
+    "ID": 11138,
+    "NAME": "RUDOLFSHÜTTE",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 12.6258,
+    "BREITE": 47.135,
+    "HOEHE": 2317
+  },
+  {
+    "ID": 11366,
+    "NAME": "SAALBACH",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 12.6483,
+    "BREITE": 47.3878,
+    "HOEHE": 975
+  },
+  {
+    "ID": 11150,
+    "NAME": "SALZBURG FLUGHAFEN",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 13.0086,
+    "BREITE": 47.7894,
+    "HOEHE": 430
+  },
+  {
+    "ID": 11350,
+    "NAME": "SALZBURG/FREISAAL",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 13.0533,
+    "BREITE": 47.7906,
+    "HOEHE": 418
+  },
+  {
+    "ID": 11340,
+    "NAME": "SCHMITTENHÖHE",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 12.7381,
+    "BREITE": 47.3286,
+    "HOEHE": 1956
+  },
+  {
+    "ID": 11343,
+    "NAME": "SONNBLICK ",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 12.9575,
+    "BREITE": 47.0542,
+    "HOEHE": 3109
+  },
+  {
+    "ID": 11364,
+    "NAME": "ST.JOHANN IM PONGAU",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 13.1867,
+    "BREITE": 47.3197,
+    "HOEHE": 634
+  },
+  {
+    "ID": 11148,
+    "NAME": "ST.MICHAEL/LUNGAU",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 13.6228,
+    "BREITE": 47.0944,
+    "HOEHE": 1052
+  },
+  {
+    "ID": 11345,
+    "NAME": "ST.VEIT IM PONGAU",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 13.155,
+    "BREITE": 47.3292,
+    "HOEHE": 749
+  },
+  {
+    "ID": 11399,
+    "NAME": "TAMSWEG",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 13.8083,
+    "BREITE": 47.1331,
+    "HOEHE": 1025
+  },
+  {
+    "ID": 11144,
+    "NAME": "ZELL AM SEE",
+    "BUNDESLAND": "SAL",
+    "LAENGE": 12.7953,
+    "BREITE": 47.3267,
+    "HOEHE": 770
+  },
+  {
+    "ID": 11375,
+    "NAME": "AFLENZ",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 15.2408,
+    "BREITE": 47.5458,
+    "HOEHE": 783
+  },
+  {
+    "ID": 11157,
+    "NAME": "AIGEN/ENNSTAL",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 14.1383,
+    "BREITE": 47.5328,
+    "HOEHE": 641
+  },
+  {
+    "ID": 11356,
+    "NAME": "BAD AUSSEE",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 13.7583,
+    "BREITE": 47.6106,
+    "HOEHE": 743
+  },
+  {
+    "ID": 11244,
+    "NAME": "BAD GLEICHENBERG",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 15.9036,
+    "BREITE": 46.8722,
+    "HOEHE": 269
+  },
+  {
+    "ID": 11358,
+    "NAME": "BAD MITTERNDORF",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 13.9347,
+    "BREITE": 47.5533,
+    "HOEHE": 814
+  },
+  {
+    "ID": 11264,
+    "NAME": "BAD RADKERSBURG",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 15.9933,
+    "BREITE": 46.6922,
+    "HOEHE": 207
+  },
+  {
+    "ID": 11175,
+    "NAME": "BRUCK/MUR",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 15.2497,
+    "BREITE": 47.4056,
+    "HOEHE": 482
+  },
+  {
+    "ID": 11285,
+    "NAME": "DEUTSCHLANDSBERG",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 15.2269,
+    "BREITE": 46.8217,
+    "HOEHE": 354
+  },
+  {
+    "ID": 11398,
+    "NAME": "EICHBERG",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 15.9369,
+    "BREITE": 47.4,
+    "HOEHE": 692
+  },
+  {
+    "ID": 11298,
+    "NAME": "FELDBACH",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 15.8797,
+    "BREITE": 46.9489,
+    "HOEHE": 323
+  },
+  {
+    "ID": 11173,
+    "NAME": "FISCHBACH",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 15.6439,
+    "BREITE": 47.4442,
+    "HOEHE": 1034
+  },
+  {
+    "ID": 11249,
+    "NAME": "FROHNLEITEN",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 15.315,
+    "BREITE": 47.2556,
+    "HOEHE": 421
+  },
+  {
+    "ID": 11246,
+    "NAME": "FÜRSTENFELD",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 16.0808,
+    "BREITE": 47.0308,
+    "HOEHE": 271
+  },
+  {
+    "ID": 11247,
+    "NAME": "GLEISDORF",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 15.7081,
+    "BREITE": 47.1156,
+    "HOEHE": 377
+  },
+  {
+    "ID": 11240,
+    "NAME": "GRAZ-FLUGHAFEN",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 15.44,
+    "BREITE": 46.9806,
+    "HOEHE": 340
+  },
+  {
+    "ID": 11238,
+    "NAME": "GRAZ-STRASSGANG",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 15.4103,
+    "BREITE": 47.0461,
+    "HOEHE": 357
+  },
+  {
+    "ID": 11290,
+    "NAME": "GRAZ-UNIVERSITÄT",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 15.4489,
+    "BREITE": 47.0778,
+    "HOEHE": 367
+  },
+  {
+    "ID": 11359,
+    "NAME": "GRÖBMING",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 13.9042,
+    "BREITE": 47.4467,
+    "HOEHE": 766
+  },
+  {
+    "ID": 11167,
+    "NAME": "HALL/ADMONT",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 14.4908,
+    "BREITE": 47.5944,
+    "HOEHE": 637
+  },
+  {
+    "ID": 11390,
+    "NAME": "HARTBERG",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 15.9786,
+    "BREITE": 47.2806,
+    "HOEHE": 330
+  },
+  {
+    "ID": 11360,
+    "NAME": "IRDNING-GUMPENSTEIN",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 14.0997,
+    "BREITE": 47.495,
+    "HOEHE": 697
+  },
+  {
+    "ID": 11362,
+    "NAME": "KALWANG",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 14.7597,
+    "BREITE": 47.4214,
+    "HOEHE": 744
+  },
+  {
+    "ID": 11176,
+    "NAME": "KAPFENBERG-FLUGFELD",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 15.3356,
+    "BREITE": 47.4583,
+    "HOEHE": 515
+  },
+  {
+    "ID": 11221,
+    "NAME": "KÖFLACH ",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 15.0872,
+    "BREITE": 47.07,
+    "HOEHE": 463
+  },
+  {
+    "ID": 11292,
+    "NAME": "LASSNITZHÖHE",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 15.5922,
+    "BREITE": 47.0736,
+    "HOEHE": 530
+  },
+  {
+    "ID": 11274,
+    "NAME": "LEOBEN",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 15.0867,
+    "BREITE": 47.3783,
+    "HOEHE": 544
+  },
+  {
+    "ID": 11171,
+    "NAME": "MARIAZELL/ST.SEBASTIAN-FLUGFELD",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 15.3022,
+    "BREITE": 47.7892,
+    "HOEHE": 864
+  },
+  {
+    "ID": 11199,
+    "NAME": "MOOSLANDL",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 14.7617,
+    "BREITE": 47.6475,
+    "HOEHE": 530
+  },
+  {
+    "ID": 11280,
+    "NAME": "MURAU",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 14.1769,
+    "BREITE": 47.1111,
+    "HOEHE": 816
+  },
+  {
+    "ID": 11177,
+    "NAME": "MÜRZZUSCHLAG",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 15.6728,
+    "BREITE": 47.6022,
+    "HOEHE": 705
+  },
+  {
+    "ID": 11220,
+    "NAME": "NEUMARKT",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 14.4247,
+    "BREITE": 47.0697,
+    "HOEHE": 869
+  },
+  {
+    "ID": 11377,
+    "NAME": "OBERWÖLZ",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 14.2867,
+    "BREITE": 47.2019,
+    "HOEHE": 842
+  },
+  {
+    "ID": 11161,
+    "NAME": "PRÄBICHL",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 14.9542,
+    "BREITE": 47.5217,
+    "HOEHE": 1215
+  },
+  {
+    "ID": 11351,
+    "NAME": "RAMSAU AM DACHSTEIN",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 13.6342,
+    "BREITE": 47.4253,
+    "HOEHE": 1207
+  },
+  {
+    "ID": 11063,
+    "NAME": "ROTTENMANN",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 14.4303,
+    "BREITE": 47.5078,
+    "HOEHE": 707
+  },
+  {
+    "ID": 11241,
+    "NAME": "SCHÖCKL",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 15.4664,
+    "BREITE": 47.1986,
+    "HOEHE": 1443
+  },
+  {
+    "ID": 11166,
+    "NAME": "SECKAU",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 14.7786,
+    "BREITE": 47.2708,
+    "HOEHE": 872
+  },
+  {
+    "ID": 11242,
+    "NAME": "ST.RADEGUND",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 15.4897,
+    "BREITE": 47.1822,
+    "HOEHE": 726
+  },
+  {
+    "ID": 11363,
+    "NAME": "STOLZALPE",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 14.1883,
+    "BREITE": 47.1231,
+    "HOEHE": 1291
+  },
+  {
+    "ID": 11296,
+    "NAME": "WAGNA-LEIBNITZ",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 15.5528,
+    "BREITE": 46.7675,
+    "HOEHE": 268
+  },
+  {
+    "ID": 11365,
+    "NAME": "ZELTWEG",
+    "BUNDESLAND": "STMK",
+    "LAENGE": 14.7469,
+    "BREITE": 47.1997,
+    "HOEHE": 678
+  },
+  {
+    "ID": 11266,
+    "NAME": "ACHENKIRCH CAMPINGPLATZ",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 11.7067,
+    "BREITE": 47.4994,
+    "HOEHE": 931
+  },
+  {
+    "ID": 11125,
+    "NAME": "ALPBACH",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 11.9406,
+    "BREITE": 47.3964,
+    "HOEHE": 929
+  },
+  {
+    "ID": 11129,
+    "NAME": "BRENNER",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 11.5108,
+    "BREITE": 47.0072,
+    "HOEHE": 1412
+  },
+  {
+    "ID": 11318,
+    "NAME": "BRUNNENKOGEL",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 10.8617,
+    "BREITE": 46.9128,
+    "HOEHE": 3437
+  },
+  {
+    "ID": 11118,
+    "NAME": "EHRWALD",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 10.92,
+    "BREITE": 47.4042,
+    "HOEHE": 982
+  },
+  {
+    "ID": 11312,
+    "NAME": "GALTÜR",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 10.1856,
+    "BREITE": 46.9681,
+    "HOEHE": 1587
+  },
+  {
+    "ID": 11110,
+    "NAME": "GALZIG",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 10.2303,
+    "BREITE": 47.1297,
+    "HOEHE": 2079
+  },
+  {
+    "ID": 11135,
+    "NAME": "HAHNENKAMM/EHRENBACHHÖHE",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 12.3592,
+    "BREITE": 47.4183,
+    "HOEHE": 1794
+  },
+  {
+    "ID": 8989044,
+    "NAME": "HAHNENKAMM/SONNENRAST",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 12.3594,
+    "BREITE": 47.4092,
+    "HOEHE": 1667
+  },
+  {
+    "ID": 11309,
+    "NAME": "HAIMING",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 10.8894,
+    "BREITE": 47.2597,
+    "HOEHE": 659
+  },
+  {
+    "ID": 11250,
+    "NAME": "HINTERTUX ",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 11.6747,
+    "BREITE": 47.1069,
+    "HOEHE": 1503
+  },
+  {
+    "ID": 11339,
+    "NAME": "HOCHFILZEN",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 12.6211,
+    "BREITE": 47.4703,
+    "HOEHE": 962
+  },
+  {
+    "ID": 11315,
+    "NAME": "HOLZGAU",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 10.3386,
+    "BREITE": 47.2575,
+    "HOEHE": 1092
+  },
+  {
+    "ID": 11115,
+    "NAME": "IMST",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 10.7422,
+    "BREITE": 47.2369,
+    "HOEHE": 773
+  },
+  {
+    "ID": 11120,
+    "NAME": "INNSBRUCK-FLUGPLATZ",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 11.3567,
+    "BREITE": 47.26,
+    "HOEHE": 578
+  },
+  {
+    "ID": 11320,
+    "NAME": "INNSBRUCK-UNIV.",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 11.3842,
+    "BREITE": 47.26,
+    "HOEHE": 578
+  },
+  {
+    "ID": 11310,
+    "NAME": "ISCHGL-IDALPE",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 10.3172,
+    "BREITE": 46.9825,
+    "HOEHE": 2327
+  },
+  {
+    "ID": 11325,
+    "NAME": "JENBACH",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 11.7581,
+    "BREITE": 47.3889,
+    "HOEHE": 530
+  },
+  {
+    "ID": 11200,
+    "NAME": "KALS",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 12.6464,
+    "BREITE": 47.0047,
+    "HOEHE": 1352
+  },
+  {
+    "ID": 11327,
+    "NAME": "KIRCHDORF",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 12.4631,
+    "BREITE": 47.5661,
+    "HOEHE": 637
+  },
+  {
+    "ID": 11279,
+    "NAME": "KITZBÜHEL",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 12.3892,
+    "BREITE": 47.4439,
+    "HOEHE": 772
+  },
+  {
+    "ID": 11131,
+    "NAME": "KÖSSEN",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 12.3939,
+    "BREITE": 47.6628,
+    "HOEHE": 588
+  },
+  {
+    "ID": 11130,
+    "NAME": "KUFSTEIN",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 12.1628,
+    "BREITE": 47.5753,
+    "HOEHE": 490
+  },
+  {
+    "ID": 11112,
+    "NAME": "LANDECK",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 10.5636,
+    "BREITE": 47.1403,
+    "HOEHE": 796
+  },
+  {
+    "ID": 11204,
+    "NAME": "LIENZ",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 12.8064,
+    "BREITE": 46.8256,
+    "HOEHE": 661
+  },
+  {
+    "ID": 11330,
+    "NAME": "MAYRHOFEN",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 11.8514,
+    "BREITE": 47.1625,
+    "HOEHE": 640
+  },
+  {
+    "ID": 11113,
+    "NAME": "NAUDERS",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 10.4969,
+    "BREITE": 46.8911,
+    "HOEHE": 1330
+  },
+  {
+    "ID": 11324,
+    "NAME": "NEUSTIFT/MILDERS",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 11.2919,
+    "BREITE": 47.1028,
+    "HOEHE": 1007
+  },
+  {
+    "ID": 11127,
+    "NAME": "OBERGURGL",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 11.0244,
+    "BREITE": 46.8667,
+    "HOEHE": 1942
+  },
+  {
+    "ID": 11126,
+    "NAME": "PATSCHERKOFEL",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 11.4622,
+    "BREITE": 47.2089,
+    "HOEHE": 2251
+  },
+  {
+    "ID": 11316,
+    "NAME": "PITZTALER GLETSCHER",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 10.8792,
+    "BREITE": 46.9269,
+    "HOEHE": 2864
+  },
+  {
+    "ID": 11313,
+    "NAME": "PRUTZ",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 10.6647,
+    "BREITE": 47.0686,
+    "HOEHE": 871
+  },
+  {
+    "ID": 11314,
+    "NAME": "REUTTE",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 10.7153,
+    "BREITE": 47.4944,
+    "HOEHE": 842
+  },
+  {
+    "ID": 11123,
+    "NAME": "RINN",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 11.5039,
+    "BREITE": 47.2492,
+    "HOEHE": 924
+  },
+  {
+    "ID": 11326,
+    "NAME": "SCHMIRN",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 11.5803,
+    "BREITE": 47.0872,
+    "HOEHE": 1464
+  },
+  {
+    "ID": 11119,
+    "NAME": "SEEFELD",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 11.1756,
+    "BREITE": 47.3247,
+    "HOEHE": 1182
+  },
+  {
+    "ID": 11201,
+    "NAME": "SILLIAN",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 12.4236,
+    "BREITE": 46.7464,
+    "HOEHE": 1081
+  },
+  {
+    "ID": 11069,
+    "NAME": "SÖLL",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 12.2003,
+    "BREITE": 47.5031,
+    "HOEHE": 697
+  },
+  {
+    "ID": 11311,
+    "NAME": "ST.ANTON AM ARLBERG",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 10.2667,
+    "BREITE": 47.1314,
+    "HOEHE": 1304
+  },
+  {
+    "ID": 11300,
+    "NAME": "ST.JAKOB/DEF.",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 12.3539,
+    "BREITE": 46.9169,
+    "HOEHE": 1383
+  },
+  {
+    "ID": 11317,
+    "NAME": "ST.LEONHARD/PITZTAL",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 10.8656,
+    "BREITE": 47.0272,
+    "HOEHE": 1454
+  },
+  {
+    "ID": 11329,
+    "NAME": "STEINACH AM BRENNER",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 11.4661,
+    "BREITE": 47.0983,
+    "HOEHE": 1036
+  },
+  {
+    "ID": 11111,
+    "NAME": "TANNHEIM",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 10.5058,
+    "BREITE": 47.5003,
+    "HOEHE": 1100
+  },
+  {
+    "ID": 11117,
+    "NAME": "UMHAUSEN",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 10.9289,
+    "BREITE": 47.1392,
+    "HOEHE": 1035
+  },
+  {
+    "ID": 11124,
+    "NAME": "VALLUGA",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 10.2128,
+    "BREITE": 47.1575,
+    "HOEHE": 2805
+  },
+  {
+    "ID": 11252,
+    "NAME": "VIRGEN",
+    "BUNDESLAND": "TIR",
+    "LAENGE": 12.4558,
+    "BREITE": 47.0028,
+    "HOEHE": 1212
+  },
+  {
+    "ID": 11301,
+    "NAME": "ALBERSCHWENDE",
+    "BUNDESLAND": "VBG",
+    "LAENGE": 9.8486,
+    "BREITE": 47.4575,
+    "HOEHE": 715
+  },
+  {
+    "ID": 11099,
+    "NAME": "BLUDENZ",
+    "BUNDESLAND": "VBG",
+    "LAENGE": 9.8294,
+    "BREITE": 47.1478,
+    "HOEHE": 571
+  },
+  {
+    "ID": 11304,
+    "NAME": "BRAND",
+    "BUNDESLAND": "VBG",
+    "LAENGE": 9.7383,
+    "BREITE": 47.1031,
+    "HOEHE": 1029
+  },
+  {
+    "ID": 11101,
+    "NAME": "BREGENZ",
+    "BUNDESLAND": "VBG",
+    "LAENGE": 9.7461,
+    "BREITE": 47.4992,
+    "HOEHE": 424
+  },
+  {
+    "ID": 11302,
+    "NAME": "DORNBIRN",
+    "BUNDESLAND": "VBG",
+    "LAENGE": 9.7256,
+    "BREITE": 47.4325,
+    "HOEHE": 407
+  },
+  {
+    "ID": 11105,
+    "NAME": "FELDKIRCH",
+    "BUNDESLAND": "VBG",
+    "LAENGE": 9.6097,
+    "BREITE": 47.2711,
+    "HOEHE": 438
+  },
+  {
+    "ID": 11104,
+    "NAME": "FRAXERN",
+    "BUNDESLAND": "VBG",
+    "LAENGE": 9.6744,
+    "BREITE": 47.3142,
+    "HOEHE": 807
+  },
+  {
+    "ID": 11108,
+    "NAME": "GASCHURN",
+    "BUNDESLAND": "VBG",
+    "LAENGE": 10.0286,
+    "BREITE": 46.9858,
+    "HOEHE": 976
+  },
+  {
+    "ID": 11307,
+    "NAME": "LANGEN AM ARLBERG",
+    "BUNDESLAND": "VBG",
+    "LAENGE": 10.1233,
+    "BREITE": 47.1317,
+    "HOEHE": 1221
+  },
+  {
+    "ID": 11251,
+    "NAME": "LATERNS-GAPFOHL",
+    "BUNDESLAND": "VBG",
+    "LAENGE": 9.76,
+    "BREITE": 47.275,
+    "HOEHE": 1559
+  },
+  {
+    "ID": 11253,
+    "NAME": "LECH AM ARLBERG",
+    "BUNDESLAND": "VBG",
+    "LAENGE": 10.1408,
+    "BREITE": 47.21,
+    "HOEHE": 1442
+  },
+  {
+    "ID": 11187,
+    "NAME": "MITTELBERG",
+    "BUNDESLAND": "VBG",
+    "LAENGE": 10.1525,
+    "BREITE": 47.3233,
+    "HOEHE": 1204
+  },
+  {
+    "ID": 11299,
+    "NAME": "ROHRSPITZ",
+    "BUNDESLAND": "VBG",
+    "LAENGE": 9.63,
+    "BREITE": 47.4972,
+    "HOEHE": 395
+  },
+  {
+    "ID": 11303,
+    "NAME": "SCHOPPERNAU",
+    "BUNDESLAND": "VBG",
+    "LAENGE": 10.0178,
+    "BREITE": 47.3114,
+    "HOEHE": 839
+  },
+  {
+    "ID": 11306,
+    "NAME": "SCHRÖCKEN",
+    "BUNDESLAND": "VBG",
+    "LAENGE": 10.0861,
+    "BREITE": 47.2617,
+    "HOEHE": 1244
+  },
+  {
+    "ID": 11100,
+    "NAME": "SULZBERG",
+    "BUNDESLAND": "VBG",
+    "LAENGE": 9.9147,
+    "BREITE": 47.5222,
+    "HOEHE": 1018
+  },
+  {
+    "ID": 11308,
+    "NAME": "WARTH",
+    "BUNDESLAND": "VBG",
+    "LAENGE": 10.1861,
+    "BREITE": 47.2558,
+    "HOEHE": 1478
+  },
+  {
+    "ID": 11090,
+    "NAME": "WIEN-DONAUFELD",
+    "BUNDESLAND": "WIE",
+    "LAENGE": 16.4314,
+    "BREITE": 48.2572,
+    "HOEHE": 160
+  },
+  {
+    "ID": 11035,
+    "NAME": "WIEN-HOHE WARTE",
+    "BUNDESLAND": "WIE",
+    "LAENGE": 16.3564,
+    "BREITE": 48.2486,
+    "HOEHE": 198
+  },
+  {
+    "ID": 11034,
+    "NAME": "WIEN-INNERE STADT",
+    "BUNDESLAND": "WIE",
+    "LAENGE": 16.3669,
+    "BREITE": 48.1983,
+    "HOEHE": 177
+  },
+  {
+    "ID": 11044,
+    "NAME": "WIEN-JUBILÄUMSWARTE",
+    "BUNDESLAND": "WIE",
+    "LAENGE": 16.2653,
+    "BREITE": 48.2211,
+    "HOEHE": 450
+  },
+  {
+    "ID": 11080,
+    "NAME": "WIEN-MARIABRUNN",
+    "BUNDESLAND": "WIE",
+    "LAENGE": 16.2294,
+    "BREITE": 48.2069,
+    "HOEHE": 225
+  },
+  {
+    "ID": 11042,
+    "NAME": "WIEN-STAMMERSDORF",
+    "BUNDESLAND": "WIE",
+    "LAENGE": 16.4056,
+    "BREITE": 48.3058,
+    "HOEHE": 191
+  },
+  {
+    "ID": 11040,
+    "NAME": "WIEN-UNTERLAA",
+    "BUNDESLAND": "WIE",
+    "LAENGE": 16.4194,
+    "BREITE": 48.125,
+    "HOEHE": 200
+  }
+]

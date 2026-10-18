@@ -1,0 +1,72 @@
+@startuml
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 15
+skinparam ArrowThickness 1.5
+skinparam class {
+  BackgroundColor #ffffff
+  HeaderBackgroundColor #ededed
+  BorderColor #1d1d1b
+  BorderThickness 1.5
+  FontStyle bold
+}
+skinparam stereotypeCBackgroundColor #d1ebf7
+skinparam stereotypeABackgroundColor #fdebd1
+skinparam stereotypeIBackgroundColor #e5f4f1
+skinparam stereotypeEBackgroundColor #e5f1d9
+hide empty fields
+hide empty methods
+
+class User
+{
+    +Email : string
+    +Firstname : string
+    +Lastname : string
+    ---
+    +User(string email, string firstname, string lastname)
+}
+
+class Comment
+{
+    +User : User
+    +Text : string
+    +Created : DateTime
+    ---
+    +Comment(User user, string text)
+}
+Comment "*" --> "1" User
+
+abstract class Post
+{
+    +User : User
+    +Title : string
+    +{abstract} Html : string
+    +AverageRating : decimal?
+    +RatingCount : int
+    +Comments : IReadOnlyList<Comment>
+    ---
+    #Post(User user, string title)
+    +void AddComment(User user, string text)
+    +bool TryRate(User user, int rating)
+}
+Post "*" --> "1" User
+Post "1" o--> "*" Comment
+
+class ImagePost
+{
+    +Url : string
+    +Html : string
+    ---
+    +ImagePost(User user, string title, string url)
+}
+ImagePost -up-|> Post
+
+class TextPost
+{
+    +Content : string
+    +Html : string
+    ---
+    +TextPost(User user, string title, string content)
+}
+TextPost -up-|> Post
+@enduml

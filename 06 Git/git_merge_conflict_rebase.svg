@@ -1,0 +1,199 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 1200" width="1100" height="1200" font-family="'Segoe UI', Helvetica, Arial, sans-serif">
+  <style>
+    .band { fill: #F7F7F7; stroke: #DDDDDD; stroke-width: 2; }
+    .h { font-size: 21px; font-weight: 700; fill: #262626; }
+    .line { fill: none; stroke: #404040; stroke-width: 4; stroke-linecap: round; }
+    .main { fill: #B3E3FF; stroke: #404040; stroke-width: 3; }
+    .add { fill: #B18BE8; stroke: #404040; stroke-width: 3; }
+    .del { fill: #4ED1A1; stroke: #404040; stroke-width: 3; }
+    .cid { font-size: 11px; font-weight: 700; fill: #262626; text-anchor: middle; }
+    .bname { font-family: Consolas, Menlo, monospace; font-size: 14px; font-weight: 700; }
+    .tag { fill: #FFF1CC; stroke: #E0A800; stroke-width: 1.5; }
+    .tagt { font-size: 12px; fill: #5C4400; text-anchor: middle; }
+    .badge { fill: #404040; }
+    .badget { font-size: 12px; font-weight: 700; fill: #FFFFFF; text-anchor: middle; }
+    .panel { fill: #FFFFFF; stroke: #C8C8C8; stroke-width: 1.5; }
+    .pt { font-size: 16px; font-weight: 700; fill: #262626; }
+    .cap { font-size: 14px; font-weight: 600; fill: #262626; }
+    .cmd { font-family: Consolas, Menlo, monospace; font-size: 13px; fill: #0B4F8A; }
+    .note { font-size: 13px; fill: #595959; }
+    .hint { font-size: 13px; font-style: italic; fill: #595959; }
+    .small { font-size: 12px; fill: #262626; }
+    .ok { font-size: 14px; font-weight: 700; fill: #1E8A4C; }
+    .err { font-size: 14px; font-weight: 700; fill: #D93025; }
+    .conflict { fill: none; stroke: #D93025; stroke-width: 3; stroke-dasharray: 8 6; }
+    .old { fill: none; stroke: #9E9E9E; stroke-width: 3; stroke-dasharray: 6 5; }
+    .oldc { fill: #EDEDED; stroke: #9E9E9E; stroke-width: 2; stroke-dasharray: 4 3; }
+    .oldt { font-size: 11px; font-weight: 700; fill: #8A8A8A; text-anchor: middle; }
+    .rebase { fill: none; stroke: #404040; stroke-width: 2.5; }
+  </style>
+  <defs>
+    <marker id="arrowDark" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#404040"/>
+    </marker>
+    <marker id="arrowRed" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#D93025"/>
+    </marker>
+  </defs>
+
+  <!-- Part 1: two feature branches change ListCustomer.tsx, second pull request fails -->
+  <g>
+    <rect class="band" x="10" y="10" width="1080" height="580" rx="14"/>
+    <text class="h" x="36" y="50">Teil 1 – Merge Konflikt: zwei Feature Branches ändern ListCustomer.tsx</text>
+
+    <!-- Branch lines -->
+    <text class="bname" x="56" y="305" text-anchor="end" fill="#1A6FA3">main</text>
+    <line class="line" x1="80" y1="300" x2="630" y2="300" marker-end="url(#arrowDark)"/>
+    <path class="line" d="M80,300 C80,230 110,170 160,170 L290,170 C330,170 360,230 360,300"/>
+    <path class="line" d="M80,300 C80,370 110,430 160,430 L300,430"/>
+    <path class="conflict" d="M316,430 L400,430 C470,430 520,380 520,318" marker-end="url(#arrowRed)"/>
+
+    <text class="bname" x="110" y="142" fill="#6B3FB5">feature/add_customer</text>
+    <text class="bname" x="110" y="474" fill="#1E7A55">feature/delete_customer</text>
+
+    <!-- Commits -->
+    <circle class="main" cx="80" cy="300" r="16"/>
+    <circle class="main" cx="360" cy="300" r="16"/>
+    <circle class="add" cx="190" cy="170" r="16"/><text class="cid" x="190" y="174">A1</text>
+    <circle class="add" cx="270" cy="170" r="16"/><text class="cid" x="270" y="174">A2</text>
+    <circle class="del" cx="200" cy="430" r="16"/><text class="cid" x="200" y="434">D1</text>
+    <circle class="del" cx="300" cy="430" r="16"/><text class="cid" x="300" y="434">D2</text>
+
+    <!-- Rejected merge -->
+    <g transform="translate(520,300)">
+      <circle r="16" fill="#FFFFFF" stroke="#D93025" stroke-width="3"/>
+      <path d="M-7,-7 L7,7 M7,-7 L-7,7" stroke="#D93025" stroke-width="3" stroke-linecap="round"/>
+    </g>
+
+    <!-- Changed file tags -->
+    <rect class="tag" x="170" y="193" width="160" height="24" rx="5"/>
+    <text class="tagt" x="250" y="209">ändert ListCustomer.tsx</text>
+    <rect class="tag" x="190" y="376" width="160" height="24" rx="5"/>
+    <text class="tagt" x="270" y="392">ändert ListCustomer.tsx</text>
+
+    <!-- Results on main -->
+    <text class="ok" x="316" y="347">PR #1 gemerged ✓</text>
+    <text class="err" x="545" y="336">PR #2 ✗</text>
+    <text class="small" x="545" y="354">Konflikt in</text>
+    <text class="small" x="545" y="371">ListCustomer.tsx</text>
+
+    <!-- Step badges in the graph -->
+    <g transform="translate(114,250)"><circle class="badge" r="11"/><text class="badget" y="4">1</text></g>
+    <g transform="translate(150,205)"><circle class="badge" r="11"/><text class="badget" y="4">2</text></g>
+    <g transform="translate(114,350)"><circle class="badge" r="11"/><text class="badget" y="4">3</text></g>
+    <g transform="translate(170,388)"><circle class="badge" r="11"/><text class="badget" y="4">4</text></g>
+    <g transform="translate(300,342)"><circle class="badge" r="11"/><text class="badget" y="4">5</text></g>
+    <g transform="translate(520,262)"><circle class="badge" r="11"/><text class="badget" y="4">6</text></g>
+
+    <!-- Command panel -->
+    <rect class="panel" x="670" y="75" width="400" height="500" rx="10"/>
+    <text class="pt" x="690" y="105">Befehle</text>
+
+    <g transform="translate(693,133)"><circle class="badge" r="11"/><text class="badget" y="4">1</text></g>
+    <text class="cap" x="712" y="138">A legt den Feature Branch an</text>
+    <text class="cmd" x="712" y="160">git checkout main</text>
+    <text class="cmd" x="712" y="180">git pull</text>
+    <text class="cmd" x="712" y="200">git checkout -b feature/add_customer</text>
+
+    <g transform="translate(693,227)"><circle class="badge" r="11"/><text class="badget" y="4">2</text></g>
+    <text class="cap" x="712" y="232">A ändert ListCustomer.tsx, commit und push</text>
+    <text class="cmd" x="712" y="254">git add .</text>
+    <text class="cmd" x="712" y="274">git commit -m "Add customer"</text>
+    <text class="cmd" x="712" y="294">git push -u origin feature/add_customer</text>
+
+    <g transform="translate(693,321)"><circle class="badge" r="11"/><text class="badget" y="4">3</text></g>
+    <text class="cap" x="712" y="326">B legt zur selben Zeit einen Branch an</text>
+    <text class="cmd" x="712" y="348">git checkout main</text>
+    <text class="cmd" x="712" y="368">git pull</text>
+    <text class="cmd" x="712" y="388">git checkout -b feature/delete_customer</text>
+
+    <g transform="translate(693,415)"><circle class="badge" r="11"/><text class="badget" y="4">4</text></g>
+    <text class="cap" x="712" y="420">B ändert ebenfalls ListCustomer.tsx</text>
+    <text class="cmd" x="712" y="442">git add .</text>
+    <text class="cmd" x="712" y="462">git commit -m "Delete customer"</text>
+    <text class="cmd" x="712" y="482">git push -u origin feature/delete_customer</text>
+
+    <g transform="translate(693,509)"><circle class="badge" r="11"/><text class="badget" y="4">5</text></g>
+    <text class="cap" x="712" y="514">GitHub: PR #1 wird gemerged <tspan class="ok">✓</tspan></text>
+
+    <g transform="translate(693,539)"><circle class="badge" r="11"/><text class="badget" y="4">6</text></g>
+    <text class="cap" x="712" y="544">GitHub: PR #2 kann nicht gemerged werden <tspan class="err">✗</tspan></text>
+    <text class="small" x="712" y="564" style="fill:#D93025">Merge Konflikt in ListCustomer.tsx</text>
+  </g>
+
+  <!-- Part 2: rebase feature/delete_customer onto main, then merge -->
+  <g transform="translate(0,600)">
+    <rect class="band" x="10" y="10" width="1080" height="580" rx="14"/>
+    <text class="h" x="36" y="50">Teil 2 – Lösung: feature/delete_customer mit rebase auf den neuen Stand von main bringen</text>
+
+    <!-- Merged add_customer branch (history only) -->
+    <g opacity="0.4">
+      <path class="line" d="M80,250 C80,190 100,150 140,150 L200,150 C240,150 260,190 260,250"/>
+      <circle class="add" cx="150" cy="150" r="16"/><text class="cid" x="150" y="154">A1</text>
+      <circle class="add" cx="200" cy="150" r="16"/><text class="cid" x="200" y="154">A2</text>
+      <text class="bname" x="90" y="122" fill="#6B3FB5">feature/add_customer</text>
+    </g>
+
+    <!-- Branch lines -->
+    <text class="bname" x="56" y="255" text-anchor="end" fill="#1A6FA3">main</text>
+    <line class="line" x1="80" y1="250" x2="630" y2="250" marker-end="url(#arrowDark)"/>
+    <path class="old" d="M80,250 C80,400 100,510 150,510 L240,510"/>
+    <path class="line" d="M260,250 C260,330 290,380 340,380 L470,380 C520,380 560,330 560,250"/>
+    <path class="rebase" d="M258,500 C295,485 330,455 346,402" marker-end="url(#arrowDark)"/>
+
+    <text class="bname" x="300" y="350" fill="#1E7A55" style="font-size:13px">feature/delete_customer</text>
+    <text class="small" x="278" y="236" style="fill:#595959">PR #1</text>
+
+    <!-- Commits -->
+    <circle class="main" cx="80" cy="250" r="16"/>
+    <circle class="main" cx="260" cy="250" r="16"/>
+    <circle class="main" cx="560" cy="250" r="16"/>
+    <circle class="oldc" cx="170" cy="510" r="16"/><text class="oldt" x="170" y="514">D1</text>
+    <circle class="oldc" cx="240" cy="510" r="16"/><text class="oldt" x="240" y="514">D2</text>
+    <circle class="del" cx="360" cy="380" r="16"/><text class="cid" x="360" y="384">D1'</text>
+    <circle class="del" cx="450" cy="380" r="16"/><text class="cid" x="450" y="384">D2'</text>
+
+    <!-- Annotations -->
+    <text class="hint" x="110" y="549">alter Stand von feature/delete_customer</text>
+    <text class="cmd" x="348" y="483">git pull origin main --rebase</text>
+    <rect class="tag" x="370" y="402" width="236" height="24" rx="5"/>
+    <text class="tagt" x="488" y="418">Konflikt in ListCustomer.tsx gelöst</text>
+    <text class="ok" x="508" y="223">PR #2 gemerged ✓</text>
+
+    <!-- Step badges in the graph -->
+    <g transform="translate(92,544)"><circle class="badge" r="11"/><text class="badget" y="4">7</text></g>
+    <g transform="translate(330,478)"><circle class="badge" r="11"/><text class="badget" y="4">8</text></g>
+    <g transform="translate(505,328)"><circle class="badge" r="11"/><text class="badget" y="4">9</text></g>
+    <g transform="translate(490,218)"><circle class="badge" r="11"/><text class="badget" y="4">10</text></g>
+
+    <!-- Command panel -->
+    <rect class="panel" x="670" y="75" width="400" height="500" rx="10"/>
+    <text class="pt" x="690" y="105">Befehle</text>
+
+    <g transform="translate(693,133)"><circle class="badge" r="11"/><text class="badget" y="4">7</text></g>
+    <text class="cap" x="712" y="138">B wechselt in den Feature Branch</text>
+    <text class="cmd" x="712" y="160">git checkout feature/delete_customer</text>
+
+    <g transform="translate(693,187)"><circle class="badge" r="11"/><text class="badget" y="4">8</text></g>
+    <text class="cap" x="712" y="192">Rebase auf den aktuellen Stand von main</text>
+    <text class="cmd" x="712" y="214">git pull origin main --rebase</text>
+    <text class="hint" x="712" y="236">Konflikt in ListCustomer.tsx in der IDE lösen</text>
+    <text class="cmd" x="712" y="258">git add .</text>
+    <text class="cmd" x="712" y="278">git rebase --continue</text>
+
+    <g transform="translate(693,305)"><circle class="badge" r="11"/><text class="badget" y="4">9</text></g>
+    <text class="cap" x="712" y="310">Neuen Stand nach GitHub übertragen</text>
+    <text class="cmd" x="712" y="332">git push --force-with-lease</text>
+
+    <g transform="translate(693,359)"><circle class="badge" r="11"/><text class="badget" y="4">10</text></g>
+    <text class="cap" x="712" y="364">GitHub: PR #2 wird gemerged <tspan class="ok">✓</tspan></text>
+
+    <line x1="690" y1="392" x2="1050" y2="392" stroke="#E0E0E0" stroke-width="1.5"/>
+    <text class="note" x="690" y="418">Die Commits D1 und D2 werden als neue Commits</text>
+    <text class="note" x="690" y="438">D1' und D2' (mit neuem Hash) auf den aktuellen</text>
+    <text class="note" x="690" y="458">Stand von main gesetzt. Der Konflikt wird so im</text>
+    <text class="note" x="690" y="478">Feature Branch gelöst und nicht erst beim Pull</text>
+    <text class="note" x="690" y="498">Request. Weil sich die History geändert hat, ist</text>
+    <text class="note" x="690" y="518">beim Push der Parameter --force-with-lease nötig.</text>
+  </g>
+</svg>

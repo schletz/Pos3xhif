@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="360" viewBox="0 0 1000 360" role="img" aria-label="Select liefert eine Liste von Listen, SelectMany eine flache Liste">
+<title>Select liefert eine Liste von Listen, SelectMany eine flache Liste</title>
+<defs><marker id="arrow-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9d9d9c"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0090d4"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f39000"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#71af2e"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#cc0935"/></marker><marker id="arrow-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6cc1b0"/></marker></defs>
+<rect x="1" y="1" width="998" height="358" rx="14" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="30.0" y="42.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Select vs. SelectMany</text>
+<text x="30.0" y="82.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Events</text>
+<rect x="30.0" y="95.0" width="210.0" height="44.0" rx="8" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="42.0" y="123.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Funk</text>
+<rect x="100.0" y="103.0" width="31.4" height="28.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="108.0" y="121.9" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="15.4" lengthAdjust="spacingAndGlyphs">S3</text>
+<rect x="136.4" y="103.0" width="31.4" height="28.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="144.4" y="121.9" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="15.4" lengthAdjust="spacingAndGlyphs">S5</text>
+<rect x="30.0" y="151.0" width="210.0" height="44.0" rx="8" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="42.0" y="179.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Rap</text>
+<rect x="100.0" y="159.0" width="31.4" height="28.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="108.0" y="177.9" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="15.4" lengthAdjust="spacingAndGlyphs">S2</text>
+<rect x="136.4" y="159.0" width="31.4" height="28.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="144.4" y="177.9" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="15.4" lengthAdjust="spacingAndGlyphs">S6</text>
+<rect x="172.8" y="159.0" width="31.4" height="28.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="180.8" y="177.9" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="15.4" lengthAdjust="spacingAndGlyphs">S7</text>
+<rect x="30.0" y="207.0" width="210.0" height="44.0" rx="8" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="42.0" y="235.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">World</text>
+<rect x="100.0" y="215.0" width="31.4" height="28.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="108.0" y="233.9" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="15.4" lengthAdjust="spacingAndGlyphs">S8</text>
+<line x1="245.0" y1="140.0" x2="330.0" y2="110.0" stroke="#9d9d9c" stroke-width="2" marker-end="url(#arrow-grey)"/>
+<text x="340.0" y="162.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">.Select(e =&gt; e.Shows)</text>
+<rect x="335.0" y="80.0" width="360.0" height="60.0" rx="8" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<rect x="345.0" y="90.0" width="92.0" height="40.0" rx="6" fill="#ededed" stroke="#9d9d9c" stroke-width="1.5"/>
+<rect x="351.0" y="96.0" width="30.3" height="28.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="359.0" y="114.5" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="13" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="14.3" lengthAdjust="spacingAndGlyphs">S3</text>
+<rect x="385.3" y="96.0" width="30.3" height="28.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="393.3" y="114.5" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="13" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="14.3" lengthAdjust="spacingAndGlyphs">S5</text>
+<rect x="447.0" y="90.0" width="134.0" height="40.0" rx="6" fill="#ededed" stroke="#9d9d9c" stroke-width="1.5"/>
+<rect x="453.0" y="96.0" width="30.3" height="28.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="461.0" y="114.5" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="13" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="14.3" lengthAdjust="spacingAndGlyphs">S2</text>
+<rect x="487.3" y="96.0" width="30.3" height="28.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="495.3" y="114.5" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="13" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="14.3" lengthAdjust="spacingAndGlyphs">S6</text>
+<rect x="521.6" y="96.0" width="30.3" height="28.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="529.6" y="114.5" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="13" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="14.3" lengthAdjust="spacingAndGlyphs">S7</text>
+<rect x="591.0" y="90.0" width="50.0" height="40.0" rx="6" fill="#ededed" stroke="#9d9d9c" stroke-width="1.5"/>
+<rect x="597.0" y="96.0" width="30.3" height="28.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="605.0" y="114.5" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="13" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="14.3" lengthAdjust="spacingAndGlyphs">S8</text>
+<text x="710.0" y="106.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">List&lt;List&lt;Show&gt;&gt;</text>
+<text x="710.0" y="128.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">3 Elemente (Listen)</text>
+<line x1="245.0" y1="200.0" x2="330.0" y2="240.0" stroke="#71af2e" stroke-width="2" marker-end="url(#arrow-green)"/>
+<text x="340.0" y="260.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">.SelectMany(e =&gt; e.Shows)</text>
+<rect x="345.0" y="205.0" width="30.3" height="28.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="353.0" y="223.6" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="13" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="14.3" lengthAdjust="spacingAndGlyphs">S3</text>
+<rect x="380.3" y="205.0" width="30.3" height="28.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="388.3" y="223.6" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="13" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="14.3" lengthAdjust="spacingAndGlyphs">S5</text>
+<rect x="415.6" y="205.0" width="30.3" height="28.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="423.6" y="223.6" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="13" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="14.3" lengthAdjust="spacingAndGlyphs">S2</text>
+<rect x="450.9" y="205.0" width="30.3" height="28.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="458.9" y="223.6" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="13" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="14.3" lengthAdjust="spacingAndGlyphs">S6</text>
+<rect x="486.2" y="205.0" width="30.3" height="28.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="494.2" y="223.6" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="13" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="14.3" lengthAdjust="spacingAndGlyphs">S7</text>
+<rect x="521.5" y="205.0" width="30.3" height="28.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="529.5" y="223.6" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="13" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="14.3" lengthAdjust="spacingAndGlyphs">S8</text>
+<text x="710.0" y="216.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">List&lt;Show&gt;</text>
+<text x="710.0" y="238.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">6 Elemente (flach)</text>
+<text x="30.0" y="320.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">SelectMany macht aus den inneren Listen eine einzige Liste. In SQL entspricht das einem INNER JOIN.</text>
+</svg>

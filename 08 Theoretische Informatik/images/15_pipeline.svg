@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="240" viewBox="0 0 960 240">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1f2937"/>
+    </marker>
+  </defs>
+  <rect x="0.5" y="0.5" width="959" height="239" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+
+  <!-- Captions above the data boxes -->
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1f2937" text-anchor="middle">
+    <text x="90" y="58">Text</text>
+    <text x="390" y="58">Tokens</text>
+    <text x="695" y="58">AST</text>
+    <text x="907" y="58">Wert</text>
+  </g>
+
+  <!-- Data boxes -->
+  <rect x="20" y="70" width="140" height="120" rx="6" fill="#f3f4f6" stroke="#d1d5db"/>
+  <rect x="265" y="70" width="250" height="120" rx="6" fill="#f3f4f6" stroke="#d1d5db"/>
+  <rect x="615" y="70" width="160" height="120" rx="6" fill="#f3f4f6" stroke="#d1d5db"/>
+  <rect x="875" y="70" width="65" height="120" rx="6" fill="#dcfce7" stroke="#16a34a"/>
+
+  <!-- Text -->
+  <text x="90" y="135" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937" text-anchor="middle">2 * (3 + 4)</text>
+
+  <!-- Token chips with their positions -->
+  <g font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle">
+    <rect x="276" y="113" width="24" height="30" rx="4" fill="#dbeafe" stroke="#2563eb"/>
+    <text x="288" y="133">2</text>
+    <rect x="304" y="113" width="24" height="30" rx="4" fill="#dbeafe" stroke="#2563eb"/>
+    <text x="316" y="133">*</text>
+    <rect x="332" y="113" width="24" height="30" rx="4" fill="#dbeafe" stroke="#2563eb"/>
+    <text x="344" y="133">(</text>
+    <rect x="360" y="113" width="24" height="30" rx="4" fill="#dbeafe" stroke="#2563eb"/>
+    <text x="372" y="133">3</text>
+    <rect x="388" y="113" width="24" height="30" rx="4" fill="#dbeafe" stroke="#2563eb"/>
+    <text x="400" y="133">+</text>
+    <rect x="416" y="113" width="24" height="30" rx="4" fill="#dbeafe" stroke="#2563eb"/>
+    <text x="428" y="133">4</text>
+    <rect x="444" y="113" width="24" height="30" rx="4" fill="#dbeafe" stroke="#2563eb"/>
+    <text x="456" y="133">)</text>
+    <rect x="472" y="113" width="36" height="30" rx="4" fill="#e5e7eb" stroke="#6b7280"/>
+    <text x="490" y="132" font-size="12">End</text>
+  </g>
+  <g font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">
+    <text x="288" y="160">0</text>
+    <text x="316" y="160">2</text>
+    <text x="344" y="160">4</text>
+    <text x="372" y="160">5</text>
+    <text x="400" y="160">7</text>
+    <text x="428" y="160">9</text>
+    <text x="456" y="160">10</text>
+    <text x="490" y="160">11</text>
+  </g>
+  <text x="390" y="100" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" fill="#6b7280" text-anchor="middle">Art und Position jedes Tokens</text>
+
+  <!-- Small AST -->
+  <g stroke="#1f2937" stroke-width="1.5">
+    <line x1="695" y1="92" x2="655" y2="130"/>
+    <line x1="695" y1="92" x2="730" y2="130"/>
+    <line x1="730" y1="130" x2="708" y2="168"/>
+    <line x1="730" y1="130" x2="752" y2="168"/>
+  </g>
+  <g fill="#dbeafe" stroke="#2563eb" stroke-width="1.5">
+    <circle cx="695" cy="92" r="13"/>
+    <circle cx="730" cy="130" r="13"/>
+  </g>
+  <g fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5">
+    <circle cx="655" cy="130" r="13"/>
+    <circle cx="708" cy="168" r="13"/>
+    <circle cx="752" cy="168" r="13"/>
+  </g>
+  <g font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">
+    <text x="695" y="97">*</text>
+    <text x="730" y="135">+</text>
+    <text x="655" y="135">2</text>
+    <text x="708" y="173">3</text>
+    <text x="752" y="173">4</text>
+  </g>
+
+  <!-- Value -->
+  <text x="907" y="138" font-family="Consolas, Menlo, monospace" font-size="24" font-weight="bold" fill="#16a34a" text-anchor="middle">14</text>
+
+  <!-- Types below the data boxes -->
+  <g font-family="Consolas, Menlo, monospace" font-size="12" fill="#6b7280" text-anchor="middle">
+    <text x="90" y="212">string</text>
+    <text x="390" y="212">List&lt;Token&gt;</text>
+    <text x="695" y="212">Expr</text>
+    <text x="907" y="212">double</text>
+  </g>
+
+  <!-- Stages between the data boxes -->
+  <g stroke="#1f2937" stroke-width="1.5" marker-end="url(#arrow)">
+    <line x1="162" y1="130" x2="262" y2="130"/>
+    <line x1="517" y1="130" x2="612" y2="130"/>
+    <line x1="777" y1="130" x2="872" y2="130"/>
+  </g>
+  <g fill="#dbeafe" stroke="#2563eb">
+    <rect x="170" y="96" width="84" height="24" rx="12"/>
+    <rect x="530" y="96" width="70" height="24" rx="12"/>
+    <rect x="783" y="96" width="84" height="24" rx="12"/>
+  </g>
+  <g font-family="Consolas, Menlo, monospace" font-size="12" fill="#1f2937" text-anchor="middle">
+    <text x="212" y="112">Tokenizer</text>
+    <text x="565" y="112">Parser</text>
+    <text x="825" y="112">Evaluator</text>
+  </g>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" fill="#1f2937" text-anchor="middle">
+    <text x="212" y="150">lexikalische</text>
+    <text x="212" y="164">Analyse</text>
+    <text x="565" y="150">syntaktische</text>
+    <text x="565" y="164">Analyse</text>
+    <text x="825" y="150">Auswertung</text>
+  </g>
+</svg>

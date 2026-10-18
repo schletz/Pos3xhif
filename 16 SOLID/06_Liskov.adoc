@@ -1,0 +1,557 @@
+= L: Liskov Substitution
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Der Webshop kennt zwei Zahlungsarten: Kreditkarte und Gutschein.
+Beide implementieren `IPaymentProvider`.
+Jetzt kommen Rücksendungen dazu, und das Interface bekommt eine Methode `Refund()`.
+Der Gutschein kann aber kein Geld zurückzahlen.
+Ein Agent löst das in Sekunden: Er wirft eine `NotSupportedException`.
+Der Code kompiliert, die Tests für die Kreditkarte sind grün.
+Bei der ersten Rücksendung mit Gutschein stürzt der Shop ab.
+In diesem Kapitel lernst du das *L* in SOLID kennen: das _Liskov Substitution Principle_.
+Es sagt, wann eine Implementierung wirklich zu ihrem Interface oder ihrer Basisklasse passt.
+
+== Projekt anlegen
+
+Du brauchst eine Solution mit Application und Testprojekt.
+Die Befehle und alle Anpassungen der Projektdateien sind im Kapitel link:{github_url}/15%20Unittests/02_xUnit.adoc#projekt-anlegen[Unit Tests mit xUnit] genau erklärt.
+Unter macOS ersetzt du _rd_, _md_ und _move_ durch _rm -rf_, _mkdir_ und _mv_.
+
+[source,text]
+----
+rd /S /Q WebshopDemo
+md WebshopDemo
+cd WebshopDemo
+md WebshopDemo.Application
+cd WebshopDemo.Application
+dotnet new classlib
+cd ..
+md WebshopDemo.Tests
+cd WebshopDemo.Tests
+dotnet new install xunit.v3.templates
+dotnet new xunit3 -f net10.0
+move global.json ..
+dotnet reference add ..\WebshopDemo.Application
+cd ..
+dotnet new sln -f sln
+dotnet sln add WebshopDemo.Application
+dotnet sln add WebshopDemo.Tests
+start WebshopDemo.sln
+----
+
+Lösche _Class1.cs_ und _UnitTest1.cs_.
+Entferne in beiden Projektdateien die Zeile _ImplicitUsings_ und füge `+<TreatWarningsAsErrors>true</TreatWarningsAsErrors>+` hinzu.
+Im Testprojekt entfernst du zusätzlich `+<Using Include="Xunit" />+`.
+
+== Das Problem: Ein Gutschein kann nicht erstatten
+
+Das Interface `IPaymentProvider` kennst du aus dem Kapitel link:{github_url}/01%20Types/06_Interfaces.adoc[Interfaces].
+Dort hat es nur `Pay()`.
+Für Rücksendungen kommt `Refund()` dazu.
+Der Kommentar beschreibt, was jede Implementierung verspricht.
+
+*IPaymentProvider.cs*, *CreditCard.cs* und *GiftCard.cs* (im Projekt _WebshopDemo.Application_)
+
+[source,csharp]
+----
+namespace WebshopDemo.Application;
+
+/// <summary>
+/// A payment method of the webshop, for example a credit card or a gift card.
+/// </summary>
+public interface IPaymentProvider
+{
+    /// <summary>Charges the amount. Returns false if the payment is not possible.</summary>
+    bool Pay(decimal amount);
+
+    /// <summary>Pays back the amount after a return. Returns false if not possible.</summary>
+    bool Refund(decimal amount);
+}
+----
+
+[source,csharp]
+----
+namespace WebshopDemo.Application;
+
+public class CreditCard : IPaymentProvider
+{
+    public CreditCard(decimal limit)
+    {
+        Limit = limit;
+    }
+
+    public decimal Limit { get; }
+    public decimal Charged { get; private set; }
+
+    public bool Pay(decimal amount)
+    {
+        if (Charged + amount > Limit) { return false; }
+        Charged += amount;
+        return true;
+    }
+
+    public bool Refund(decimal amount)
+    {
+        if (amount > Charged) { return false; }
+        Charged -= amount;
+        return true;
+    }
+}
+----
+
+Unser Shop zahlt den Wert eines Gutscheins nie aus.
+Das ist eine Regel des Geschäfts.
+Deshalb wirft `GiftCard.Refund()` eine Exception:
+
+[source,csharp]
+----
+using System;
+
+namespace WebshopDemo.Application;
+
+public class GiftCard : IPaymentProvider
+{
+    public GiftCard(decimal balance)
+    {
+        Balance = balance;
+    }
+
+    public decimal Balance { get; private set; }
+
+    public bool Pay(decimal amount)
+    {
+        if (amount > Balance) { return false; }
+        Balance -= amount;
+        return true;
+    }
+
+    public bool Refund(decimal amount)
+    {
+        // The shop never pays out the value of a gift card.
+        throw new NotSupportedException("Gift cards cannot be refunded.");
+    }
+}
+----
+
+Der `ReturnService` bearbeitet Rücksendungen.
+Er kennt nur das Interface:
+
+*ReturnService.cs*
+
+[source,csharp]
+----
+namespace WebshopDemo.Application;
+
+public class ReturnService
+{
+    /// <summary>Pays back the price of a returned product.</summary>
+    public bool ProcessReturn(IPaymentProvider paymentProvider, decimal amount)
+    {
+        return paymentProvider.Refund(amount);
+    }
+}
+----
+
+Die Tests zeigen das Problem:
+
+*ReturnServiceTests.cs* (im Projekt _WebshopDemo.Tests_)
+
+[source,csharp]
+----
+using System;
+using WebshopDemo.Application;
+using Xunit;
+
+namespace WebshopDemo.Tests;
+
+public class ReturnServiceTests
+{
+    [Fact]
+    public void ProcessReturn_WithCreditCard_RefundsAmount()
+    {
+        CreditCard creditCard = new CreditCard(limit: 500m);
+        creditCard.Pay(80m);
+        ReturnService returnService = new ReturnService();
+
+        bool refunded = returnService.ProcessReturn(creditCard, 30m);
+
+        Assert.True(refunded);
+        Assert.Equal(50m, creditCard.Charged);
+    }
+
+    [Fact]
+    public void ProcessReturn_WithGiftCard_ThrowsNotSupportedException()
+    {
+        GiftCard giftCard = new GiftCard(balance: 100m);
+        giftCard.Pay(80m);
+        ReturnService returnService = new ReturnService();
+
+        Assert.Throws<NotSupportedException>(() => returnService.ProcessReturn(giftCard, 30m));
+    }
+}
+----
+
+`ProcessReturn()` verlangt einen `IPaymentProvider`.
+Der Compiler ist zufrieden, denn `GiftCard` _ist_ ein `IPaymentProvider`.
+Trotzdem stürzt das Programm ab.
+Das Interface verspricht „`Refund()` liefert `true` oder `false`“.
+Der Gutschein hält dieses Versprechen nicht.
+
+=== Die schnelle Reparatur macht es schlimmer
+
+Ein typischer Fix, den du oft in generiertem Code siehst:
+
+[source,csharp]
+----
+public bool ProcessReturn(IPaymentProvider paymentProvider, decimal amount)
+{
+    if (paymentProvider is GiftCard)
+    {
+        return false;
+    }
+    return paymentProvider.Refund(amount);
+}
+----
+
+Der Absturz ist weg, aber:
+
+[%header]
+|===
+|Problem |Folge
+|`ReturnService` kennt jetzt `GiftCard`. |Das Interface sollte genau das verhindern.
+|Jeder Aufrufer von `Refund()` braucht die Prüfung. |Eine Stornierung (`CancellationService`) stürzt weiter ab, wenn jemand die Prüfung vergisst.
+|Eine neue Zahlungsart ohne Erstattung kommt dazu. |Du musst alle `is`-Prüfungen finden und erweitern. Das verletzt auch link:{github_url}/16%20SOLID/05_Open_Closed_Polymorphie.adoc[Open/Closed].
+|Der Fehler zeigt sich erst zur Laufzeit. |Der Compiler kann dir nicht helfen.
+|===
+
+== Das Prinzip
+
+Die Informatikerin Barbara Liskov stellte das Prinzip 1987 in ihrem Vortrag _Data Abstraction and Hierarchy_ vor.
+Für ihre Arbeit bekam sie später den Turing Award.
+Verständlich formuliert:
+
+____
+Ein Objekt einer abgeleiteten Klasse oder einer Implementierung muss *überall funktionieren*, wo der Basistyp erwartet wird, und zwar *ohne Überraschung* für den Aufrufer.
+____
+
+_Substitution_ heißt „Ersetzen“: Du ersetzt den Basistyp durch einen Untertyp, und alles läuft weiter wie versprochen.
+
+Wichtig: Es geht um *Verhalten*, nicht nur um Typen.
+Der Compiler prüft, ob `GiftCard` eine Methode `Refund(decimal)` mit Rückgabetyp `bool` hat.
+Er prüft nicht, ob sie tut, was das Interface verspricht.
+Dieses Versprechen heißt *Vertrag* (_Contract_).
+Er besteht aus drei Teilen:
+
+[%header]
+|===
+|Teil des Vertrags |Frage |Beispiel bei `Pay(amount)`
+|*Vorbedingung* |Was muss der Aufrufer vorher sicherstellen? |`amount` ist positiv.
+|*Nachbedingung* |Was gilt nach dem Aufruf? |Bei `true` wurde genau `amount` abgebucht.
+|*Exceptions* |Welche Fehler können kommen? |Keine. „Geht nicht“ heißt `false`.
+|===
+
+Eine Implementierung darf die Vorbedingung nicht verschärfen und die Nachbedingung nicht abschwächen.
+Sie darf auch keine neuen Exceptions werfen, mit denen der Aufrufer nicht rechnet.
+
+[NOTE]
+====
+Das bekannteste Beispiel ist Rechteck und Quadrat.
+In der Mathematik _ist_ jedes Quadrat ein Rechteck.
+Im Code macht `Square : Rectangle` aber Probleme: Wer beim Rechteck die Breite ändert, erwartet, dass die Höhe gleich bleibt.
+Beim Quadrat ändert sie sich mit.
+„Ist ein“ heißt also nicht automatisch „ist ersetzbar“.
+====
+
+== Drei Warnzeichen
+
+=== 1. NotSupportedException oder leere Implementierung
+
+Eine Methode wirft `NotSupportedException` oder `NotImplementedException`, weil sie „eigentlich nicht passt“.
+Das ist das Beispiel von oben.
+Noch gefährlicher ist die leere Variante:
+
+[source,csharp]
+----
+public bool Refund(decimal amount)
+{
+    return true;   // does nothing
+}
+----
+
+Der Aufrufer glaubt, die Kundin hat ihr Geld zurück.
+Niemand merkt den Fehler, bis sie sich beschwert.
+
+=== 2. Typprüfungen beim Aufrufer
+
+`is GiftCard`, `as GiftCard`, `+GetType() == typeof(...)+` oder ein `switch` über den Typ in einer Methode, die eigentlich nur das Interface kennen sollte.
+Die Prüfung ist ein Zeichen dafür, dass sich eine Implementierung anders verhält, als der Basistyp verspricht.
+Der Aufrufer hat das bemerkt und baut eine Ausnahme ein.
+
+=== 3. Verschärfte Vorbedingung oder abgeschwächte Nachbedingung
+
+Eine neue Zahlungsart „Kauf auf Rechnung“ erlaubt nur Beträge bis 100 €:
+
+[source,csharp]
+----
+using System;
+
+namespace WebshopDemo.Application;
+
+public class InvoicePayment : IPaymentProvider
+{
+    public bool Pay(decimal amount)
+    {
+        if (amount > 100m)
+        {
+            throw new ArgumentException("Invoice payment is limited to 100 EUR.");
+        }
+        return true;
+    }
+
+    public bool Refund(decimal amount) => true;
+}
+----
+
+Das Limit selbst ist in Ordnung, die Kreditkarte hat auch eines.
+Aber das Interface verspricht: „Geht nicht“ heißt `false`.
+`InvoicePayment` wirft stattdessen eine Exception.
+Die Vorbedingung ist verschärft: Der Aufrufer muss jetzt vorher wissen, welche Beträge erlaubt sind.
+
+[source,csharp]
+----
+[Fact]
+public void Pay_AmountAboveLimit_CreditCardReturnsFalseButInvoiceThrows()
+{
+    IPaymentProvider creditCard = new CreditCard(limit: 100m);
+    IPaymentProvider invoice = new InvoicePayment();
+
+    Assert.False(creditCard.Pay(150m));
+    Assert.Throws<ArgumentException>(() => invoice.Pay(150m));
+}
+----
+
+Beide Objekte haben denselben Typ `IPaymentProvider`.
+Trotzdem braucht der Aufrufer zwei verschiedene Arten, mit ihnen umzugehen.
+Die Korrektur ist hier einfach: `return false;` statt `throw`.
+
+Die Nachbedingung ist abgeschwächt, wenn eine Implementierung weniger oder etwas anderes liefert als versprochen.
+Beispiel: `Pay(amount)` liefert `true`, bucht aber `+amount + 0.50m+` ab, weil eine Gebühr dazukommt.
+Der Kunde zahlt mehr, als die Rechnung zeigt.
+
+== Auch .NET verletzt Liskov
+
+Ein Array implementiert in .NET das Interface `+IList<T>+`.
+Das Interface hat eine Methode `Add()`.
+Ein Array hat aber eine feste Länge.
+Was passiert?
+
+*DotNetCollectionTests.cs* (im Projekt _WebshopDemo.Tests_)
+
+[source,csharp]
+----
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using Xunit;
+
+namespace WebshopDemo.Tests;
+
+public class DotNetCollectionTests
+{
+    [Fact]
+    public void Add_OnArrayAsIList_ThrowsNotSupportedException()
+    {
+        IList<int> numbers = new int[] { 1, 2, 3 };
+
+        Assert.True(numbers.IsReadOnly);
+        Assert.Throws<NotSupportedException>(() => numbers.Add(4));
+    }
+
+    [Fact]
+    public void Add_OnReadOnlyCollection_ThrowsNotSupportedException()
+    {
+        IList<int> numbers = new ReadOnlyCollection<int>(new List<int> { 1, 2, 3 });
+
+        Assert.True(numbers.IsReadOnly);
+        Assert.Throws<NotSupportedException>(() => numbers.Add(4));
+    }
+}
+----
+
+Das ist genau Warnzeichen 1. Damit der Aufrufer nicht abstürzt, gibt es die Property `IsReadOnly`.
+Wer `Add()` sicher aufrufen will, muss sie vorher prüfen.
+Das ist Warnzeichen 2 in anderer Form.
+Noch verwirrender: Beim Array ist `IsReadOnly` zwar `true`, aber `+numbers[0] = 9+` funktioniert trotzdem.
+
+Warum ist das so?
+`+IList<T>+` gibt es seit .NET 2.0 (2005).
+Ein Interface nur zum Lesen kam erst mit .NET 4.5 (2012) dazu: `+IReadOnlyList<T>+`.
+Es hat gar keine Methode `Add()`.
+Ein falscher Aufruf kompiliert nicht:
+
+[source,csharp]
+----
+IReadOnlyList<int> numbers = new int[] { 1, 2, 3 };
+numbers.Add(4);   // error CS1061: 'IReadOnlyList<int>' does not contain a definition for 'Add'
+----
+
+Ein so verbreitetes Interface wie `+IList<T>+` kann Microsoft nicht mehr ändern, ohne Millionen Programme zu brechen.
+Es ist ein historischer Kompromiss.
+In deinem eigenen Code verwendest du deshalb `+IReadOnlyList<T>+`, wenn der Aufrufer nur lesen soll.
+Die Idee dahinter, kleine Interfaces für einzelne Fähigkeiten, ist das nächste Prinzip: link:{github_url}/16%20SOLID/07_Interface_Segregation.adoc[I: Interface Segregation].
+
+== Refactoring: Fähigkeiten trennen
+
+Nicht jede Zahlungsart kann erstatten.
+Also gehört `Refund()` nicht in den Vertrag für _alle_ Zahlungsarten.
+Wir trennen die Fähigkeiten in zwei Interfaces:
+
+image::{root_dir}/images/06_lsp_refactoring.svg[Vorher: ein Interface mit Pay und Refund. Nachher: IPaymentProvider und IRefundable]
+
+[.small]#PlantUML Quelle: link:{github_url}/16%20SOLID/images/06_lsp_refactoring.puml[06_lsp_refactoring.puml]#
+
+*IPaymentProvider.cs* und *IRefundable.cs*
+
+[source,csharp]
+----
+namespace WebshopDemo.Application;
+
+/// <summary>
+/// A payment method of the webshop, for example a credit card or a gift card.
+/// </summary>
+public interface IPaymentProvider
+{
+    /// <summary>Charges the amount. Returns false if the payment is not possible.</summary>
+    bool Pay(decimal amount);
+}
+----
+
+[source,csharp]
+----
+namespace WebshopDemo.Application;
+
+/// <summary>
+/// A payment method that can pay back money after a return.
+/// </summary>
+public interface IRefundable
+{
+    /// <summary>Pays back the amount. Returns false if not possible.</summary>
+    bool Refund(decimal amount);
+}
+----
+
+Die Klassen deklarieren nur noch, was sie wirklich können.
+Der Code in den Methoden bleibt gleich, `GiftCard` verliert die Methode `Refund()`:
+
+[source,csharp]
+----
+public class CreditCard : IPaymentProvider, IRefundable
+{
+    /* Pay() and Refund() as before */
+}
+
+public class GiftCard : IPaymentProvider
+{
+    /* Pay() as before, no Refund() */
+}
+----
+
+Der `ReturnService` verlangt jetzt genau die Fähigkeit, die er braucht:
+
+*ReturnService.cs*
+
+[source,csharp]
+----
+namespace WebshopDemo.Application;
+
+public class ReturnService
+{
+    /// <summary>Pays back the price of a returned product.</summary>
+    public bool ProcessReturn(IRefundable refundable, decimal amount)
+    {
+        return refundable.Refund(amount);
+    }
+}
+----
+
+Der Test für die Kreditkarte bleibt unverändert grün.
+Den Test mit dem Gutschein kannst du nicht mehr schreiben:
+
+[source,csharp]
+----
+GiftCard giftCard = new GiftCard(balance: 100m);
+returnService.ProcessReturn(giftCard, 30m);
+// error CS1503: Argument 1: cannot convert from
+// 'WebshopDemo.Application.GiftCard' to 'WebshopDemo.Application.IRefundable'
+----
+
+Der Fehler zeigt sich jetzt beim Kompilieren, nicht bei der Kundin.
+Es gibt keine `NotSupportedException` und keine `is`-Prüfung mehr.
+
+=== Wo fällt die Entscheidung?
+
+Irgendwo muss das Programm trotzdem wissen, was bei einer Rücksendung mit Gutschein passiert.
+Das ist eine fachliche Frage, keine technische.
+Es gibt zwei saubere Wege:
+
+[%header]
+|===
+|Weg |Idee |Passt, wenn ...
+|*Fähigkeiten trennen* |`IRefundable` nur dort, wo es Erstattungen gibt. Gutscheine laufen über einen anderen Ablauf. |nur ein Teil der Implementierungen die Fähigkeit hat.
+|*Vertrag allgemeiner fassen* |Statt `Refund()` heißt die Methode `Compensate()`. Die Kreditkarte bucht zurück, der Gutschein bekommt den Betrag wieder gutgeschrieben. |jede Implementierung den Vertrag sinnvoll erfüllen kann.
+|===
+
+Welcher Weg richtig ist, entscheidet das Geschäft, nicht das Prinzip.
+Prüfst du an einer Stelle doch den Typ, dann auf die Fähigkeit (`is IRefundable`), nicht auf die Klasse (`is GiftCard`).
+Eine neue Zahlungsart muss dann nur das Interface implementieren, der Aufrufer bleibt gleich.
+
+[TIP]
+====
+Bevor du eine Methode überschreibst oder ein Interface implementierst, frag dich: Kann ich den Kommentar des Basistyps für meine Klasse unverändert unterschreiben?
+Wenn nicht, passt die Vererbung nicht.
+====
+
+== Im Code-Review erkennen
+
+[%header]
+|===
+|Warnzeichen im Code |Verletztes Prinzip |Was du verlangst bzw. wie du es formulierst
+|`throw new NotSupportedException()` in einem Override oder einer Interface-Methode |Liskov |„`GiftCard` erfüllt den Vertrag von `IPaymentProvider` nicht. Trenne `Refund()` in ein eigenes Interface `IRefundable`.“
+|Leere Implementierung, die nur `return true;` oder nichts macht |Liskov |„`Refund()` meldet Erfolg, tut aber nichts. Entweder erfüllt die Klasse den Vertrag, oder sie implementiert das Interface nicht.“
+|`if (x is GiftCard)`, `as`, `GetType()` oder `switch` über den Typ beim Aufrufer |Liskov (oft auch Open/Closed) |„`ReturnService` darf keine konkreten Zahlungsarten kennen. Der Parameter soll genau die Fähigkeit verlangen, die gebraucht wird.“
+|Override wirft bei Werten, die der Basistyp erlaubt (`+amount > 100+`) |Liskov: Vorbedingung verschärft |„`InvoicePayment.Pay()` wirft, wo der Vertrag `false` verspricht. Gib `false` zurück.“
+|Override liefert mehr, weniger oder etwas anderes als dokumentiert |Liskov: Nachbedingung abgeschwächt |„`Pay()` bucht eine Gebühr dazu. Der Vertrag sagt ‚genau `amount`‘. Weise die Gebühr als eigene Position aus.“
+|Basisklasse bekommt Dummy-Werte im Konstruktor (`base(name, 0, 0)`) |Liskov |„Die Unterklasse braucht diese Daten nicht. Die Daten gehören in eine andere Unterklasse, nicht in die Basis.“
+|Parameter vom Typ `+IList<T>+`, obwohl die Methode nur liest |Liskov / Interface Segregation |„Verwende `+IReadOnlyList<T>+`. Dann kann der Aufrufer auch ein Array oder eine `ReadOnlyCollection` übergeben, ohne Überraschung.“
+|===
+
+// tag::pdf_exclude[]
+== Übungen
+
+*Fleet: Fuhrpark mit Elektroautos.*
+Ein Fuhrpark wurde für Benzin- und Dieselautos programmiert.
+Dann kamen Elektroautos dazu.
+`ElectricCar` erbt von `Vehicle` und wirft bei `Refuel()` eine `NotSupportedException`.
+Der `FleetService` ist voller Typprüfungen.
+Die Tests sind grün.
+Baue den Code so um, dass jedes Fahrzeug überall funktioniert, wo ein `Vehicle` erwartet wird.
+Die Tests bleiben dabei grün.
+
+Lade dazu link:{github_url}/16%20SOLID/Uebungen/Fleet.7z[Fleet.7z] herunter.
+Die Angabe steht im Archiv in der Datei _README.md_.
+
+// end::pdf_exclude[]

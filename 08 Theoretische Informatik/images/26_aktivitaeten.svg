@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="414" viewBox="0 0 900 414">
+  <rect x="0.5" y="0.5" width="899" height="413" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="20" y="30" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600" fill="#1f2937">Nach dem Ende sortiert: Ein Termin kommt dazu, wenn er nicht vor dem Ende des zuletzt gewählten beginnt</text>
+  <g stroke="#d1d5db" stroke-dasharray="3 3">
+    <line x1="130" y1="68" x2="130" y2="400"/>
+    <line x1="186" y1="68" x2="186" y2="400"/>
+    <line x1="242" y1="68" x2="242" y2="400"/>
+    <line x1="298" y1="68" x2="298" y2="400"/>
+    <line x1="354" y1="68" x2="354" y2="400"/>
+    <line x1="410" y1="68" x2="410" y2="400"/>
+    <line x1="466" y1="68" x2="466" y2="400"/>
+    <line x1="522" y1="68" x2="522" y2="400"/>
+    <line x1="578" y1="68" x2="578" y2="400"/>
+    <line x1="634" y1="68" x2="634" y2="400"/>
+    <line x1="690" y1="68" x2="690" y2="400"/>
+  </g>
+  <g font-family="Consolas, Menlo, monospace" font-size="12" fill="#6b7280" text-anchor="middle">
+    <text x="130" y="62">8</text>
+    <text x="186" y="62">9</text>
+    <text x="242" y="62">10</text>
+    <text x="298" y="62">11</text>
+    <text x="354" y="62">12</text>
+    <text x="410" y="62">13</text>
+    <text x="466" y="62">14</text>
+    <text x="522" y="62">15</text>
+    <text x="578" y="62">16</text>
+    <text x="634" y="62">17</text>
+    <text x="690" y="62">18</text>
+  </g>
+  <text x="20" y="62" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#6b7280">Uhrzeit</text>
+  <g stroke-width="2">
+    <rect x="130" y="80" width="112" height="22" rx="4" stroke="#16a34a" fill="#dcfce7"/>
+    <rect x="186" y="110" width="112" height="22" rx="4" stroke="#6b7280" fill="#e5e7eb"/>
+    <rect x="298" y="140" width="56" height="22" rx="4" stroke="#16a34a" fill="#dcfce7"/>
+    <rect x="242" y="170" width="168" height="22" rx="4" stroke="#6b7280" fill="#e5e7eb"/>
+    <rect x="410" y="200" width="56" height="22" rx="4" stroke="#16a34a" fill="#dcfce7"/>
+    <rect x="354" y="230" width="168" height="22" rx="4" stroke="#6b7280" fill="#e5e7eb"/>
+    <rect x="522" y="260" width="56" height="22" rx="4" stroke="#16a34a" fill="#dcfce7"/>
+    <rect x="466" y="290" width="168" height="22" rx="4" stroke="#6b7280" fill="#e5e7eb"/>
+    <rect x="578" y="320" width="112" height="22" rx="4" stroke="#16a34a" fill="#dcfce7"/>
+  </g>
+  <g font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">
+    <text x="20" y="96">A   8–10</text>
+    <text x="20" y="126">B   9–11</text>
+    <text x="20" y="156">D  11–12</text>
+    <text x="20" y="186">C  10–13</text>
+    <text x="20" y="216">F  13–14</text>
+    <text x="20" y="246">E  12–15</text>
+    <text x="20" y="276">H  15–16</text>
+    <text x="20" y="306">G  14–17</text>
+    <text x="20" y="336">I  16–18</text>
+  </g>
+  <g font-family="Consolas, Menlo, monospace" font-size="13" fill="#1f2937" text-anchor="middle">
+    <text x="186" y="96">A</text>
+    <text x="242" y="126">B</text>
+    <text x="326" y="156">D</text>
+    <text x="326" y="186">C</text>
+    <text x="438" y="216">F</text>
+    <text x="438" y="246">E</text>
+    <text x="550" y="276">H</text>
+    <text x="550" y="306">G</text>
+    <text x="634" y="336">I</text>
+  </g>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13">
+    <text x="710" y="96" fill="#16a34a" font-weight="600">gewählt</text>
+    <text x="710" y="126" fill="#6b7280">beginnt vor Ende von A</text>
+    <text x="710" y="156" fill="#16a34a" font-weight="600">gewählt</text>
+    <text x="710" y="186" fill="#6b7280">beginnt vor Ende von D</text>
+    <text x="710" y="216" fill="#16a34a" font-weight="600">gewählt</text>
+    <text x="710" y="246" fill="#6b7280">beginnt vor Ende von F</text>
+    <text x="710" y="276" fill="#16a34a" font-weight="600">gewählt</text>
+    <text x="710" y="306" fill="#6b7280">beginnt vor Ende von H</text>
+    <text x="710" y="336" fill="#16a34a" font-weight="600">gewählt</text>
+  </g>
+  <line x1="20" y1="358" x2="880" y2="358" stroke="#d1d5db"/>
+  <text x="20" y="388" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="600" fill="#1f2937">Raum</text>
+  <g stroke="#16a34a" stroke-width="2" fill="#dcfce7">
+    <rect x="130" y="372" width="112" height="22" rx="4"/>
+    <rect x="298" y="372" width="56" height="22" rx="4"/>
+    <rect x="410" y="372" width="56" height="22" rx="4"/>
+    <rect x="522" y="372" width="56" height="22" rx="4"/>
+    <rect x="578" y="372" width="112" height="22" rx="4"/>
+  </g>
+  <g font-family="Consolas, Menlo, monospace" font-size="13" fill="#1f2937" text-anchor="middle">
+    <text x="186" y="388">A</text>
+    <text x="326" y="388">D</text>
+    <text x="438" y="388">F</text>
+    <text x="550" y="388">H</text>
+    <text x="634" y="388">I</text>
+  </g>
+  <text x="710" y="388" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#16a34a">5 Termine</text>
+</svg>

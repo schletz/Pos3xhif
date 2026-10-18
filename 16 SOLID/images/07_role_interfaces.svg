@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="650" viewBox="0 0 1040 650">
+  <defs><marker id="dep" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,1 L11,6 L1,11" fill="none" stroke="#1d1d1b" stroke-width="1.5"/></marker><marker id="tri" viewBox="0 0 16 16" refX="15" refY="8" markerWidth="16" markerHeight="16" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,1 L15,8 L1,15 Z" fill="#ffffff" stroke="#1d1d1b" stroke-width="1.5"/></marker></defs>
+  <rect x="0.5" y="0.5" width="1039" height="649" rx="8" fill="#ffffff" stroke="#9d9d9c"/>
+  <text x="520" y="40" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="21" font-weight="bold" fill="#1d1d1b" text-anchor="middle">Nach Rollen geschnitten: Jeder Client sieht nur seine Rolle</text>
+  <text x="30" y="112" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1d1d1b" text-anchor="start">Client</text>
+  <text x="30" y="262" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1d1d1b" text-anchor="start">Rolle</text>
+  <text x="30" y="282" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#5f5f5e" text-anchor="start">(Interface)</text>
+  <rect x="200" y="75" width="190" height="66" rx="8" fill="#ffffff" stroke="#0090d4" stroke-width="1.8"/>
+  <path d="M208,75 H382 Q390,75 390,83 V107 H200 V83 Q200,75 208,75 Z" fill="#d1ebf7" stroke="none"/>
+  <rect x="200" y="75" width="190" height="66" rx="8" fill="none" stroke="#0090d4" stroke-width="1.8"/>
+  <polyline points="200,107 390,107" fill="none" stroke="#0090d4" stroke-width="1.2"/>
+  <text x="295.0" y="96" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1d1d1b" text-anchor="middle">CheckoutService</text>
+  <text x="212" y="131" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#00628f" text-anchor="start">Bezahlen</text>
+  <polyline points="295.0,141 295.0,208" fill="none" stroke="#1d1d1b" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#dep)"/>
+  <rect x="200" y="210" width="190" height="82" rx="8" fill="#ffffff" stroke="#f39000" stroke-width="1.8"/>
+  <path d="M208,210 H382 Q390,210 390,218 V258 H200 V218 Q200,210 208,210 Z" fill="#fdebd1" stroke="none"/>
+  <rect x="200" y="210" width="190" height="82" rx="8" fill="none" stroke="#f39000" stroke-width="1.8"/>
+  <polyline points="200,258 390,258" fill="none" stroke="#f39000" stroke-width="1.2"/>
+  <text x="295.0" y="228" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#a35f00" text-anchor="middle">«interface»</text>
+  <text x="295.0" y="248" font-family="Consolas, Menlo, monospace" font-size="15" font-weight="bold" fill="#1d1d1b" text-anchor="middle">IPaymentProvider</text>
+  <text x="212" y="282" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">+ Pay()</text>
+  <rect x="410" y="75" width="190" height="66" rx="8" fill="#ffffff" stroke="#0090d4" stroke-width="1.8"/>
+  <path d="M418,75 H592 Q600,75 600,83 V107 H410 V83 Q410,75 418,75 Z" fill="#d1ebf7" stroke="none"/>
+  <rect x="410" y="75" width="190" height="66" rx="8" fill="none" stroke="#0090d4" stroke-width="1.8"/>
+  <polyline points="410,107 600,107" fill="none" stroke="#0090d4" stroke-width="1.2"/>
+  <text x="505.0" y="96" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1d1d1b" text-anchor="middle">ReturnService</text>
+  <text x="422" y="131" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#00628f" text-anchor="start">Rückerstatten</text>
+  <polyline points="505.0,141 505.0,208" fill="none" stroke="#1d1d1b" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#dep)"/>
+  <rect x="410" y="210" width="190" height="82" rx="8" fill="#ffffff" stroke="#f39000" stroke-width="1.8"/>
+  <path d="M418,210 H592 Q600,210 600,218 V258 H410 V218 Q410,210 418,210 Z" fill="#fdebd1" stroke="none"/>
+  <rect x="410" y="210" width="190" height="82" rx="8" fill="none" stroke="#f39000" stroke-width="1.8"/>
+  <polyline points="410,258 600,258" fill="none" stroke="#f39000" stroke-width="1.2"/>
+  <text x="505.0" y="228" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#a35f00" text-anchor="middle">«interface»</text>
+  <text x="505.0" y="248" font-family="Consolas, Menlo, monospace" font-size="15" font-weight="bold" fill="#1d1d1b" text-anchor="middle">IRefundable</text>
+  <text x="422" y="282" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">+ Refund()</text>
+  <rect x="620" y="75" width="190" height="66" rx="8" fill="#ffffff" stroke="#0090d4" stroke-width="1.8"/>
+  <path d="M628,75 H802 Q810,75 810,83 V107 H620 V83 Q620,75 628,75 Z" fill="#d1ebf7" stroke="none"/>
+  <rect x="620" y="75" width="190" height="66" rx="8" fill="none" stroke="#0090d4" stroke-width="1.8"/>
+  <polyline points="620,107 810,107" fill="none" stroke="#0090d4" stroke-width="1.2"/>
+  <text x="715.0" y="96" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1d1d1b" text-anchor="middle">PreOrderService</text>
+  <text x="632" y="131" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#00628f" text-anchor="start">Reservieren</text>
+  <polyline points="715.0,141 715.0,208" fill="none" stroke="#1d1d1b" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#dep)"/>
+  <rect x="620" y="210" width="190" height="106" rx="8" fill="#ffffff" stroke="#f39000" stroke-width="1.8"/>
+  <path d="M628,210 H802 Q810,210 810,218 V258 H620 V218 Q620,210 628,210 Z" fill="#fdebd1" stroke="none"/>
+  <rect x="620" y="210" width="190" height="106" rx="8" fill="none" stroke="#f39000" stroke-width="1.8"/>
+  <polyline points="620,258 810,258" fill="none" stroke="#f39000" stroke-width="1.2"/>
+  <text x="715.0" y="228" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#a35f00" text-anchor="middle">«interface»</text>
+  <text x="715.0" y="248" font-family="Consolas, Menlo, monospace" font-size="15" font-weight="bold" fill="#1d1d1b" text-anchor="middle">IAuthorizable</text>
+  <text x="632" y="282" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">+ Authorize()</text>
+  <text x="632" y="306" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">+ Capture()</text>
+  <rect x="830" y="75" width="190" height="66" rx="8" fill="#ffffff" stroke="#0090d4" stroke-width="1.8"/>
+  <path d="M838,75 H1012 Q1020,75 1020,83 V107 H830 V83 Q830,75 838,75 Z" fill="#d1ebf7" stroke="none"/>
+  <rect x="830" y="75" width="190" height="66" rx="8" fill="none" stroke="#0090d4" stroke-width="1.8"/>
+  <polyline points="830,107 1020,107" fill="none" stroke="#0090d4" stroke-width="1.2"/>
+  <text x="925.0" y="96" font-family="Consolas, Menlo, monospace" font-size="15" font-weight="bold" fill="#1d1d1b" text-anchor="middle">AccountingExporter</text>
+  <text x="842" y="131" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#00628f" text-anchor="start">Buchhaltung</text>
+  <polyline points="925.0,141 925.0,208" fill="none" stroke="#1d1d1b" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#dep)"/>
+  <rect x="830" y="210" width="190" height="82" rx="8" fill="#ffffff" stroke="#f39000" stroke-width="1.8"/>
+  <path d="M838,210 H1012 Q1020,210 1020,218 V258 H830 V218 Q830,210 838,210 Z" fill="#fdebd1" stroke="none"/>
+  <rect x="830" y="210" width="190" height="82" rx="8" fill="none" stroke="#f39000" stroke-width="1.8"/>
+  <polyline points="830,258 1020,258" fill="none" stroke="#f39000" stroke-width="1.2"/>
+  <text x="925.0" y="228" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#a35f00" text-anchor="middle">«interface»</text>
+  <text x="925.0" y="248" font-family="Consolas, Menlo, monospace" font-size="15" font-weight="bold" fill="#1d1d1b" text-anchor="middle">IStatementSource</text>
+  <text x="842" y="282" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">+ GetStatement()</text>
+  <text x="30" y="352" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1d1d1b" text-anchor="start">Implementierung</text>
+  <text x="30" y="394" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1d1d1b" text-anchor="start">GiftCard</text>
+  <rect x="200" y="362" width="190" height="52" rx="6" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+  <text x="295.0" y="394" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#4a7a1c" text-anchor="middle">✓ implementiert</text>
+  <rect x="410" y="362" width="190" height="52" rx="6" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="505.0" y="394" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#5f5f5e" text-anchor="middle">– nicht nötig</text>
+  <rect x="620" y="362" width="190" height="52" rx="6" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="715.0" y="394" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#5f5f5e" text-anchor="middle">– nicht nötig</text>
+  <rect x="830" y="362" width="190" height="52" rx="6" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+  <text x="925.0" y="394" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#4a7a1c" text-anchor="middle">✓ implementiert</text>
+  <text x="30" y="456" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1d1d1b" text-anchor="start">Invoice</text>
+  <rect x="200" y="424" width="190" height="52" rx="6" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+  <text x="295.0" y="456" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#4a7a1c" text-anchor="middle">✓ implementiert</text>
+  <rect x="410" y="424" width="190" height="52" rx="6" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+  <text x="505.0" y="456" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#4a7a1c" text-anchor="middle">✓ implementiert</text>
+  <rect x="620" y="424" width="190" height="52" rx="6" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="715.0" y="456" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#5f5f5e" text-anchor="middle">– nicht nötig</text>
+  <rect x="830" y="424" width="190" height="52" rx="6" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+  <text x="925.0" y="456" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#4a7a1c" text-anchor="middle">✓ implementiert</text>
+  <text x="30" y="518" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1d1d1b" text-anchor="start">CreditCard</text>
+  <rect x="200" y="486" width="190" height="52" rx="6" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+  <text x="295.0" y="518" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#4a7a1c" text-anchor="middle">✓ implementiert</text>
+  <rect x="410" y="486" width="190" height="52" rx="6" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+  <text x="505.0" y="518" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#4a7a1c" text-anchor="middle">✓ implementiert</text>
+  <rect x="620" y="486" width="190" height="52" rx="6" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+  <text x="715.0" y="518" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#4a7a1c" text-anchor="middle">✓ implementiert</text>
+  <rect x="830" y="486" width="190" height="52" rx="6" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+  <text x="925.0" y="518" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#4a7a1c" text-anchor="middle">✓ implementiert</text>
+  <text x="520" y="580" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#1d1d1b" text-anchor="middle">Keine Klasse muss eine Methode schreiben, die sie nicht kann: kein NotSupportedException.</text>
+  <text x="520" y="605" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#1d1d1b" text-anchor="middle">ExportForAccounting() ist keine Aufgabe eines Zahlungsmittels mehr. Das macht jetzt</text>
+  <text x="520" y="625" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#1d1d1b" text-anchor="middle">AccountingExporter mit den Daten aus GetStatement() (Single Responsibility).</text>
+</svg>

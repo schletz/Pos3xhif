@@ -1,0 +1,459 @@
+= Code analysieren
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Mit der O-Notation kannst du ausdrücken, wie stark die Laufzeit mit der Eingabegröße n wächst.
+Jetzt geht es darum, diese Klasse direkt aus dem Code abzulesen, ohne etwas zu messen.
+Du zählst dazu, wie oft die Anweisungen ausgeführt werden, und behältst am Ende nur den dominanten Term.
+Mit ein paar Regeln für Schleifen und Rekursion schaffst du das für fast jeden Code, der dir im Alltag begegnet.
+Am Ende ordnest du damit die Algorithmen aus dem Block Algorithmen ein.
+
+[TIP]
+====
+*Zum Selbst-Erarbeiten: das interaktive Laufzeit-Quiz*
+
+Im https://die-spengergasse.github.io/course-pos-csharp_basics/08%20Theoretische%20Informatik/32_Code_analysieren.html[Laufzeit-Quiz] siehst du als Animation, wie man die Durchläufe von Schleifen zählt.
+Danach bestimmst du selbst die Laufzeit von rund 20 C#-Snippets, manche davon mit versteckten Kosten.
+Damit trainierst du genau das, was du beim Lesen von fremdem Code brauchst.
+====
+
+== Die Grundregeln
+
+[%header]
+|===
+|Konstrukt |Kosten
+|Einfache Anweisung (Zuweisung, Vergleich, Rechnung, Arrayzugriff) |O(1)
+|Folge von Anweisungen `A; B;` |Kosten von A {plus} Kosten von B, also das Maximum
+|`if (Bedingung) A else B` |Bedingung {plus} teurerer Zweig (Worst Case)
+|Schleife |Anzahl der Durchläufe × Kosten des Rumpfs
+|Methodenaufruf |Kosten der aufgerufenen Methode, *nicht* automatisch O(1)
+|===
+
+Die letzte Zeile ist die häufigste Fehlerquelle.
+`list.Contains(x)` sieht aus wie eine einfache Anweisung, durchsucht aber die ganze Liste.
+Bei jedem Aufruf einer Bibliotheksmethode musst du also wissen, was sie intern tut.
+Die wichtigsten Collections findest du in link:{github_url}/08%20Theoretische%20Informatik/33_Datenstrukturen_in_NET.adoc[Datenstrukturen in .NET].
+
+Ein erstes Beispiel:
+
+[source,csharp]
+----
+int[] numbers = [4, 8, 15, 16, 23, 42];
+Console.WriteLine(Average(numbers));
+
+static double Average(int[] values)
+{
+    long sum = 0;                           // (1)
+    foreach (int v in values)               // (2)
+    {
+        sum += v;                           // (3)
+    }
+    return (double)sum / values.Length;     // (4)
+}
+----
+
+[source,text]
+----
+18
+----
+
+* *(1)* und *(4)* werden genau einmal ausgeführt, egal wie lang das Array ist.
+* *(2)* Die Schleife läuft n-mal, wobei n = `values.Length` ist.
+* *(3)* Der Rumpf kostet einen Schritt pro Durchlauf, zusammen also n Schritte.
+
+Insgesamt sind das 1 {plus} n {plus} 1 = n {plus} 2 Schritte.
+Der dominante Term ist n, die Methode ist also in O(n).
+Ob du die Prüfung `+v < values.Length+` und das Weiterzählen als eigene Schritte zählst, ändert nur die Konstante vor dem n. Genau deshalb lässt die O-Notation Konstanten weg: Du musst nicht entscheiden, was „ein Schritt“ ist.
+
+Achte darauf, was n ist.
+Eine Schleife, die immer genau 10-mal läuft, ist in O(1), auch wenn sie über ein Array mit einer Million Elementen geht.
+Und eine Schleife bis `n / 2` oder mit `+i += 2+` ist trotzdem in O(n), denn n/2 unterscheidet sich von n nur um den Faktor ½.
+
+== Verschachtelte Schleifen
+
+Steht eine Schleife in einer anderen, multiplizierst du die Durchläufe.
+Läuft die äußere n-mal und die innere jedes Mal m-mal, wird der innere Rumpf n · m-mal ausgeführt.
+Bei zwei Schleifen über dasselbe Array sind das n · n = n² Durchläufe.
+
+Zwei Schleifen *hintereinander* addierst du dagegen nur: n {plus} n = 2n ist immer noch O(n).
+Schau also genau auf die geschweiften Klammern, bevor du multiplizierst.
+
+=== Abhängige Schleifen
+
+Oft hängt die innere Schleife von der äußeren ab.
+Das Beispiel sucht alle Paare in einem Array, deren Summe 10 ergibt.
+Die erste Variante prüft alle Kombinationen, die zweite nur echte Paare:
+
+[source,csharp]
+----
+int[] values = [3, 9, 1, 7, 5];
+int checksAll = 0;
+int checksPairs = 0;
+
+for (int i = 0; i < values.Length; i++)            // (1)
+{
+    for (int j = 0; j < values.Length; j++)
+    {
+        checksAll++;
+    }
+}
+
+for (int i = 0; i < values.Length; i++)            // (2)
+{
+    for (int j = i + 1; j < values.Length; j++)    // (3)
+    {
+        checksPairs++;
+        if (values[i] + values[j] == 10)
+        {
+            Console.WriteLine($"{values[i]} + {values[j]}");
+        }
+    }
+}
+Console.WriteLine($"Alle Kombinationen: {checksAll}, nur Paare: {checksPairs}");
+----
+
+[source,text]
+----
+3 + 7
+9 + 1
+Alle Kombinationen: 25, nur Paare: 10
+----
+
+* *(1)* Zwei unabhängige Schleifen: 5 · 5 = 25 Durchläufe.
+Dabei würde jedes Paar doppelt gefunden (`+3 + 7+` und `+7 + 3+`) und jede Zahl auch mit sich selbst kombiniert.
+* *(2)* Die äußere Schleife läuft weiterhin n-mal.
+* *(3)* Die innere Schleife beginnt erst bei `+i + 1+`.
+Für i = 0 läuft sie 4-mal, für i = 1 3-mal und so weiter bis 0-mal für das letzte i.
+
+Die Grafik zeigt das für n = 6. Jede Zeile ist ein Wert von i, jede Spalte ein Wert von j. Blau sind die Kombinationen, die die innere Schleife wirklich prüft:
+
+image::{root_dir}/images/32_abhaengige_schleife.svg[]
+
+Die Durchläufe sind eine Summe aufeinanderfolgender Zahlen.
+Dafür gibt es die *Gaußsche Summenformel*:
+
+1 {plus} 2 {plus} 3 {plus} … {plus} n = n(n {plus} 1) / 2
+
+Für die Paar-Schleife beginnt die Summe bei n − 1, also (n − 1) {plus} (n − 2) {plus} … {plus} 1 {plus} 0 = (n − 1) · n / 2. Für n = 5 sind das 10, für n = 6 sind es 15. Ausmultipliziert ergibt das n²/2 − n/2.
+Der dominante Term ist n²/2, die Konstante ½ fällt weg.
+Die abhängige Schleife spart also die Hälfte der Arbeit, bleibt aber in *O(n²)*.
+Bei n = 100 000 sind das immer noch rund 5 Milliarden Prüfungen.
+
+Mit drei abhängigen Schleifen (`+i < j < k+`) werden alle Dreiergruppen geprüft.
+Das sind n(n − 1)(n − 2) / 6 Durchläufe, also O(n³).
+
+== Halbierende Schleifen
+
+Eine Schleife muss nicht in Einerschritten zählen.
+Halbiert sie in jedem Durchlauf die verbleibende Menge, ist sie sehr schnell fertig:
+
+[source,csharp]
+----
+foreach (int n in new[] { 8, 1000, 1_000_000, 1_000_000_000 })
+{
+    int steps = 0;
+    for (int size = n; size > 1; size /= 2)       // (1)
+    {
+        steps++;
+    }
+    Console.WriteLine($"n = {n,10}: {steps,2} Halbierungen");
+}
+----
+
+[source,text]
+----
+n =          8:  3 Halbierungen
+n =       1000:  9 Halbierungen
+n =    1000000: 19 Halbierungen
+n = 1000000000: 29 Halbierungen
+----
+
+* *(1)* `size` wird 8 → 4 → 2 → 1. Nach 3 Halbierungen ist die Schleife fertig, und 2³ = 8.
+
+Die Frage „Wie oft kann ich n halbieren, bis 1 übrig bleibt?“ beantwortet der *Logarithmus zur Basis 2*: log₂ 8 = 3, log₂ 1000 ≈ 9,97.
+Weil die Ganzzahldivision abrundet, zählt die Schleife ⌊log₂ n⌋ Durchläufe.
+Eine Schleife, die halbiert oder verdoppelt (`+for (int i = 1; i < n; i *= 2)+`), ist also in *O(log n)*.
+Die Basis schreibt man nicht dazu, denn Logarithmen zu verschiedenen Basen unterscheiden sich nur um einen konstanten Faktor.
+
+Das beste Beispiel ist die *binäre Suche* in einem sortierten Array.
+Sie vergleicht mit dem mittleren Element und sucht danach nur in einer Hälfte weiter:
+
+[source,csharp]
+----
+int[] sorted = Enumerable.Range(0, 1_000_000).Select(i => 2 * i).ToArray();
+(int index, int steps) = BinarySearch(sorted, 1_234_566);
+Console.WriteLine($"Index {index} nach {steps} Schritten");
+
+static (int Index, int Steps) BinarySearch(int[] a, int value)
+{
+    int lo = 0, hi = a.Length - 1, steps = 0;
+    while (lo <= hi)                            // (1)
+    {
+        steps++;
+        int mid = lo + (hi - lo) / 2;
+        if (a[mid] == value) { return (mid, steps); }
+        if (a[mid] < value) { lo = mid + 1; } else { hi = mid - 1; }   // (2)
+    }
+    return (-1, steps);
+}
+----
+
+[source,text]
+----
+Index 617283 nach 20 Schritten
+----
+
+* *(1)* Die Schleife läuft, solange der Suchbereich nicht leer ist.
+* *(2)* In jedem Durchlauf wird der Bereich mindestens halbiert.
+Nach höchstens ⌊log₂ n⌋ {plus} 1 = 20 Durchläufen ist er leer.
+Bei einer Milliarde Elemente wären es 30.
+
+Kombinationen funktionieren wie gewohnt: Führst du für jedes der n Elemente eine binäre Suche aus, kostet das n · log n Schritte, also O(n log n).
+
+== Rekursion und der Rekursionsbaum
+
+Bei einer rekursiven Methode kannst du die Durchläufe nicht direkt ablesen.
+Hier hilft der *Rekursionsbaum*: Jeder Aufruf ist ein Knoten, seine rekursiven Aufrufe sind die Kinder.
+Die Gesamtkosten sind die Summe der Arbeit in allen Knoten.
+Zwei Fragen führen zum Ergebnis:
+
+. Wie viele Aufrufe gibt es (wie viele Ebenen, wie viele Knoten pro Ebene)?
+. Wie viel Arbeit macht ein Aufruf *ohne* seine rekursiven Aufrufe?
+
+=== Ein Aufruf pro Ebene: binäre Suche rekursiv
+
+Die rekursive binäre Suche ruft sich höchstens einmal selbst auf, mit einem halb so großen Bereich.
+Der Baum ist eine Kette mit log₂ n Knoten, und jeder Knoten macht O(1) Arbeit.
+Das ergibt wie bei der Schleife O(log n).
+Dasselbe Muster mit `n - 1` statt `n / 2` (etwa eine rekursive Summe über ein Array) ergibt eine Kette mit n Knoten, also O(n).
+
+=== Zwei Aufrufe mit halber Größe: Mergesort
+
+link:{github_url}/08%20Theoretische%20Informatik/24_Divide_and_Conquer.adoc[Mergesort] teilt das Array in zwei Hälften, sortiert beide rekursiv und fügt sie danach mit dem Merge-Schritt zusammen.
+Das Zusammenfügen von k Elementen kostet k Schritte.
+Für n = 8 sieht der Rekursionsbaum so aus:
+
+image::{root_dir}/images/32_rekursionsbaum_mergesort.svg[]
+
+Die Ebenen werden breiter, die Teile aber kleiner.
+Auf jeder Ebene werden zusammen genau n Elemente gemerged: einmal 8, zweimal 4, viermal 2. Es gibt log₂ n Ebenen mit Merge-Arbeit, weil die Teile bei jeder Ebene halbiert werden.
+Das ergibt *n · log₂ n* Schritte, also O(n log n).
+Diese Rechnung „Ebenen × Arbeit pro Ebene“ funktioniert immer, wenn sich die Arbeit gleichmäßig über die Ebenen verteilt.
+Mergesort braucht außerdem ein Hilfsarray mit n Plätzen.
+
+=== Zwei Aufrufe mit fast gleicher Größe: naive Fibonacci
+
+Die naive Fibonacci-Funktion aus link:{github_url}/08%20Theoretische%20Informatik/27_Dynamische_Programmierung.adoc[Dynamische Programmierung] sieht harmlos aus.
+Der Zähler zeigt, wie oft sie sich aufruft:
+
+[source,csharp]
+----
+long calls = 0;
+foreach (int n in new[] { 5, 10, 20, 30 })
+{
+    calls = 0;
+    long result = Fib(n);
+    Console.WriteLine($"Fib({n}) = {result}, {calls} Aufrufe");
+}
+
+long Fib(int n)
+{
+    calls++;                                        // (1)
+    return n < 2 ? n : Fib(n - 1) + Fib(n - 2);     // (2)
+}
+----
+
+[source,text]
+----
+Fib(5) = 5, 15 Aufrufe
+Fib(10) = 55, 177 Aufrufe
+Fib(20) = 6765, 21891 Aufrufe
+Fib(30) = 832040, 2692537 Aufrufe
+----
+
+* *(1)* `Fib` ist eine lokale Funktion und kann deshalb den Zähler `calls` verwenden.
+* *(2)* Jeder Aufruf mit n ≥ 2 erzeugt *zwei* neue Aufrufe.
+Die Größe sinkt dabei nur um 1 bzw. 2.
+
+image::{root_dir}/images/32_rekursionsbaum_fib.svg[]
+
+Jede Ebene hat höchstens doppelt so viele Knoten wie die vorige, und es gibt bis zu n Ebenen.
+Das sind höchstens 1 {plus} 2 {plus} 4 {plus} … {plus} 2ⁿ⁻¹ < 2ⁿ Aufrufe, also *O(2ⁿ)*.
+Weil der rechte Ast schneller endet, ist der Baum nicht ganz voll.
+Genau gerechnet wächst die Zahl der Aufrufe ungefähr mit 1,618ⁿ, das ist trotzdem exponentiell: Jedes zusätzliche n kostet 62 % mehr Aufrufe.
+Der Grund ist in der Grafik orange markiert: Dieselben Teilprobleme werden immer wieder neu berechnet.
+Mit Memoization wird jedes F(k) nur einmal berechnet, und die Laufzeit sinkt auf O(n).
+
+Vergleich die beiden Bäume: Mergesort hat zwei Aufrufe mit *halber* Größe und deshalb nur log n Ebenen.
+Fibonacci hat zwei Aufrufe mit *fast gleicher* Größe und deshalb n Ebenen.
+Dieser Unterschied macht aus O(n log n) ein O(2ⁿ).
+
+=== Quicksort im Worst Case
+
+link:{github_url}/08%20Theoretische%20Informatik/24_Divide_and_Conquer.adoc[Quicksort] mit Lomuto-Partitionierung nimmt das letzte Element als Pivot.
+Die Partitionierung eines Bereichs mit k Elementen braucht k − 1 Vergleiche.
+Danach wird links und rechts vom Pivot rekursiv weitersortiert.
+Der Zähler zeigt die Vergleiche für ein gemischtes und ein bereits sortiertes Array:
+
+[source,csharp]
+----
+int n = 2000;
+int[] sorted = Enumerable.Range(0, n).ToArray();
+int[] shuffled = [.. sorted];
+new Random(42).Shuffle(shuffled);
+
+Console.WriteLine($"gemischt:  {QuickSort(shuffled, 0, n - 1)} Vergleiche");
+Console.WriteLine($"sortiert:  {QuickSort(sorted, 0, n - 1)} Vergleiche");
+Console.WriteLine($"n(n-1)/2 = {n * (n - 1) / 2}");
+
+static long QuickSort(int[] a, int lo, int hi)
+{
+    if (lo >= hi) { return 0; }
+    int pivot = a[hi];
+    int i = lo;
+    long comparisons = 0;
+    for (int j = lo; j < hi; j++)                   // (1)
+    {
+        comparisons++;
+        if (a[j] < pivot)
+        {
+            (a[i], a[j]) = (a[j], a[i]);
+            i++;
+        }
+    }
+    (a[i], a[hi]) = (a[hi], a[i]);
+    return comparisons + QuickSort(a, lo, i - 1) + QuickSort(a, i + 1, hi);   // (2)
+}
+----
+
+[source,text]
+----
+gemischt:  23433 Vergleiche
+sortiert:  1999000 Vergleiche
+n(n-1)/2 = 1999000
+----
+
+* *(1)* Die Partitionierung vergleicht jedes Element des Bereichs mit dem Pivot.
+* *(2)* Bei gemischten Daten landet das Pivot meist irgendwo in der Mitte.
+Der Baum ähnelt dann dem von Mergesort, das ergibt im Mittel O(n log n).
+
+Ist das Array schon sortiert, ist das letzte Element immer das größte.
+Die Partitionierung liefert dann einen leeren rechten Teil und einen linken Teil mit k − 1 Elementen.
+Der Rekursionsbaum wird zu einer Kette mit n Ebenen, und die Vergleiche sind (n − 1) {plus} (n − 2) {plus} … {plus} 1 = n(n − 1)/2.
+Das ist die abhängige Schleife von oben in rekursiver Form: *O(n²)* im Worst Case.
+Schon bei n = 2000 sind das 85-mal so viele Vergleiche wie beim gemischten Array.
+Dazu kommt eine Rekursionstiefe von n, die bei großen Arrays zu einer `StackOverflowException` führen kann.
+Bibliotheken wählen das Pivot deshalb geschickter, und `Array.Sort` wechselt bei zu tiefer Rekursion auf ein anderes Verfahren (_Introsort_).
+Damit bleibt es auch im Worst Case bei O(n log n).
+
+== Die Algorithmen aus dem Block Algorithmen
+
+Mit diesen Werkzeugen kannst du die Algorithmen aus dem Block Algorithmen nachträglich einordnen.
+Bei Graphen ist V die Anzahl der Knoten (_vertices_) und E die Anzahl der Kanten (_edges_).
+Die Graphen sind als Adjazenzliste gespeichert.
+
+[%header]
+|===
+|Algorithmus |Laufzeit |Begründung
+|link:{github_url}/08%20Theoretische%20Informatik/21_Breiten_und_Tiefensuche.adoc[BFS und DFS] |O(V {plus} E) |Jeder Knoten kommt einmal in die Queue bzw. auf den Stack, jede Kante wird einmal (ungerichtet: zweimal) angesehen.
+|link:{github_url}/08%20Theoretische%20Informatik/22_Kuerzeste_Wege.adoc[Dijkstra] mit `PriorityQueue` |O((V {plus} E) log V) |Jede Kante kann einen Eintrag in der Queue erzeugen. Einfügen und Herausnehmen kosten je O(log V).
+|link:{github_url}/08%20Theoretische%20Informatik/23_Topologische_Sortierung.adoc[Topologische Sortierung] (Kahn) |O(V {plus} E) |Eingangsgrade zählen geht einmal über alle Kanten, danach wird jeder Knoten und jede Kante einmal verarbeitet.
+|link:{github_url}/08%20Theoretische%20Informatik/24_Divide_and_Conquer.adoc[Binäre Suche] |O(log n) |Der Bereich halbiert sich in jedem Schritt.
+|link:{github_url}/08%20Theoretische%20Informatik/24_Divide_and_Conquer.adoc[Mergesort] |O(n log n) |log n Ebenen mit je n Schritten Merge-Arbeit, in jedem Fall.
+|link:{github_url}/08%20Theoretische%20Informatik/24_Divide_and_Conquer.adoc[Quicksort] |O(n log n) im Mittel, O(n²) im Worst Case |Bei ungünstigem Pivot wird der Baum zu einer Kette mit n Ebenen.
+|link:{github_url}/08%20Theoretische%20Informatik/25_Backtracking.adoc[Backtracking] |exponentiell |Der Suchbaum hat bei n Entscheidungen mit je k Möglichkeiten bis zu kⁿ Blätter. Permutationen: n!, Teilsummen: 2ⁿ, N-Damen: bis zu N! vollständige Stellungen.
+|link:{github_url}/08%20Theoretische%20Informatik/26_Greedy.adoc[Greedy]: Aktivitätsauswahl |O(n log n) |Das Sortieren nach Endzeit dominiert, die Auswahl danach ist ein Durchlauf in O(n).
+|link:{github_url}/08%20Theoretische%20Informatik/27_Dynamische_Programmierung.adoc[Dynamische Programmierung] |Zeilen × Spalten × Arbeit pro Zelle |Fibonacci mit Tabelle: n Zellen → O(n). Wechselgeld: Betrag B × k Münzen → O(B · k). Rucksack: n Gegenstände × Kapazität W → O(n · W). Editierdistanz: O(m · n) für Wörter der Länge m und n.
+|===
+
+Beim Backtracking ändert Pruning viel an der tatsächlichen Laufzeit, weil ganze Teilbäume wegfallen.
+Die Klasse im Worst Case bleibt aber exponentiell.
+Bei der dynamischen Programmierung ist das Zählen besonders einfach: Jede Zelle der Tabelle wird genau einmal berechnet, und eine Zelle schaut nur auf wenige Nachbarzellen.
+
+== Adjazenzmatrix und Adjazenzliste im Vergleich
+
+In link:{github_url}/08%20Theoretische%20Informatik/20_Graphen.adoc[Graphen] hast du zwei Darstellungen kennengelernt.
+Jetzt kannst du ihre Kosten vergleichen:
+
+[%header]
+|===
+|Operation |Adjazenzmatrix |Adjazenzliste
+|Speicher |O(V²) |O(V {plus} E)
+|Gibt es die Kante u → v? |O(1) |O(Grad von u)
+|Alle Nachbarn von u durchlaufen |O(V) |O(Grad von u)
+|BFS oder DFS über den ganzen Graphen |O(V²) |O(V {plus} E)
+|===
+
+Bei der Matrix muss die Suche für jeden Knoten eine ganze Zeile mit V Einträgen durchgehen, auch wenn nur zwei davon Kanten sind.
+Wie viel das ausmacht, hängt davon ab, wie dicht der Graph ist.
+In einem *dichten* Graphen ist E ungefähr V², dann sind beide Darstellungen gleich gut.
+Die meisten echten Graphen sind aber *dünn*: Eine Kreuzung im Straßennetz hat 3 oder 4 Nachbarn, egal wie groß das Netz ist.
+Für ein Straßennetz mit einer Million Kreuzungen hätte die Matrix 10¹² Einträge, die Liste nur einige Millionen.
+Deshalb ist die Adjazenzliste der Normalfall.
+
+// tag::pdf_exclude[]
+== Übungen
+
+. Bestimme für jedes Snippet die Laufzeit in O-Notation und begründe sie. n ist jeweils die Länge des Arrays `a`.
++
+[source,csharp]
+----
+int[] a = [5, 3, 8, 1];
+int n = a.Length;
+
+int x = 0;
+for (int i = 0; i < n; i++)
+{
+    for (int j = 0; j < 100; j++) { x += a[i] * j; }
+}
+
+int y = 0;
+for (int i = 1; i < n; i *= 2)
+{
+    for (int j = 0; j < i; j++) { y++; }
+}
+
+int z = 0;
+for (int i = 0; i < n; i++)
+{
+    for (int j = n; j > 0; j /= 2) { z += a[i]; }
+}
+Console.WriteLine($"{x} {y} {z}");
+----
+. Zeichne den Rekursionsbaum für `Count(8)` und gib die Anzahl der Aufrufe an.
+Leite daraus die Laufzeit für allgemeines n ab.
++
+[source,csharp]
+----
+Console.WriteLine(Count(8));
+
+static int Count(int n)
+{
+    if (n <= 1) { return 1; }
+    int sum = 0;
+    for (int i = 0; i < n; i++) { sum++; }
+    return sum + Count(n / 2) + Count(n / 2);
+}
+----
+. Schreibe eine Breitensuche für einen Graphen als Adjazenzmatrix (`+bool[,]+`) und eine für denselben Graphen als Adjazenzliste.
+Zähle in beiden Varianten, wie oft die innere Schleife über die Nachbarn läuft.
+Teste mit einem Ring aus 1000 Knoten (jeder Knoten ist mit seinem Nachfolger verbunden, der letzte mit dem ersten) und vergleiche die Zähler mit V² und V {plus} E.
+
+// end::pdf_exclude[]
+
+== Zusatzmaterial
+
+Im https://die-spengergasse.github.io/course-pos-csharp_basics/08%20Theoretische%20Informatik/32_Code_analysieren.html[32_Code_analysieren.html] siehst du animiert, wie man die Durchläufe von Schleifen zählt, und bestimmst danach selbst die Laufzeit von rund 20 C#-Snippets, darunter einige mit versteckten Kosten.

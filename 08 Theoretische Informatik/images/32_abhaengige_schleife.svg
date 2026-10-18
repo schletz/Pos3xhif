@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="340" viewBox="0 0 720 340">
+  <rect x="0.5" y="0.5" width="719" height="339" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+
+  <!-- Code -->
+  <text x="24" y="34" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1f2937">Abhängige Schleife, n = 6</text>
+  <rect x="16" y="48" width="296" height="82" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+  <g font-family="Consolas, Menlo, monospace" font-size="13" fill="#1f2937">
+    <text x="26" y="72">for (int i = 0; i &lt; n; i++)</text>
+    <text x="55" y="94">for (int j = i + 1; j &lt; n; j++)</text>
+    <text x="84" y="116">count++;</text>
+  </g>
+
+  <!-- Legend -->
+  <rect x="24" y="158" width="18" height="18" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="24" y="188" width="18" height="18" fill="#f3f4f6" stroke="#d1d5db"/>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937">
+    <text x="52" y="172">Rumpf läuft (j &gt; i)</text>
+    <text x="52" y="202">wird übersprungen (j ≤ i)</text>
+    <text x="24" y="244">Zeile i hat n − 1 − i Durchläufe.</text>
+  </g>
+
+  <!-- Grid header -->
+  <g font-family="Consolas, Menlo, monospace" font-size="13" fill="#6b7280" text-anchor="middle">
+    <text x="502" y="30">j</text>
+    <text x="417" y="52">0</text>
+    <text x="451" y="52">1</text>
+    <text x="485" y="52">2</text>
+    <text x="519" y="52">3</text>
+    <text x="553" y="52">4</text>
+    <text x="587" y="52">5</text>
+  </g>
+  <g font-family="Consolas, Menlo, monospace" font-size="13" fill="#6b7280" text-anchor="end">
+    <text x="390" y="82">i = 0</text>
+    <text x="390" y="116">i = 1</text>
+    <text x="390" y="150">i = 2</text>
+    <text x="390" y="184">i = 3</text>
+    <text x="390" y="218">i = 4</text>
+    <text x="390" y="252">i = 5</text>
+  </g>
+
+  <!-- Skipped cells (j <= i) -->
+  <g fill="#f3f4f6" stroke="#d1d5db">
+    <rect x="400" y="60" width="34" height="34"/>
+    <rect x="400" y="94" width="34" height="34"/>
+    <rect x="434" y="94" width="34" height="34"/>
+    <rect x="400" y="128" width="34" height="34"/>
+    <rect x="434" y="128" width="34" height="34"/>
+    <rect x="468" y="128" width="34" height="34"/>
+    <rect x="400" y="162" width="34" height="34"/>
+    <rect x="434" y="162" width="34" height="34"/>
+    <rect x="468" y="162" width="34" height="34"/>
+    <rect x="502" y="162" width="34" height="34"/>
+    <rect x="400" y="196" width="34" height="34"/>
+    <rect x="434" y="196" width="34" height="34"/>
+    <rect x="468" y="196" width="34" height="34"/>
+    <rect x="502" y="196" width="34" height="34"/>
+    <rect x="536" y="196" width="34" height="34"/>
+    <rect x="400" y="230" width="34" height="34"/>
+    <rect x="434" y="230" width="34" height="34"/>
+    <rect x="468" y="230" width="34" height="34"/>
+    <rect x="502" y="230" width="34" height="34"/>
+    <rect x="536" y="230" width="34" height="34"/>
+    <rect x="570" y="230" width="34" height="34"/>
+  </g>
+  <!-- Executed cells (j > i) -->
+  <g fill="#dbeafe" stroke="#2563eb">
+    <rect x="434" y="60" width="34" height="34"/>
+    <rect x="468" y="60" width="34" height="34"/>
+    <rect x="502" y="60" width="34" height="34"/>
+    <rect x="536" y="60" width="34" height="34"/>
+    <rect x="570" y="60" width="34" height="34"/>
+    <rect x="468" y="94" width="34" height="34"/>
+    <rect x="502" y="94" width="34" height="34"/>
+    <rect x="536" y="94" width="34" height="34"/>
+    <rect x="570" y="94" width="34" height="34"/>
+    <rect x="502" y="128" width="34" height="34"/>
+    <rect x="536" y="128" width="34" height="34"/>
+    <rect x="570" y="128" width="34" height="34"/>
+    <rect x="536" y="162" width="34" height="34"/>
+    <rect x="570" y="162" width="34" height="34"/>
+    <rect x="570" y="196" width="34" height="34"/>
+  </g>
+
+  <!-- Count per row -->
+  <text x="652" y="52" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#6b7280" text-anchor="middle">Durchläufe</text>
+  <g font-family="Consolas, Menlo, monospace" font-size="15" font-weight="bold" fill="#2563eb" text-anchor="middle">
+    <text x="652" y="82">5</text>
+    <text x="652" y="116">4</text>
+    <text x="652" y="150">3</text>
+    <text x="652" y="184">2</text>
+    <text x="652" y="218">1</text>
+    <text x="652" y="252">0</text>
+  </g>
+
+  <!-- Sum -->
+  <text x="360" y="298" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle">5 + 4 + 3 + 2 + 1 + 0 = 15 = 6 · 5 / 2</text>
+  <text x="360" y="322" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Knapp die Hälfte des Quadrats mit n² = 36 Feldern: n(n − 1)/2 Durchläufe, also O(n²)</text>
+</svg>

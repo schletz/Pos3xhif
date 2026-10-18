@@ -1,0 +1,32 @@
+:doctype: book
+:toc: macro
+:source-highlighter: rouge
+:icons: font
+// Lade die entsprechende Kopfzeile (kopfzeile_diplomarbeit_aul, ..._hif oder ..._kolleg)
+:header_image: kopfzeile_diplomarbeit_aul.png
+:pdf-page-size: a4
+:toc-title: Inhaltsverzeichnis
+:lang: DE
+:hyphens:
+
+// Lädt das PDF, das aus der Wordvorlage erzeugt wurde, zu Beginn der Arbeit.
+image::diplomarbeit_intro.pdf[pages=1..99]
+
+// Schreibt das Inhaltsverzeichnis
+toc::[]
+
+// Füge die Arbeit jedes einzelnen ein.
+// WICHTIG: Nach jedem include muss eine Leerzeile sein!
+
+include::diplomarbeit_themenstellung.adoc[]
+
+// include::diplomarbeit_themenstellung_nachname1.adoc[]
+
+// include::diplomarbeit_themenstellung_nachname2.adoc[]
+
+// include::diplomarbeit_themenstellung_nachname3.adoc[]
+
+// include::diplomarbeit_themenstellung_nachname4.adoc[]
+
+// Hier kannst du ggf. Anhänge aus externen Quellen laden.
+// image::diplomarbeit_anhang.pdf[pages=1..99]

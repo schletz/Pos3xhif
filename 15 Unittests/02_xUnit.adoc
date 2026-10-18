@@ -1,0 +1,372 @@
+= Unit Tests mit xUnit
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Im Kapitel link:{github_url}/15%20Unittests/01_Warum_Testen.adoc[Warum testen?] hast du gesehen, was Unit Tests leisten.
+Jetzt schreibst du sie selbst, und zwar für den Notenrechner.
+Du lernst das Paket xUnit kennen, prüfst Ergebnisse und Exceptions und erfährst, warum ein Test nur ein Verhalten prüfen soll.
+Welche Testfälle du brauchst, leitest du im nächsten Kapitel systematisch ab.
+
+[[projekt-anlegen]]
+== Projekt anlegen
+
+Eine Solution mit Tests besteht aus zwei Projekten: Die _Application_ enthält den Code, das Projekt _Tests_ enthält die Tests und verweist auf die Application.
+Führe diese Befehle in der Konsole aus.
+Unter macOS ersetzt du _rd_, _md_ und _move_ durch _rm -rf_, _mkdir_ und _mv_.
+
+[source,text]
+----
+rd /S /Q UnittestDemo
+md UnittestDemo
+cd UnittestDemo
+md UnittestDemo.Application
+cd UnittestDemo.Application
+dotnet new classlib
+cd ..
+md UnittestDemo.Tests
+cd UnittestDemo.Tests
+dotnet new install xunit.v3.templates
+dotnet new xunit3 -f net10.0
+move global.json ..
+dotnet reference add ..\UnittestDemo.Application
+cd ..
+dotnet new sln -f sln
+dotnet sln add UnittestDemo.Application
+dotnet sln add UnittestDemo.Tests
+start UnittestDemo.sln
+----
+
+* `dotnet new install xunit.v3.templates` installiert die Vorlage für xUnit in Version 3. Das musst du nur einmal pro Rechner machen.
+* `-f net10.0` ist nötig, sonst erzeugt die Vorlage ein Projekt für .NET 8.
+* Die Datei _global.json_ gehört in den Ordner der Solution.
+Sie legt fest, mit welcher Testplattform `dotnet test` arbeitet.
+Fehlt sie, bricht `dotnet test` mit einer Fehlermeldung ab.
+Liegt dein Ordner in einem git-Repository, legt die Vorlage _global.json_ gleich im obersten Ordner des Repositorys an.
+Dann meldet _move_ „Datei nicht gefunden“.
+Das kannst du ignorieren, denn `dotnet test` sucht die Datei auch in den übergeordneten Ordnern.
+
+Lösche _Class1.cs_ und _UnitTest1.cs_.
+Entferne in beiden Projektdateien die Zeile _ImplicitUsings_ und füge _TreatWarningsAsErrors_ hinzu.
+Im Testprojekt entfernst du zusätzlich die Zeile `+<Using Include="Xunit" />+`.
+Dann schreibst du `using Xunit;` selbst in jede Testdatei und siehst, woher `Assert` kommt.
+_UnittestDemo.Tests.csproj_ sieht dann so aus:
+
+[source,xml]
+----
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit.v3.mtp-v2" Version="4.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UnittestDemo.Application\UnittestDemo.Application.csproj" />
+  </ItemGroup>
+
+</Project>
+----
+
+Das Testprojekt ist ein eigenes, ausführbares Programm (`OutputType Exe`).
+Du startest die Tests im Test Explorer von Visual Studio oder Rider, in der Konsole mit `dotnet test` im Ordner der Solution.
+
+== Die Klasse, die wir testen
+
+Der Notenrechner bekommt die erreichten Prozent als `decimal`.
+Mit `decimal` sind Werte wie 87,5 oder 49,99 exakt darstellbar.
+Bei `double` können an den Grenzen Rundungsfehler auftreten.
+
+*GradeCalculator.cs* (im Projekt _UnittestDemo.Application_)
+
+[source,csharp]
+----
+using System;
+
+namespace UnittestDemo.Application;
+
+public static class GradeCalculator
+{
+    public static int CalculateGrade(decimal percent)
+    {
+        if (percent < 0 || percent > 100)
+        {
+            throw new ArgumentOutOfRangeException(nameof(percent), "Percent must be between 0 and 100.");
+        }
+        if (percent >= 87.5m) { return 1; }
+        if (percent >= 75m) { return 2; }
+        if (percent >= 62.5m) { return 3; }
+        if (percent >= 50m) { return 4; }
+        return 5;
+    }
+}
+----
+
+Die Klasse muss `public` sein, sonst sieht das Testprojekt sie nicht.
+
+== Der erste Test: [Fact]
+
+*GradeCalculatorTests.cs* (im Projekt _UnittestDemo.Tests_)
+
+[source,csharp]
+----
+using System;
+using UnittestDemo.Application;
+using Xunit;
+
+namespace UnittestDemo.Tests;
+
+public class GradeCalculatorTests
+{
+    [Fact]
+    public void CalculateGrade_With90Percent_Returns1()
+    {
+        // Arrange
+        decimal percent = 90m;
+
+        // Act
+        int grade = GradeCalculator.CalculateGrade(percent);
+
+        // Assert
+        Assert.Equal(1, grade);
+    }
+}
+----
+
+* Eine *Testklasse* ist `public` und heißt wie die getestete Klasse plus _Tests_.
+* `+[Fact]+` markiert eine Testmethode ohne Parameter.
+Sie ist `public void`.
+* Der *Name* folgt dem Muster `+Methode_Situation_ErwartetesErgebnis+`.
+Schlägt der Test fehl, sagt schon der Name, was nicht stimmt.
+
+Jeder Test hat drei Teile.
+Man nennt das *Arrange-Act-Assert* (AAA):
+
+[%header,cols="1,3,3"]
+|===
+|Teil |Was passiert? |Im Beispiel
+|*Arrange* |Die Ausgangslage herstellen: Objekte, Eingaben |`percent = 90m`
+|*Act* |Genau *eine* Aktion ausführen |`CalculateGrade(percent)` aufrufen
+|*Assert* |Das Ergebnis prüfen |Ist die Note `1`?
+|===
+
+Bei kurzen Tests lässt man die Kommentare weg.
+Die Reihenfolge bleibt trotzdem gleich.
+
+Ist ein Test rot, zeigt xUnit, was erwartet war und was herauskam.
+Stünde im Notenrechner `+percent > 87.5m+` statt `+percent >= 87.5m+`, meldet ein Test für 87,5 %:
+
+[source,text]
+----
+failed UnittestDemo.Tests.GradeCalculatorTests.CalculateGrade_With87Point5Percent_Returns1
+  Assert.Equal() Failure: Values differ
+  Expected: 1
+  Actual:   2
+----
+
+== Mehrere Werte: [Theory] und [InlineData]
+
+Für die Grenze bei 87,5 % willst du zwei Werte prüfen: 87,5 (Note 1) und 87,49 (Note 2).
+Zwei fast gleiche `+[Fact]+`-Methoden wären doppelter Code.
+Eine *Theory* ist ein Test mit Parametern.
+Jedes `+[InlineData]+` liefert einen Satz Argumente:
+
+[source,csharp]
+----
+[Theory]
+[InlineData(87.5, 1)]
+[InlineData(87.49, 2)]
+public void CalculateGrade_AtBoundary_ReturnsExpectedGrade(decimal percent, int expected)
+{
+    int grade = GradeCalculator.CalculateGrade(percent);
+    Assert.Equal(expected, grade);
+}
+----
+
+* Die Werte in `+[InlineData]+` stehen in der Reihenfolge der Parameter.
+* Der Test Explorer zeigt jede Zeile als eigenen Testfall.
+Du siehst also, _welcher_ Wert fehlschlägt.
+* In einem Attribut darf kein `decimal` stehen (`87.5m` ist dort nicht erlaubt).
+Du schreibst `87.5`, xUnit wandelt den Wert in den Parametertyp `decimal` um.
+
+== Die wichtigsten Asserts
+
+Die Klasse `Assert` hat viele Methoden.
+Diese brauchst du in den nächsten Kapiteln am häufigsten:
+
+[%header]
+|===
+|Assert |Prüft, ob ...
+|`Assert.Equal(expected, actual)` |zwei Werte gleich sind. Zuerst der erwartete Wert!
+|`Assert.NotEqual(expected, actual)` |zwei Werte verschieden sind
+|`Assert.True(condition)`, `Assert.False(condition)` |eine Bedingung erfüllt (nicht erfüllt) ist
+|`Assert.Null(obj)`, `Assert.NotNull(obj)` |ein Wert `null` ist (nicht ist)
+|`Assert.Empty(list)`, `Assert.Single(list)` |eine Collection leer ist bzw. genau ein Element hat
+|`Assert.Contains(item, list)` |eine Collection (oder ein String) das Element enthält
+|`Assert.Equivalent(expected, actual)` |zwei Objekte in allen Properties übereinstimmen
+|`+Assert.Throws<T>(...)+` |eine Exception vom Typ `T` geworfen wird (nächster Abschnitt)
+|===
+
+*Nimm das genaueste Assert.*
+`Assert.True(grade == 1)` funktioniert auch.
+Schlägt der Test fehl, meldet xUnit aber nur `Expected: True, Actual: False`.
+`Assert.Equal(1, grade)` meldet dagegen `Expected: 1, Actual: 2`.
+Damit weißt du (oder ein Agent) sofort mehr.
+
+`Assert.True` und `Assert.False` können eine eigene Meldung bekommen.
+Sie erscheint statt `Expected: True` in der Ausgabe:
+
+[source,csharp]
+----
+Assert.True(success, "Payment within the limit must succeed.");
+----
+
+== Exceptions testen
+
+Bei -5 % soll `CalculateGrade` eine `ArgumentOutOfRangeException` werfen.
+Würdest du die Methode direkt im Test aufrufen, bricht die Exception den Test ab.
+Daher übergibst du den Aufruf an `Assert.Throws`.
+Diese Methode führt ihn selbst aus und fängt die Exception:
+
+[source,csharp]
+----
+[Fact]
+public void CalculateGrade_WithNegativePercent_ThrowsArgumentOutOfRangeException()
+{
+    ArgumentOutOfRangeException ex = Assert.Throws<ArgumentOutOfRangeException>(
+        () => GradeCalculator.CalculateGrade(-0.01m));
+
+    Assert.Equal("percent", ex.ParamName);
+    Assert.StartsWith("Percent must be between 0 and 100.", ex.Message);
+}
+----
+
+* `+() => GradeCalculator.CalculateGrade(-0.01m)+` ist eine *Lambda Expression*: eine kurze Methode ohne Namen.
+`Assert.Throws` ruft sie auf.
+Lambdas lernst du im Kapitel link:{github_url}/17%20Serviceklassen/01_Lambdas.adoc[Lambda Expressions] genauer kennen.
+* Wird keine Exception geworfen, ist der Test rot.
+* `Assert.Throws` liefert die gefangene Exception zurück.
+So prüfst du auch die *Message*.
+Damit erkennst du, ob die _richtige_ Prüfung angeschlagen hat.
+`ArgumentException` und ihre Unterklassen hängen an die Message noch `+(Parameter 'percent')+` an.
+Daher steht hier `Assert.StartsWith` statt `Assert.Equal`.
+
+[WARNING]
+====
+Schreibe in Tests kein `try`/`catch`, um Exceptions zu prüfen.
+Vergisst du im `try` ein `Assert.Fail()`, ist der Test auch grün, wenn gar keine Exception kommt.
+====
+
+=== Throws oder ThrowsAny?
+
+`+Assert.Throws<T>+` verlangt *genau* den Typ `T`.
+`ArgumentOutOfRangeException` ist eine Unterklasse von `ArgumentException`.
+Trotzdem ist dieser Test rot:
+
+[source,csharp]
+----
+Assert.Throws<ArgumentException>(() => GradeCalculator.CalculateGrade(101m));
+----
+
+[source,text]
+----
+Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(System.ArgumentOutOfRangeException)
+----
+
+`+Assert.ThrowsAny<T>+` akzeptiert auch alle Unterklassen von `T`:
+
+[source,csharp]
+----
+Assert.ThrowsAny<ArgumentException>(() => GradeCalculator.CalculateGrade(101m));   // green
+----
+
+[%header,cols="2,2,3"]
+|===
+|Methode |Akzeptiert |Verwende es, wenn ...
+|`+Assert.Throws<T>+` |genau `T` |der genaue Typ zur Spezifikation gehört (der Normalfall).
+|`+Assert.ThrowsAny<T>+` |`T` und alle Unterklassen |nur die Basisklasse zählt.
+|===
+
+`ThrowsAny` wird wichtig, sobald du eigene Exceptions schreibst.
+Eine Serviceklasse wirft dann zum Beispiel eine `ServiceException` oder eine davon abgeleitete `NotFoundException`.
+Ein Test, der nur prüft „der Service lehnt ab“, verwendet `+Assert.ThrowsAny<ServiceException>+`.
+
+== Ein Verhalten pro Test
+
+Dieser Test prüft alles auf einmal:
+
+[source,csharp]
+----
+[Fact]
+public void CalculateGrade_Works()
+{
+    Assert.Equal(1, GradeCalculator.CalculateGrade(90m));
+    Assert.Equal(1, GradeCalculator.CalculateGrade(87.5m));
+    Assert.Equal(5, GradeCalculator.CalculateGrade(0m));
+    Assert.Throws<ArgumentOutOfRangeException>(() => GradeCalculator.CalculateGrade(-1m));
+}
+----
+
+Das hat zwei Nachteile:
+
+* *Das erste rote Assert beendet den Test.*
+Schlägt die Zeile mit 87,5 fehl, laufen die anderen Prüfungen gar nicht.
+Du weißt nicht, ob 0 % und -1 % funktionieren.
+* *Der Name sagt nichts.*
+`+CalculateGrade_Works+` ist rot.
+Aber was genau ist kaputt?
+
+Daher gilt die Regel: *Ein Test prüft ein Verhalten.*
+Oft wird sie als „ein Assert pro Test“ zitiert.
+Mehrere Asserts sind aber in Ordnung, wenn sie _dasselbe_ Verhalten prüfen.
+Im Abschnitt über Exceptions prüfen Typ, `ParamName` und Message gemeinsam: „Die richtige Exception kommt.“
+
+Prüfst du mehrere Properties eines Objekts, gibt es zwei Hilfen.
+Beide melden _alle_ Abweichungen und nicht nur die erste.
+Im Beispiel ist `card` eine _CreditCard_ aus dem Kapitel link:{github_url}/01%20Types/06_Interfaces.adoc[Interfaces], erzeugt mit `+new CreditCard(limit: 1000, expiration: new DateTime(2030, 12, 31))+`:
+
+[source,csharp]
+----
+// Assert.Multiple runs every check and reports all failures together.
+Assert.Multiple(
+    () => Assert.Equal(1000m, card.Limit),
+    () => Assert.Equal(new DateTime(2030, 12, 31), card.Expiration));
+
+// Assert.Equivalent compares the properties of an anonymous object with the real object.
+Assert.Equivalent(new { Limit = 1000m, Expiration = new DateTime(2030, 12, 31) }, card);
+----
+
+// tag::pdf_exclude[]
+== Übungen
+
+. *Aufräumen:* Zerlege den Test `+CalculateGrade_Works+` aus dem Abschnitt _Ein Verhalten pro Test_ in einzelne Tests.
+Verwende `+[Theory]+`, wo mehrere Werte dasselbe Verhalten prüfen, und gib jedem Test einen Namen nach dem Muster `+Methode_Situation_ErwartetesErgebnis+`.
+Ändere danach im Notenrechner `+>=+` bei einer Grenze absichtlich auf `+>+`.
+Welche Tests werden rot?
+Was verrät dir ihr Name?
+
+// end::pdf_exclude[]

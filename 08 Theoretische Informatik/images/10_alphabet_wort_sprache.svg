@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="380" viewBox="0 0 820 380">
+<rect x="0.5" y="0.5" width="819" height="379" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1f2937"/></marker></defs>
+<rect x="20" y="20" width="180" height="120" rx="8" fill="#f3f4f6" stroke="#d1d5db"/>
+<text x="110" y="46" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#1f2937" text-anchor="middle" font-weight="bold">Alphabet</text>
+<text x="110" y="70" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle" font-weight="normal">Σ = {a, b}</text>
+<circle cx="85" cy="108" r="17" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="85" y="113" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937" text-anchor="middle" font-weight="normal">a</text>
+<circle cx="135" cy="108" r="17" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="135" y="113" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937" text-anchor="middle" font-weight="normal">b</text>
+<line x1="110" y1="140" x2="110" y2="196" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<text x="122" y="165" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#6b7280" text-anchor="start" font-weight="normal">Symbole</text>
+<text x="122" y="181" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#6b7280" text-anchor="start" font-weight="normal">aneinanderreihen</text>
+<rect x="20" y="200" width="180" height="120" rx="8" fill="#f3f4f6" stroke="#d1d5db"/>
+<text x="110" y="226" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#1f2937" text-anchor="middle" font-weight="bold">Wort</text>
+<rect x="50" y="242" width="28" height="30" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="64" y="263" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937" text-anchor="middle" font-weight="normal">a</text>
+<rect x="82" y="242" width="28" height="30" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="96" y="263" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937" text-anchor="middle" font-weight="normal">b</text>
+<rect x="114" y="242" width="28" height="30" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="128" y="263" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937" text-anchor="middle" font-weight="normal">b</text>
+<rect x="146" y="242" width="28" height="30" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="160" y="263" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937" text-anchor="middle" font-weight="normal">a</text>
+<text x="110" y="302" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle" font-weight="normal">|abba| = 4</text>
+<line x1="200" y1="260" x2="246" y2="260" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="250" y="20" width="550" height="340" rx="16" fill="#f3f4f6" stroke="#6b7280" stroke-width="1.5"/>
+<text x="270" y="50" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#1f2937" text-anchor="start" font-weight="bold">Σ* = alle Wörter über {a, b}</text>
+<text x="300" y="110" font-family="Consolas, Menlo, monospace" font-size="16" fill="#6b7280" text-anchor="middle" font-weight="normal">ε</text>
+<text x="350" y="150" font-family="Consolas, Menlo, monospace" font-size="16" fill="#6b7280" text-anchor="middle" font-weight="normal">b</text>
+<text x="300" y="200" font-family="Consolas, Menlo, monospace" font-size="16" fill="#6b7280" text-anchor="middle" font-weight="normal">ba</text>
+<text x="360" y="245" font-family="Consolas, Menlo, monospace" font-size="16" fill="#6b7280" text-anchor="middle" font-weight="normal">bb</text>
+<text x="305" y="290" font-family="Consolas, Menlo, monospace" font-size="16" fill="#6b7280" text-anchor="middle" font-weight="normal">bab</text>
+<text x="365" y="330" font-family="Consolas, Menlo, monospace" font-size="16" fill="#6b7280" text-anchor="middle" font-weight="normal">bbba</text>
+<text x="300" y="335" font-family="Consolas, Menlo, monospace" font-size="16" fill="#6b7280" text-anchor="middle" font-weight="normal">…</text>
+<ellipse cx="600" cy="205" rx="180" ry="130" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+<text x="600" y="112" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" fill="#1f2937" text-anchor="middle" font-weight="bold">L = { w ∈ Σ* | w beginnt mit a }</text>
+<text x="510" y="160" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937" text-anchor="middle" font-weight="normal">a</text>
+<text x="590" y="155" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937" text-anchor="middle" font-weight="normal">aa</text>
+<text x="670" y="165" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937" text-anchor="middle" font-weight="normal">ab</text>
+<text x="480" y="215" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937" text-anchor="middle" font-weight="normal">aab</text>
+<text x="560" y="210" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937" text-anchor="middle" font-weight="normal">aba</text>
+<text x="650" y="220" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937" text-anchor="middle" font-weight="normal">abba</text>
+<text x="730" y="210" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937" text-anchor="middle" font-weight="normal">abb</text>
+<text x="530" y="270" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937" text-anchor="middle" font-weight="normal">aaaa</text>
+<text x="620" y="280" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937" text-anchor="middle" font-weight="normal">abab</text>
+<text x="700" y="270" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937" text-anchor="middle" font-weight="normal">…</text>
+<text x="780" y="350" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="end" font-weight="bold">L ⊆ Σ*</text>
+</svg>

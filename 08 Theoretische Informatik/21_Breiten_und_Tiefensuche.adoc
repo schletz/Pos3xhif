@@ -1,0 +1,571 @@
+= Breiten- und Tiefensuche
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Sobald ein Problem als Graph vorliegt, lautet die erste Frage oft: Welche Knoten kann ich von hier aus erreichen, und auf welchem Weg?
+Komme ich durch das Labyrinth zum Ausgang?
+Sind alle Rechner im Netzwerk miteinander verbunden?
+Wie viele Umstiege brauche ich mindestens?
+Für solche Fragen gibt es zwei grundlegende Verfahren: die *Breitensuche* (_Breadth-First Search_, BFS) und die *Tiefensuche* (_Depth-First Search_, DFS).
+Beide besuchen jeden erreichbaren Knoten genau einmal.
+Sie unterscheiden sich nur in der Reihenfolge.
+
+[TIP]
+====
+*Zum Selbst-Erarbeiten: der interaktive Trainer*
+
+Im https://die-spengergasse.github.io/course-pos-csharp_basics/08%20Theoretische%20Informatik/21_Breiten_und_Tiefensuche.html[Trainer für Breiten- und Tiefensuche] siehst du beide Suchen als Animation, Schritt für Schritt mit Queue und Stack.
+Danach suchst du selbst und bekommst bei jedem Schritt sofort Rückmeldung.
+So merkst du schnell, ob du das Verfahren wirklich verstanden hast.
+Ideal zum Üben vor einem Test!
+====
+
+== Das Beispiel und die Spielregeln
+
+Alle Beispiele verwenden diesen ungerichteten Graphen mit 8 Knoten.
+Wie in link:{github_url}/08%20Theoretische%20Informatik/20_Graphen.adoc[Graphen] speichern wir ihn als Adjazenzliste:
+
+[source,text]
+----
+A: C, E          E: A, D, F
+B: C, G          F: C, E, G
+C: A, B, F       G: B, F
+D: E, H          H: D
+----
+
+Beide Suchen müssen bei jedem Knoten entscheiden, in welcher Reihenfolge sie die Nachbarn betrachten.
+Damit alle dasselbe Ergebnis bekommen, gilt hier: *Die Nachbarn werden aufsteigend nach ihrem Namen betrachtet.*
+Die Listen oben sind schon so sortiert.
+
+Zwei Begriffe brauchst du in diesem Kapitel:
+
+* Ein Knoten ist *entdeckt* (oder _offen_), sobald die Suche ihn als Nachbarn gesehen und vorgemerkt hat.
+* Ein Knoten ist *besucht*, wenn die Suche ihn aus ihrem Speicher herausnimmt und seine Nachbarn betrachtet.
+Die _Besuchsreihenfolge_ ist die Reihenfolge, in der das passiert.
+
+== Breitensuche (BFS)
+
+Die Breitensuche breitet sich aus wie eine Welle: zuerst der Startknoten, dann alle seine Nachbarn, dann deren Nachbarn und so weiter.
+Damit das klappt, merkt sie sich die entdeckten Knoten in einer *Queue* (Warteschlange).
+Was zuerst hineinkommt, kommt zuerst wieder heraus (_FIFO, first in, first out_), genau wie an der Supermarktkasse.
+
+. Lege den Startknoten in die Queue und markiere ihn als entdeckt.
+. Solange die Queue nicht leer ist: Nimm den vordersten Knoten heraus und besuche ihn.
+Hänge jeden Nachbarn, der noch nicht entdeckt ist, hinten an die Queue und markiere ihn als entdeckt.
+
+So läuft die BFS ab Knoten A ab:
+
+[source,text]
+----
+Schritt  besucht  neu entdeckt   Queue danach (vorne ... hinten)
+1        A        C, E           C E
+2        C        B, F           E B F        A ist schon entdeckt
+3        E        D              B F D        A und F sind schon entdeckt
+4        B        G              F D G
+5        F        –              D G          C, E und G sind schon entdeckt
+6        D        H              G H
+7        G        –              H
+8        H        –              (leer)
+----
+
+Die Besuchsreihenfolge ist *A C E B F D G H*.
+Beachte Schritt 3: F ist zu diesem Zeitpunkt schon in der Queue, weil C ihn entdeckt hat.
+Deshalb wird F nicht ein zweites Mal angehängt.
+Ohne die Markierung „entdeckt“ würde die Suche Knoten mehrfach besuchen und bei Zyklen sogar endlos laufen.
+
+In C# gibt es für die Queue die Klasse `+Queue<T>+`, für die Markierung nimmst du ein `+HashSet<T>+`:
+
+[source,csharp]
+----
+Dictionary<string, string[]> graph = new()
+{
+    ["A"] = ["C", "E"],
+    ["B"] = ["C", "G"],
+    ["C"] = ["A", "B", "F"],
+    ["D"] = ["E", "H"],
+    ["E"] = ["A", "D", "F"],
+    ["F"] = ["C", "E", "G"],
+    ["G"] = ["B", "F"],
+    ["H"] = ["D"],
+};
+
+Console.WriteLine($"BFS: {string.Join(" ", BreadthFirst(graph, "A"))}");
+
+static List<string> BreadthFirst(Dictionary<string, string[]> graph, string start)
+{
+    var order = new List<string>();
+    var discovered = new HashSet<string> { start };     // (1)
+    var queue = new Queue<string>();
+    queue.Enqueue(start);
+    while (queue.Count > 0)
+    {
+        string node = queue.Dequeue();                    // (2)
+        order.Add(node);
+        foreach (string neighbor in graph[node])          // (3)
+        {
+            if (discovered.Add(neighbor))                 // (4)
+            {
+                queue.Enqueue(neighbor);
+            }
+        }
+    }
+    return order;
+}
+----
+
+[source,text]
+----
+BFS: A C E B F D G H
+----
+
+* *(1)* Der Startknoten ist von Anfang an entdeckt.
+* *(2)* Der vorderste Knoten wird besucht.
+* *(3)* Die Nachbarn kommen in der Reihenfolge des Arrays, also aufsteigend nach Namen.
+* *(4)* `HashSet.Add` liefert `false`, wenn das Element schon enthalten ist.
+Damit prüft und markiert eine einzige Zeile.
+
+=== Ebenen und Abstände
+
+Die Welle der Breitensuche hat eine wichtige Eigenschaft: Sie besucht zuerst alle Knoten mit Abstand 1 vom Start, dann alle mit Abstand 2 und so weiter.
+Der *Abstand* ist dabei die kleinste Anzahl von Kanten auf einem Weg vom Start zum Knoten.
+
+image::{root_dir}/images/21_bfs_ebenen.svg[]
+
+Merkt sich die BFS bei jedem neu entdeckten Knoten, von welchem Knoten aus sie ihn entdeckt hat, entsteht ein Baum aus *Vorgängern* (die Pfeile in der Grafik).
+Folgst du den Vorgängern von einem Knoten rückwärts bis zum Start, bekommst du einen kürzesten Weg: H ← D ← E ← A. Umgedreht ist das der Weg *A → E → D → H* mit 3 Kanten.
+Einen Weg mit weniger Kanten gibt es nicht, denn H liegt auf Ebene 3.
+
+Für die Vorgänger nimmst du ein `Dictionary`.
+Es ersetzt gleichzeitig das `HashSet`, denn jeder entdeckte Knoten steht darin.
+Füge diese Methode im Programm von oben ein (die Aufrufe gehören zu den Top-Level-Statements, die Methode darunter):
+
+[source,csharp]
+----
+Console.WriteLine($"A -> H: {string.Join(" ", ShortestPath(graph, "A", "H") ?? [])}");
+Console.WriteLine($"A -> G: {string.Join(" ", ShortestPath(graph, "A", "G") ?? [])}");
+
+static List<string>? ShortestPath(Dictionary<string, string[]> graph, string start, string target)
+{
+    var previous = new Dictionary<string, string?> { [start] = null };   // (1)
+    var queue = new Queue<string>();
+    queue.Enqueue(start);
+    while (queue.Count > 0)
+    {
+        string node = queue.Dequeue();
+        if (node == target) { break; }                                     // (2)
+        foreach (string neighbor in graph[node])
+        {
+            if (previous.TryAdd(neighbor, node))                           // (3)
+            {
+                queue.Enqueue(neighbor);
+            }
+        }
+    }
+    if (!previous.ContainsKey(target)) { return null; }                    // (4)
+
+    var path = new List<string>();
+    for (string? node = target; node is not null; node = previous[node])   // (5)
+    {
+        path.Add(node);
+    }
+    path.Reverse();
+    return path;
+}
+----
+
+[source,text]
+----
+A -> H: A E D H
+A -> G: A C B G
+----
+
+* *(1)* Der Startknoten hat keinen Vorgänger, deshalb `null`.
+* *(2)* Ist das Ziel erreicht, kann die Suche aufhören.
+Der Weg dorthin steht schon fest.
+* *(3)* `TryAdd` trägt den Vorgänger nur ein, wenn der Nachbar noch nicht entdeckt ist.
+* *(4)* Wurde das Ziel nie entdeckt, gibt es keinen Weg.
+* *(5)* Die Schleife folgt den Vorgängern vom Ziel bis zum Start.
+Danach steht der Weg verkehrt herum in der Liste und wird umgedreht.
+
+Die Länge des Weges in Kanten ist `path.Count - 1`.
+Das ist der Abstand des Ziels vom Start.
+
+== Tiefensuche (DFS)
+
+Die Tiefensuche geht den umgekehrten Weg: Sie folgt einem Pfad so weit wie möglich.
+Erst wenn es nicht mehr weitergeht, kehrt sie um und probiert die nächste Abzweigung.
+So würdest du ein Labyrinth erkunden, wenn du immer an der Wand entlanggehst.
+Statt einer Queue verwendet die Tiefensuche einen *Stack* (Stapel).
+Was zuletzt hineinkommt, kommt zuerst heraus (_LIFO, last in, first out_).
+
+Es gibt mehrere Varianten der DFS, die sich in Details unterscheiden.
+Hier gilt diese:
+
+. Lege den Startknoten auf den Stack.
+. Solange der Stack nicht leer ist: Nimm den obersten Knoten herunter.
+Ist er schon besucht, überspringe ihn.
+Sonst besuche ihn und lege alle noch nicht besuchten Nachbarn auf den Stack, und zwar in *absteigender* Reihenfolge.
+
+Warum absteigend?
+Der zuletzt hinaufgelegte Knoten wird als Erstes wieder heruntergenommen.
+Legst du die Nachbarn absteigend hinauf, liegt der Nachbar mit dem kleinsten Namen oben und wird als Nächstes besucht.
+
+[source,text]
+----
+Schritt  herunter  besucht                     Stack danach (unten ... oben)
+1        A         A                           E C
+2        C         C                           E F B
+3        B         B                           E F G
+4        G         G                           E F F
+5        F         F                           E F E
+6        E         E                           E F D
+7        D         D                           E F H
+8        H         H                           E F
+9        F         schon besucht, überspringen E
+10       E         schon besucht, überspringen (leer)
+----
+
+Die Besuchsreihenfolge ist *A C B G F E D H*.
+Ein Knoten kann mehrmals auf dem Stack liegen: F wurde von C und von G hinaufgelegt, als er noch nicht besucht war.
+Deshalb wird beim Herunternehmen noch einmal geprüft.
+
+In C# verwendest du `+Stack<T>+`.
+Füge auch diese Methode im Programm von oben ein:
+
+[source,csharp]
+----
+Console.WriteLine($"DFS: {string.Join(" ", DepthFirst(graph, "A"))}");
+
+static List<string> DepthFirst(Dictionary<string, string[]> graph, string start)
+{
+    var order = new List<string>();
+    var visited = new HashSet<string>();
+    var stack = new Stack<string>();
+    stack.Push(start);
+    while (stack.Count > 0)
+    {
+        string node = stack.Pop();
+        if (!visited.Add(node)) { continue; }               // (1)
+        order.Add(node);
+        string[] neighbors = graph[node];
+        for (int i = neighbors.Length - 1; i >= 0; i--)     // (2)
+        {
+            if (!visited.Contains(neighbors[i]))
+            {
+                stack.Push(neighbors[i]);
+            }
+        }
+    }
+    return order;
+}
+----
+
+[source,text]
+----
+DFS: A C B G F E D H
+----
+
+* *(1)* Liegt ein Knoten doppelt auf dem Stack, wird er beim zweiten Mal übersprungen.
+* *(2)* Die Schleife läuft rückwärts durch die Nachbarn, damit der kleinste Nachbar oben liegt.
+
+=== Rekursive Tiefensuche
+
+Die Tiefensuche lässt sich auch rekursiv schreiben.
+Dann übernimmt der Aufrufstack die Rolle des `+Stack<T>+`: Jeder Aufruf besucht einen Knoten und ruft sich für jeden noch nicht besuchten Nachbarn selbst auf.
+Ist ein Aufruf fertig, geht es beim Aufrufer mit dem nächsten Nachbarn weiter.
+Das ist das „Umkehren und die nächste Abzweigung probieren“.
+
+[source,csharp]
+----
+var visited = new HashSet<string>();
+var recursiveOrder = new List<string>();
+DepthFirstRecursive(graph, "A", visited, recursiveOrder);
+Console.WriteLine($"DFS rekursiv: {string.Join(" ", recursiveOrder)}");
+
+static void DepthFirstRecursive(Dictionary<string, string[]> graph, string node,
+    HashSet<string> visited, List<string> order)
+{
+    visited.Add(node);
+    order.Add(node);
+    foreach (string neighbor in graph[node])                // (1)
+    {
+        if (!visited.Contains(neighbor))
+        {
+            DepthFirstRecursive(graph, neighbor, visited, order);
+        }
+    }
+}
+----
+
+[source,text]
+----
+DFS rekursiv: A C B G F E D H
+----
+
+* *(1)* Hier laufen die Nachbarn aufsteigend durch.
+Der erste noch nicht besuchte Nachbar wird sofort besucht, alle weiteren erst, wenn dieser Aufruf zurückkommt.
+
+Beide Varianten liefern dieselbe Reihenfolge.
+Das ist kein Zufall, sondern der Grund für die Regeln oben: Weil die iterative Variante erst beim Herunternehmen markiert und die Nachbarn absteigend hinauflegt, verhält sich ihr Stack genau wie der Aufrufstack der Rekursion.
+Würdest du dagegen schon beim Hinauflegen markieren (wie bei der BFS), käme eine andere Reihenfolge heraus.
+
+Die rekursive Variante ist kürzer, hat aber eine Grenze: Jeder Aufruf belegt Platz auf dem Aufrufstack, und der ist begrenzt.
+Bei einem Graphen, in dem ein Pfad über zehntausende Knoten führt, bricht das Programm mit einer `StackOverflowException` ab.
+Die Variante mit `+Stack<T>+` hat dieses Problem nicht.
+
+== Unterschiede in der Besuchsreihenfolge
+
+image::{root_dir}/images/21_dfs_reihenfolge.svg[]
+
+Die Grafik zeigt beide Suchen nebeneinander.
+Die Pfeile führen jeweils vom Knoten, über den ein Knoten erreicht wurde, zu diesem Knoten.
+Die BFS erzeugt einen breiten, flachen Baum: Jeder Knoten wird über einen Weg mit möglichst wenigen Kanten erreicht.
+Die DFS erzeugt hier einen einzigen langen Pfad A → C → B → G → F → E → D → H. Sie erreicht E erst als sechsten Knoten, obwohl E direkt neben A liegt.
+
+[%header]
+|===
+| |Breitensuche (BFS) |Tiefensuche (DFS)
+|Speicher für offene Knoten |Queue (FIFO) |Stack (LIFO) oder Rekursion
+|Reihenfolge |Ebene für Ebene, nach Abstand vom Start |einem Pfad folgen, dann zurück zur letzten Abzweigung
+|liefert |kürzeste Wege in Kanten, Abstände |Pfade bis in die Tiefe, Rücksprünge
+|typische Anwendungen |wenigste Umstiege, kürzester Weg im Labyrinth, „Freunde von Freunden“ bis Stufe 2 |Erreichbarkeit, Labyrinth erzeugen, Zyklen finden, link:{github_url}/08%20Theoretische%20Informatik/23_Topologische_Sortierung.adoc[Topologische Sortierung], link:{github_url}/08%20Theoretische%20Informatik/25_Backtracking.adoc[Backtracking]
+|===
+
+Willst du nur wissen, *ob* ein Knoten erreichbar ist oder welche Knoten zusammenhängen, sind beide Suchen gleich gut.
+Brauchst du einen Weg mit möglichst *wenigen Kanten*, nimm die BFS.
+Der Weg, den die DFS findet, ist oft ein Umweg (im Beispiel A → C → B → G → F → E für das Ziel E).
+
+== Zusammenhangskomponenten
+
+Eine Suche findet alle Knoten, die vom Start aus erreichbar sind, also genau eine Zusammenhangskomponente.
+Um alle Komponenten zu finden, startest du nacheinander bei jedem Knoten, der noch in keiner Komponente liegt.
+Das folgende Netzwerk besteht aus 8 Rechnern und ihren Kabeln.
+Auch diese Zeilen kannst du im Programm von oben einfügen:
+
+[source,csharp]
+----
+Dictionary<string, string[]> network = new()
+{
+    ["A"] = ["B"],
+    ["B"] = ["A", "C"],
+    ["C"] = ["B"],
+    ["D"] = ["F"],
+    ["E"] = ["G"],
+    ["F"] = ["D"],
+    ["G"] = ["E"],
+    ["H"] = [],
+};
+
+var assigned = new HashSet<string>();
+int componentCount = 0;
+foreach (string node in network.Keys.Order())
+{
+    if (assigned.Contains(node)) { continue; }             // (1)
+    List<string> component = BreadthFirst(network, node);  // (2)
+    assigned.UnionWith(component);
+    componentCount++;
+    Console.WriteLine($"Komponente {componentCount}: {string.Join(", ", component.Order())}");
+}
+----
+
+[source,text]
+----
+Komponente 1: A, B, C
+Komponente 2: D, F
+Komponente 3: E, G
+Komponente 4: H
+----
+
+* *(1)* Knoten, die schon zu einer Komponente gehören, sind kein neuer Startpunkt.
+* *(2)* Statt `BreadthFirst` könntest du genauso `DepthFirst` verwenden.
+Die Komponenten sind dieselben, nur die Reihenfolge innerhalb einer Komponente ist anders.
+
+Ein Graph ist genau dann zusammenhängend, wenn es nur eine Komponente gibt, wenn also eine einzige Suche alle Knoten besucht.
+
+== Labyrinth als impliziter Graph
+
+Nicht jeder Graph muss als `Dictionary` gespeichert sein.
+Ein Labyrinth aus Feldern ist schon ein Graph: Jedes freie Feld ist ein Knoten, und zwei Felder sind benachbart, wenn sie oben, rechts, unten oder links nebeneinanderliegen und keines davon eine Mauer ist.
+Die Nachbarn eines Feldes berechnest du erst, wenn die Suche sie braucht.
+Man spricht von einem *impliziten Graphen*.
+
+[source,csharp]
+----
+string[] maze =
+[
+    "#############",
+    "#S....#.....#",
+    "#.###.#.###.#",
+    "#...#...#...#",
+    "###.#####.#.#",
+    "#...#.....#.#",
+    "#.###.#####.#",
+    "#.....#....Z#",
+    "#############",
+];
+
+Console.WriteLine($"Nachbarn von (1, 1): {string.Join(" ", Neighbors(maze, (1, 1)))}");
+Console.WriteLine($"Nachbarn von (3, 5): {string.Join(" ", Neighbors(maze, (3, 5)))}");
+
+static IEnumerable<(int Row, int Col)> Neighbors(string[] maze, (int Row, int Col) cell)
+{
+    (int Row, int Col)[] directions = [(-1, 0), (0, 1), (1, 0), (0, -1)];   // (1)
+    foreach (var (dRow, dCol) in directions)
+    {
+        int row = cell.Row + dRow;
+        int col = cell.Col + dCol;
+        if (row >= 0 && row < maze.Length && col >= 0 && col < maze[row].Length   // (2)
+            && maze[row][col] != '#')
+        {
+            yield return (row, col);
+        }
+    }
+}
+----
+
+[source,text]
+----
+Nachbarn von (1, 1): (1, 2) (2, 1)
+Nachbarn von (3, 5): (2, 5) (3, 6)
+----
+
+* *(1)* Die Richtungen oben, rechts, unten, links als Änderung von Zeile und Spalte.
+Ihre Reihenfolge legt fest, in welcher Reihenfolge die Nachbarn betrachtet werden.
+* *(2)* Felder außerhalb des Labyrinths und Mauern sind keine Nachbarn.
+
+Mit dieser Methode statt `+graph[node]+` und `(int Row, int Col)` statt `string` als Knotentyp funktionieren BFS und DFS unverändert.
+Die Grafik zeigt das Ergebnis einer BFS ab S: In jedem Feld steht der Abstand von S. Die Welle läuft gleichzeitig in alle Gänge, auch in die Sackgassen.
+Z hat den Abstand 20, und über die Vorgänger findet man den grünen Weg.
+
+image::{root_dir}/images/21_labyrinth.svg[]
+
+== Flood Fill
+
+Das Füllwerkzeug in einem Malprogramm färbt eine zusammenhängende Fläche gleicher Farbe ein.
+Auch das ist eine Suche in einem impliziten Graphen: Die Pixel sind die Knoten, Nachbarn sind die angrenzenden Pixel mit derselben Farbe wie der Startpixel.
+Das Verfahren heißt *Flood Fill*.
+Hier ist die Reihenfolge egal, deshalb reicht ein Stack:
+
+[source,csharp]
+----
+string[] lines =
+[
+    "............",
+    "..#######...",
+    "..#.....#...",
+    "..#.###.#...",
+    "..#.#.#.#...",
+    "..#.###.#...",
+    "..#.....#...",
+    "..#######...",
+];
+char[][] picture = [.. lines.Select(line => line.ToCharArray())];
+
+FloodFill(picture, (2, 3), 'o');
+foreach (char[] row in picture)
+{
+    Console.WriteLine(new string(row));
+}
+
+static void FloodFill(char[][] picture, (int Row, int Col) start, char color)
+{
+    char oldColor = picture[start.Row][start.Col];
+    if (oldColor == color) { return; }                    // (1)
+    picture[start.Row][start.Col] = color;
+    var stack = new Stack<(int Row, int Col)>();
+    stack.Push(start);
+    (int Row, int Col)[] directions = [(-1, 0), (0, 1), (1, 0), (0, -1)];
+    while (stack.Count > 0)
+    {
+        var (row, col) = stack.Pop();
+        foreach (var (dRow, dCol) in directions)
+        {
+            int r = row + dRow;
+            int c = col + dCol;
+            if (r >= 0 && r < picture.Length && c >= 0 && c < picture[r].Length
+                && picture[r][c] == oldColor)             // (2)
+            {
+                picture[r][c] = color;                    // (3)
+                stack.Push((r, c));
+            }
+        }
+    }
+}
+----
+
+[source,text]
+----
+............
+..#######...
+..#ooooo#...
+..#o###o#...
+..#o#.#o#...
+..#o###o#...
+..#ooooo#...
+..#######...
+----
+
+* *(1)* Hat die Fläche schon die neue Farbe, gibt es nichts zu tun.
+Ohne diese Prüfung würde die Suche bereits gefärbte Pixel wieder als „alte Farbe“ erkennen und endlos laufen.
+* *(2)* Nachbar ist nur, wer im Bild liegt und noch die alte Farbe hat.
+* *(3)* Die neue Farbe ist gleichzeitig die Markierung „entdeckt“.
+Ein eigenes `HashSet` braucht Flood Fill deshalb nicht.
+
+Das Feld in der Mitte bleibt leer, denn es ist ringsum von `+#+` umgeben und gehört zu einer anderen Komponente.
+
+// tag::pdf_exclude[]
+== Übungen
+
+. Gegeben ist der folgende ungerichtete Graph als Adjazenzliste.
+Bestimme per Hand die Besuchsreihenfolge der BFS und der DFS ab Knoten D, jeweils mit einer Tabelle wie oben (Queue bzw. Stack nach jedem Schritt).
+Gib außerdem für jeden Knoten den Abstand von D und seinen Vorgänger in der BFS an.
+Kontrolliere dein Ergebnis danach mit dem C#-Code.
++
+[source,text]
+----
+A: B, D, F      E: C, D, G
+B: A, C         F: A, G
+C: B, E         G: E, F, H
+D: A, E         H: G
+----
+. Schreib ein Programm, das im Labyrinth aus diesem Kapitel mit einer BFS den kürzesten Weg von S nach Z sucht.
+Gib das Labyrinth aus und markiere die Felder des Weges mit `+++`.
+Gib auch die Anzahl der Schritte aus.
+Was passiert, wenn du eine Mauer so setzt, dass Z nicht mehr erreichbar ist?
+. Eine Karte besteht aus Wasser (`.`) und Land (`+#+`).
+Eine _Insel_ ist eine Fläche aus Land, die oben, rechts, unten oder links zusammenhängt (diagonal zählt nicht).
+Schreib eine Methode `+int CountIslands(string[] map)+` und eine Methode, die die Größe der größten Insel liefert.
+Teste mit dieser Karte:
++
+[source,text]
+----
+##....#...
+##...###..
+......#...
+.#........
+.##..####.
+.....#..#.
+##...####.
+----
+. Im Übungsprojekt link:{github_url}/08%20Theoretische%20Informatik/Uebungen/Routenplaner.7z[Routenplaner.7z] suchst du mit der Breitensuche Verbindungen mit möglichst wenigen Stationen in einem U-Bahn-Netz.
+Die Angabe steht im Archiv in der Datei _README.md_.
+
+// end::pdf_exclude[]
+
+== Zusatzmaterial
+
+Im https://die-spengergasse.github.io/course-pos-csharp_basics/08%20Theoretische%20Informatik/21_Breiten_und_Tiefensuche.html[21_Breiten_und_Tiefensuche.html] siehst du beide Suchen Schritt für Schritt mit Queue und Stack.
+Danach führst du sie auf Zufallsgraphen oder selbst gezeichneten Graphen selbst aus und bekommst bei jedem Schritt Rückmeldung.

@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="475" height="568" viewBox="0 0 475 568">
+<rect x="0.5" y="0.5" width="474" height="567" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1f2937"/></marker></defs>
+<text x="20" y="36" font-family="Consolas, Menlo, monospace" font-size="15" font-weight="bold" fill="#1f2937">expr</text>
+<path d="M20,68.0 V86.0" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M20,77.0 H35" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="35" y1="77.0" x2="57" y2="77.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="57" y="62.0" width="55" height="30" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="84.5" y="82.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">term</text>
+<path d="M112,77.0 H122" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M122,77.0 H162" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M162,77.0 H182" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="182" y1="77.0" x2="204" y2="77.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="204" y="62.0" width="32" height="30" rx="15" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+<text x="220.0" y="82.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">+</text>
+<path d="M236,77.0 H246" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M246,77.0 H266" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M162,77.0 q10,0 10,10 V109.0 q0,10 10,10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="182" y1="119.0" x2="204" y2="119.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="204" y="104.0" width="32" height="30" rx="15" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+<text x="220.0" y="124.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">-</text>
+<path d="M236,119.0 H246" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M246,119.0 H246 q10,0 10,-10 V87.0 q0,-10 10,-10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="266" y1="77.0" x2="288" y2="77.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="288" y="62.0" width="55" height="30" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="315.5" y="82.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">term</text>
+<path d="M343,77.0 H353" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M353,77.0 H393" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M122,77.0 q10,0 10,-10 V62.0 q0,-10 10,-10 H373 q10,0 10,10 V67.0 q0,10 10,10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M254.0,48.0 L261.0,52.0 L254.0,56.0 Z" fill="#1f2937"/>
+<path d="M353,77.0 q10,0 10,10 V134.0 q0,10 -10,10 H162 q-10,0 -10,-10 V87.0 q0,-10 10,-10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M261.0,140.0 L254.0,144.0 L261.0,148.0 Z" fill="#1f2937"/>
+<line x1="393" y1="77.0" x2="413" y2="77.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<path d="M413,68.0 V86.0" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<text x="20" y="174.0" font-family="Consolas, Menlo, monospace" font-size="13" fill="#6b7280">expr = term { ("+" | "-") term }</text>
+<text x="20" y="214.0" font-family="Consolas, Menlo, monospace" font-size="15" font-weight="bold" fill="#1f2937">term</text>
+<path d="M20,246.0 V264.0" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M20,255.0 H35" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="35" y1="255.0" x2="57" y2="255.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="57" y="240.0" width="71" height="30" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="92.5" y="260.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">factor</text>
+<path d="M128,255.0 H138" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M138,255.0 H178" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M178,255.0 H198" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="198" y1="255.0" x2="220" y2="255.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="220" y="240.0" width="32" height="30" rx="15" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+<text x="236.0" y="260.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">*</text>
+<path d="M252,255.0 H262" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M262,255.0 H282" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M178,255.0 q10,0 10,10 V287.0 q0,10 10,10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="198" y1="297.0" x2="220" y2="297.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="220" y="282.0" width="32" height="30" rx="15" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+<text x="236.0" y="302.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">/</text>
+<path d="M252,297.0 H262" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M262,297.0 H262 q10,0 10,-10 V265.0 q0,-10 10,-10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="282" y1="255.0" x2="304" y2="255.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="304" y="240.0" width="71" height="30" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="339.5" y="260.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">factor</text>
+<path d="M375,255.0 H385" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M385,255.0 H425" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M138,255.0 q10,0 10,-10 V240.0 q0,-10 10,-10 H405 q10,0 10,10 V245.0 q0,10 10,10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M278.0,226.0 L285.0,230.0 L278.0,234.0 Z" fill="#1f2937"/>
+<path d="M385,255.0 q10,0 10,10 V312.0 q0,10 -10,10 H178 q-10,0 -10,-10 V265.0 q0,-10 10,-10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M285.0,318.0 L278.0,322.0 L285.0,326.0 Z" fill="#1f2937"/>
+<line x1="425" y1="255.0" x2="445" y2="255.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<path d="M445,246.0 V264.0" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<text x="20" y="352.0" font-family="Consolas, Menlo, monospace" font-size="13" fill="#6b7280">term = factor { ("*" | "/") factor }</text>
+<text x="20" y="392.0" font-family="Consolas, Menlo, monospace" font-size="15" font-weight="bold" fill="#1f2937">factor</text>
+<path d="M20,412.0 V430.0" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M20,421.0 H35" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M35,421.0 H55" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="55" y1="421.0" x2="77" y2="421.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="77" y="406.0" width="71" height="30" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="112.5" y="426.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">number</text>
+<path d="M148,421.0 H158" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M158,421.0 H290" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M35,421.0 q10,0 10,10 V453.0 q0,10 10,10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="55" y1="463.0" x2="77" y2="463.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="77" y="448.0" width="32" height="30" rx="15" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+<text x="93.0" y="468.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">(</text>
+<path d="M109,463.0 H119" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="119" y1="463.0" x2="141" y2="463.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="141" y="448.0" width="55" height="30" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="168.5" y="468.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">expr</text>
+<path d="M196,463.0 H206" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="206" y1="463.0" x2="228" y2="463.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="228" y="448.0" width="32" height="30" rx="15" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+<text x="244.0" y="468.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">)</text>
+<path d="M260,463.0 H270" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M270,463.0 H270 q10,0 10,-10 V431.0 q0,-10 10,-10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M35,421.0 q10,0 10,10 V495.0 q0,10 10,10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="55" y1="505.0" x2="77" y2="505.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="77" y="490.0" width="32" height="30" rx="15" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+<text x="93.0" y="510.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">-</text>
+<path d="M109,505.0 H119" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="119" y1="505.0" x2="141" y2="505.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="141" y="490.0" width="71" height="30" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="176.5" y="510.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">factor</text>
+<path d="M212,505.0 H222" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M222,505.0 H270 q10,0 10,-10 V431.0 q0,-10 10,-10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="290" y1="421.0" x2="310" y2="421.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<path d="M310,412.0 V430.0" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<text x="20" y="548.0" font-family="Consolas, Menlo, monospace" font-size="13" fill="#6b7280">factor = number | "(" expr ")" | "-" factor</text>
+</svg>

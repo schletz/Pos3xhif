@@ -1,0 +1,340 @@
+= Backtracking
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Du stehst in einem Labyrinth an einer Abzweigung.
+Du wählst einen Gang und gehst weiter.
+Landest du in einer Sackgasse, gehst du zurück bis zur letzten Abzweigung und probierst dort den nächsten Gang.
+Gibt es dort keinen mehr, gehst du noch eine Abzweigung weiter zurück.
+So findest du sicher einen Ausgang, wenn es einen gibt.
+Genau dieses Vorgehen heißt *Backtracking* (deutsch etwa _Zurückverfolgen_).
+Damit löst ein Programm Rätsel wie Sudoku, plant Stundenpläne oder findet Kombinationen, die eine Bedingung erfüllen.
+
+[TIP]
+====
+*Zum Selbst-Erarbeiten: der interaktive Backtracking-Trainer*
+
+Im https://die-spengergasse.github.io/course-pos-csharp_basics/08%20Theoretische%20Informatik/25_Backtracking.html[Backtracking-Trainer] siehst du die Suche nach N Damen, während der Suchbaum mitwächst.
+Danach setzt du selbst Damen, siehst sofort jeden Konflikt und kannst dir den nächsten Schritt zeigen lassen.
+So verstehst du, wann und warum die Suche zurückgeht.
+====
+
+== Teillösungen und der Suchbaum
+
+Backtracking baut eine Lösung *Schritt für Schritt* auf.
+Was nach einigen Schritten feststeht, heißt *Teillösung*.
+In jedem Schritt gibt es mehrere Möglichkeiten, die Teillösung zu erweitern.
+Der Algorithmus probiert sie der Reihe nach aus:
+
+. *Setzen:* Eine Möglichkeit wird zur Teillösung hinzugefügt.
+. *Prüfen:* Ist die Teillösung noch gültig?
+Wenn nein, ist das eine Sackgasse.
+. *Weitersuchen:* Ist sie gültig, geht es mit dem nächsten Schritt weiter, bis die Lösung vollständig ist.
+. *Zurücknehmen:* Danach (oder bei einer Sackgasse) wird die Möglichkeit wieder entfernt und die nächste probiert.
+
+Als erstes Beispiel bilden wir alle Anordnungen (_Permutationen_) der Zahlen 1, 2 und 3. Eine Teillösung ist eine Liste der schon gewählten Zahlen.
+Erweitern kannst du sie um jede Zahl, die noch nicht in der Liste steht.
+Vollständig ist sie, wenn alle drei Zahlen darin stehen.
+
+image::{root_dir}/images/25_suchbaum.svg[]
+
+Alle Teillösungen zusammen bilden einen *Suchbaum*.
+Die Wurzel ist die leere Teillösung, jede Kante ist ein Schritt, die Blätter in der untersten Ebene sind die vollständigen Lösungen.
+Backtracking durchläuft diesen Baum mit einer *Tiefensuche*: Es geht immer zuerst so tief wie möglich und kehrt erst dann um (siehe auch link:{github_url}/08%20Theoretische%20Informatik/21_Breiten_und_Tiefensuche.adoc[Breiten- und Tiefensuche]).
+
+Der Baum wird nie als Datenstruktur gespeichert.
+Er entsteht nur durch die rekursiven Aufrufe: Jeder Aufruf ist ein Knoten, der Aufrufstack enthält genau den Weg von der Wurzel zum aktuellen Knoten.
+Deshalb braucht Backtracking wenig Speicher, auch wenn der Baum riesig ist.
+
+== Das Schema
+
+Fast jeder Backtracking-Algorithmus folgt demselben Muster:
+
+[source,text]
+----
+Suche(teillösung):
+    wenn teillösung vollständig ist:
+        Lösung melden
+        zurück
+    für jede Möglichkeit m, teillösung zu erweitern:
+        wenn teillösung mit m gültig ist:        (prüfen)
+            m zu teillösung hinzufügen           (setzen)
+            Suche(teillösung)                    (weitersuchen)
+            m wieder aus teillösung entfernen    (zurücknehmen)
+----
+
+Für ein neues Problem musst du vier Fragen beantworten:
+
+[%header]
+|===
+|Problem |Teillösung |vollständig, wenn |Möglichkeiten |ungültig, wenn
+|Permutationen |Liste gewählter Elemente |alle Elemente gewählt |jedes noch freie Element |nie
+|N-Damen |Spalten der Damen in den ersten Zeilen |in jeder Zeile eine Dame |jede Spalte der nächsten Zeile |zwei Damen bedrohen sich
+|Teilsumme |gewählte Zahlen |Summe = Ziel |jede spätere Zahl |Summe > Ziel
+|Sudoku |teilweise ausgefülltes Gitter |kein Feld mehr leer |Ziffern 1–9 im nächsten leeren Feld |Ziffer doppelt in Zeile, Spalte oder Block
+|===
+
+Ob du nur *eine* Lösung suchst oder *alle*, ist ein kleiner Unterschied: Für eine Lösung brichst du die Suche beim ersten Treffer ab.
+Für alle Lösungen sammelst du jede Lösung und suchst weiter.
+
+== Das N-Damen-Problem
+
+Auf einem Schachbrett mit N × N Feldern sollen N Damen so stehen, dass keine eine andere bedroht.
+Eine Dame bedroht alle Felder in ihrer Zeile, ihrer Spalte und ihren beiden Diagonalen.
+Auf dem normalen Schachbrett mit N = 8 gibt es 92 Lösungen.
+
+Zwei Damen in derselben Zeile bedrohen sich sofort.
+In jeder Zeile steht also genau eine Dame.
+Diese Überlegung macht die Teillösung sehr einfach: Sie ist eine Liste von Spalten.
+`+[1, 3]+` bedeutet: In Zeile 0 steht die Dame in Spalte 1, in Zeile 1 in Spalte 3. Ein Schritt setzt eine Dame in die nächste freie Zeile.
+Zu prüfen sind nur noch zwei Bedingungen gegenüber allen schon gesetzten Damen:
+
+* *gleiche Spalte:* Die Spalten sind gleich.
+* *gleiche Diagonale:* Der Abstand der Spalten ist gleich dem Abstand der Zeilen.
+Die Damen `(0, 0)` und `(2, 2)` stehen z. B. auf einer Diagonale, ebenso `(1, 3)` und `(3, 1)`.
+
+Die Grafik zeigt die Suche für N = 4 bis zur ersten Lösung.
+Zeilen und Spalten sind ab 0 nummeriert.
+
+image::{root_dir}/images/25_n_damen_4.svg[]
+
+* *1–2:* Die erste Dame kommt in Spalte 0. In Zeile 1 sind Spalte 0 (gleiche Spalte) und Spalte 1 (Diagonale) bedroht, Spalte 2 ist frei.
+* *3:* In Zeile 2 ist jedes Feld bedroht.
+Das ist eine Sackgasse.
+Die Dame aus Zeile 1 wird zurückgenommen.
+* *4–5:* Die Dame in Zeile 1 probiert die nächste Spalte, also 3. In Zeile 2 ist jetzt Spalte 1 frei.
+* *6:* In Zeile 3 ist wieder alles bedroht.
+Auch die restlichen Spalten von Zeile 2 und Zeile 1 führen zu nichts.
+Die Suche geht bis Zeile 0 zurück.
+* *7–8:* Mit der ersten Dame in Spalte 1 gelingt es: `+[1, 3, 0, 2]+` ist eine Lösung.
+
+=== N-Damen in C#
+
+[source,csharp]
+----
+const int n = 4;
+List<int[]> solutions = [];
+Solve(n, [], solutions);
+
+Console.WriteLine($"{n} Damen: {solutions.Count} Lösungen");
+foreach (int[] solution in solutions)
+{
+    Console.WriteLine($"[{string.Join(", ", solution)}]");
+    Print(solution);
+}
+
+static void Solve(int n, List<int> queens, List<int[]> solutions)
+{
+    int row = queens.Count;                          // (1)
+    if (row == n)                                    // (2)
+    {
+        solutions.Add([.. queens]);
+        return;
+    }
+    for (int col = 0; col < n; col++)
+    {
+        if (!IsSafe(queens, col)) { continue; }      // (3)
+        queens.Add(col);                             // (4)
+        Solve(n, queens, solutions);                 // (5)
+        queens.RemoveAt(queens.Count - 1);           // (6)
+    }
+}
+
+static bool IsSafe(List<int> queens, int col)
+{
+    int row = queens.Count;
+    for (int r = 0; r < row; r++)
+    {
+        int c = queens[r];
+        // Same column, or same diagonal: the column distance equals the row distance.
+        if (c == col || Math.Abs(c - col) == row - r) { return false; }
+    }
+    return true;
+}
+
+static void Print(int[] queens)
+{
+    foreach (int col in queens)
+    {
+        Console.WriteLine(string.Join(" ", Enumerable.Range(0, queens.Length).Select(c => c == col ? "D" : ".")));
+    }
+    Console.WriteLine();
+}
+----
+
+[source,text]
+----
+4 Damen: 2 Lösungen
+[1, 3, 0, 2]
+. D . .
+. . . D
+D . . .
+. . D .
+
+[2, 0, 3, 1]
+. . D .
+D . . .
+. . . D
+. D . .
+----
+
+* *(1)* Die Länge der Teillösung ist gleichzeitig die Zeile, in die die nächste Dame kommt.
+* *(2)* In jeder Zeile steht eine Dame, die Teillösung ist vollständig.
+`+[.. queens]+` legt eine *Kopie* an.
+Ohne Kopie stünde in `solutions` immer dieselbe Liste, die das Zurücknehmen später wieder leert.
+* *(3)* Prüfen: Bedrohte Spalten werden übersprungen.
+Der Teilbaum unter diesem Feld wird nie besucht.
+* *(4)* Setzen.
+* *(5)* Weitersuchen in der nächsten Zeile.
+Kommt der Aufruf zurück, sind alle Möglichkeiten unter dieser Teillösung abgearbeitet, egal ob er Lösungen gefunden hat oder nicht.
+* *(6)* Zurücknehmen.
+Danach ist `queens` wieder genau so wie vor (4), und die Schleife probiert die nächste Spalte.
+
+`IsSafe` muss die Zeilen nicht prüfen, weil jede Dame in einer eigenen Zeile steht.
+Der Ausdruck `row - r` ist immer positiv, deshalb braucht nur der Spaltenabstand `Math.Abs`.
+
+=== Lösungen zählen
+
+Interessiert nur die Anzahl, muss die Methode keine Lösungen speichern.
+Sie gibt stattdessen zurück, wie viele Lösungen unter der aktuellen Teillösung liegen:
+
+[source,csharp]
+----
+for (int n = 1; n <= 10; n++)
+{
+    Console.WriteLine($"N = {n,2}: {CountSolutions(n, []),3} Lösungen");
+}
+
+static int CountSolutions(int n, List<int> queens)
+{
+    if (queens.Count == n) { return 1; }
+    int count = 0;
+    for (int col = 0; col < n; col++)
+    {
+        if (!IsSafe(queens, col)) { continue; }
+        queens.Add(col);
+        count += CountSolutions(n, queens);          // (1)
+        queens.RemoveAt(queens.Count - 1);
+    }
+    return count;
+}
+
+static bool IsSafe(List<int> queens, int col)
+{
+    int row = queens.Count;
+    for (int r = 0; r < row; r++)
+    {
+        int c = queens[r];
+        if (c == col || Math.Abs(c - col) == row - r) { return false; }
+    }
+    return true;
+}
+----
+
+[source,text]
+----
+N =  1:   1 Lösungen
+N =  2:   0 Lösungen
+N =  3:   0 Lösungen
+N =  4:   2 Lösungen
+N =  5:  10 Lösungen
+N =  6:   4 Lösungen
+N =  7:  40 Lösungen
+N =  8:  92 Lösungen
+N =  9: 352 Lösungen
+N = 10: 724 Lösungen
+----
+
+* *(1)* Die Anzahl der Lösungen eines Knotens ist die Summe über alle seine Kinder.
+Ein vollständiges Blatt zählt 1, eine Sackgasse 0.
+
+Für N = 2 und N = 3 gibt es keine Lösung.
+Backtracking stellt das fest, indem es den ganzen Suchbaum durchläuft, ohne ein vollständiges Blatt zu erreichen.
+
+== Pruning
+
+Das Abschneiden ganzer Teilbäume heißt *Pruning* (englisch für _Zurückschneiden_ von Ästen).
+Es ist der eigentliche Grund, warum Backtracking mehr ist als stures Durchprobieren.
+Je früher eine Sackgasse erkannt wird, desto mehr Knoten fallen weg.
+Für N = 4 kannst du das nachzählen:
+
+* Ohne jede Prüfung während des Aufbaus gibt es 4 · 4 · 4 · 4 = 256 vollständige Stellungen mit einer Dame pro Zeile.
+Erst am Ende würde jede einzelne geprüft.
+* Mit der Prüfung nach jeder Dame probiert die Suche nach allen Lösungen 60 Felder aus und setzt nur 16-mal tatsächlich eine Dame.
+
+=== Beispiel: Teilsummen
+
+Beim *Teilsummenproblem* sind positive Zahlen und eine Zielsumme gegeben.
+Gesucht sind alle Auswahlen von Zahlen, deren Summe genau das Ziel ergibt.
+Für die Zahlen 3, 4, 5, 6 und das Ziel 9 sind das {3, 6} und {4, 5}.
+
+Die Teillösung ist eine Auswahl von Zahlen.
+Damit keine Auswahl doppelt vorkommt ({3, 6} und {6, 3}), wird sie nur um Zahlen erweitert, die in der Liste *nach* der zuletzt gewählten Zahl stehen.
+Weil alle Zahlen positiv sind, wird die Summe beim Erweitern nur größer.
+Ist sie einmal über dem Ziel, kann darunter keine Lösung mehr liegen.
+Dieser Teilbaum wird abgeschnitten.
+
+image::{root_dir}/images/25_pruning.svg[]
+
+Sind die Zahlen aufsteigend sortiert, bringt das noch mehr: Ist {3, 4, 5} schon zu groß, ist {3, 4, 6} es erst recht.
+Die Schleife über die nächsten Zahlen kann deshalb ganz abbrechen, statt nur diesen einen Knoten zu überspringen.
+Eine zweite Regel schneidet von der anderen Seite: Reicht die Summe aller noch verfügbaren Zahlen nicht mehr bis zum Ziel, ist der Knoten ebenfalls eine Sackgasse.
+In der Grafik betrifft das z. B. \{6}.
+
+Pruning ändert nie das Ergebnis, sondern nur, wie viel vom Suchbaum besucht wird.
+Eine Pruning-Regel darf deshalb nur Teilbäume abschneiden, in denen *sicher* keine Lösung liegt.
+
+== Sudoku
+
+Ein Sudoku ist ein klassisches Backtracking-Problem.
+Die Teillösung ist das teilweise ausgefüllte Gitter.
+Ein Schritt wählt das nächste leere Feld und probiert dort die Ziffern 1 bis 9. Eine Ziffer ist gültig, wenn sie in derselben Zeile, derselben Spalte und demselben 3 × 3-Block noch nicht vorkommt.
+Passt in einem Feld keine einzige Ziffer, ist das eine Sackgasse: Die zuletzt eingetragene Ziffer wird wieder gelöscht, und dort geht es mit der nächsten Ziffer weiter.
+Ist kein Feld mehr leer, ist das Rätsel gelöst.
+
+Die vorgegebenen Ziffern schränken die Möglichkeiten stark ein, deshalb greift das Pruning bei einem Sudoku sehr früh.
+Wie viele Schritte die Suche braucht, hängt auch davon ab, in welcher Reihenfolge die leeren Felder drankommen.
+Das probierst du im Übungsprojekt selbst aus.
+
+// tag::pdf_exclude[]
+== Übungen
+
+. *Permutationen:* Schreibe eine Methode, die alle Permutationen eines Strings ausgibt.
+Zeichne vorher den Suchbaum für `"ABC"`.
+Erweitere die Methode so, dass bei doppelten Buchstaben keine Permutation doppelt ausgegeben wird: `"ANNE"` hat 12 verschiedene Permutationen, nicht 24.
+. *Teilsummen:* Schreibe eine Methode, die alle Auswahlen aus einer Liste positiver Zahlen ausgibt, deren Summe ein gegebenes Ziel ergibt.
+Teste sie mit 3, 4, 5, 6 und dem Ziel 9 sowie mit 2, 3, 5, 7, 8, 10 und dem Ziel 15. Zähle die besuchten Knoten mit und ohne Pruning.
+. *Wortsuche:* In einem Buchstabengitter soll ein Wort gefunden werden.
+Das Wort entsteht, indem man von Feld zu Feld waagrecht oder senkrecht weitergeht.
+Jedes Feld darf in einem Wort nur einmal vorkommen.
+Schreibe `+bool Contains(char[,] grid, string word)+` und teste mit dem Gitter unten die Wörter `HAUS`, `BEST`, `RAST`, `BAUM` und `TEST`.
++
+[source,text]
+----
+T E S T
+A B R E
+H A U S
+M E L K
+----
+. Im Übungsprojekt link:{github_url}/08%20Theoretische%20Informatik/Uebungen/SudokuSolver.7z[SudokuSolver.7z] löst du Sudokus mit Backtracking und zählst, wie viele Aufrufe die Suche braucht.
+Die Angabe steht im Archiv in der Datei _README.md_.
+
+// end::pdf_exclude[]
+
+== Zusatzmaterial
+
+Im https://die-spengergasse.github.io/course-pos-csharp_basics/08%20Theoretische%20Informatik/25_Backtracking.html[25_Backtracking.html] siehst du die Suche nach N Damen Schritt für Schritt, während der Suchbaum mitwächst.
+Danach setzt du selbst Damen, bekommst sofort Feedback zu Konflikten und kannst dir den nächsten Backtracking-Schritt zeigen lassen.

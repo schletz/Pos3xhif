@@ -1,0 +1,37 @@
+@startuml
+abstract class PaymentProvider <<abstract>>
+{
+    +virtual bool Pay(decimal amount)
+}
+
+class Product
+{
+    +Ean : string
+    +Name : string
+    +Price : decimal
+}
+
+class OrderItem
+{
+    +Product : Product
+    +Quantity : int
+    ---
+    +OrderItem(Product product, int quantity)
+}
+
+class Order
+{
+    +PaymentProvider : PaymentProvider
+    +OrderItems : IReadOnlyList<OrderItem>
+    +TotalAmount : decimal
+    ---
+    +Order(PaymentProvider paymentProvider)
+    +void AddProduct(Product product, int quantity)
+    +bool Checkout()
+}
+
+Order "1" *--> "*" OrderItem : Komposition
+Order --> "1" PaymentProvider : Assoziation
+OrderItem "*" --> "1" Product : Assoziation
+Order ..> Product : Abhängigkeit
+@enduml

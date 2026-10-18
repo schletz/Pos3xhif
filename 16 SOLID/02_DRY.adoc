@@ -1,0 +1,553 @@
+= DRY: Don't Repeat Yourself
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Ein Webshop berechnet den Gesamtpreis einer Bestellung an drei Stellen: für Kunden in Österreich, für Kunden in Deutschland und für Firmenkunden.
+Jede Stelle addiert die Rechnungszeilen, rechnet die Versandkosten dazu und schlägt die Steuer auf.
+Dann ändert sich eine Regel: Gratisversand gibt es nicht mehr ab 50 €, sondern erst ab 60 €.
+Die Entwicklerin ändert zwei Stellen.
+Die dritte übersieht sie.
+Ab jetzt bekommen Firmenkunden bei 55 € den Versand geschenkt, alle anderen nicht.
+In diesem Kapitel lernst du, solche Wiederholungen zu erkennen und in *Methoden* an genau einer Stelle zusammenzufassen, ohne dabei etwas kaputt zu machen.
+
+[TIP]
+====
+*Zum Selbst-Erarbeiten: Duplikation erkennen und Parameter finden*
+
+In der https://die-spengergasse.github.io/course-pos-csharp_basics/16%20SOLID/02_DRY.html[interaktiven Präsentation zu DRY] siehst du Schritt für Schritt, wie aus zwei fast gleichen Blöcken eine Methode mit Parametern wird.
+Danach entscheidest du in mehreren Runden selbst, welche Teile gleich bleiben und welche zu Parametern werden.
+So trainierst du den Blick, den du für jedes Refactoring brauchst.
+====
+
+== Projekt anlegen
+
+Du brauchst eine Solution mit einer Application und einem Testprojekt.
+Führe diese Befehle in der Konsole aus.
+Unter macOS ersetzt du _rd_, _md_ und _move_ durch _rm -rf_, _mkdir_ und _mv_.
+
+[source,text]
+----
+rd /S /Q WebshopDemo
+md WebshopDemo
+cd WebshopDemo
+md WebshopDemo.Application
+cd WebshopDemo.Application
+dotnet new classlib
+cd ..
+md WebshopDemo.Tests
+cd WebshopDemo.Tests
+dotnet new install xunit.v3.templates
+dotnet new xunit3 -f net10.0
+move global.json ..
+dotnet reference add ..\WebshopDemo.Application
+cd ..
+dotnet new sln -f sln
+dotnet sln add WebshopDemo.Application
+dotnet sln add WebshopDemo.Tests
+start WebshopDemo.sln
+----
+
+Lösche _Class1.cs_ und _UnitTest1.cs_.
+Entferne in beiden Projektdateien die Zeile _ImplicitUsings_, im Testprojekt auch `+<Using Include="Xunit" />+`.
+Füge in beiden `+<TreatWarningsAsErrors>true</TreatWarningsAsErrors>+` hinzu.
+Was die einzelnen Befehle und Einstellungen bedeuten, steht im Kapitel link:{github_url}/15%20Unittests/02_xUnit.adoc#projekt-anlegen[Unit Tests mit xUnit].
+
+== Das Problem: dreimal fast derselbe Code
+
+Eine Rechnungszeile besteht aus Produkt, Nettopreis pro Stück und Menge:
+
+*OrderLine.cs* (im Projekt _WebshopDemo.Application_)
+
+[source,csharp]
+----
+namespace WebshopDemo.Application;
+
+/// <summary>
+/// One line of an order: a product, its net unit price and the ordered quantity.
+/// </summary>
+public record OrderLine(string Product, decimal UnitPrice, int Quantity);
+----
+
+Die Klasse `PriceCalculator` berechnet den Gesamtpreis für drei Gruppen von Kunden.
+Die Regeln sind erfunden: In Österreich kostet der Versand 4,90 € und die Steuer 20 %, in Deutschland 6,90 € und 19 %.
+Firmenkunden zahlen 4,90 € Versand und in unserem Beispiel keine Steuer.
+
+*PriceCalculator.cs* (im Projekt _WebshopDemo.Application_)
+
+[source,csharp]
+----
+using System;
+using System.Collections.Generic;
+
+namespace WebshopDemo.Application;
+
+/// <summary>
+/// Calculates the total of an order for different groups of customers.
+/// </summary>
+public class PriceCalculator
+{
+    public decimal CalculateTotalAustria(IReadOnlyList<OrderLine> lines)
+    {
+        decimal net = 0m;
+        foreach (OrderLine line in lines)
+        {
+            net += line.UnitPrice * line.Quantity;
+        }
+        decimal shipping = net >= 60m ? 0m : 4.90m;
+        return Math.Round((net + shipping) * 1.20m, 2);
+    }
+
+    public decimal CalculateTotalGermany(IReadOnlyList<OrderLine> lines)
+    {
+        decimal sum = 0m;
+        foreach (OrderLine line in lines)
+        {
+            sum += line.Quantity * line.UnitPrice;
+        }
+        decimal shippingCost = 6.90m;
+        if (sum >= 60m)
+        {
+            shippingCost = 0m;
+        }
+        return Math.Round((sum + shippingCost) * 1.19m, 2);
+    }
+
+    public decimal CalculateTotalBusiness(IReadOnlyList<OrderLine> lines)
+    {
+        decimal net = 0m;
+        foreach (OrderLine line in lines)
+        {
+            net += line.UnitPrice * line.Quantity;
+        }
+        decimal shipping = net >= 50m ? 0m : 4.90m;
+        return Math.Round(net + shipping, 2);
+    }
+}
+----
+
+Lege die drei Methoden nebeneinander:
+
+[%header]
+|===
+|Teil |Österreich |Deutschland |Firmenkunden
+|Rechnungszeilen addieren |✓ gleich |✓ gleich, aber anders geschrieben (`sum`, `+Quantity * UnitPrice+`) |✓ gleich
+|Gratisversand ab |60 € |60 € |*50 €* ✗ vergessen
+|Versandkosten |4,90 € |6,90 € |4,90 €
+|Steuersatz |20 % |19 % |0 %
+|===
+
+Die Grenze für den Gratisversand wurde in zwei Methoden geändert, in der dritten nicht.
+Die Methode für Deutschland sieht außerdem anders aus.
+Eine Suche nach dem Text `+net += line.UnitPrice+` findet sie nicht.
+*Doppelten Code erkennst du nicht immer am gleichen Text.*
+
+Ein Test zeigt den Fehler:
+
+*PriceCalculatorTests.cs* (im Projekt _WebshopDemo.Tests_)
+
+[source,csharp]
+----
+using System.Collections.Generic;
+using WebshopDemo.Application;
+using Xunit;
+
+namespace WebshopDemo.Tests;
+
+public class PriceCalculatorTests
+{
+    private readonly PriceCalculator _calculator = new PriceCalculator();
+
+    // 2 x 12.50 + 1 x 20.00 = 45.00 net, below the limit for free shipping
+    private readonly List<OrderLine> _smallOrder = new List<OrderLine>
+    {
+        new OrderLine("USB cable", 12.50m, 2),
+        new OrderLine("Mouse", 20.00m, 1)
+    };
+
+    [Fact]
+    public void CalculateTotalAustria_SmallOrder_AddsShippingAndTax()
+    {
+        // (45.00 + 4.90) * 1.20 = 59.88
+        Assert.Equal(59.88m, _calculator.CalculateTotalAustria(_smallOrder));
+    }
+
+    [Fact]
+    public void CalculateTotalGermany_SmallOrder_AddsShippingAndTax()
+    {
+        // (45.00 + 6.90) * 1.19 = 61.761, rounded to 61.76
+        Assert.Equal(61.76m, _calculator.CalculateTotalGermany(_smallOrder));
+    }
+
+    [Fact]
+    public void CalculateTotalBusiness_OrderOf55Euro_AddsShipping()
+    {
+        List<OrderLine> lines = new List<OrderLine> { new OrderLine("Keyboard", 55.00m, 1) };
+        // 55.00 + 4.90 = 59.90, business customers pay no tax in this example
+        Assert.Equal(59.90m, _calculator.CalculateTotalBusiness(lines));
+    }
+}
+----
+
+[source,text]
+----
+failed WebshopDemo.Tests.PriceCalculatorTests.CalculateTotalBusiness_OrderOf55Euro_AddsShipping
+  Assert.Equal() Failure: Values differ
+  Expected: 59.90
+  Actual:   55.00
+----
+
+Die Erwartungswerte in den Kommentaren rechnest du von Hand nach.
+So prüft der Test wirklich die Regel und nicht nur, ob der Code das tut, was er eben tut.
+
+== DRY: Wissen an genau einer Stelle
+
+Andrew Hunt und David Thomas formulieren das Prinzip in ihrem Buch _The Pragmatic Programmer_ so:
+
+____
+_Every piece of knowledge must have a single, unambiguous, authoritative representation within a system._
+____
+
+Auf Deutsch: Jedes Stück Wissen hat im System genau *eine* eindeutige und maßgebliche Darstellung.
+Mit *Wissen* sind Regeln und Entscheidungen gemeint, zum Beispiel „Gratisversand ab 60 €“ oder „so berechnet man die Summe einer Bestellung“.
+
+DRY betrifft also das *Wissen* und nicht nur gleichen Text:
+
+[%header]
+|===
+|Situation |DRY verletzt?
+|Die Grenze 60 € steht in drei Methoden. |✓ Ja, dieselbe Regel steht dreimal da.
+|Die Summe wird einmal mit `+UnitPrice * Quantity+`, einmal mit `+Quantity * UnitPrice+` berechnet. |✓ Ja, gleiches Wissen in anderer Form.
+|Zwei Methoden enthalten beide die Zeile `decimal total = 0m;`. |✗ Nein, das ist kein Wissen, sondern Handwerk.
+|Rückgabefrist und Zahlungsziel sind beide 14 Tage. |✗ Nein, das sind zwei Regeln mit zufällig gleichem Wert (siehe _Wann DRY schadet_).
+|===
+
+Die Prüffrage lautet: *Wenn sich diese Regel ändert, wie viele Stellen muss ich anpassen?*
+Ist die Antwort größer als eins, ist DRY verletzt.
+
+== Methoden extrahieren
+
+Die Lösung ist eine Methode, die das gemeinsame Wissen enthält.
+So gehst du vor:
+
+. *Vergleichen:* Lege die Blöcke nebeneinander.
+Markiere, was gleich ist und was sich unterscheidet.
+. *Unterschiede werden Parameter:* Versandkosten und Steuersatz sind in jedem Block anders.
+Sie werden zu den Parametern `shippingCost` und `taxRate`.
+. *Gleiches wird der Methodenrumpf:* Zeilen addieren, Versand prüfen, Steuer aufschlagen.
+. *Sprechender Name:* Der Name sagt, _was_ die Methode liefert, nicht _wie_.
+. *Ersetzen:* Jeder Block wird zu einem Aufruf der neuen Methode.
+
+image::{root_dir}/images/02_dry_extract_method.svg[Zwei fast gleiche Blöcke werden zu einer Methode mit Parametern]
+
+*PriceCalculator.cs* nach dem Umbau:
+
+[source,csharp]
+----
+using System;
+using System.Collections.Generic;
+
+namespace WebshopDemo.Application;
+
+/// <summary>
+/// Calculates the total of an order for different groups of customers.
+/// </summary>
+public class PriceCalculator
+{
+    /// <summary>Orders with at least this net value are shipped for free.</summary>
+    private const decimal FreeShippingLimit = 60m;
+
+    public decimal CalculateTotalAustria(IReadOnlyList<OrderLine> lines)
+    {
+        return CalculateTotal(lines, shippingCost: 4.90m, taxRate: 0.20m);
+    }
+
+    public decimal CalculateTotalGermany(IReadOnlyList<OrderLine> lines)
+    {
+        return CalculateTotal(lines, shippingCost: 6.90m, taxRate: 0.19m);
+    }
+
+    public decimal CalculateTotalBusiness(IReadOnlyList<OrderLine> lines)
+    {
+        return CalculateTotal(lines, shippingCost: 4.90m, taxRate: 0m);
+    }
+
+    private static decimal CalculateTotal(IReadOnlyList<OrderLine> lines, decimal shippingCost, decimal taxRate)
+    {
+        decimal net = SumLines(lines);
+        decimal shipping = CalculateShipping(net, shippingCost);
+        return Math.Round((net + shipping) * (1 + taxRate), 2);
+    }
+
+    private static decimal SumLines(IReadOnlyList<OrderLine> lines)
+    {
+        decimal net = 0m;
+        foreach (OrderLine line in lines)
+        {
+            net += line.UnitPrice * line.Quantity;
+        }
+        return net;
+    }
+
+    private static decimal CalculateShipping(decimal net, decimal shippingCost)
+    {
+        return net >= FreeShippingLimit ? 0m : shippingCost;
+    }
+}
+----
+
+Was ist jetzt besser?
+
+* *Die Regel steht einmal da.*
+Gratisversand ab 70 € heißt: eine Zeile ändern.
+Der Fehler bei den Firmenkunden ist ganz nebenbei verschwunden, alle Tests sind grün.
+* *Private Hilfsmethoden:* `CalculateTotal`, `SumLines` und `CalculateShipping` sind `private`.
+Sie sind ein Detail der Klasse.
+Von außen sieht man nur die drei öffentlichen Methoden.
+Die Tests prüfen weiterhin nur diese.
+* *`static`* zeigt: Die Hilfsmethode verwendet keine Felder und ändert den Zustand nicht.
+* *Benannte Argumente:* `shippingCost: 4.90m` zeigt beim Lesen, welche Zahl was bedeutet.
+* *Sprechende Namen:* Jede Methode hat eine Aufgabe, ihr Name ersetzt einen Kommentar.
+`CalculateShipping` sagt mehr als `Calc2` oder `Helper`.
+`SumLines` beschreibt das _Was_, `DoLoop` nur das _Wie_.
+Ein „And“ im Namen (`CheckAndCalc`) verrät zwei Aufgaben.
+
+[NOTE]
+====
+DRY spart nicht unbedingt Zeilen.
+Die Klasse ist nach dem Umbau sogar 3 Zeilen länger.
+Was sinkt, sind die Stellen, die du bei einer Änderung anfassen musst.
+Eine vierte Kundengruppe kostet jetzt 4 Zeilen statt 10, und sie kann die Versandregel nicht mehr falsch übernehmen.
+====
+
+== Regressionstest: erst absichern, dann umbauen
+
+Ein Fehler, der durch eine Änderung in Code entsteht, der vorher funktioniert hat, heißt *Regression* (wörtlich: Rückschritt), siehe link:{github_url}/15%20Unittests/01_Warum_Testen.adoc[Warum testen?].
+Ein *Regressionstest* ist ein Test, der vor einer Änderung grün war und danach grün bleiben muss.
+Er schützt vor Rückschritten.
+Für jedes Refactoring gilt deshalb diese Reihenfolge:
+
+[%header]
+|===
+|Schritt |Was du tust |Tests
+|1 |Tests für das bestehende Verhalten schreiben, falls sie fehlen |grün
+|2 |Gefundene Fehler *getrennt* beheben, hier: `50m` → `60m` |grün
+|3 |Einen kleinen Umbau machen, zum Beispiel `SumLines` extrahieren |grün?
+|4 |Nach *jedem* Umbau `dotnet test` ausführen |grün!
+|5 |Ist alles grün: Commit. Dann zurück zu Schritt 3 |grün
+|===
+
+Ein Bugfix ist kein Refactoring (siehe link:{github_url}/16%20SOLID/01_Einfuehrung.adoc#tests-als-sicherheitsnetz[Tests als Sicherheitsnetz]).
+Mischst du beides, weißt du bei einem roten Test nicht, ob der Fix oder der Umbau schuld ist.
+Kleine Schritte haben denselben Grund: Nach fünf geänderten Zeilen ist ein Fehler schnell gefunden, nach fünfzig nicht.
+Testfälle findest du wie in link:{github_url}/15%20Unittests/03_Testfaelle_finden.adoc[Testfälle finden].
+
+== Werkzeuge der IDE
+
+Code von Hand in eine neue Methode zu kopieren ist langsam und fehleranfällig.
+Die IDE erkennt selbst, welche Variablen die neue Methode als Parameter braucht und was sie zurückgeben muss.
+
+=== Extract Method und Rename
+
+Markiere die Zeilen, die in die neue Methode sollen, und drücke:
+
+[%header]
+|===
+|Aktion |Visual Studio |Rider (Windows/Linux) |Rider (macOS) |VS Code (C# Dev Kit)
+|Extract Method |`+Ctrl+R, Ctrl+M+` |`+Ctrl+Alt+M+` |`+⌥⌘M+` |`pass:c[Ctrl+.]` → _Extract method_
+|Rename |`+Ctrl+R, Ctrl+R+` |`+Shift+F6+` |`+⇧F6+` |`F2`
+|Alle Aktionen an der Stelle |`pass:c[Ctrl+.]` (_Quick Actions_) |`+Ctrl+Alt+Shift+T+` (_Refactor This_) |`+⌃T+` |`pass:c[Ctrl+.]`
+|===
+
+`+Ctrl+R, Ctrl+M+` heißt: Halte `Ctrl` gedrückt und drücke nacheinander `R` und `M`.
+Die IDE legt die Methode an und markiert ihren Namen.
+Tippe gleich einen sprechenden Namen ein.
+*Rename* ändert einen Namen überall, wo er verwendet wird, auch in anderen Dateien.
+Suchen und Ersetzen erwischt dagegen auch gleichnamige Variablen in anderen Methoden.
+
+=== Code Metrics: messen statt schätzen
+
+„Die Methode ist zu lang“ ist eine Meinung.
+Eine Zahl ist ein Argument.
+*Code Metrics* sind Kennzahlen, die die IDE aus dem Quelltext berechnet:
+
+[%header]
+|===
+|Metrik |Bedeutung |Richtwert pro Methode
+|*Lines of Source Code* |Zeilen im Quelltext, mit Leerzeilen und Kommentaren |so wenig wie nötig
+|*Lines of Executable Code* |ungefähre Anzahl der ausführbaren Anweisungen |so wenig wie nötig
+|*Cyclomatic Complexity* |Anzahl der Wege durch die Methode |höchstens 10
+|*Maintainability Index* |Wartbarkeit von 0 bis 100. Ab 20 grün, 10 bis 19 gelb, unter 10 rot |möglichst hoch
+|===
+
+Die *zyklomatische Komplexität* (_Cyclomatic Complexity_) zählt die unabhängigen Wege durch eine Methode.
+Du startest bei 1 und zählst für jedes `if`, jede Schleife, jedes `case`, jedes `?:`, jedes `&&` und jedes `+||+` eins dazu.
+`CalculateTotalGermany` hat eine Schleife und ein `if`, also den Wert 3. Jeder Weg braucht mindestens einen Testfall.
+Eine hohe Komplexität heißt also auch: viele Tests und viele Stellen für Fehler.
+
+Bei `PriceCalculator` haben die drei öffentlichen Methoden vor dem Umbau je die Komplexität 3 und einen Maintainability Index zwischen 66 und 70. Nach dem Umbau haben sie die Komplexität 1 und den Index 92. Der Index der ganzen Klasse steigt von 68 auf 82.
+
+*In Visual Studio:* Markiere im Solution Explorer die Solution.
+Wähle _View → Other Windows → Code Metrics_ und dann _Calculate Code Metrics for Solution_.
+In Visual Studio 2022 heißt der Befehl _Analyze → Calculate Code Metrics → For Solution_.
+Im Fenster klappst du Projekt, Namespace und Klasse auf und siehst die Werte jeder Methode.
+
+*In Rider, VS Code oder in der Konsole:* Der C#-Compiler bringt Analyseregeln mit.
+Die Regel *CA1502* meldet Methoden, deren Komplexität eine Grenze überschreitet.
+Sie ist standardmäßig ausgeschaltet.
+So schaltest du sie ein:
+
+. Lege im Projektordner die Datei _CodeMetricsConfig.txt_ mit der Zeile `CA1502: 6` an.
+. Trage sie in der Projektdatei ein:
++
+[source,xml]
+----
+<ItemGroup>
+  <AdditionalFiles Include="CodeMetricsConfig.txt" />
+</ItemGroup>
+----
+. Lege im Projektordner eine Datei _.editorconfig_ an:
++
+[source,text]
+----
+[*.cs]
+dotnet_diagnostic.CA1502.severity = warning
+----
+
+Jetzt meldet `dotnet build` jede Methode mit einer Komplexität über 6. Wegen _TreatWarningsAsErrors_ bricht der Build sogar ab.
+Für die Methode `CalculatePrice` aus der Übung _PraterTickets_ sieht das so aus:
+
+[source,text]
+----
+error CA1502: 'CalculatePrice' has a cyclomatic complexity of '19'. Rewrite or refactor the code
+to decrease its complexity below '7'.
+----
+
+Metriken sind ein Hinweis, kein Urteil.
+Ein `switch` mit zwölf einfachen Fällen ist lesbar, hat aber die Komplexität 13. Hohe Werte sagen dir, wo du zuerst hinschauen solltest.
+
+== Wann DRY schadet
+
+DRY heißt nicht, jede Ähnlichkeit sofort zu entfernen.
+Falsch angewendet macht es Code schlechter.
+
+=== Rule of Three
+
+Martin Fowler beschreibt in seinem Buch _Refactoring_ die *Rule of Three*.
+Er schreibt sie seinem Kollegen Don Roberts zu:
+
+. Beim ersten Mal schreibst du den Code einfach.
+. Beim zweiten Mal bemerkst du die Wiederholung, schreibst ihn aber noch einmal.
+. Beim dritten Mal fasst du zusammen.
+
+Nach zwei Fällen weißt du oft noch nicht, was wirklich gleich ist.
+Beim dritten Fall siehst du es.
+Eine Ausnahme sind Regeln wie „Gratisversand ab 60 €“: Sie gehören schon beim zweiten Mal an eine Stelle.
+
+=== Zufällig gleich ist nicht doppelt
+
+[source,csharp]
+----
+private const int ReturnPeriodDays = 14;
+private const int PaymentTermDays = 14;
+----
+
+Beide Werte sind 14. Trotzdem wäre eine gemeinsame Konstante `DefaultDays` falsch.
+Rückgabefrist und Zahlungsziel sind zwei Regeln, die sich aus verschiedenen Gründen ändern.
+Verlängert der Shop das Zahlungsziel auf 30 Tage, ändert sich mit `DefaultDays` auch die Rückgabefrist.
+Frag dich deshalb: *Ändern sich beide Stellen immer gemeinsam?*
+Nur dann ist es dasselbe Wissen.
+
+=== Die falsche Abstraktion: bool-Parameter
+
+Was passiert, wenn man Blöcke zusammenlegt, die sich nicht nur in Werten, sondern im *Ablauf* unterscheiden?
+
+[source,csharp]
+----
+private static decimal CalculateTotal(IReadOnlyList<OrderLine> lines, bool isGermany, bool isBusiness,
+    bool isGiftOrder)
+{
+    decimal net = SumLines(lines);
+    if (isGiftOrder && !isBusiness) { net += 2.50m; }   // gift wrapping
+    decimal shipping = net >= 60m || isGiftOrder ? 0m : (isGermany ? 6.90m : 4.90m);
+    decimal taxRate = isBusiness ? 0m : (isGermany ? 0.19m : 0.20m);
+    return Math.Round((net + shipping) * (1 + taxRate), 2);
+}
+----
+
+Der Aufruf `CalculateTotal(lines, false, true, false)` ist nicht mehr lesbar.
+Jeder neue Sonderfall bringt einen weiteren `bool` und ein weiteres `if`.
+Bei drei `bool`-Parametern gibt es 8 Kombinationen, von denen einige keinen Sinn ergeben.
+Sandi Metz hat dazu einen bekannten Satz geprägt: _„Duplication is far cheaper than the wrong abstraction.“_
+Doppelter Code ist billiger als eine falsche Abstraktion.
+
+[%header]
+|===
+|Unterschied zwischen den Blöcken |Was du tust
+|ein *Wert* (Preis, Satz, Grenze, Text) |Parameter
+|ein *zusätzlicher Schritt* in einem Block |bleibt beim Aufrufer, vor oder nach dem Aufruf
+|ein *anderer Ablauf* |getrennte Methoden oder Polymorphie, siehe link:{github_url}/16%20SOLID/05_Open_Closed_Polymorphie.adoc[O&#44; Teil 2]
+|===
+
+=== LLMs abstrahieren gern zu früh
+
+Bittest du ein LLM, doppelten Code zu entfernen, bekommst du oft mehr als nötig: eine Methode mit `bool`-Flags oder ein Interface mit nur einer Implementierung.
+Prüfe jedes Ergebnis mit diesen Fragen:
+
+* Ist es wirklich dasselbe *Wissen*, oder nur zufällig gleicher Code?
+* Sind die Unterschiede *Werte* (gut als Parameter) oder *Abläufe* (schlecht als `bool`)?
+* Ist der Aufruf ohne Blick in die Methode verständlich?
+
+== Im Code-Review erkennen
+
+[%header]
+|===
+|Warnzeichen im Code |Verletztes Prinzip |Was du verlangst bzw. wie du es formulierst
+|Zwei oder mehr Blöcke unterscheiden sich nur in Zahlen oder Texten |DRY |„Die Blöcke in X und Y sind bis auf Versandkosten und Steuersatz gleich. Extrahiere eine private Methode mit diesen beiden Parametern.“
+|Dieselbe Grenze (`+>= 60m+`) steht an mehreren Stellen |DRY |„Die Grenze für Gratisversand steht dreimal im Code. Definiere sie an einer Stelle.“
+|Eine Methode ist länger als eine Bildschirmseite |Lesbarkeit |„`CalculatePrice` hat eine Komplexität von 19. Teile sie in private Methoden mit je einer Aufgabe auf.“
+|Kommentare gliedern eine Methode in Abschnitte (`// discount`) |Lesbarkeit |„Mach aus jedem kommentierten Abschnitt eine Methode, deren Name den Kommentar ersetzt.“
+|Eine Hilfsmethode hat mehrere `bool`-Parameter |falsche Abstraktion |„Die Flags zeigen verschiedene Abläufe. Trenne die Fälle wieder, statt sie über `bool` zu steuern.“
+|Ein Refactoring und ein Bugfix stecken im selben Commit |Arbeitsweise |„Trenne den Bugfix vom Umbau, damit die Regressionstests aussagekräftig bleiben.“
+|===
+
+// tag::pdf_exclude[]
+== Übungen
+
+. *PraterTickets:* Eine Ticketkasse im Wiener Prater berechnet Preise für Riesenrad, Hochschaubahn und Geisterbahn.
+Die Methode `CalculatePrice` enthält drei fast gleiche Blöcke.
+Teile sie in private Methoden auf, ohne dass ein Test rot wird.
+Lade dazu link:{github_url}/16%20SOLID/Uebungen/PraterTickets.7z[PraterTickets.7z] herunter.
+Die Angabe steht im Archiv in der Datei _README.md_.
+. *Eine neue Kundengruppe:* Erweitere `PriceCalculator` (nach dem Umbau) um die Methode `CalculateTotalSwitzerland`.
+Die Werte sind erfunden: Versand 9,90 €, Steuer 8 %.
+Schreibe zuerst zwei Tests mit von Hand gerechneten Erwartungswerten: eine Bestellung unter und eine über der Grenze für Gratisversand.
+Ändere danach die Grenze auf 70 €.
+Wie viele Stellen musst du anpassen?
+Welche Tests musst du anpassen und warum?
+. *Gleich oder zufällig gleich?*
+Entscheide für jedes Paar, ob es dasselbe Wissen ist.
+Begründe mit der Frage „Ändern sich beide immer gemeinsam?“.
+* `MaxItemsPerOrder = 99` und `MaxQuantityPerLine = 99`
+* Die Prüfung `+email.Contains('@')+` bei der Registrierung und beim Newsletter-Abo
+* Die Berechnung `+price * 1.20m+` im Warenkorb und auf der Rechnung
+* Der Text `"Order not found."` in zwei verschiedenen Fehlermeldungen
+
+// end::pdf_exclude[]
+
+== Zusatzmaterial
+
+In der https://die-spengergasse.github.io/course-pos-csharp_basics/16%20SOLID/02_DRY.html[interaktiven Präsentation zu DRY] siehst du die Schritte von zwei fast gleichen Blöcken bis zur extrahierten Methode mit grünen Tests.
+Danach übst du in mehreren Runden, welche Teile gleich bleiben und welche zu Parametern werden.

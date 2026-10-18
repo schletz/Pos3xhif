@@ -1,0 +1,64 @@
+@startuml
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 15
+skinparam ArrowThickness 1.5
+skinparam class {
+  BackgroundColor #ffffff
+  HeaderBackgroundColor #ededed
+  BorderColor #1d1d1b
+  BorderThickness 1.5
+  FontStyle bold
+}
+skinparam stereotypeCBackgroundColor #d1ebf7
+skinparam stereotypeABackgroundColor #fdebd1
+skinparam stereotypeIBackgroundColor #e5f4f1
+skinparam stereotypeEBackgroundColor #e5f1d9
+hide empty fields
+hide empty methods
+
+interface ISafetyCheck
+{
+    +bool IsValid(DateTime date)
+}
+
+class Test
+{
+    +TestDate : DateTime
+    ---
+    +Test(DateTime testDate)
+    +bool IsValid(DateTime date)
+}
+Test .up.|> ISafetyCheck
+
+class Cured
+{
+    +DateOfDiagnosis : DateTime
+    ---
+    +Cured(DateTime dateOfDiagnosis)
+    +bool IsValid(DateTime date)
+}
+Cured .up.|> ISafetyCheck
+
+class Vaccination
+{
+    +FirstVaccination : DateTime
+    +SecondVaccination : DateTime?
+    ---
+    +Vaccination(DateTime firstVaccination)
+    +bool IsValid(DateTime date)
+}
+Vaccination .up.|> ISafetyCheck
+
+class Employee
+{
+    +Firstname : string
+    +Lastname : string
+    +SafetyChecks : IReadOnlyList<ISafetyCheck>
+    ---
+    +Employee(string firstname, string lastname)
+    +void AddSafetyCheck(ISafetyCheck safetyCheck)
+    +bool IsSafe(DateTime date)
+}
+Employee "1" o--> "*" ISafetyCheck
+@enduml

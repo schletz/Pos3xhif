@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="300" viewBox="0 0 980 300">
+  <rect x="0.5" y="0.5" width="979" height="299" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/>
+    </marker>
+  </defs>
+  <text x="20" y="32" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600" fill="#1f2937">2,88 € herausgeben: Jeder Schritt nimmt die größte Münze, die noch in den Restbetrag passt</text>
+  <!-- arrows between the remaining amounts -->
+  <g stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)">
+    <line x1="96" y1="120" x2="140" y2="120"/>
+    <line x1="220" y1="120" x2="264" y2="120"/>
+    <line x1="344" y1="120" x2="388" y2="120"/>
+    <line x1="468" y1="120" x2="512" y2="120"/>
+    <line x1="592" y1="120" x2="636" y2="120"/>
+    <line x1="716" y1="120" x2="760" y2="120"/>
+    <line x1="840" y1="120" x2="884" y2="120"/>
+  </g>
+  <!-- remaining amounts -->
+  <g stroke="#2563eb" stroke-width="2" fill="#dbeafe">
+    <rect x="20" y="100" width="72" height="40" rx="6"/>
+    <rect x="144" y="100" width="72" height="40" rx="6"/>
+    <rect x="268" y="100" width="72" height="40" rx="6"/>
+    <rect x="392" y="100" width="72" height="40" rx="6"/>
+    <rect x="516" y="100" width="72" height="40" rx="6"/>
+    <rect x="640" y="100" width="72" height="40" rx="6"/>
+    <rect x="764" y="100" width="72" height="40" rx="6"/>
+    <rect x="888" y="100" width="72" height="40" rx="6" stroke="#16a34a" fill="#dcfce7"/>
+  </g>
+  <g font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle">
+    <text x="56" y="125">2,88 €</text>
+    <text x="180" y="125">0,88 €</text>
+    <text x="304" y="125">0,38 €</text>
+    <text x="428" y="125">0,18 €</text>
+    <text x="552" y="125">0,08 €</text>
+    <text x="676" y="125">0,03 €</text>
+    <text x="800" y="125">0,01 €</text>
+    <text x="924" y="125">0,00 €</text>
+  </g>
+  <!-- coin chosen in each step -->
+  <g stroke="#ea580c" stroke-width="2" fill="#ffedd5">
+    <circle cx="118" cy="70" r="20"/>
+    <circle cx="242" cy="70" r="20"/>
+    <circle cx="366" cy="70" r="20"/>
+    <circle cx="490" cy="70" r="20"/>
+    <circle cx="614" cy="70" r="20"/>
+    <circle cx="738" cy="70" r="20"/>
+    <circle cx="862" cy="70" r="20"/>
+  </g>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#1f2937" text-anchor="middle">
+    <text x="118" y="74">2 €</text>
+    <text x="242" y="74">50 ct</text>
+    <text x="366" y="74">20 ct</text>
+    <text x="490" y="74">10 ct</text>
+    <text x="614" y="74">5 ct</text>
+    <text x="738" y="74">2 ct</text>
+    <text x="862" y="74">1 ct</text>
+  </g>
+  <line x1="20" y1="168" x2="960" y2="168" stroke="#d1d5db"/>
+  <!-- coin palette -->
+  <text x="20" y="196" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937">Münzsorten, größte zuerst, und wie oft Greedy sie nimmt:</text>
+  <g stroke="#16a34a" stroke-width="2" fill="#dcfce7">
+    <circle cx="60" cy="236" r="22"/>
+    <circle cx="150" cy="236" r="22" stroke="#6b7280" fill="#e5e7eb"/>
+    <circle cx="240" cy="236" r="22"/>
+    <circle cx="330" cy="236" r="22"/>
+    <circle cx="420" cy="236" r="22"/>
+    <circle cx="510" cy="236" r="22"/>
+    <circle cx="600" cy="236" r="22"/>
+    <circle cx="690" cy="236" r="22"/>
+  </g>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#1f2937" text-anchor="middle">
+    <text x="60" y="240">2 €</text>
+    <text x="150" y="240">1 €</text>
+    <text x="240" y="240">50 ct</text>
+    <text x="330" y="240">20 ct</text>
+    <text x="420" y="240">10 ct</text>
+    <text x="510" y="240">5 ct</text>
+    <text x="600" y="240">2 ct</text>
+    <text x="690" y="240">1 ct</text>
+  </g>
+  <g font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">
+    <text x="60" y="282">1×</text>
+    <text x="150" y="282" fill="#6b7280">0×</text>
+    <text x="240" y="282">1×</text>
+    <text x="330" y="282">1×</text>
+    <text x="420" y="282">1×</text>
+    <text x="510" y="282">1×</text>
+    <text x="600" y="282">1×</text>
+    <text x="690" y="282">1×</text>
+  </g>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937">
+    <text x="760" y="230" font-weight="600" fill="#16a34a">Ergebnis: 7 Münzen</text>
+    <text x="760" y="252">Nach 2 € bleiben 0,88 €,</text>
+    <text x="760" y="270">1 € passt nicht mehr.</text>
+  </g>
+</svg>

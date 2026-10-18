@@ -1,0 +1,18 @@
+extends: default
+# header:
+#   height: 15mm
+#   recto:
+#     center:
+#       content:  '{author} - {revdate}'
+footer:
+  recto:
+    left:
+      content: '{author} - {revdate}'
+    right:
+      content: '*{section-or-chapter-title}* | {page-number} of {page-count}'
+  verso:
+    left:
+      content: '{page-number} von {page-count} | *{section-or-chapter-title}*'
+    right:
+      content: '{author} - {revdate}'
+

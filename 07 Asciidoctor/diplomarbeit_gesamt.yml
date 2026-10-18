@@ -1,0 +1,16 @@
+extends: default
+page:
+  margin: [25mm, 20mm, 20mm, 20mm]
+  numbering:
+    start-at: toc  
+header:
+  height: 25mm
+  background-image: image:{header_image}[]
+footer:
+  recto:
+    right:
+      content: '*{chapter-title}* | {page-number} von {page-count}'
+  verso:
+    left:
+      content: '{page-number} von {page-count} | *{chapter-title}*'
+

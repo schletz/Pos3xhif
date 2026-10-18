@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ableitungstrainer</title>
+<style>
+:root {
+  --bg: #f9fafb; --panel: #ffffff; --text: #1f2937; --muted: #6b7280; --border: #d1d5db; --soft: #f3f4f6;
+  --nt-line: #2563eb; --nt-fill: #dbeafe; --act-line: #ea580c; --act-fill: #ffedd5;
+  --ok-line: #16a34a; --ok-fill: #dcfce7; --err-line: #dc2626; --err-fill: #fee2e2;
+  --gray-fill: #e5e7eb; --btn: #2563eb; --btn-text: #ffffff;
+  --sans: "Segoe UI", Helvetica, Arial, sans-serif; --mono: Consolas, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111827; --panel: #1f2937; --text: #e5e7eb; --muted: #9ca3af; --border: #374151; --soft: #273244;
+    --nt-line: #60a5fa; --nt-fill: #1e3a8a; --act-line: #fb923c; --act-fill: #7c2d12;
+    --ok-line: #4ade80; --ok-fill: #14532d; --err-line: #f87171; --err-fill: #7f1d1d;
+    --gray-fill: #374151; --btn: #3b82f6; --btn-text: #ffffff;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 16px; line-height: 1.5;
+  display: flex; flex-direction: column; }
+header { display: flex; align-items: center; gap: 16px; padding: 10px 20px; background: var(--panel);
+  border-bottom: 1px solid var(--border); }
+header h1 { font-size: 18px; margin: 0; white-space: nowrap; }
+.progress { flex: 1; display: flex; align-items: center; gap: 12px; }
+.bar { flex: 1; height: 8px; background: var(--soft); border-radius: 4px; overflow: hidden; border: 1px solid var(--border); }
+.bar > div { height: 100%; width: 0; background: var(--nt-line); transition: width .3s; }
+#counter { font-variant-numeric: tabular-nums; color: var(--muted); white-space: nowrap; }
+main { flex: 1; overflow: auto; padding: 20px; }
+.slide { display: none; max-width: 1150px; margin: 0 auto; }
+.slide.active { display: block; }
+.slide h2 { margin: 0 0 12px; font-size: 26px; }
+.slide h3 { margin: 18px 0 8px; font-size: 18px; }
+footer { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;
+  background: var(--panel); border-top: 1px solid var(--border); }
+footer .hint { color: var(--muted); font-size: 13px; }
+button { font: inherit; cursor: pointer; border-radius: 6px; border: 1px solid var(--border); background: var(--soft);
+  color: var(--text); padding: 6px 14px; }
+button:hover:not(:disabled) { border-color: var(--nt-line); }
+button:disabled { opacity: .45; cursor: default; }
+button.primary { background: var(--btn); border-color: var(--btn); color: var(--btn-text); }
+select { font: inherit; padding: 5px 8px; border-radius: 6px; border: 1px solid var(--border); background: var(--panel); color: var(--text); }
+code, .mono { font-family: var(--mono); }
+code { background: var(--soft); border: 1px solid var(--border); border-radius: 4px; padding: 0 4px; }
+.card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; }
+.grid2 { display: grid; grid-template-columns: minmax(300px, 5fr) 6fr; gap: 18px; align-items: start; }
+@media (max-width: 860px) { .grid2 { grid-template-columns: 1fr; } }
+.cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+@media (max-width: 860px) { .cols2 { grid-template-columns: 1fr; } }
+.grammar { font-family: var(--mono); font-size: 16px; white-space: pre; margin: 4px 0; line-height: 1.7; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0; }
+.controls label { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 14px; }
+.deriv { font-family: var(--mono); font-size: 16px; margin: 0; padding: 0; list-style: none; max-height: 340px; overflow: auto; }
+.deriv li { display: flex; justify-content: space-between; gap: 12px; padding: 2px 6px; border-radius: 4px; }
+.deriv li.cur { background: var(--soft); box-shadow: inset 3px 0 0 var(--act-line); }
+.deriv .prod { color: var(--muted); font-size: 14px; white-space: nowrap; }
+.sym-next { color: var(--act-line); font-weight: bold; text-decoration: underline; text-underline-offset: 3px; }
+.sym-nt { color: var(--nt-line); font-weight: bold; }
+.sym-ok { color: var(--ok-line); }
+.sym-bad { color: var(--err-line); text-decoration: line-through; }
+.caption { min-height: 48px; color: var(--text); }
+.treebox { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 8px; }
+.treebox svg { width: 100%; height: auto; max-height: 520px; display: block; }
+svg .edge { stroke: var(--text); stroke-width: 1.3; }
+svg .nt circle { fill: var(--nt-fill); stroke: var(--nt-line); stroke-width: 1.6; }
+svg .nt.next circle { fill: var(--act-fill); stroke: var(--act-line); stroke-width: 2.5; }
+svg .nt.bad circle { fill: var(--err-fill); stroke: var(--err-line); }
+svg .term rect { fill: var(--soft); stroke: var(--border); }
+svg .term.done rect { fill: var(--ok-fill); stroke: var(--ok-line); }
+svg .term.bad rect { fill: var(--err-fill); stroke: var(--err-line); }
+svg text { fill: var(--text); font-family: var(--mono); font-size: 16px; }
+svg .nt text { font-weight: bold; }
+svg .eps text { fill: var(--muted); }
+svg .fresh { animation: pop .45s ease-out; }
+@keyframes pop { from { opacity: 0; } to { opacity: 1; } }
+.form { font-family: var(--mono); font-size: 24px; padding: 8px 12px; border-radius: 6px; background: var(--soft);
+  border: 1px solid var(--border); min-height: 48px; word-break: break-word; }
+.form.dead { border-color: var(--err-line); background: var(--err-fill); }
+.form.won { border-color: var(--ok-line); background: var(--ok-fill); }
+.target { font-family: var(--mono); font-size: 20px; }
+.prods { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+.prods button { font-family: var(--mono); font-size: 16px; }
+.prods button kbd { font-family: var(--sans); font-size: 11px; color: var(--muted); margin-left: 6px; }
+.feedback { margin-top: 12px; padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border); background: var(--soft); }
+.feedback.dead { border-color: var(--err-line); background: var(--err-fill); }
+.feedback.won { border-color: var(--ok-line); background: var(--ok-fill); }
+.feedback strong { display: block; margin-bottom: 2px; }
+.stars { color: var(--act-line); letter-spacing: 2px; }
+.tag { display: inline-block; font-size: 12px; padding: 1px 8px; border-radius: 10px; border: 1px solid var(--ok-line);
+  color: var(--ok-line); margin-left: 8px; vertical-align: middle; }
+.tag[hidden] { display: none; }
+.found { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+.found .treebox { width: 220px; }
+table.overview { border-collapse: collapse; width: 100%; }
+table.overview td, table.overview th { border-bottom: 1px solid var(--border); padding: 8px; text-align: left; }
+.ok { color: var(--ok-line); font-weight: bold; }
+.small { font-size: 14px; color: var(--muted); }
+ul.tight { margin: 6px 0; padding-left: 22px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Ableitungstrainer</h1>
+  <div class="progress"><div class="bar"><div id="bar"></div></div><span id="counter">1 / 1</span></div>
+</header>
+
+<main id="main">
+
+<section class="slide" data-title="Start">
+  <h2>Grammatiken und Ableitungen</h2>
+  <div class="cols2">
+    <div class="card">
+      <h3>Die Grammatik G = (N, Σ, P, S)</h3>
+      <ul class="tight">
+        <li><b>N</b>: Nichtterminale (Platzhalter), hier Großbuchstaben wie <code>S</code>, <code>E</code>, <code>T</code></li>
+        <li><b>Σ</b>: Terminale, aus ihnen besteht das fertige Wort</li>
+        <li><b>P</b>: Produktionen wie <code>S → aSb | ε</code></li>
+        <li><b>S</b>: das Startsymbol</li>
+      </ul>
+      <p>Ein <b>Ableitungsschritt</b> ⇒ ersetzt ein Nichtterminal durch eine rechte Seite seiner Produktionen.
+        Bei der <b>Linksableitung</b> ersetzt du immer das <span class="sym-next">linkeste</span> Nichtterminal.</p>
+    </div>
+    <div class="card">
+      <h3>So bedienst du die Seite</h3>
+      <ul class="tight">
+        <li>Folien wechseln: <code>←</code> <code>→</code> oder die Buttons unten</li>
+        <li>Die nächsten Folien zeigen Linksableitungen als Animation. Der Ableitungsbaum wächst mit.</li>
+        <li>Danach leitest du in 7 Aufgaben selbst Zielwörter ab. Die Seite merkt sofort, wenn du in eine
+          <b>Sackgasse</b> geraten bist, und erklärt dir, warum.</li>
+        <li>Der Fortschritt bleibt im Browser gespeichert (falls der Browser das erlaubt).</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Animation: Linksableitung">
+  <h2>Linksableitung Schritt für Schritt</h2>
+  <div id="anim-basic"></div>
+</section>
+
+<section class="slide" data-title="Animation: Mehrdeutigkeit">
+  <h2>Mehrdeutigkeit: ein Wort, zwei Bäume</h2>
+  <p>Mit <code>E → E + E | E * E | ( E ) | id</code> hat <code>id + id * id</code> zwei Linksableitungen.
+    Links steht <code>+</code> an der Wurzel, rechts <code>*</code>. Mit 2, 3 und 4 für die <code>id</code> ergibt
+    der linke Baum 2 + (3 · 4) = 14, der rechte (2 + 3) · 4 = 20.</p>
+  <div id="anim-ambig"></div>
+</section>
+
+<section class="slide" data-title="Animation: Präzedenzstufen">
+  <h2>Eindeutig durch Präzedenzstufen</h2>
+  <p>Jede Präzedenzstufe bekommt ein eigenes Nichtterminal: <code>E</code> für Summen, <code>T</code> für
+    Produkte, <code>F</code> für <code>id</code> und Klammern. Das <code>*</code> landet so immer tiefer im Baum
+    und wird zuerst ausgewertet. Für jedes Wort gibt es nur noch einen Baum.</p>
+  <div id="anim-prec"></div>
+</section>
+
+<section class="slide" data-title="Übungsteil">
+  <h2>Jetzt bist du dran</h2>
+  <div class="cols2">
+    <div class="card">
+      <h3>Ablauf</h3>
+      <ul class="tight">
+        <li>Grammatik und Zielwort sind vorgegeben.</li>
+        <li>Du wählst für das <span class="sym-next">linkeste Nichtterminal</span> eine Produktion
+          (Klick oder Taste <code>1</code>, <code>2</code>, …).</li>
+        <li><b>Rückgängig</b> (Taste <code>Backspace</code>) nimmt den letzten Schritt zurück.</li>
+        <li>Die Aufgaben werden schwieriger. Die letzte Aufgabe verlangt zwei verschiedene Bäume.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Wann ist es eine Sackgasse?</h3>
+      <ul class="tight">
+        <li>Die Terminale vor dem linkesten Nichtterminal passen nicht zum Anfang des Zielworts.
+          Sie werden nie mehr ersetzt.</li>
+        <li>Die Satzform hat schon mehr Terminale als das Zielwort. Terminale verschwinden nie,
+          eine ε-Produktion löscht nur ein Nichtterminal.</li>
+        <li>Das nächste Zeichen kann aus dem Rest gar nicht entstehen.</li>
+        <li>Allgemein: Aus der Satzform lässt sich das Zielwort nicht mehr ableiten. Dann führt
+          auch keine Produktion mehr weiter.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Practice slides are inserted here by script. -->
+<section class="slide" id="overview" data-title="Übersicht">
+  <h2>Übersicht</h2>
+  <div class="card">
+    <table class="overview" id="overview-table"></table>
+    <p class="controls"><button id="reset-progress">Fortschritt zurücksetzen</button></p>
+    <p class="small">Weiter geht es mit den Übungen am Ende von <i>11_Grammatiken.adoc</i>. Dort schreibst du
+      selbst Grammatiken, zum Beispiel für Palindrome.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <button id="prev">◀ Zurück</button>
+  <span class="hint" id="slide-title"></span>
+  <button id="next" class="primary">Weiter ▶</button>
+</footer>
+
+<script>
+"use strict";
+
+// ---------------------------------------------------------------------------
+// Storage (optional: the page works without localStorage)
+// ---------------------------------------------------------------------------
+
+const STORE_KEY = "ti-11-solved";
+
+/** Reads the set of solved task ids. */
+function loadSolved() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    return new Set(raw ? JSON.parse(raw) : []);
+  } catch (e) {
+    return new Set();
+  }
+}
+
+/** Writes the set of solved task ids. */
+function saveSolved(set) {
+  try {
+    localStorage.setItem(STORE_KEY, JSON.stringify([...set]));
+  } catch (e) {
+    // Storage not available (e.g. privacy mode): progress is kept only for this visit.
+  }
+}
+
+const solved = loadSolved();
+
+// ---------------------------------------------------------------------------
+// Grammar model and analysis
+// ---------------------------------------------------------------------------
+
+/**
+ * Creates a grammar from lines like "E → E + T | T". Symbols are separated by spaces,
+ * "ε" stands for the empty right side. Every left side is a nonterminal.
+ */
+function makeGrammar(lines, spaced) {
+  const prods = [];
+  for (const line of lines) {
+    const [lhs, rhsText] = line.split("→").map(s => s.trim());
+    for (const alt of rhsText.split("|").map(s => s.trim())) {
+      prods.push({ lhs, rhs: alt === "ε" ? [] : alt.split(/\s+/) });
+    }
+  }
+  const nts = [...new Set(prods.map(p => p.lhs))];
+  const g = { lines, prods, nts, start: prods[0].lhs, spaced };
+  g.isNt = sym => nts.includes(sym);
+  analyse(g);
+  return g;
+}
+
+/** Computes the minimum word length and the FIRST set of every nonterminal (fixpoint iteration). */
+function analyse(g) {
+  g.minLen = {};
+  g.first = {};
+  for (const a of g.nts) { g.minLen[a] = Infinity; g.first[a] = new Set(); }
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const p of g.prods) {
+      const len = p.rhs.reduce((sum, s) => sum + (g.isNt(s) ? g.minLen[s] : 1), 0);
+      if (len < g.minLen[p.lhs]) { g.minLen[p.lhs] = len; changed = true; }
+      const before = g.first[p.lhs].size;
+      for (const t of firstOfSeq(g, p.rhs).set) g.first[p.lhs].add(t);
+      if (g.first[p.lhs].size !== before) changed = true;
+    }
+  }
+}
+
+/** FIRST set of a symbol sequence; nullable tells whether the sequence can become ε. */
+function firstOfSeq(g, seq) {
+  const set = new Set();
+  for (const s of seq) {
+    if (!g.isNt(s)) { set.add(s); return { set, nullable: false }; }
+    for (const t of g.first[s]) set.add(t);
+    if (g.minLen[s] !== 0) return { set, nullable: false };
+  }
+  return { set, nullable: true };
+}
+
+/**
+ * Builds the table derives[A][i][j] = (A ⇒* target[i..j)) for all nonterminals.
+ * Works for ε-productions and unit productions because it iterates until nothing changes.
+ */
+function derivesTable(g, target) {
+  const n = target.length;
+  const d = {};
+  for (const a of g.nts) d[a] = Array.from({ length: n + 1 }, () => new Array(n + 1).fill(false));
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const p of g.prods) {
+      for (let i = 0; i <= n; i++) {
+        for (const j of reach(g, d, target, p.rhs, i)) {
+          if (!d[p.lhs][i][j]) { d[p.lhs][i][j] = true; changed = true; }
+        }
+      }
+    }
+  }
+  return d;
+}
+
+/** All end positions j such that the symbol sequence can derive target[i..j). */
+function reach(g, d, target, seq, i) {
+  let positions = new Set([i]);
+  for (const s of seq) {
+    const next = new Set();
+    for (const p of positions) {
+      if (g.isNt(s)) {
+        for (let q = p; q <= target.length; q++) if (d[s][p][q]) next.add(q);
+      } else if (target[p] === s) {
+        next.add(p + 1);
+      }
+    }
+    positions = next;
+    if (positions.size === 0) break;
+  }
+  return positions;
+}
+
+/** True if the sequence derives exactly target[i..j). */
+function seqDerives(g, d, target, seq, i, j) {
+  return reach(g, d, target, seq, i).has(j);
+}
+
+// ---------------------------------------------------------------------------
+// Formatting helpers
+// ---------------------------------------------------------------------------
+
+function esc(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+/** Joins symbols to a word; ε for the empty sequence. */
+function word(g, syms) {
+  return syms.length === 0 ? "ε" : syms.join(g.spaced ? " " : "");
+}
+
+function codeWord(g, syms) {
+  return "<code>" + esc(word(g, syms)) + "</code>";
+}
+
+function prodText(p) {
+  return p.lhs + " → " + (p.rhs.length ? p.rhs.join(" ") : "ε");
+}
+
+/**
+ * Renders a sentential form as HTML. The leftmost nonterminal is marked; optionally the
+ * terminal prefix is compared with the target word.
+ */
+function formHtml(g, form, target, markNext) {
+  if (form.length === 0) return '<span class="small">ε</span>';
+  const k = form.findIndex(g.isNt);
+  const sep = g.spaced ? " " : "";
+  return form.map((s, i) => {
+    let cls = "";
+    if (g.isNt(s)) cls = (markNext && i === k) ? "sym-next" : "sym-nt";
+    else if (target && (k === -1 || i < k)) cls = target[i] === s ? "sym-ok" : "sym-bad";
+    return cls ? `<span class="${cls}">${esc(s)}</span>` : esc(s);
+  }).join(sep);
+}
+
+// ---------------------------------------------------------------------------
+// Dead-end detection
+// ---------------------------------------------------------------------------
+
+/**
+ * Checks whether the target can still be derived from the sentential form.
+ * Returns null if it can, otherwise an HTML explanation. The checks are ordered from the
+ * most obvious reason to the general one; every reason on its own proves the dead end.
+ */
+function deadEnd(g, d, target, form) {
+  const n = target.length;
+  for (const s of form) {
+    if (g.isNt(s) && g.minLen[s] === Infinity) {
+      return `Aus <code>${esc(s)}</code> entsteht nie ein Wort aus Terminalen.`;
+    }
+  }
+  const k = form.findIndex(g.isNt);
+  const prefix = k === -1 ? form : form.slice(0, k);
+
+  // (1) No nonterminal left: the word is final.
+  if (k === -1) {
+    if (form.join(" ") === target.join(" ")) return null;
+    return `Die Satzform ${codeWord(g, form)} enthält kein Nichtterminal mehr, ist also schon ein fertiges Wort. ` +
+      `Sie ist aber nicht das Zielwort ${codeWord(g, target)}.`;
+  }
+
+  // (2) Terminals before the leftmost nonterminal are never replaced again.
+  for (let i = 0; i < prefix.length; i++) {
+    if (i >= n) {
+      return `Vor dem linkesten Nichtterminal stehen schon ${prefix.length} Terminale, das Zielwort hat nur ${n}.`;
+    }
+    if (prefix[i] !== target[i]) {
+      return `Vor dem linkesten Nichtterminal steht ${codeWord(g, prefix)}. Das Zielwort beginnt aber mit ` +
+        `${codeWord(g, target.slice(0, prefix.length))}. Terminale werden nie mehr ersetzt, ` +
+        `der Anfang bleibt also falsch.`;
+    }
+  }
+
+  // (3) Terminals never disappear in a context-free grammar, ε-productions only delete nonterminals.
+  const terms = form.filter(s => !g.isNt(s)).length;
+  if (terms > n) {
+    return `Die Satzform enthält schon ${terms} Terminale, das Zielwort hat nur ${n}. ` +
+      `Terminale verschwinden nie mehr, auch eine ε-Produktion löscht nur ein Nichtterminal.`;
+  }
+
+  // (4) Every nonterminal produces at least minLen terminals.
+  const ntsInForm = [...new Set(form.filter(g.isNt))];
+  const minTotal = terms + form.filter(g.isNt).reduce((sum, s) => sum + g.minLen[s], 0);
+  if (minTotal > n) {
+    const list = ntsInForm.filter(a => g.minLen[a] > 0)
+      .map(a => `<code>${esc(a)}</code> mindestens ${g.minLen[a]}`).join(", ");
+    return `Jedes Nichtterminal erzeugt eine Mindestanzahl an Terminalen: ${list}. ` +
+      `Die Satzform wird daher mindestens ${minTotal} Terminale lang, das Zielwort hat nur ${n}.`;
+  }
+
+  // (5) The next symbol of the target must be producible by the rest of the form.
+  const rest = form.slice(k);
+  const f = firstOfSeq(g, rest);
+  if (prefix.length === n) {
+    if (!f.nullable) {
+      return `Das Zielwort steht schon vollständig da, aber ${codeWord(g, rest)} kann nicht ganz verschwinden (zu ε werden).`;
+    }
+  } else {
+    const c = target[prefix.length];
+    if (!f.set.has(c)) {
+      const starts = [...f.set].map(t => `<code>${esc(t)}</code>`).join(", ");
+      return `Als Nächstes muss <code>${esc(c)}</code> kommen. Aus ${codeWord(g, rest)} entsteht aber nur ` +
+        `ein Wort, das mit ${starts || "nichts"} beginnt${f.nullable ? ", oder ε" : ""}.`;
+    }
+  }
+
+  // (6) General check: can the rest derive the rest of the target?
+  if (seqDerives(g, d, target, rest, prefix.length, n)) return null;
+  const why = explainAlignment(g, d, target, rest, prefix.length);
+  return why.text + (why.gap && g.note ? " " + g.note : "");
+}
+
+/**
+ * Explains a general dead end: the terminals inside the rest are fixed, so they must match
+ * terminals of the target. Between them, the nonterminals must derive the gaps.
+ * Returns the text and whether a gap of nonterminals is to blame (gap = true).
+ */
+function explainAlignment(g, d, target, rest, start) {
+  const n = target.length;
+  const termIdx = rest.map((s, i) => g.isNt(s) ? -1 : i).filter(i => i >= 0);
+  const alignments = [];
+  // Enumerate all ways to map the terminals of the rest to equal terminals of the target, in order.
+  (function search(t, from, acc) {
+    if (alignments.length >= 50) return;
+    if (t === termIdx.length) { alignments.push(acc.slice()); return; }
+    for (let p = from; p < n; p++) {
+      if (target[p] === rest[termIdx[t]]) { acc.push(p); search(t + 1, p + 1, acc); acc.pop(); }
+    }
+  })(0, start, []);
+
+  const restWord = codeWord(g, rest);
+  const targetRest = (start === 0 ? "das Zielwort " : "der Rest des Zielworts ") + codeWord(g, target.slice(start));
+  if (alignments.length === 0) {
+    return { gap: false, text: `Die Terminale ${codeWord(g, termIdx.map(i => rest[i]))} aus ${restWord} kommen ` +
+      `${targetRest.replace(/^das Zielwort/, "im Zielwort").replace(/^der Rest/, "im Rest")} nicht in dieser Anzahl und Reihenfolge vor. Terminale verschwinden nie mehr.` };
+  }
+  const failing = alignments.map(al => firstFailingGap(g, d, target, rest, termIdx, al, start));
+  const fail = failing[0];
+  const gapText = fail.syms.length === 0 ? "" : codeWord(g, fail.syms);
+  const need = fail.from === fail.to ? "zu ε werden" : `das Teilwort ${codeWord(g, target.slice(fail.from, fail.to))} erzeugen`;
+  if (termIdx.length === 0) {
+    return { gap: true, text: `Aus ${restWord} müsste ${targetRest} entstehen. Das ist nicht möglich.` };
+  }
+  if (alignments.length === 1) {
+    return { gap: true, text: `Die Terminale in ${restWord} stehen schon fest und müssen genau zu den gleichen ` +
+      `Zeichen im Zielwort passen. Dann müsste ${gapText} ${need}. Das ist nicht möglich.` };
+  }
+  return { gap: true, text: `Egal, welchen Zeichen im Zielwort du die Terminale aus ${restWord} zuordnest: Immer ` +
+    `kann ein Teil der Satzform sein Teilwort nicht erzeugen. Zum Beispiel müsste ${gapText} ${need}.` };
+}
+
+/** Returns the first gap (nonterminals between fixed terminals) that cannot derive its part. */
+function firstFailingGap(g, d, target, rest, termIdx, al, start) {
+  const bounds = [-1, ...termIdx, rest.length];
+  const pos = [start - 1, ...al, target.length];
+  for (let b = 0; b + 1 < bounds.length; b++) {
+    const syms = rest.slice(bounds[b] + 1, bounds[b + 1]);
+    const from = pos[b] + 1, to = pos[b + 1];
+    if (!seqDerives(g, d, target, syms, from, to)) return { syms, from, to };
+  }
+  return { syms: rest, from: start, to: target.length };
+}
+
+// ---------------------------------------------------------------------------
+// Derivation tree
+// ---------------------------------------------------------------------------
+
+/** A derivation: tree of nodes plus the list of applied steps (for undo). */
+class Derivation {
+  constructor(g) {
+    this.g = g;
+    this.nextId = 0;
+    this.root = this.node(g.start);
+    this.steps = [];   // { node, prod }
+  }
+
+  node(sym) {
+    return { id: this.nextId++, sym, children: null, step: -1 };
+  }
+
+  /** Leaves in left-to-right order: terminals, ε markers and not yet expanded nonterminals. */
+  leaves() {
+    const out = [];
+    const walk = n => { if (n.children) n.children.forEach(walk); else out.push(n); };
+    walk(this.root);
+    return out;
+  }
+
+  form() {
+    return this.leaves().filter(n => n.sym !== "ε").map(n => n.sym);
+  }
+
+  leftmostOpen() {
+    return this.leaves().find(n => this.g.isNt(n.sym)) || null;
+  }
+
+  apply(prod) {
+    const n = this.leftmostOpen();
+    if (!n || n.sym !== prod.lhs) throw new Error("Production does not fit the leftmost nonterminal.");
+    n.children = prod.rhs.length ? prod.rhs.map(s => this.node(s)) : [this.node("ε")];
+    n.step = this.steps.length;
+    this.steps.push({ node: n, prod });
+  }
+
+  undo() {
+    const last = this.steps.pop();
+    if (!last) return;
+    last.node.children = null;
+    last.node.step = -1;
+  }
+
+  /** Sentential forms after 0..k steps. */
+  forms() {
+    const copy = new Derivation(this.g);
+    const out = [copy.form()];
+    for (const s of this.steps) { copy.apply(s.prod); out.push(copy.form()); }
+    return out;
+  }
+
+  signature() {
+    return this.steps.map(s => this.g.prods.indexOf(s.prod)).join(",");
+  }
+}
+
+/** Builds a derivation from a list of right sides (one per step, "ε" for empty). */
+function derivationFrom(g, rhsList) {
+  const der = new Derivation(g);
+  for (const rhs of rhsList) {
+    const open = der.leftmostOpen();
+    const prod = g.prods.find(p => p.lhs === open.sym && (p.rhs.length ? p.rhs.join(" ") : "ε") === rhs);
+    if (!prod) throw new Error("Unknown production " + open.sym + " → " + rhs);
+    der.apply(prod);
+  }
+  return der;
+}
+
+const DX = 48, DY = 64, PAD = 30;
+
+/** Computes x/y for every node: leaves get consecutive slots, parents sit above their children. */
+function layoutTree(root) {
+  const pos = {};
+  let slot = 0, maxDepth = 0;
+  (function walk(n, depth) {
+    maxDepth = Math.max(maxDepth, depth);
+    if (!n.children) {
+      pos[n.id] = { x: PAD + slot * DX + DX / 2, y: PAD + depth * DY };
+      slot++;
+    } else {
+      n.children.forEach(c => walk(c, depth + 1));
+      const a = pos[n.children[0].id], b = pos[n.children[n.children.length - 1].id];
+      pos[n.id] = { x: (a.x + b.x) / 2, y: PAD + depth * DY };
+    }
+  })(root, 0);
+  return { pos, width: 2 * PAD + slot * DX, height: 2 * PAD + maxDepth * DY };
+}
+
+/**
+ * Renders the tree of a derivation as SVG markup.
+ * opts: layout (positions to use, e.g. of the finished tree), freshStep (step whose
+ * children fade in), state ("won" | "dead" | null).
+ */
+function treeSvg(der, opts = {}) {
+  const lay = opts.layout || layoutTree(der.root);
+  const open = der.leftmostOpen();
+  const edges = [], nodes = [];
+  const g = der.g;
+  (function walk(n, parent) {
+    const p = lay.pos[n.id];
+    const fresh = parent && parent.step === opts.freshStep && opts.freshStep >= 0 ? " fresh" : "";
+    if (parent) {
+      const q = lay.pos[parent.id];
+      const r = g.isNt(n.sym) ? 17 : (n.sym === "ε" ? 9 : 13);
+      edges.push(`<line class="edge${fresh}" x1="${q.x}" y1="${q.y + 17}" x2="${p.x}" y2="${p.y - r}"/>`);
+    }
+    if (g.isNt(n.sym)) {
+      let cls = "nt";
+      if (n === open && opts.state !== "won") cls += opts.state === "dead" ? " bad" : " next";
+      nodes.push(`<g class="${cls}${fresh}"><circle cx="${p.x}" cy="${p.y}" r="17"/>` +
+        `<text x="${p.x}" y="${p.y + 5}" text-anchor="middle">${esc(n.sym)}</text></g>`);
+    } else if (n.sym === "ε") {
+      nodes.push(`<g class="eps${fresh}"><text x="${p.x}" y="${p.y + 5}" text-anchor="middle">ε</text></g>`);
+    } else {
+      const w = 14 + 9 * n.sym.length;
+      const cls = opts.state === "won" ? " done" : "";
+      nodes.push(`<g class="term${cls}${fresh}"><rect x="${p.x - w / 2}" y="${p.y - 13}" width="${w}" height="26" rx="4"/>` +
+        `<text x="${p.x}" y="${p.y + 5}" text-anchor="middle">${esc(n.sym)}</text></g>`);
+    }
+    if (n.children) n.children.forEach(c => walk(c, n));
+  })(der.root, null);
+  const label = opts.label ? ` aria-label="${esc(opts.label)}"` : "";
+  return `<svg viewBox="0 0 ${lay.width} ${lay.height}" style="max-width:${Math.round(lay.width * 1.3)}px; margin:0 auto" role="img"${label}>${edges.join("")}${nodes.join("")}</svg>`;
+}
+
+// ---------------------------------------------------------------------------
+// Grammars used on this page
+// ---------------------------------------------------------------------------
+
+const G_ANBN = makeGrammar(["S → a S b | ε"], false);
+const G_BIN = makeGrammar(["Z → 0 | 1 R", "R → 0 R | 1 R | ε"], false);
+const G_PAREN = makeGrammar(["K → ( K ) K | ε"], false);
+const G_ABC = makeGrammar(["S → A B", "A → a A b | ε", "B → b B c | ε"], false);
+const G_ETF = makeGrammar(["E → E + T | T", "T → T * F | F", "F → ( E ) | id"], true);
+G_ETF.note = "Beachte: Außerhalb von Klammern erzeugt <code>T</code> kein <code>+</code>, " +
+  "und <code>F</code> erzeugt <code>+</code> und <code>*</code> nur innerhalb von Klammern.";
+const G_AMB = makeGrammar(["E → E + E | E * E | ( E ) | id"], true);
+
+function grammarHtml(g) {
+  return `<div class="grammar">${g.lines.map(esc).join("\n")}</div>`;
+}
+
+// ---------------------------------------------------------------------------
+// Intro animation
+// ---------------------------------------------------------------------------
+
+/**
+ * Animated leftmost derivation. Each example has one or more panels (grammar + steps) that
+ * share the same controls; the tree layout is taken from the finished tree so nodes keep
+ * their place while the tree grows.
+ */
+class Animation {
+  constructor(container, examples) {
+    this.container = container;
+    this.examples = examples;
+    this.step = 0;
+    this.timer = null;
+    this.speed = 1;
+    this.build();
+    this.select(0);
+  }
+
+  build() {
+    const c = this.container;
+    const options = this.examples.map((e, i) => `<option value="${i}">${esc(e.title)}</option>`).join("");
+    c.innerHTML = `
+      <div class="controls">
+        ${this.examples.length > 1 ? `<label>Beispiel <select class="a-example">${options}</select></label>` : ""}
+        <button class="a-first" title="Zum Anfang">⏮</button>
+        <button class="a-back">◀ Schritt</button>
+        <button class="a-step primary">Schritt ▶</button>
+        <button class="a-play">▶ Abspielen</button>
+        <label>Geschwindigkeit <input class="a-speed" type="range" min="0.5" max="3" step="0.5" value="1">
+          <span class="a-speed-val">1×</span></label>
+        <span class="small a-count"></span>
+      </div>
+      <div class="a-panels ${this.examples[0].panels.length > 1 ? "cols2" : ""}"></div>`;
+    const q = s => c.querySelector(s);
+    if (this.examples.length > 1) q(".a-example").addEventListener("change", e => this.select(+e.target.value));
+    q(".a-first").addEventListener("click", () => { this.pause(); this.go(0); });
+    q(".a-back").addEventListener("click", () => { this.pause(); this.go(this.step - 1); });
+    q(".a-step").addEventListener("click", () => { this.pause(); this.go(this.step + 1); });
+    q(".a-play").addEventListener("click", () => this.timer ? this.pause() : this.play());
+    q(".a-speed").addEventListener("input", e => {
+      this.speed = +e.target.value;
+      q(".a-speed-val").textContent = this.speed + "×";
+      if (this.timer) { this.pause(); this.play(); }
+    });
+  }
+
+  select(i) {
+    this.pause();
+    const ex = this.examples[i];
+    this.current = ex.panels.map(p => {
+      const full = derivationFrom(p.grammar, p.steps);
+      return { ...p, layout: layoutTree(full.root) };
+    });
+    this.total = Math.max(...this.current.map(p => p.steps.length));
+    const panels = this.container.querySelector(".a-panels");
+    // Several panels (comparison) are shown side by side: tree on top, derivation below.
+    const compact = this.current.length > 1;
+    panels.innerHTML = this.current.map((p, k) => compact ? `
+      <div class="a-panel" data-k="${k}">
+        <h3 style="margin-top:0">${esc(p.title)}</h3>
+        <div class="treebox"></div>
+        <div class="card" style="margin-top:10px">
+          <ol class="deriv"></ol>
+          <p class="caption"></p>
+        </div>
+      </div>` : `
+      <div class="grid2 a-panel" data-k="${k}">
+        <div class="card">
+          ${grammarHtml(p.grammar)}
+          <p class="small">Zielwort: <span class="mono">${esc(p.word)}</span></p>
+          <ol class="deriv"></ol>
+          <p class="caption"></p>
+        </div>
+        <div class="treebox"></div>
+      </div>`).join("");
+    this.go(0);
+  }
+
+  go(step) {
+    this.step = Math.max(0, Math.min(this.total, step));
+    this.current.forEach((p, k) => this.renderPanel(p, k));
+    const q = s => this.container.querySelector(s);
+    q(".a-count").textContent = `Schritt ${this.step} / ${this.total}`;
+    q(".a-back").disabled = this.step === 0;
+    q(".a-first").disabled = this.step === 0;
+    q(".a-step").disabled = this.step === this.total;
+  }
+
+  renderPanel(p, k) {
+    const shown = Math.min(this.step, p.steps.length);
+    const der = derivationFrom(p.grammar, p.steps.slice(0, shown));
+    const panel = this.container.querySelector(`.a-panel[data-k="${k}"]`);
+    const forms = der.forms();
+    const done = der.leftmostOpen() === null;
+    panel.querySelector(".deriv").innerHTML = forms.map((f, i) => {
+      const arrow = i === 0 ? "&nbsp;&nbsp;" : "⇒";
+      const prod = i === 0 ? "Startsymbol" : prodText(der.steps[i - 1].prod);
+      const html = formHtml(p.grammar, f, null, i === forms.length - 1);
+      return `<li class="${i === forms.length - 1 ? "cur" : ""}"><span>${arrow} ${html}</span><span class="prod">${esc(prod)}</span></li>`;
+    }).join("");
+    const list = panel.querySelector(".deriv");
+    list.scrollTop = list.scrollHeight;
+    let caption;
+    if (shown === 0) {
+      caption = `Start mit dem Startsymbol <code>${esc(p.grammar.start)}</code>. Der Baum besteht nur aus der Wurzel.`;
+    } else {
+      const s = der.steps[shown - 1];
+      caption = `Schritt ${shown}: Das linkeste Nichtterminal ist <code>${esc(s.prod.lhs)}</code>. ` +
+        `Angewendet wird <code>${esc(prodText(s.prod))}</code>, im Baum bekommt es ` +
+        `${s.prod.rhs.length ? s.prod.rhs.length + (s.prod.rhs.length === 1 ? " Kind" : " Kinder") : "das Kind ε"}.`;
+    }
+    if (done) caption += ` <span class="ok">Fertig: Die Blätter von links nach rechts ergeben ${codeWord(p.grammar, forms[forms.length - 1])}.</span>`;
+    panel.querySelector(".caption").innerHTML = caption;
+    panel.querySelector(".treebox").innerHTML = treeSvg(der, {
+      layout: p.layout, freshStep: shown - 1, state: done ? "won" : null, label: "Ableitungsbaum"
+    });
+  }
+
+  play() {
+    if (this.step >= this.total) this.go(0);
+    const btn = this.container.querySelector(".a-play");
+    btn.textContent = "⏸ Pause";
+    this.timer = setInterval(() => {
+      this.go(this.step + 1);
+      if (this.step >= this.total) this.pause();
+    }, 1400 / this.speed);
+  }
+
+  pause() {
+    if (this.timer) clearInterval(this.timer);
+    this.timer = null;
+    const btn = this.container.querySelector(".a-play");
+    if (btn) btn.textContent = "▶ Abspielen";
+  }
+}
+
+const animations = [
+  new Animation(document.getElementById("anim-basic"), [
+    { title: "aⁿbⁿ: aaabbb", panels: [{ grammar: G_ANBN, word: "aaabbb", steps: ["a S b", "a S b", "a S b", "ε"] }] },
+    { title: "Klammern: (())()", panels: [{ grammar: G_PAREN, word: "(())()",
+      steps: ["( K ) K", "( K ) K", "ε", "ε", "( K ) K", "ε", "ε"] }] },
+    { title: "Binärzahl: 1101", panels: [{ grammar: G_BIN, word: "1101", steps: ["1 R", "1 R", "0 R", "1 R", "ε"] }] },
+  ]),
+  new Animation(document.getElementById("anim-ambig"), [
+    { title: "id + id * id", panels: [
+      { title: "Baum 1: zuerst E → E + E", grammar: G_AMB, word: "id + id * id",
+        steps: ["E + E", "id", "E * E", "id", "id"] },
+      { title: "Baum 2: zuerst E → E * E", grammar: G_AMB, word: "id + id * id",
+        steps: ["E * E", "E + E", "id", "id", "id"] },
+    ] },
+  ]),
+  new Animation(document.getElementById("anim-prec"), [
+    { title: "id + id * id", panels: [{ grammar: G_ETF, word: "id + id * id",
+      steps: ["E + T", "T", "F", "id", "T * F", "F", "id", "id"] }] },
+    { title: "( id + id ) * id", panels: [{ grammar: G_ETF, word: "( id + id ) * id",
+      steps: ["T", "T * F", "F", "( E )", "E + T", "T", "F", "id", "F", "id", "id"] }] },
+  ]),
+];
+
+// ---------------------------------------------------------------------------
+// Practice tasks
+// ---------------------------------------------------------------------------
+
+const TASKS = [
+  { id: "anbn", title: "Gleich viele a und b", stars: 1, grammar: G_ANBN, target: "a a a b b b",
+    text: "Leite das Wort mit drei <code>a</code> und drei <code>b</code> ab." },
+  { id: "bin", title: "Binärzahl ohne führende Null", stars: 1, grammar: G_BIN, target: "1 0 1 1 0",
+    text: "Diese Grammatik ist regulär (Typ 3): Rechts steht höchstens ein Nichtterminal, und zwar ganz hinten." },
+  { id: "paren", title: "Korrekt geklammert", stars: 2, grammar: G_PAREN, target: "( ( ) ( ) )",
+    text: "Achte darauf, welches <code>K</code> gerade das linkeste ist." },
+  { id: "abc", title: "Zwei Teile", stars: 2, grammar: G_ABC, target: "a a b b b c",
+    text: "<code>A</code> erzeugt aⁿbⁿ, <code>B</code> erzeugt bᵐcᵐ. Wann muss <code>A</code> aufhören?" },
+  { id: "prec1", title: "Punkt vor Strich", stars: 2, grammar: G_ETF, target: "id + id * id",
+    text: "Die Grammatik mit Präzedenzstufen. Überlege zuerst, welcher Operator an der Wurzel stehen muss." },
+  { id: "prec2", title: "Klammern zuerst", stars: 3, grammar: G_ETF, target: "( id + id ) * id",
+    text: "Jetzt steht das <code>+</code> in Klammern. Wie kommst du von <code>F</code> wieder zu <code>E</code>?" },
+  { id: "ambig", title: "Zwei Bäume finden", stars: 3, grammar: G_AMB, target: "id + id * id", need: 2,
+    text: "Diese Grammatik ist mehrdeutig. Finde <b>zwei verschiedene</b> Linksableitungen, also zwei verschiedene Bäume." },
+];
+
+/** UI and state of one practice task. */
+class Practice {
+  constructor(section, task, index) {
+    this.section = section;
+    this.task = task;
+    this.g = task.grammar;
+    this.target = task.target.split(" ");
+    this.table = derivesTable(this.g, this.target);
+    this.found = new Map();   // signature -> derivation (for the ambiguity task)
+    this.der = new Derivation(this.g);
+    section.innerHTML = `
+      <h2>Aufgabe ${index + 1} von ${TASKS.length}: ${esc(task.title)} <span class="stars">${"★".repeat(task.stars)}${"☆".repeat(3 - task.stars)}</span>
+        <span class="tag p-solved" hidden>gelöst</span></h2>
+      <div class="grid2">
+        <div>
+          <div class="card">
+            <p style="margin-top:0">${task.text}</p>
+            ${grammarHtml(this.g)}
+            <p>Zielwort: <span class="target">${esc(word(this.g, this.target))}</span></p>
+          </div>
+          <h3>Aktuelle Satzform</h3>
+          <div class="form p-form"></div>
+          <p class="p-which" style="margin-bottom:0"></p>
+          <div class="prods p-prods"></div>
+          <div class="controls">
+            <button class="p-undo">↶ Rückgängig</button>
+            <button class="p-reset">Neu beginnen</button>
+            <span class="small p-steps"></span>
+          </div>
+          <div class="feedback p-feedback"></div>
+          <h3>Bisherige Ableitung</h3>
+          <ol class="deriv p-deriv"></ol>
+        </div>
+        <div>
+          <div class="treebox p-tree"></div>
+          <div class="found p-found"></div>
+        </div>
+      </div>`;
+    this.q = s => section.querySelector(s);
+    this.q(".p-undo").addEventListener("click", () => this.undo());
+    this.q(".p-reset").addEventListener("click", () => this.reset());
+    this.render();
+  }
+
+  pick(i) {
+    const open = this.der.leftmostOpen();
+    if (!open || this.state) return;
+    const prods = this.g.prods.filter(p => p.lhs === open.sym);
+    if (i < 0 || i >= prods.length) return;
+    this.der.apply(prods[i]);
+    this.render();
+  }
+
+  undo() {
+    this.der.undo();
+    this.render();
+  }
+
+  reset() {
+    this.der = new Derivation(this.g);
+    this.render();
+  }
+
+  /** Evaluates the current form: won, dead end (with reason) or still open. */
+  evaluate() {
+    const form = this.der.form();
+    const open = this.der.leftmostOpen();
+    if (!open && form.join(" ") === this.target.join(" ")) return { state: "won" };
+    const reason = deadEnd(this.g, this.table, this.target, form);
+    return reason ? { state: "dead", reason } : { state: null };
+  }
+
+  render() {
+    const ev = this.evaluate();
+    this.state = ev.state;
+    const g = this.g;
+    const form = this.der.form();
+    const open = this.der.leftmostOpen();
+
+    const formEl = this.q(".p-form");
+    formEl.className = "form p-form" + (ev.state ? " " + ev.state : "");
+    formEl.innerHTML = formHtml(g, form, this.target, !ev.state);
+
+    const prodsEl = this.q(".p-prods");
+    if (open && ev.state !== "dead") {
+      const prods = g.prods.filter(p => p.lhs === open.sym);
+      this.q(".p-which").innerHTML = `Ersetze das linkeste Nichtterminal <span class="sym-next mono">${esc(open.sym)}</span> durch:`;
+      prodsEl.innerHTML = prods.map((p, i) =>
+        `<button data-i="${i}">${esc(prodText(p))}<kbd>${i + 1}</kbd></button>`).join("");
+      prodsEl.querySelectorAll("button").forEach(b => b.addEventListener("click", () => this.pick(+b.dataset.i)));
+    } else {
+      this.q(".p-which").innerHTML = "";
+      prodsEl.innerHTML = "";
+    }
+    this.q(".p-undo").disabled = this.der.steps.length === 0;
+    this.q(".p-steps").textContent = this.der.steps.length === 1 ? "1 Schritt" : `${this.der.steps.length} Schritte`;
+
+    const forms = this.der.forms();
+    this.q(".p-deriv").innerHTML = forms.map((f, i) =>
+      `<li class="${i === forms.length - 1 ? "cur" : ""}"><span>${i === 0 ? "&nbsp;&nbsp;" : "⇒"} ${formHtml(g, f, null, false)}</span>` +
+      `<span class="prod">${i === 0 ? "Start" : esc(prodText(this.der.steps[i - 1].prod))}</span></li>`).join("");
+
+    this.q(".p-tree").innerHTML = treeSvg(this.der, { state: ev.state, label: "Ableitungsbaum" });
+
+    const fb = this.q(".p-feedback");
+    fb.className = "feedback p-feedback" + (ev.state ? " " + ev.state : "");
+    if (ev.state === "dead") {
+      fb.innerHTML = `<strong>Sackgasse</strong>${ev.reason}<br>Nimm mit <b>Rückgängig</b> einen oder mehrere Schritte zurück.`;
+    } else if (ev.state === "won") {
+      fb.innerHTML = this.winText();
+    } else if (this.der.steps.length === 0) {
+      fb.innerHTML = "Wähle eine Produktion für das Startsymbol.";
+    } else {
+      fb.innerHTML = "Bisher passt alles: Aus dieser Satzform lässt sich das Zielwort noch ableiten.";
+    }
+    this.renderFound();
+    this.q(".p-solved").hidden = !solved.has(this.task.id);
+  }
+
+  winText() {
+    const need = this.task.need || 1;
+    if (need > 1) {
+      const sig = this.der.signature();
+      const isNew = !this.found.has(sig);
+      if (isNew) this.found.set(sig, derivationFrom(this.g, this.der.steps.map(s => s.prod.rhs.length ? s.prod.rhs.join(" ") : "ε")));
+      if (!isNew && this.found.size < need) {
+        return `<strong>Diesen Baum kennst du schon</strong>Du hast dasselbe Wort mit denselben Produktionen ` +
+          `abgeleitet. Klicke auf <b>Neu beginnen</b> und finde einen anderen Baum.`;
+      }
+      if (this.found.size < need) {
+        return `<strong>Baum ${this.found.size} gefunden</strong>Das ist eine gültige Linksableitung in ` +
+          `${this.der.steps.length} Schritten. Klicke auf <b>Neu beginnen</b> und finde einen anderen Baum für dasselbe Wort.`;
+      }
+      this.markSolved();
+      return `<strong>Geschafft!</strong>Du hast ${this.found.size} verschiedene Bäume für dasselbe Wort gefunden. ` +
+        `Die Grammatik ist also mehrdeutig. Vergleiche, welcher Operator jeweils an der Wurzel steht.`;
+    }
+    this.markSolved();
+    return `<strong>Geschafft!</strong>Du hast ${codeWord(this.g, this.target)} in ${this.der.steps.length} Schritten ` +
+      `abgeleitet. Die Blätter des Baums ergeben von links nach rechts das Zielwort.`;
+  }
+
+  renderFound() {
+    const el = this.q(".p-found");
+    if (!this.task.need) { el.innerHTML = ""; return; }
+    el.innerHTML = [...this.found.values()].map((d, i) =>
+      `<div class="treebox"><div class="small">Gefunden: Baum ${i + 1} (${esc(prodText(d.steps[0].prod))})</div>` +
+      treeSvg(d, { state: "won", label: "Gefundener Baum " + (i + 1) }) + "</div>").join("");
+  }
+
+  markSolved() {
+    if (!solved.has(this.task.id)) {
+      solved.add(this.task.id);
+      saveSolved(solved);
+      renderOverview();
+    }
+  }
+}
+
+const overview = document.getElementById("overview");
+const practices = TASKS.map((task, i) => {
+  const section = document.createElement("section");
+  section.className = "slide";
+  section.dataset.title = "Aufgabe " + (i + 1);
+  overview.parentNode.insertBefore(section, overview);
+  return new Practice(section, task, i);
+});
+
+function renderOverview() {
+  const rows = TASKS.map((t, i) => `<tr><td>Aufgabe ${i + 1}</td><td>${esc(t.title)}</td>` +
+    `<td class="mono">${esc(word(t.grammar, t.target.split(" ")))}</td>` +
+    `<td>${solved.has(t.id) ? '<span class="ok">✓ gelöst</span>' : '<span class="small">offen</span>'}</td>` +
+    `<td><button data-goto="${i}">Öffnen</button></td></tr>`).join("");
+  document.getElementById("overview-table").innerHTML =
+    `<tr><th></th><th>Thema</th><th>Zielwort</th><th>Status</th><th></th></tr>${rows}` +
+    `<tr><td colspan="5" class="small">${solved.size} von ${TASKS.length} Aufgaben gelöst.</td></tr>`;
+  document.querySelectorAll("#overview-table button").forEach(b =>
+    b.addEventListener("click", () => show(firstPractice + +b.dataset.goto)));
+  practices.forEach(p => p.q(".p-solved").hidden = !solved.has(p.task.id));
+}
+
+document.getElementById("reset-progress").addEventListener("click", () => {
+  solved.clear();
+  saveSolved(solved);
+  renderOverview();
+});
+
+// ---------------------------------------------------------------------------
+// Slide navigation
+// ---------------------------------------------------------------------------
+
+const slides = [...document.querySelectorAll(".slide")];
+const firstPractice = slides.indexOf(practices[0].section);
+let currentSlide = 0;
+
+function show(i) {
+  currentSlide = Math.max(0, Math.min(slides.length - 1, i));
+  slides.forEach((s, k) => s.classList.toggle("active", k === currentSlide));
+  animations.forEach(a => a.pause());
+  document.getElementById("counter").textContent = `${currentSlide + 1} / ${slides.length}`;
+  document.getElementById("bar").style.width = `${(currentSlide + 1) / slides.length * 100}%`;
+  document.getElementById("slide-title").textContent = slides[currentSlide].dataset.title || "";
+  document.getElementById("prev").disabled = currentSlide === 0;
+  document.getElementById("next").disabled = currentSlide === slides.length - 1;
+  document.getElementById("main").scrollTop = 0;
+  if (location.hash !== "#" + (currentSlide + 1)) history.replaceState(null, "", "#" + (currentSlide + 1));
+}
+
+document.getElementById("prev").addEventListener("click", () => show(currentSlide - 1));
+document.getElementById("next").addEventListener("click", () => show(currentSlide + 1));
+
+document.addEventListener("keydown", e => {
+  const tag = e.target.tagName;
+  // Do not steal keys from form controls (select, range slider) or modified shortcuts.
+  if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA" || e.target.isContentEditable) return;
+  if (e.altKey || e.metaKey) return;
+  if (!e.ctrlKey && (e.key === "ArrowRight" || e.key === "PageDown")) { show(currentSlide + 1); e.preventDefault(); return; }
+  if (!e.ctrlKey && (e.key === "ArrowLeft" || e.key === "PageUp")) { show(currentSlide - 1); e.preventDefault(); return; }
+  const practice = practices.find(p => p.section === slides[currentSlide]);
+  if (!practice) return;
+  if (!e.ctrlKey && /^[1-9]$/.test(e.key)) { practice.pick(+e.key - 1); e.preventDefault(); }
+  else if (e.key === "Backspace" || (e.ctrlKey && e.key.toLowerCase() === "z")) { practice.undo(); e.preventDefault(); }
+});
+
+/** Shows the slide named in the URL hash (#1, #2, ...), so a slide can be linked directly. */
+function showFromHash() {
+  const n = parseInt(location.hash.slice(1), 10);
+  show(Number.isFinite(n) ? n - 1 : 0);
+}
+window.addEventListener("hashchange", showFromHash);
+
+renderOverview();
+showFromHash();
+</script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="330" viewBox="0 0 820 330">
+  <rect x="0.5" y="0.5" width="819" height="329" rx="8" fill="#ffffff" stroke="#9d9d9c"/>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1d1d1b"/>
+    </marker>
+    <marker id="arrowRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#cc0935"/>
+    </marker>
+  </defs>
+
+  <!-- Loop boxes -->
+  <g fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5">
+    <rect x="40" y="40" width="230" height="70" rx="8"/>
+    <rect x="360" y="40" width="230" height="70" rx="8"/>
+    <rect x="360" y="200" width="230" height="70" rx="8"/>
+    <rect x="40" y="200" width="230" height="70" rx="8"/>
+  </g>
+  <!-- Result: all tests green -->
+  <rect x="640" y="40" width="150" height="70" rx="8" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+  <!-- Forbidden shortcut -->
+  <rect x="640" y="200" width="150" height="70" rx="8" fill="#f6d3db" stroke="#cc0935" stroke-width="1.5" stroke-dasharray="6 4"/>
+
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1d1d1b" text-anchor="middle">
+    <text x="155" y="70">1 · Code ändern</text>
+    <text x="475" y="70">2 · Tests ausführen</text>
+    <text x="475" y="230">3 · Ausgabe lesen</text>
+    <text x="155" y="230">4 · Ursache finden</text>
+    <text x="715" y="70">✓ alle grün</text>
+    <text x="715" y="230">✗ Test ändern</text>
+  </g>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1d1d1b" text-anchor="middle">
+    <text x="155" y="92">Agent oder Mensch</text>
+    <text x="155" y="252">Testname zeigt, was kaputt ist</text>
+    <text x="715" y="92">fertig</text>
+    <text x="715" y="252">löst nichts</text>
+  </g>
+  <g font-family="Consolas, Menlo, monospace" font-size="13" fill="#00628f" text-anchor="middle">
+    <text x="475" y="92">dotnet test</text>
+    <text x="475" y="252">Expected: 1 · Actual: 2</text>
+  </g>
+
+  <!-- Arrows of the loop -->
+  <g stroke="#1d1d1b" stroke-width="1.5" fill="none" marker-end="url(#arrow)">
+    <line x1="270" y1="75" x2="356" y2="75"/>
+    <line x1="475" y1="110" x2="475" y2="196"/>
+    <line x1="360" y1="235" x2="274" y2="235"/>
+    <line x1="155" y1="200" x2="155" y2="114"/>
+    <line x1="590" y1="75" x2="636" y2="75"/>
+  </g>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1d1d1b">
+    <text x="485" y="158">✗ rot</text>
+    <text x="596" y="66">✓ grün</text>
+  </g>
+
+  <!-- Forbidden shortcut arrow -->
+  <line x1="590" y1="235" x2="636" y2="235" stroke="#cc0935" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arrowRed)"/>
+
+  <text x="410" y="306" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1d1d1b" text-anchor="middle">Die Schleife läuft, bis alle Tests grün sind. Die Tests selbst bleiben unverändert.</text>
+</svg>

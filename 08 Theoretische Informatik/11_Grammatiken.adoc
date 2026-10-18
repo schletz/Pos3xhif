@@ -1,0 +1,397 @@
+= Grammatiken
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Eine unendliche Sprache wie „alle korrekt geklammerten Ausdrücke“ kannst du nicht aufzählen.
+Du brauchst eine endliche Beschreibung, aus der sich jedes Wort der Sprache bauen lässt.
+Genau das leistet eine Grammatik: ein paar Ersetzungsregeln, die vom Startsymbol zum fertigen Wort führen.
+Jede Programmiersprache ist so definiert, auch C#.
+Wer die Grammatik lesen kann, versteht Compilerfehler besser und kann später selbst einen Parser schreiben (siehe link:{github_url}/08%20Theoretische%20Informatik/15_Parser.adoc[Parser für arithmetische Ausdrücke]).
+
+[TIP]
+====
+*Zum Selbst-Erarbeiten: der interaktive Ableitungstrainer*
+
+Im https://die-spengergasse.github.io/course-pos-csharp_basics/08%20Theoretische%20Informatik/11_Grammatiken.html[Ableitungstrainer] siehst du als Animation, wie bei einer Linksableitung der Ableitungsbaum wächst.
+Danach leitest du selbst Wörter ab, vom einfachen aⁿbⁿ bis zu mehrdeutigen Ausdrücken, und bekommst sofort Rückmeldung.
+Nach ein paar Aufgaben dort sitzt das Ableiten viel sicherer als nur vom Lesen.
+====
+
+== Ein erstes Beispiel
+
+Die folgende Grammatik erzeugt Wörter wie `ab`, `aabb` oder `aaabbb`:
+
+[source,text]
+----
+S → aSb | ε
+----
+
+Lies das so: Das Symbol `S` darfst du durch `aSb` ersetzen _oder_ durch das leere Wort ε. Der Strich `+|+` trennt die Alternativen.
+Du beginnst immer mit `S` und ersetzt so lange, bis kein `S` mehr dasteht:
+
+[source,text]
+----
+S ⇒ aSb ⇒ aaSbb ⇒ aabb
+----
+
+Jeder Pfeil ⇒ ist ein _Ableitungsschritt_.
+In den ersten beiden Schritten hast du `+S → aSb+` angewendet, im letzten `+S → ε+`.
+Jede Anwendung von `+S → aSb+` setzt ein `a` vorne und ein `b` hinten dazu.
+Deshalb erzeugt die Grammatik genau die Wörter aⁿbⁿ mit n ≥ 0, also gleich viele `a` gefolgt von gleich vielen `b`.
+Wörter wie `abab` oder `aab` kannst du nicht ableiten.
+
+== Formale Definition
+
+Eine Grammatik ist ein Quadrupel G = (N, Σ, P, S):
+
+* *N* ist eine endliche Menge von _Nichtterminalen_ (auch Variablen).
+Sie sind Platzhalter und kommen im fertigen Wort nicht mehr vor.
+* *Σ* ist das Alphabet der _Terminale_.
+Das sind die Zeichen, aus denen die Wörter der Sprache bestehen.
+N und Σ haben keine gemeinsamen Elemente.
+* *P* ist eine endliche Menge von _Produktionen_ (Regeln) der Form α → β. Links steht mindestens ein Nichtterminal.
+* *S* ∈ N ist das _Startsymbol_.
+
+Für das Beispiel oben gilt also G = (\{S}, {a, b}, {S → aSb, S → ε}, S).
+
+In diesem Kapitel gilt folgende Konvention: Großbuchstaben (`S`, `E`, `T`) sind Nichtterminale, alles andere sind Terminale.
+Bis zum Abschnitt über die Chomsky-Hierarchie steht links in jeder Produktion genau *ein* Nichtterminal.
+Solche Grammatiken heißen _kontextfrei_.
+
+=== Ableitung und Sprache
+
+Eine Folge aus Terminalen und Nichtterminalen heißt _Satzform_.
+`aaSbb` ist eine Satzform, `aabb` auch (sie enthält nur Terminale).
+
+* *u ⇒ v* (ein Ableitungsschritt): Du ersetzt in u ein Nichtterminal A durch die rechte Seite einer Produktion A → γ und bekommst v. Beispiel: `+aSb ⇒ aaSbb+`.
+* *u ⇒++*++ v* (Ableitung): v entsteht aus u in null oder mehr Schritten.
+Beispiel: `+S ⇒* aabb+`.
+
+Die _Sprache_ der Grammatik besteht aus allen Wörtern, die nur aus Terminalen bestehen und sich aus dem Startsymbol ableiten lassen:
+
+[source,text]
+----
+L(G) = { w ∈ Σ* | S ⇒* w }
+----
+
+Satzformen mit Nichtterminalen wie `aSb` sind Zwischenschritte.
+Sie gehören nicht zu L(G).
+
+== Weitere Beispiele
+
+=== Korrekt geklammerte Ausdrücke
+
+Jede öffnende Klammer braucht eine passende schließende.
+`()`, `+(())+` und `+()(())+` sind korrekt, `)(` und `+(()+` nicht:
+
+[source,text]
+----
+K → ( K ) K | ε
+----
+
+Die Regel sagt: Ein korrekter Ausdruck ist leer, oder er beginnt mit einem Klammerpaar, in dem ein korrekter Ausdruck steht.
+Danach folgt wieder ein korrekter Ausdruck.
+Hier ist N = \{K} und Σ = {(, )}.
+
+=== Einfache arithmetische Ausdrücke
+
+[source,text]
+----
+E → E + E | E * E | ( E ) | id
+----
+
+Das Terminal `id` steht für eine Zahl oder einen Variablennamen.
+Ein Lexer fasst die Zeichen `42` oder `count` vorher zu einem Symbol zusammen (das machst du in 15).
+So kannst du z. B. `+id * ( id + id )+` ableiten:
+
+[source,text]
+----
+E ⇒ E * E ⇒ id * E ⇒ id * ( E ) ⇒ id * ( E + E ) ⇒ id * ( id + E ) ⇒ id * ( id + id )
+----
+
+== Links- und Rechtsableitung
+
+Enthält eine Satzform mehrere Nichtterminale, darfst du dir aussuchen, welches du ersetzt.
+Damit Ableitungen vergleichbar werden, legt man die Reihenfolge fest:
+
+* Bei der *Linksableitung* ersetzt du immer das _linkeste_ Nichtterminal.
+* Bei der *Rechtsableitung* ersetzt du immer das _rechteste_ Nichtterminal.
+
+Beide Varianten für das Wort `()()` mit der Klammer-Grammatik:
+
+[source,text]
+----
+Linksableitung:   K ⇒ (K)K ⇒ ()K ⇒ ()(K)K ⇒ ()()K ⇒ ()()
+Rechtsableitung:  K ⇒ (K)K ⇒ (K)(K)K ⇒ (K)(K) ⇒ (K)() ⇒ ()()
+----
+
+Die Ableitung von `+id * ( id + id )+` im letzten Abschnitt war eine Linksableitung.
+Die Linksableitung ist wichtig, weil ein Parser, der den Text von links nach rechts liest, genau sie nachbaut.
+Der rekursive Abstiegsparser in link:{github_url}/08%20Theoretische%20Informatik/15_Parser.adoc[Parser für arithmetische Ausdrücke] macht das so.
+
+== Der Ableitungsbaum
+
+Ein _Ableitungsbaum_ (Syntaxbaum) zeigt, welche Produktion auf welches Nichtterminal angewendet wurde.
+Die Reihenfolge der Schritte zeigt er nicht.
+
+* Die Wurzel ist das Startsymbol.
+* Jeder innere Knoten ist ein Nichtterminal.
+Seine Kinder sind die Symbole der rechten Seite der angewendeten Produktion, von links nach rechts.
+* Die Blätter sind Terminale oder ε. Liest du sie von links nach rechts, bekommst du das Wort.
+
+image::{root_dir}/images/11_ableitungsbaum.svg[]
+
+Die orangen Nummern zeigen, in welchem Schritt der Linksableitung der Knoten ersetzt wird.
+Die Rechtsableitung von oben ersetzt dieselben Knoten in anderer Reihenfolge, liefert aber *denselben Baum*.
+Zu jedem Baum gibt es genau eine Linksableitung und umgekehrt.
+Deshalb kannst du Bäume zählen, indem du Linksableitungen zählst.
+
+== Mehrdeutigkeit
+
+Eine Grammatik ist _mehrdeutig_, wenn es ein Wort mit zwei verschiedenen Ableitungsbäumen gibt.
+Gleichwertig: Das Wort hat zwei verschiedene Linksableitungen.
+Die Grammatik für arithmetische Ausdrücke von oben ist mehrdeutig.
+Für `+id + id * id+` gibt es zwei Linksableitungen:
+
+[source,text]
+----
+E ⇒ E + E ⇒ id + E ⇒ id + E * E ⇒ id + id * E ⇒ id + id * id
+E ⇒ E * E ⇒ E + E * E ⇒ id + E * E ⇒ id + id * E ⇒ id + id * id
+----
+
+Die erste Ableitung beginnt mit `+E → E + E+`, die zweite mit `+E → E * E+`.
+Das ergibt zwei verschiedene Bäume:
+
+image::{root_dir}/images/11_mehrdeutigkeit.svg[]
+
+Für die Syntax ist das egal, beide Male entsteht dasselbe Wort.
+Für die Bedeutung ist es fatal: Ein Compiler wertet den Baum von unten nach oben aus.
+Setzt du für die drei `id` die Zahlen 2, 3 und 4 ein, liefert der linke Baum 2 {plus} (3 · 4) = 14, der rechte (2 {plus} 3) · 4 = 20. Eine Grammatik für eine Programmiersprache muss daher eindeutig sein.
+
+=== Auflösung über Präzedenzstufen
+
+Die Lösung kennst du aus der Mathematik: Punkt- vor Strichrechnung.
+Du führst für jede Präzedenzstufe ein eigenes Nichtterminal ein:
+
+[source,text]
+----
+E → E + T | T          (1)
+T → T * F | F          (2)
+F → ( E ) | id         (3)
+----
+
+* *(1)* Ein Ausdruck E (expression) ist eine Summe von Termen T. Auf dieser Ebene gibt es nur `+++`.
+* *(2)* Ein Term T ist ein Produkt von Faktoren F. `+*+` gibt es nur auf dieser Ebene, also tiefer im Baum.
+Was tiefer liegt, wird zuerst ausgewertet.
+* *(3)* Ein Faktor F ist ein `id` oder ein geklammerter Ausdruck.
+Mit der Klammer kommst du wieder ganz nach oben zu E. So kannst du `+( id + id ) * id+` schreiben.
+
+Jetzt gibt es für `+id + id * id+` nur noch eine Linksableitung und einen Baum:
+
+[source,text]
+----
+E ⇒ E + T ⇒ T + T ⇒ F + T ⇒ id + T ⇒ id + T * F ⇒ id + F * F ⇒ id + id * F ⇒ id + id * id
+----
+
+image::{root_dir}/images/11_praezedenz.svg[]
+
+Die Produktion `+E → E + T+` hat ihr E links.
+Deshalb wird `+id + id + id+` als `+(id + id) + id+` gelesen, so wie in C#.
+Man nennt das _Linksrekursion_, sie macht den Operator linksassoziativ.
+Ein rekursiver Abstiegsparser kann Linksrekursion nicht direkt umsetzen, er würde sich endlos selbst aufrufen.
+In link:{github_url}/08%20Theoretische%20Informatik/12_Darstellungsformen.adoc[Darstellungsformen von Grammatiken] lernst du die EBNF kennen.
+Dort schreibst du die Wiederholung mit `+{ }+`, und die Grammatik wird zu genau der Form, die du in link:{github_url}/08%20Theoretische%20Informatik/15_Parser.adoc[Parser für arithmetische Ausdrücke] programmierst (dort mit `-`, `/`, Zahlen und Vorzeichen):
+
+[source,text]
+----
+expr = term { "+" term }
+term = factor { "*" factor }
+factor = "(" expr ")" | "id"
+----
+
+== Die Chomsky-Hierarchie
+
+Bisher stand links in jeder Produktion genau ein Nichtterminal.
+Erlaubt man links mehrere Symbole, werden Grammatiken mächtiger.
+Der Linguist Noam Chomsky hat in den 1950er-Jahren vier Typen unterschieden.
+Je höher die Nummer, desto strenger die Regeln für die Produktionen und desto einfacher der Automat, der die Sprache erkennt:
+
+[%header]
+|===
+|Typ |Name |Form der Produktionen |Automatenmodell |Beispiel
+|3 |regulär |A → aB, A → a, A → ε |endlicher Automat |Binärzahlen, Bezeichner
+|2 |kontextfrei |A → γ (links genau ein Nichtterminal) |Kellerautomat |aⁿbⁿ, Klammern, Ausdrücke
+|1 |kontextsensitiv |α → β mit {vbar}α{vbar} ≤ {vbar}β{vbar} |linear beschränkter Automat |aⁿbⁿcⁿ
+|0 |unbeschränkt |α → β (α enthält ein Nichtterminal) |Turingmaschine |Programme, die anhalten
+|===
+
+Dabei sind A, B ∈ N, a ∈ Σ und α, β, γ beliebige Folgen aus N ∪ Σ. Bei Typ 1 darf die rechte Seite nie kürzer sein als die linke.
+Damit ε trotzdem zur Sprache gehören kann, ist zusätzlich S → ε erlaubt, wenn S auf keiner rechten Seite vorkommt.
+
+image::{root_dir}/images/11_chomsky.svg[]
+
+Ein paar Beispiele zu den Typen:
+
+* *Typ 3:* Binärzahlen ohne führende Nullen erzeugt `+Z → 0 | 1R+` mit `+R → 0R | 1R | ε+`.
+Rechts steht höchstens ein Nichtterminal, und zwar ganz hinten.
+Solche Sprachen erkennt ein endlicher Automat (link:{github_url}/08%20Theoretische%20Informatik/13_Endliche_Automaten.adoc[Endliche Automaten]) oder ein regulärer Ausdruck (link:{github_url}/08%20Theoretische%20Informatik/14_Regulaere_Ausdruecke.adoc[Reguläre Ausdrücke]).
+* *Typ 2:* `+S → aSb | ε+` ist kontextfrei, aber nicht regulär, weil rechts nach dem `S` noch ein `b` steht.
+Ein endlicher Automat kann aⁿbⁿ nicht erkennen, denn er müsste sich die Anzahl der `a` merken, und die ist unbegrenzt.
+Ein Kellerautomat hat dafür einen Stack.
+* *Typ 1:* aⁿbⁿcⁿ (n ≥ 1) ist nicht kontextfrei.
+Eine Grammatik dafür braucht Regeln mit zwei Symbolen links:
+
+[source,text]
+----
+S → aSBC | aBC      CB → BC      aB → ab      bB → bb      bC → bc      cC → cc
+
+S ⇒ aSBC ⇒ aaBCBC ⇒ aaBBCC ⇒ aabBCC ⇒ aabbCC ⇒ aabbcC ⇒ aabbcc
+----
+
+Die Regel `+CB → BC+` vertauscht zwei Nichtterminale.
+Die anderen Regeln ersetzen ein Nichtterminal nur, wenn links davon das passende Terminal steht, also in einem bestimmten _Kontext_.
+Daher kommt der Name.
+
+=== Grammatik oder Sprache einordnen
+
+Den Typ einer *Grammatik* liest du an den Produktionen ab: Es zählt der höchste Typ, dessen Form alle Produktionen erfüllen.
+Bei einer *Sprache* zählt der höchste Typ, für den es irgendeine Grammatik gibt.
+Das kann ein Unterschied sein:
+
+[source,text]
+----
+S → aS | Sb | ε
+----
+
+Die Grammatik ist wegen `+S → Sb+` vom Typ 2, das Nichtterminal steht nicht hinten.
+Sie erzeugt aber die Sprache „beliebig viele `a`, dann beliebig viele `b`“, und die ist regulär (Typ 3).
+
+Für Programmiersprachen bedeutet das: Einzelne Tokens wie Zahlen und Bezeichner sind regulär.
+Der Aufbau von Ausdrücken, Anweisungen und Klassen ist kontextfrei.
+Regeln wie „eine Variable muss deklariert sein, bevor du sie verwendest“ sind nicht kontextfrei.
+Der Compiler prüft sie deshalb in einem eigenen Schritt nach dem Parsen.
+
+== Grammatiken in C#
+
+Eine kontextfreie Grammatik lässt sich leicht als Datenstruktur speichern.
+Eine Produktion ist ein `record` aus der linken Seite und der Liste der Symbole rechts.
+Mit einer Linksableitung, bei der du die Produktion zufällig wählst, erzeugst du Wörter der Sprache:
+
+[source,csharp]
+----
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+var anbn = new Grammar("S",
+[
+    new Production("S", ["a", "S", "b"]),
+    new Production("S", []),                       // (1)
+]);
+var binary = new Grammar("Z",
+[
+    new Production("Z", ["0"]),
+    new Production("Z", ["1", "R"]),
+    new Production("R", ["0", "R"]),
+    new Production("R", ["1", "R"]),
+    new Production("R", []),
+]);
+
+var random = new Random(1);                         // (2)
+for (int i = 0; i < 3; i++)
+{
+    Console.WriteLine(string.Join(" ⇒ ", anbn.Derive(random)));
+}
+for (int i = 0; i < 3; i++)
+{
+    Console.WriteLine(string.Join(" ⇒ ", binary.Derive(random)));
+}
+
+/// <summary>A production Left → Right. An empty Right stands for ε.</summary>
+record Production(string Left, string[] Right);
+
+/// <summary>
+/// A context-free grammar. Every symbol that appears on the left side of a production is a
+/// nonterminal, all other symbols are terminals.
+/// </summary>
+class Grammar(string start, Production[] productions)
+{
+    /// <summary>Returns true if <paramref name="symbol"/> is a nonterminal of this grammar.</summary>
+    public bool IsNonterminal(string symbol) => productions.Any(p => p.Left == symbol);
+
+    /// <summary>
+    /// Creates a random word with a leftmost derivation. Returns all sentential forms,
+    /// from the start symbol to the word.
+    /// </summary>
+    public List<string> Derive(Random random)
+    {
+        List<string> form = [start];
+        List<string> steps = [Show(form)];
+        int index;
+        while ((index = form.FindIndex(IsNonterminal)) != -1)              // (3)
+        {
+            Production[] candidates = [.. productions.Where(p => p.Left == form[index])];
+            Production chosen = candidates[random.Next(candidates.Length)];
+            form.RemoveAt(index);                                         // (4)
+            form.InsertRange(index, chosen.Right);
+            steps.Add(Show(form));
+        }
+        return steps;
+    }
+
+    private static string Show(List<string> form) => form.Count == 0 ? "ε" : string.Concat(form);
+}
+----
+
+* *(1)* Die ε-Produktion hat eine leere rechte Seite.
+Symbole sind Strings, damit auch Terminale wie `id` aus mehreren Zeichen möglich sind.
+* *(2)* Mit einem festen Seed liefert `Random` bei jedem Start dieselben Zahlen.
+Das ist praktisch zum Testen.
+* *(3)* `FindIndex` sucht das linkeste Nichtterminal der Satzform.
+Gibt es keines mehr, ist das Wort fertig.
+* *(4)* Das Nichtterminal wird durch die rechte Seite der gewählten Produktion ersetzt.
+Bei ε verschwindet es einfach.
+
+Die Ausgabe:
+
+[source,text]
+----
+S ⇒ aSb ⇒ aaSbb ⇒ aaaSbbb ⇒ aaabbb
+S ⇒ ε
+S ⇒ aSb ⇒ aaSbb ⇒ aabb
+Z ⇒ 0
+Z ⇒ 1R ⇒ 10R ⇒ 100R ⇒ 1000R ⇒ 1000
+Z ⇒ 1R ⇒ 11R ⇒ 110R ⇒ 1101R ⇒ 1101
+----
+
+Jedes erzeugte Wort liegt in L(G), denn es entsteht durch eine Ableitung aus dem Startsymbol.
+Je öfter du `Derive` aufrufst, desto mehr verschiedene Wörter der Sprache siehst du.
+
+// tag::pdf_exclude[]
+== Übungen
+
+. Gib eine Grammatik G = (N, Σ, P, S) für alle Palindrome über {a, b} an, also Wörter, die vorwärts und rückwärts gleich gelesen werden (`abba`, `aba`, `b`, ε).
+Leite `abba` und `babab` ab.
+. Verwende die Grammatik mit den Präzedenzstufen E, T und F. Schreibe die Linksableitung für `+id * ( id + id ) + id+` auf und zeichne den Ableitungsbaum.
+. Zeige, dass die Grammatik `+S → aS | Sb | ε+` aus dem Abschnitt über die Chomsky-Hierarchie mehrdeutig ist.
+Gib danach eine eindeutige Grammatik für dieselbe Sprache an.
+. Probiere den C#-Generator mit der Grammatik `+E → E + E | E * E | id+` aus.
+Manchmal hört `Derive` nicht mehr auf.
+Erweitere die Methode um einen Parameter `maxLength`, sodass sie nur Wörter mit höchstens `maxLength` Terminalen liefert und immer fertig wird.
+
+// end::pdf_exclude[]
+
+== Zusatzmaterial
+
+Im https://die-spengergasse.github.io/course-pos-csharp_basics/08%20Theoretische%20Informatik/11_Grammatiken.html[Ableitungstrainer] siehst du animiert, wie bei einer Linksableitung der Baum wächst, und leitest danach selbst Zielwörter ab, vom einfachen aⁿbⁿ bis zu mehrdeutigen Ausdrücken.

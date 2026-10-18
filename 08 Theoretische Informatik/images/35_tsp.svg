@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="790" height="330" viewBox="0 0 790 330">
+  <rect x="0.5" y="0.5" width="789" height="329" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <line x1="395" y1="16" x2="395" y2="268" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4 4"/>
+  <text x="200" y="34" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1f2937" text-anchor="middle">Nearest Neighbour ab A: 309,1 km</text>
+  <polygon points="110,120 50,180 110,240 170,240 230,240 230,150 200,90 350,240" fill="none" stroke="#ea580c" stroke-width="2.5" stroke-linejoin="round"/>
+  <text x="94" y="124" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" fill="#6b7280" text-anchor="end">Start</text>
+  <circle cx="110" cy="120" r="11" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+  <text x="110" y="124.5" font-family="Consolas, Menlo, monospace" font-size="13" font-weight="bold" fill="#1f2937" text-anchor="middle">A</text>
+  <circle cx="170" cy="240" r="11" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="170" y="244.5" font-family="Consolas, Menlo, monospace" font-size="13" font-weight="bold" fill="#1f2937" text-anchor="middle">B</text>
+  <circle cx="200" cy="90" r="11" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="200" y="94.5" font-family="Consolas, Menlo, monospace" font-size="13" font-weight="bold" fill="#1f2937" text-anchor="middle">C</text>
+  <circle cx="230" cy="240" r="11" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="230" y="244.5" font-family="Consolas, Menlo, monospace" font-size="13" font-weight="bold" fill="#1f2937" text-anchor="middle">D</text>
+  <circle cx="110" cy="240" r="11" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="110" y="244.5" font-family="Consolas, Menlo, monospace" font-size="13" font-weight="bold" fill="#1f2937" text-anchor="middle">E</text>
+  <circle cx="350" cy="240" r="11" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="350" y="244.5" font-family="Consolas, Menlo, monospace" font-size="13" font-weight="bold" fill="#1f2937" text-anchor="middle">F</text>
+  <circle cx="50" cy="180" r="11" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="50" y="184.5" font-family="Consolas, Menlo, monospace" font-size="13" font-weight="bold" fill="#1f2937" text-anchor="middle">G</text>
+  <circle cx="230" cy="150" r="11" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="230" y="154.5" font-family="Consolas, Menlo, monospace" font-size="13" font-weight="bold" fill="#1f2937" text-anchor="middle">H</text>
+  <text x="590" y="34" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1f2937" text-anchor="middle">Optimale Rundreise: 240,6 km</text>
+  <polygon points="500,120 590,90 620,150 740,240 620,240 560,240 500,240 440,180" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linejoin="round"/>
+  <text x="484" y="124" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" fill="#6b7280" text-anchor="end">Start</text>
+  <circle cx="500" cy="120" r="11" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+  <text x="500" y="124.5" font-family="Consolas, Menlo, monospace" font-size="13" font-weight="bold" fill="#1f2937" text-anchor="middle">A</text>
+  <circle cx="560" cy="240" r="11" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="560" y="244.5" font-family="Consolas, Menlo, monospace" font-size="13" font-weight="bold" fill="#1f2937" text-anchor="middle">B</text>
+  <circle cx="590" cy="90" r="11" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="590" y="94.5" font-family="Consolas, Menlo, monospace" font-size="13" font-weight="bold" fill="#1f2937" text-anchor="middle">C</text>
+  <circle cx="620" cy="240" r="11" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="620" y="244.5" font-family="Consolas, Menlo, monospace" font-size="13" font-weight="bold" fill="#1f2937" text-anchor="middle">D</text>
+  <circle cx="500" cy="240" r="11" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="500" y="244.5" font-family="Consolas, Menlo, monospace" font-size="13" font-weight="bold" fill="#1f2937" text-anchor="middle">E</text>
+  <circle cx="740" cy="240" r="11" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="740" y="244.5" font-family="Consolas, Menlo, monospace" font-size="13" font-weight="bold" fill="#1f2937" text-anchor="middle">F</text>
+  <circle cx="440" cy="180" r="11" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="440" y="184.5" font-family="Consolas, Menlo, monospace" font-size="13" font-weight="bold" fill="#1f2937" text-anchor="middle">G</text>
+  <circle cx="620" cy="150" r="11" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="620" y="154.5" font-family="Consolas, Menlo, monospace" font-size="13" font-weight="bold" fill="#1f2937" text-anchor="middle">H</text>
+  <g font-family="Consolas, Menlo, monospace" font-size="12" fill="#ea580c">
+    <text x="290" y="158">70,7</text>
+    <text x="152" y="124" text-anchor="middle">89,4</text>
+  </g>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#6b7280">
+    <text x="20" y="292">Nearest Neighbour fährt immer zur nächsten noch nicht besuchten Stadt: A, G, E, B, D, H, C, F.</text>
+    <text x="20" y="310">Am Ende bleibt das abgelegene F übrig, der Rückweg F → A ist teuer: 28,5 % länger als das Optimum.</text>
+  </g>
+</svg>

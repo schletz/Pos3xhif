@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="260" viewBox="0 0 860 260">
+  <rect x="0.5" y="0.5" width="859" height="259" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/>
+    </marker>
+  </defs>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" fill="#1f2937" font-weight="600">
+    <text x="20" y="32">Teilmengen-Tabelle</text>
+    <text x="450" y="32">Ergebnis-DEA</text>
+  </g>
+  <!-- table -->
+  <rect x="20" y="50" width="380" height="34" fill="#f3f4f6" stroke="#d1d5db"/>
+  <rect x="20" y="84" width="380" height="34" fill="#ffffff" stroke="#d1d5db"/>
+  <rect x="20" y="118" width="380" height="34" fill="#ffffff" stroke="#d1d5db"/>
+  <rect x="20" y="152" width="380" height="34" fill="#dcfce7" stroke="#16a34a"/>
+  <g stroke="#d1d5db">
+    <line x1="80" y1="50" x2="80" y2="186"/>
+    <line x1="200" y1="50" x2="200" y2="186"/>
+    <line x1="300" y1="50" x2="300" y2="186"/>
+  </g>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">
+    <text x="50" y="72" font-weight="600">Name</text>
+    <text x="140" y="72" font-weight="600">Menge</text>
+    <text x="50" y="106">→ A</text>
+    <text x="50" y="140">B</text>
+    <text x="50" y="174">* C</text>
+  </g>
+  <g font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle">
+    <text x="250" y="72" font-weight="600">a</text>
+    <text x="350" y="72" font-weight="600">b</text>
+    <text x="140" y="106">{q₀}</text>
+    <text x="250" y="106">{q₀,q₁}</text>
+    <text x="350" y="106">{q₀}</text>
+    <text x="140" y="140">{q₀,q₁}</text>
+    <text x="250" y="140">{q₀,q₁}</text>
+    <text x="350" y="140">{q₀,q₂}</text>
+    <text x="140" y="174">{q₀,q₂}</text>
+    <text x="250" y="174">{q₀,q₁}</text>
+    <text x="350" y="174">{q₀}</text>
+  </g>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937">
+    <text x="20" y="214">Endzustand ist jede Menge, die den NEA-Endzustand q₂ enthält.</text>
+    <text x="20" y="234">A = {q₀}, B = {q₀,q₁}, C = {q₀,q₂}</text>
+  </g>
+  <line x1="425" y1="20" x2="425" y2="240" stroke="#d1d5db"/>
+  <!-- resulting DFA -->
+  <g fill="none" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)">
+    <line x1="450" y1="140" x2="498" y2="140"/>
+    <path d="M511,120 C495,78 545,78 529,120"/>
+    <line x1="542" y1="140" x2="658" y2="140"/>
+    <path d="M671,120 C655,78 705,78 689,120"/>
+    <path d="M699,129 Q740,105 781,129"/>
+    <path d="M781,151 Q740,175 699,151"/>
+    <path d="M800,162 C800,235 520,235 520,162"/>
+  </g>
+  <g font-family="Consolas, Menlo, monospace" font-size="17" fill="#1f2937" text-anchor="middle">
+    <text x="520" y="80">b</text>
+    <text x="600" y="132">a</text>
+    <text x="680" y="80">a</text>
+    <text x="740" y="108">b</text>
+    <text x="740" y="184">a</text>
+    <text x="660" y="244">b</text>
+  </g>
+  <g stroke="#2563eb" stroke-width="2" fill="#dbeafe">
+    <circle cx="520" cy="140" r="22"/>
+    <circle cx="680" cy="140" r="22"/>
+    <circle cx="800" cy="140" r="22" stroke="#16a34a" fill="#dcfce7"/>
+    <circle cx="800" cy="140" r="18" fill="none" stroke="#16a34a"/>
+  </g>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#1f2937" text-anchor="middle">
+    <text x="520" y="146">A</text>
+    <text x="680" y="146">B</text>
+    <text x="800" y="146">C</text>
+  </g>
+</svg>

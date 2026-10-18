@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="330" viewBox="0 0 1000 330" role="img" aria-label="Ablauf einer Methode, die die Datenbank ändert">
+<title>Ablauf einer Methode, die die Datenbank ändert</title>
+<defs><marker id="arrow-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9d9d9c"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0090d4"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f39000"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#71af2e"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#cc0935"/></marker><marker id="arrow-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6cc1b0"/></marker></defs>
+<rect x="1" y="1" width="998" height="328" rx="14" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="30.0" y="42.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Ablauf einer schreibenden Methode</text>
+<rect x="30.0" y="85.0" width="200.0" height="80.0" rx="8" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="130.0" y="115.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">1. Daten laden</text>
+<text x="130.0" y="143.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">FirstOrDefault, Include</text>
+<line x1="230.0" y1="125.0" x2="268.0" y2="125.0" stroke="#9d9d9c" stroke-width="2" marker-end="url(#arrow-grey)"/>
+<rect x="270.0" y="85.0" width="200.0" height="80.0" rx="8" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="370.0" y="115.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">2. Regeln prüfen</text>
+<text x="370.0" y="143.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">if (...) throw</text>
+<line x1="470.0" y1="125.0" x2="508.0" y2="125.0" stroke="#9d9d9c" stroke-width="2" marker-end="url(#arrow-grey)"/>
+<rect x="510.0" y="85.0" width="200.0" height="80.0" rx="8" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="610.0" y="115.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">3. Entity ändern</text>
+<text x="610.0" y="143.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">Add, Property setzen</text>
+<line x1="710.0" y1="125.0" x2="748.0" y2="125.0" stroke="#9d9d9c" stroke-width="2" marker-end="url(#arrow-grey)"/>
+<rect x="750.0" y="85.0" width="200.0" height="80.0" rx="8" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+<text x="850.0" y="115.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">4. SaveChanges()</text>
+<text x="850.0" y="143.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">INSERT, UPDATE</text>
+<text x="965.0" y="133.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="26" font-weight="bold" text-anchor="middle" fill="#4a7a1c" xml:space="preserve">✓</text>
+<path d="M130,165 L130,235 L370,235" fill="none" stroke="#cc0935" stroke-width="2"/>
+<path d="M370,165 L370,240" fill="none" stroke="#cc0935" stroke-width="2" marker-end="url(#arrow-red)"/>
+<rect x="190.0" y="245.0" width="360.0" height="60.0" rx="8" fill="#f6d3db" stroke="#cc0935" stroke-width="1.5"/>
+<text x="370.0" y="270.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">✗ throw new EventServiceException(...)</text>
+<text x="370.0" y="292.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">nichts wird gespeichert</text>
+<text x="600.0" y="260.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Erst SaveChanges() schreibt in die Datenbank.</text>
+<text x="600.0" y="282.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Eine Exception davor ändert nichts.</text>
+</svg>

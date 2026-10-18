@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="318" viewBox="0 0 800 318">
+  <rect x="0.5" y="0.5" width="799" height="317" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/>
+    </marker>
+    <marker id="arrowRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/>
+    </marker>
+  </defs>
+  <text x="20" y="30" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#6b7280">Energieverbrauch eines Elektroautos in kWh</text>
+  <g stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)">
+    <line x1="102" y1="144" x2="218" y2="86"/>
+    <line x1="102" y1="176" x2="218" y2="234"/>
+  </g>
+  <line x1="250" y1="86" x2="250" y2="232" stroke="#dc2626" stroke-width="2.4" marker-end="url(#arrowRed)"/>
+  <rect x="35" y="144" width="70" height="32" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="70" y="165" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">Start</text>
+  <rect x="215" y="54" width="70" height="32" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="250" y="75" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">Pass</text>
+  <rect x="215" y="234" width="70" height="32" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="250" y="255" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">Tal</text>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="end">
+    <text x="150" y="100">5 (bergauf)</text>
+    <text x="150" y="228">2 (eben)</text>
+  </g>
+  <text x="262" y="160" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#dc2626">−4</text>
+  <text x="262" y="178" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#dc2626">bergab, Akku lädt</text>
+  <rect x="410" y="44" width="130" height="28" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="475.0" y="63" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle" font-weight="bold">entnommen</text>
+  <rect x="540" y="44" width="70" height="28" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="575.0" y="63" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle" font-weight="bold">Start</text>
+  <rect x="610" y="44" width="70" height="28" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="645.0" y="63" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle" font-weight="bold">Pass</text>
+  <rect x="680" y="44" width="70" height="28" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="715.0" y="63" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle" font-weight="bold">Tal</text>
+  <rect x="410" y="72" width="130" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="475.0" y="91" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">–</text>
+  <rect x="540" y="72" width="70" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="575.0" y="91" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">0</text>
+  <rect x="610" y="72" width="70" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="645.0" y="91" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">∞</text>
+  <rect x="680" y="72" width="70" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="715.0" y="91" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">∞</text>
+  <rect x="410" y="100" width="130" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="475.0" y="119" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Start (0)</text>
+  <rect x="540" y="100" width="70" height="28" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="575.0" y="119" font-family="Consolas, Menlo, monospace" font-size="14" fill="#16a34a" text-anchor="middle" font-weight="bold">0</text>
+  <rect x="610" y="100" width="70" height="28" fill="#ffedd5" stroke="#ea580c"/>
+  <text x="645.0" y="119" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">5</text>
+  <rect x="680" y="100" width="70" height="28" fill="#ffedd5" stroke="#ea580c"/>
+  <text x="715.0" y="119" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">2</text>
+  <rect x="410" y="128" width="130" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="475.0" y="147" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Tal (2)</text>
+  <rect x="540" y="128" width="70" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="575.0" y="147" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">0</text>
+  <rect x="610" y="128" width="70" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="645.0" y="147" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">5</text>
+  <rect x="680" y="128" width="70" height="28" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="715.0" y="147" font-family="Consolas, Menlo, monospace" font-size="14" fill="#16a34a" text-anchor="middle" font-weight="bold">2</text>
+  <rect x="410" y="156" width="130" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="475.0" y="175" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Pass (5)</text>
+  <rect x="540" y="156" width="70" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="575.0" y="175" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">0</text>
+  <rect x="610" y="156" width="70" height="28" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="645.0" y="175" font-family="Consolas, Menlo, monospace" font-size="14" fill="#16a34a" text-anchor="middle" font-weight="bold">5</text>
+  <rect x="680" y="156" width="70" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="715.0" y="175" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">2</text>
+  <text x="410" y="214" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="start">Nach „Tal (2)“ ist das Tal fertig.</text>
+  <text x="410" y="238" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="start">Über den Pass wären es 5 + (−4) = 1 kWh,</text>
+  <text x="410" y="262" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="start">aber ein fertiger Knoten ändert sich nicht mehr.</text>
+  <text x="410" y="294" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#dc2626" text-anchor="start" font-weight="bold">Dijkstra: Tal = 2  ✗</text>
+  <text x="590" y="294" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#16a34a" text-anchor="start" font-weight="bold">richtig: Start → Pass → Tal = 1</text>
+</svg>

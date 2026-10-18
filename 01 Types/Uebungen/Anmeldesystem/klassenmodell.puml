@@ -1,0 +1,69 @@
+@startuml
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 15
+skinparam ArrowThickness 1.5
+skinparam class {
+  BackgroundColor #ffffff
+  HeaderBackgroundColor #ededed
+  BorderColor #1d1d1b
+  BorderThickness 1.5
+  FontStyle bold
+}
+skinparam stereotypeCBackgroundColor #d1ebf7
+skinparam stereotypeABackgroundColor #fdebd1
+skinparam stereotypeIBackgroundColor #e5f4f1
+skinparam stereotypeEBackgroundColor #e5f1d9
+hide empty fields
+hide empty methods
+
+class Applicant
+{
+    +Firstname : string
+    +Lastname : string
+    +Email : string
+    +Department : string
+    +Grades : IReadOnlyDictionary<string, int>
+    ---
+    +Applicant(string firstname, string lastname, string email, string department)
+    #Applicant(Applicant other)
+    +bool AddGrade(string subject, int value)
+}
+
+class AcceptedApplicant
+{
+    +DateAccepted : DateTime
+    ---
+    +AcceptedApplicant(Applicant applicant)
+}
+AcceptedApplicant -up-|> Applicant
+
+class RegistrationService
+{
+    +Applicants : IReadOnlyCollection<Applicant>
+    ---
+    +bool AddApplicant(Applicant applicant)
+    +bool AcceptApplicant(string email)
+    +int CountAccepted(string department)
+    +void RegisterGradeChecker(string department, IGradeChecker gradeChecker)
+}
+RegistrationService "1" o--> "*" Applicant
+RegistrationService "1" o--> "*" IGradeChecker
+
+interface IGradeChecker
+{
+    +bool CanBeAccepted(IReadOnlyDictionary<string, int> grades)
+}
+
+class HtlGradeChecker
+{
+    +bool CanBeAccepted(IReadOnlyDictionary<string, int> grades)
+}
+HtlGradeChecker .up.|> IGradeChecker
+
+class FsGradeChecker
+{
+    +bool CanBeAccepted(IReadOnlyDictionary<string, int> grades)
+}
+FsGradeChecker .up.|> IGradeChecker
+@enduml

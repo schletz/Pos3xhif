@@ -1,0 +1,573 @@
+= O, Teil 2: Erweitern statt ändern
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Der Webshop bietet drei Zahlungsarten an: Kreditkarte, PayPal und Rechnung.
+Jetzt soll die Lastschrift dazukommen.
+Eine Entwicklerin ergänzt das Enum und zwei `switch`-Anweisungen.
+Alle Tests sind grün, der Code geht online.
+Beim ersten Kunden mit Lastschrift bricht der Checkout mit einer Exception ab.
+Sie hat eine dritte `switch`-Anweisung übersehen.
+In diesem Kapitel lernst du, wie du Code so baust, dass eine neue Variante eine *neue Klasse* ist und kein Eingriff an vielen Stellen.
+
+Im Kapitel link:{github_url}/16%20SOLID/04_Open_Closed_Werte.adoc[O&#44; Teil 1] ging es um Werte und Regeln.
+Jetzt geht es um *Verhalten*, das von einer Art abhängt: Jede Zahlungsart berechnet die Gebühr anders und bezahlt anders.
+
+== Projekt anlegen
+
+Du brauchst eine Solution mit Application und Testprojekt.
+Die Befehle und alle Anpassungen der Projektdateien sind im Kapitel link:{github_url}/15%20Unittests/02_xUnit.adoc#projekt-anlegen[Unit Tests mit xUnit] genau erklärt.
+Unter macOS ersetzt du _rd_, _md_ und _move_ durch _rm -rf_, _mkdir_ und _mv_.
+
+[source,text]
+----
+rd /S /Q WebshopDemo
+md WebshopDemo
+cd WebshopDemo
+md WebshopDemo.Application
+cd WebshopDemo.Application
+dotnet new classlib
+cd ..
+md WebshopDemo.Tests
+cd WebshopDemo.Tests
+dotnet new install xunit.v3.templates
+dotnet new xunit3 -f net10.0
+move global.json ..
+dotnet reference add ..\WebshopDemo.Application
+cd ..
+dotnet new sln -f sln
+dotnet sln add WebshopDemo.Application
+dotnet sln add WebshopDemo.Tests
+start WebshopDemo.sln
+----
+
+Lösche _Class1.cs_ und _UnitTest1.cs_.
+Entferne in beiden Projektdateien die Zeile _ImplicitUsings_ und füge `+<TreatWarningsAsErrors>true</TreatWarningsAsErrors>+` hinzu.
+Im Testprojekt entfernst du zusätzlich `+<Using Include="Xunit" />+`.
+
+== Das Problem: dieselbe Fallunterscheidung an drei Stellen
+
+Für die Zahlungsarten gelten diese (erfundenen) Regeln:
+
+[%header]
+|===
+|Zahlungsart |Gebühr |Höchstbetrag
+|Kreditkarte |1,5 % des Betrags |1 000 €
+|PayPal |0,35 € {plus} 2 % des Betrags |10 000 €
+|Rechnung |keine |500 €
+|===
+
+Ein typischer erster Entwurf verwendet ein Enum und eine Serviceklasse.
+Die Methode `Pay()` simuliert hier nur die Zahlung.
+Ein echter Shop würde an dieser Stelle einen Zahlungsdienst im Internet aufrufen.
+
+*PaymentMethod.cs*
+
+[source,csharp]
+----
+namespace WebshopDemo.Application;
+
+public enum PaymentMethod
+{
+    CreditCard = 1,
+    PayPal,
+    Invoice
+}
+----
+
+*PaymentService.cs*
+
+[source,csharp]
+----
+using System;
+
+namespace WebshopDemo.Application;
+
+public class PaymentService
+{
+    public decimal CalculateFee(PaymentMethod method, decimal amount)
+    {
+        switch (method)
+        {
+            case PaymentMethod.CreditCard:
+                return Math.Round(amount * 0.015m, 2);
+            case PaymentMethod.PayPal:
+                return Math.Round(0.35m + amount * 0.02m, 2);
+            case PaymentMethod.Invoice:
+                return 0m;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(method), $"Unknown payment method {method}.");
+        }
+    }
+
+    // Simulates the payment: every payment method accepts amounts up to a limit.
+    public bool Pay(PaymentMethod method, decimal amount)
+    {
+        switch (method)
+        {
+            case PaymentMethod.CreditCard:
+                return amount <= 1000m;
+            case PaymentMethod.PayPal:
+                return amount <= 10000m;
+            case PaymentMethod.Invoice:
+                return amount <= 500m;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(method), $"Unknown payment method {method}.");
+        }
+    }
+
+    public string GetDisplayName(PaymentMethod method) => method switch
+    {
+        PaymentMethod.CreditCard => "Credit card",
+        PaymentMethod.PayPal => "PayPal",
+        PaymentMethod.Invoice => "Invoice",
+        _ => throw new ArgumentOutOfRangeException(nameof(method), $"Unknown payment method {method}.")
+    };
+}
+----
+
+Der Code funktioniert.
+Jede Methode fragt aber dieselbe Frage: _Welche Zahlungsart ist es?_
+Das Wissen über eine Zahlungsart ist auf drei Methoden verteilt.
+In einem echten Shop stehen solche Abfragen oft in verschiedenen Klassen: im Warenkorb, auf der Rechnung, in der Bestätigungsmail.
+
+=== Eine Zahlungsart kommt dazu
+
+Die Lastschrift (`DirectDebit`) hat keine Gebühr und einen Höchstbetrag von 2 000 €.
+Die Entwicklerin ergänzt das Enum, `CalculateFee()` und `GetDisplayName()`:
+
+[source,csharp]
+----
+DirectDebit                                     // new value in the enum PaymentMethod
+
+case PaymentMethod.DirectDebit:                 // new case in CalculateFee()
+    return 0m;
+
+PaymentMethod.DirectDebit => "Direct debit",    // new arm in GetDisplayName()
+----
+
+`Pay()` hat sie vergessen.
+Der Compiler meldet nichts, denn der `default`-Zweig fängt jeden Wert ab.
+Erst zur Laufzeit zeigt sich der Fehler.
+Ein Test macht ihn sichtbar:
+
+[source,csharp]
+----
+[Fact]
+public void Pay_DirectDebitWith200Euro_ReturnsTrue()
+{
+    PaymentService service = new PaymentService();
+    Assert.True(service.Pay(PaymentMethod.DirectDebit, 200m));
+}
+----
+
+[source,text]
+----
+failed WebshopDemo.Tests.PaymentServiceTests.Pay_DirectDebitWith200Euro_ReturnsTrue
+  System.ArgumentOutOfRangeException : Unknown payment method DirectDebit. (Parameter 'method')
+----
+
+Gibt es diesen Test nicht, findet ihn der erste Kunde mit Lastschrift.
+
+[NOTE]
+====
+Kann der Compiler nicht helfen?
+Bei einer `switch`-Anweisung warnt er nie, wenn ein `case` fehlt.
+Lässt du bei einer `switch`-Expression den Zweig `+_ =>+` weg, warnt er mit CS8524.
+Ein Enum kann nämlich auch Werte ohne Namen enthalten, zum Beispiel `(PaymentMethod)0`.
+Darum schreibt man fast immer `+_ => throw ...+`.
+Genau dieser Zweig versteckt dann jeden neuen Wert, den du vergessen hast.
+====
+
+Das Problem ist nicht die eine vergessene Zeile.
+Das Problem ist das Design: *Jede neue Zahlungsart verlangt Änderungen an bestehendem, getestetem Code, und zwar an vielen Stellen.*
+
+== Das Open/Closed Principle
+
+Das *O* in SOLID steht für das _Open/Closed Principle_ (OCP).
+Bertrand Meyer hat es 1988 in seinem Buch _Object-Oriented Software Construction_ formuliert.
+Robert C. Martin hat es später in der Form bekannt gemacht, die wir heute verwenden:
+
+____
+"Software entities should be open for extension, but closed for modification."
+____
+
+Eine _Software Entity_ ist eine Klasse, ein Modul oder eine Methode.
+Der Satz hat zwei Teile:
+
+[%header]
+|===
+|Teil |Bedeutung |Im Webshop
+|*Open for extension* (offen für Erweiterung) |Du kannst neues Verhalten ergänzen. |Eine neue Zahlungsart ist möglich.
+|*Closed for modification* (geschlossen für Änderung) |Dafür änderst du bestehenden Code nicht. |Der Checkout und die anderen Zahlungsarten bleiben, wie sie sind.
+|===
+
+Klingt widersprüchlich?
+Der Trick: Das neue Verhalten kommt in *neuen Code*.
+Der alte Code ist fertig und getestet.
+Wer ihn nicht anfasst, kann darin auch nichts kaputt machen.
+
+== Die Lösung: Jede Zahlungsart ist eine Klasse
+
+Im Kapitel link:{github_url}/01%20Types/06_Interfaces.adoc#interfaces-als-contract-vertrag[Interfaces] hast du das Interface `IPaymentProvider` mit der Methode `bool Pay(decimal amount)` kennengelernt.
+Wir erweitern es um alles, was sich je nach Zahlungsart unterscheidet:
+
+*IPaymentProvider.cs*
+
+[source,csharp]
+----
+namespace WebshopDemo.Application;
+
+/// <summary>A payment method of the webshop. Every payment method is its own class.</summary>
+public interface IPaymentProvider
+{
+    string DisplayName { get; }
+    decimal CalculateFee(decimal amount);
+    bool Pay(decimal amount);
+}
+----
+
+Jeder Zweig der `switch`-Anweisungen wird zu einer Klasse.
+Alles, was zur Kreditkarte gehört, steht jetzt in `CreditCard`:
+
+*CreditCard.cs*
+
+[source,csharp]
+----
+using System;
+
+namespace WebshopDemo.Application;
+
+public class CreditCard : IPaymentProvider
+{
+    public CreditCard(decimal limit)
+    {
+        Limit = limit;
+    }
+
+    public decimal Limit { get; }
+    public string DisplayName => "Credit card";
+    public decimal CalculateFee(decimal amount) => Math.Round(amount * 0.015m, 2);
+    public bool Pay(decimal amount) => amount <= Limit;
+}
+----
+
+*PayPal.cs*
+
+[source,csharp]
+----
+using System;
+
+namespace WebshopDemo.Application;
+
+public class PayPal : IPaymentProvider
+{
+    public string DisplayName => "PayPal";
+    public decimal CalculateFee(decimal amount) => Math.Round(0.35m + amount * 0.02m, 2);
+    public bool Pay(decimal amount) => amount <= 10000m;
+}
+----
+
+*Invoice.cs*
+
+[source,csharp]
+----
+namespace WebshopDemo.Application;
+
+public class Invoice : IPaymentProvider
+{
+    public string DisplayName => "Invoice";
+    public decimal CalculateFee(decimal amount) => 0m;
+    public bool Pay(decimal amount) => amount <= 500m;
+}
+----
+
+Eine Klasse kann auch eigene Daten haben.
+Mit dem Enum hatte jede Kreditkarte das Limit 1 000 €.
+Jetzt bekommt jede Karte ihr eigenes Limit im Konstruktor.
+
+Der Checkout kennt nur das Interface.
+Er enthält keinen `switch` mehr:
+
+*CheckoutService.cs*
+
+[source,csharp]
+----
+namespace WebshopDemo.Application;
+
+/// <summary>Calculates the total of an order and pays it. Knows only the interface IPaymentProvider.</summary>
+public class CheckoutService
+{
+    private readonly IPaymentProvider _paymentProvider;
+
+    public CheckoutService(IPaymentProvider paymentProvider)
+    {
+        _paymentProvider = paymentProvider;
+    }
+
+    public decimal CalculateTotal(decimal orderAmount) =>
+        orderAmount + _paymentProvider.CalculateFee(orderAmount);
+
+    public bool Pay(decimal orderAmount) => _paymentProvider.Pay(CalculateTotal(orderAmount));
+}
+----
+
+Die Tests übergeben die Zahlungsart als Objekt:
+
+*CheckoutServiceTests.cs*
+
+[source,csharp]
+----
+using WebshopDemo.Application;
+using Xunit;
+
+namespace WebshopDemo.Tests;
+
+public class CheckoutServiceTests
+{
+    [Fact]
+    public void CalculateTotal_CreditCardWith100Euro_Returns101Point50()
+    {
+        CheckoutService checkout = new CheckoutService(new CreditCard(limit: 1000m));
+        Assert.Equal(101.50m, checkout.CalculateTotal(100m));
+    }
+
+    [Fact]
+    public void Pay_InvoiceAbove500Euro_ReturnsFalse()
+    {
+        CheckoutService checkout = new CheckoutService(new Invoice());
+        Assert.False(checkout.Pay(600m));
+    }
+}
+----
+
+=== Die Lastschrift kommt dazu, diesmal als neue Klasse
+
+*DirectDebit.cs*
+
+[source,csharp]
+----
+namespace WebshopDemo.Application;
+
+public class DirectDebit : IPaymentProvider
+{
+    public string DisplayName => "Direct debit";
+    public decimal CalculateFee(decimal amount) => 0m;
+    public bool Pay(decimal amount) => amount <= 2000m;
+}
+----
+
+*DirectDebitTests.cs* (`using`s und Namespace wie in _CheckoutServiceTests.cs_)
+
+[source,csharp]
+----
+public class DirectDebitTests
+{
+    [Fact]
+    public void Pay_DirectDebitWith200Euro_ReturnsTrue()
+    {
+        CheckoutService checkout = new CheckoutService(new DirectDebit());
+        Assert.True(checkout.Pay(200m));
+    }
+}
+----
+
+Vergleiche, was sich für die neue Zahlungsart geändert hat:
+
+[%header]
+|===
+|Datei |Mit `switch` |Mit Interface
+|`PaymentMethod` / `IPaymentProvider` |geändert (neuer Wert) |unverändert
+|`PaymentService` / `CheckoutService` |an drei Stellen geändert |unverändert
+|`CreditCard`, `PayPal`, `Invoice` |– |unverändert
+|`CheckoutServiceTests` |– |unverändert und grün
+|`DirectDebit`, `DirectDebitTests` |– |neu
+|===
+
+Und wenn die Entwicklerin diesmal `Pay()` vergisst?
+Dann kompiliert der Code nicht:
+
+[source,text]
+----
+DirectDebit.cs(3,28): error CS0535: 'DirectDebit' does not implement interface member 'IPaymentProvider.Pay(decimal)'
+----
+
+Der Fehler kommt jetzt vom Compiler und nicht vom ersten Kunden.
+
+image::{root_dir}/images/05_ocp_switch_vs_interface.svg[Vorher: drei switch-Anweisungen müssen geändert werden. Nachher: Die neue Klasse DirectDebit wird an das Interface angesteckt.]
+
+=== Das Strategy Pattern
+
+Diese Lösung hat einen Namen: *Strategy Pattern*.
+Ein Verfahren, das es in mehreren Varianten gibt, steckt hinter einem Interface.
+Die Klasse, die es verwendet, kennt nur das Interface.
+
+[%header]
+|===
+|Rolle im Pattern |Im Webshop
+|_Strategy_ (das Interface) |`IPaymentProvider`
+|_Concrete Strategy_ (eine Variante) |`CreditCard`, `PayPal`, `Invoice`, `DirectDebit`
+|_Context_ (verwendet die Strategie) |`CheckoutService`
+|===
+
+Schreibst du einem Agent „Ersetze den `switch` über `PaymentMethod` durch das Strategy Pattern“, weiß er genau, was du meinst.
+
+== Interface oder abstrakte Klasse?
+
+Sieh dir `CreditCard` und `PayPal` an.
+Beide runden die Gebühr auf Cent, und beide vergleichen den Betrag mit einem Limit.
+Kommen weitere Zahlungsarten dazu, wiederholt sich dieser Code (siehe link:{github_url}/16%20SOLID/02_DRY.adoc[DRY]).
+Gemeinsamen Code legst du in eine *abstrakte Basisklasse*, wie im Kapitel link:{github_url}/01%20Types/05_Vererbung.adoc[Vererbung]:
+
+*PaymentProvider.cs*
+
+[source,csharp]
+----
+using System;
+
+namespace WebshopDemo.Application;
+
+/// <summary>Shared code of all payment methods: the limit and the rounding of the fee.</summary>
+public abstract class PaymentProvider : IPaymentProvider
+{
+    protected PaymentProvider(decimal limit)
+    {
+        Limit = limit;
+    }
+
+    public decimal Limit { get; }
+    public abstract string DisplayName { get; }
+
+    // Template method: the fixed steps are here, the variable step is in the subclass.
+    public decimal CalculateFee(decimal amount) => Math.Round(CalculateRawFee(amount), 2);
+
+    public bool Pay(decimal amount) => amount <= Limit;
+
+    protected abstract decimal CalculateRawFee(decimal amount);
+}
+----
+
+*PayPal.cs*
+
+[source,csharp]
+----
+namespace WebshopDemo.Application;
+
+public class PayPal : PaymentProvider
+{
+    public PayPal() : base(limit: 10000m) { }
+
+    public override string DisplayName => "PayPal";
+    protected override decimal CalculateRawFee(decimal amount) => 0.35m + amount * 0.02m;
+}
+----
+
+`CalculateFee()` ist in der Basisklasse fertig: Sie ruft den abstrakten Schritt `CalculateRawFee()` auf und rundet das Ergebnis.
+Jede Unterklasse liefert nur ihren Schritt.
+Diese Idee heißt *Template Method*: Die Basisklasse legt den Ablauf fest, die Unterklassen füllen einzelne Schritte.
+
+[%header]
+|===
+|Verwende ... |wenn ...
+|ein *Interface* |die Varianten nur dasselbe _können_ müssen. Das ist der Normalfall.
+|zusätzlich eine *abstrakte Basisklasse* |mehrere Varianten denselben _Code_ teilen.
+|===
+
+`CheckoutService` kennt weiterhin nur `IPaymentProvider`.
+Ob eine Zahlungsart von `PaymentProvider` erbt, ist ihm egal.
+
+== Wo ein switch in Ordnung ist
+
+Der Kunde wählt im Checkout-Formular eine Zahlungsart.
+Vom Browser kommt ein String wie `"paypal"`.
+Irgendwo muss das Programm daraus das passende Objekt machen.
+Dafür ist ein `switch` richtig:
+
+*PaymentProviderFactory.cs*
+
+[source,csharp]
+----
+using System;
+
+namespace WebshopDemo.Application;
+
+/// <summary>Creates the payment provider for the code the customer selected in the checkout form.</summary>
+public static class PaymentProviderFactory
+{
+    public static IPaymentProvider Create(string code) => code switch
+    {
+        "creditcard" => new CreditCard(limit: 1000m),
+        "paypal" => new PayPal(),
+        "invoice" => new Invoice(),
+        "directdebit" => new DirectDebit(),
+        _ => throw new ArgumentException($"Unknown payment method '{code}'.", nameof(code))
+    };
+}
+----
+
+Eine Methode oder Klasse, die nur Objekte erzeugt, heißt *Factory*.
+Dieser `switch` ist in Ordnung, weil er drei Bedingungen erfüllt:
+
+* Er steht an *genau einer* Stelle.
+* Er *erzeugt nur* Objekte und enthält keine Geschäftsregeln (keine Gebühr, kein Limit).
+* Eine neue Zahlungsart braucht hier eine neue Zeile.
+Bestehende Zeilen bleiben gleich.
+
+In größeren Programmen steht diese Stelle beim Programmstart.
+Sie heißt dann _Composition Root_.
+Mehr dazu im Kapitel link:{github_url}/16%20SOLID/08_Dependency_Inversion.adoc[D: Dependency Inversion].
+
+=== OCP mit Augenmaß: YAGNI
+
+Musst du jetzt jede Fallunterscheidung durch Klassen ersetzen?
+Nein.
+*YAGNI* steht für _You Aren't Gonna Need It_: Baue nichts für eine Zukunft, die vielleicht nie kommt.
+Auch Agents bauen Interfaces gerne auf Vorrat.
+Frag dann: Welche zweite Variante gibt es wirklich?
+
+[%header]
+|===
+|Situation |Entscheidung
+|Ein `if` oder `switch` an *einer* Stelle, die Varianten ändern sich selten |Lass ihn stehen.
+|Dieselbe Fallunterscheidung an *mehreren* Stellen |Ersetze sie durch Klassen mit einem gemeinsamen Interface.
+|Es kommen *tatsächlich* neue Varianten dazu (Zahlungsarten, Versandarten, Tarife) |Interface. Hier lohnt sich OCP.
+|„Vielleicht brauchen wir das irgendwann“ |Kein Interface auf Vorrat. Baue um, wenn die zweite Variante kommt.
+|===
+
+== Im Code-Review erkennen
+
+[%header]
+|===
+|Warnzeichen im Code |Verletztes Prinzip |Was du verlangst bzw. wie du es formulierst
+|`switch (paymentMethod)` mit denselben `case`-Werten in mehreren Methoden oder Klassen |OCP |„Die Fallunterscheidung über `PaymentMethod` steht an drei Stellen. Ersetze sie durch ein Interface `IPaymentProvider` mit einer Klasse pro Zahlungsart (Strategy Pattern).“
+|`if`/`else if`-Kette über einen Typcode (`+if (type == "A") ... else if (type == "B")+`) |OCP |„Jeder Zweig ist eine eigene Variante. Mach daraus eine Klasse pro Variante.“
+|Vergleich mit Typnamen: `GetType().Name == "PayPal"` oder Strings wie `"creditcard"` mitten in der Logik |OCP |„Der Aufrufer soll den konkreten Typ nicht kennen. Verschiebe das Verhalten in die Klasse und rufe es über das Interface auf.“
+|`+default: throw new ...("Unknown ...")+` in mehreren `switch`-Anweisungen |OCP |„Eine neue Variante fällt erst zur Laufzeit auf. Mit einem Interface meldet der Compiler fehlende Methoden.“
+|Gleicher Code in mehreren Implementierungen eines Interfaces |DRY |„Lege den gemeinsamen Code in eine abstrakte Basisklasse (Template Method).“
+|Ein `switch`, der nur Objekte erzeugt, an genau einer Stelle |– |In Ordnung. Das ist eine Factory.
+|Interface mit einer einzigen Implementierung, keine zweite in Sicht |YAGNI |„Wofür brauchen wir hier das Interface? Welche zweite Variante gibt es?“
+|===
+
+// tag::pdf_exclude[]
+== Übungen
+
+*BusTickets:* Ein Fahrkartenautomat für den automatisierten Linienbus in Wolfurt berechnet Preis, Gültigkeit und Text einer Karte mit `switch` über den Kartentyp.
+Du baust ihn auf eine abstrakte Basisklasse mit einer Unterklasse pro Kartentyp um.
+Danach ergänzt du eine Wochenkarte als neue Klasse, ohne die bestehenden Kartenklassen zu ändern.
+Lade dazu link:{github_url}/16%20SOLID/Uebungen/BusTickets.7z[BusTickets.7z] herunter.
+Die Angabe steht im Archiv in der Datei _README.md_.
+
+// end::pdf_exclude[]

@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="410" viewBox="0 0 960 410">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1d1d1b"/></marker></defs>
+<rect x="1" y="1" width="958" height="408" rx="12" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<line x1="320" y1="20" x2="320" y2="390" stroke="#9d9d9c" stroke-width="1.5" stroke-dasharray="6 4"/>
+
+<!-- Value type -->
+<text x="160" y="42" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="17" font-weight="600" fill="#1d1d1b">Wertetyp: kopiert den Wert</text>
+<text x="40" y="80" font-family="Cascadia Mono, Consolas, monospace" font-size="14" fill="#1d1d1b">int a = 5;</text>
+<text x="40" y="100" font-family="Cascadia Mono, Consolas, monospace" font-size="14" fill="#1d1d1b">int b = a;</text>
+<text x="40" y="120" font-family="Cascadia Mono, Consolas, monospace" font-size="14" fill="#1d1d1b">b = 7;</text>
+<text x="160" y="160" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="600" fill="#5f5f5e">Stack</text>
+<text x="90" y="200" text-anchor="end" font-family="Cascadia Mono, Consolas, monospace" font-size="16" fill="#1d1d1b">a</text>
+<rect x="105" y="174" width="110" height="44" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="2"/>
+<text x="160" y="203" text-anchor="middle" font-family="Cascadia Mono, Consolas, monospace" font-size="20" font-weight="700" fill="#1d1d1b">5</text>
+<text x="90" y="260" text-anchor="end" font-family="Cascadia Mono, Consolas, monospace" font-size="16" fill="#1d1d1b">b</text>
+<rect x="105" y="234" width="110" height="44" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="2"/>
+<text x="160" y="263" text-anchor="middle" font-family="Cascadia Mono, Consolas, monospace" font-size="20" font-weight="700" fill="#1d1d1b">7</text>
+<text x="160" y="335" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="15" fill="#1d1d1b">Zwei unabhängige Werte.</text>
+<text x="160" y="358" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="15" fill="#1d1d1b">a bleibt 5.</text>
+
+<!-- Reference type -->
+<text x="640" y="42" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="17" font-weight="600" fill="#1d1d1b">Referenztyp: kopiert die Adresse</text>
+<text x="350" y="80" font-family="Cascadia Mono, Consolas, monospace" font-size="14" fill="#1d1d1b">Person p1 = new Person("Max", "Muster");</text>
+<text x="350" y="100" font-family="Cascadia Mono, Consolas, monospace" font-size="14" fill="#1d1d1b">Person p2 = p1;</text>
+<text x="350" y="120" font-family="Cascadia Mono, Consolas, monospace" font-size="14" fill="#1d1d1b">p2.FirstName = "Eva";</text>
+<text x="465" y="160" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="600" fill="#5f5f5e">Stack</text>
+<text x="770" y="160" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="600" fill="#5f5f5e">Heap</text>
+<text x="400" y="200" text-anchor="end" font-family="Cascadia Mono, Consolas, monospace" font-size="16" fill="#1d1d1b">p1</text>
+<rect x="410" y="174" width="110" height="44" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="2"/>
+<circle cx="465" cy="196" r="6" fill="#1d1d1b"/>
+<text x="400" y="260" text-anchor="end" font-family="Cascadia Mono, Consolas, monospace" font-size="16" fill="#1d1d1b">p2</text>
+<rect x="410" y="234" width="110" height="44" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="2"/>
+<circle cx="465" cy="256" r="6" fill="#1d1d1b"/>
+<path d="M465,196 C560,196 580,212 648,212" fill="none" stroke="#1d1d1b" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M465,256 C560,256 580,240 648,240" fill="none" stroke="#1d1d1b" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="650" y="174" width="240" height="104" rx="6" fill="#e5f4f1" stroke="#2f7d6e" stroke-width="2"/>
+<rect x="651" y="175" width="238" height="30" rx="5" fill="#cfeae4"/>
+<line x1="650" y1="205" x2="890" y2="205" stroke="#2f7d6e" stroke-width="1.5"/>
+<text x="770" y="196" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d1d1b">Person</text>
+<text x="664" y="234" font-family="Cascadia Mono, Consolas, monospace" font-size="14" fill="#1d1d1b">FirstName</text>
+<text x="876" y="234" text-anchor="end" font-family="Cascadia Mono, Consolas, monospace" font-size="14" font-weight="700" fill="#1d1d1b">"Eva"</text>
+<text x="664" y="262" font-family="Cascadia Mono, Consolas, monospace" font-size="14" fill="#1d1d1b">LastName</text>
+<text x="876" y="262" text-anchor="end" font-family="Cascadia Mono, Consolas, monospace" font-size="14" font-weight="700" fill="#1d1d1b">"Muster"</text>
+<text x="640" y="335" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="15" fill="#1d1d1b">Ein Objekt, zwei Referenzen darauf.</text>
+<text x="640" y="358" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="15" fill="#1d1d1b">p1.FirstName ist jetzt auch "Eva".</text>
+</svg>

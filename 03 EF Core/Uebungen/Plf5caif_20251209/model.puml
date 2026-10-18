@@ -1,0 +1,98 @@
+@startuml
+' ---- Layout & Stil ----
+hide empty methods
+
+' ---- Legende ----
+legend right
+<<RichType>>: Stark typisierte Primitive
+<<ValueObject>>: Value Objects
+<<entity>>: Persistente Entität
+<<unique>>: Eindeutige Einschränkung auf Spaltenebene
+<<nn>>: Not null
+endlegend
+
+package "Shared" as P_Shared #EEF6FF {
+  class VersionNumber << (R,#FFEECC) RichType >> {
+    +Major : int <<nn>>
+    +Minor : int <<nn>>
+    +Patch : int
+    ---
+    +VersionNumber(int major, int minor, int patch = null)
+    +VersionNumber(string versionStr)
+    +ToString() : string <<override>>
+  }
+
+  class ValidityPeriod << (V,#CCEEFF) ValueObject >> {
+    +From: DateTime <<nn>>
+    +To: DateTime <<nn>>
+  }
+
+  class LicenseServer << (V,#CCEEFF) ValueObject >> {
+    +Url : string <<nn>>
+    +Port : int <<nn>>
+  }
+
+  enum Activated {
+    Active <<A>>
+    Inactive <<I>>
+  }
+
+}
+
+class Person <<entity>> {
+  +Firstname : string <<nn>>
+  +Lastname : string <<nn>>
+  +User : User
+}
+
+class User <<entity>> {
+  +Accountname : string <<nn>> <<unique>>
+  +LastLogin : DateTime
+  +Person : Person <<nn>>
+}
+
+Person "1" --- "0..1" User 
+
+class Software <<entity>> {
+  +Name : string <<nn>>
+  +Version : VersionNumber <<nn>>
+  +Vendor : string <<nn>>
+  +LicenseServers : List<LicenseServer> <<nn>>
+}
+
+Software --- LicenseServer
+
+class License <<entity>> {
+  +Software : Software <<nn>>
+  +Validity : ValidityPeriod <<nn>>
+  +Activated : Activated <<nn>>
+  +LicenseType : string <<nn>>
+}
+
+License --- Activated
+
+note left of License::LicenseType
+Discriminator
+end note
+
+License --- ValidityPeriod
+License "0..*" --> "1" Software  : "> Software"
+
+class UserLicense <<entity>> {
+  +User : User <<nn>>
+  +IssuedAt : DateTime <<nn>>
+}
+
+UserLicense "0..*" --> "1" User : "> User"
+UserLicense -up-|> License
+
+class VolumeLicense <<entity>> {
+  +Key : string <<nn>>
+}
+
+VolumeLicense -up-|> License
+
+
+
+
+@enduml

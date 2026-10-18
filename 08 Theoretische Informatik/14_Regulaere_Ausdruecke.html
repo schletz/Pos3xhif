@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Regex-Trainer</title>
+<style>
+:root {
+  --bg: #f8fafc; --panel: #ffffff; --ink: #1f2937; --muted: #6b7280; --border: #d1d5db;
+  --code-bg: #f3f4f6; --blue: #2563eb; --blue-f: #dbeafe; --orange: #ea580c; --orange-f: #ffedd5;
+  --green: #16a34a; --green-f: #dcfce7; --red: #dc2626; --red-f: #fee2e2; --gray-f: #e5e7eb;
+  --violet: #7c3aed; --violet-f: #ede9fe;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f172a; --panel: #1e293b; --ink: #e5e7eb; --muted: #9ca3af; --border: #334155;
+    --code-bg: #0b1220; --blue: #60a5fa; --blue-f: #1e3a5f; --orange: #fb923c; --orange-f: #4a2a12;
+    --green: #4ade80; --green-f: #14532d; --red: #f87171; --red-f: #4c1d1d; --gray-f: #334155;
+    --violet: #a78bfa; --violet-f: #3b2a63;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: "Segoe UI", Helvetica, Arial, sans-serif; font-size: 17px; line-height: 1.5;
+  min-height: 100vh; display: flex; flex-direction: column;
+}
+code, .mono, input.mono, textarea.mono { font-family: Consolas, Menlo, monospace; }
+code { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: 0 4px; font-size: 0.95em; }
+pre.code { font-family: Consolas, Menlo, monospace; font-size: 14px; background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; margin: 6px 0; white-space: pre-wrap; }
+header {
+  display: flex; align-items: center; gap: 16px; padding: 10px 20px;
+  border-bottom: 1px solid var(--border); background: var(--panel);
+}
+header h1 { font-size: 20px; margin: 0; white-space: nowrap; }
+.progress { flex: 1; display: flex; align-items: center; gap: 12px; }
+.bar { flex: 1; height: 8px; background: var(--gray-f); border-radius: 4px; overflow: hidden; }
+.bar > div { height: 100%; width: 0; background: var(--blue); transition: width 0.3s; }
+#counter { font-variant-numeric: tabular-nums; color: var(--muted); white-space: nowrap; }
+main { flex: 1; width: 100%; max-width: 1120px; margin: 0 auto; padding: 18px 20px 24px; }
+footer {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  padding: 10px 20px; border-top: 1px solid var(--border); background: var(--panel);
+}
+footer .hint { color: var(--muted); font-size: 14px; text-align: center; }
+h2 { margin: 0 0 10px; font-size: 26px; }
+h3 { margin: 16px 0 6px; font-size: 19px; }
+p { margin: 6px 0 10px; }
+button, select {
+  font: inherit; font-size: 15px; color: var(--ink); background: var(--panel);
+  border: 1px solid var(--border); border-radius: 6px; padding: 6px 12px; cursor: pointer;
+}
+button:hover:not(:disabled) { border-color: var(--blue); }
+button:disabled { opacity: 0.45; cursor: default; }
+button.primary { background: var(--blue); border-color: var(--blue); color: #ffffff; }
+@media (prefers-color-scheme: dark) { button.primary { color: #0f172a; } }
+input[type=text], textarea {
+  font: inherit; color: var(--ink); background: var(--panel);
+  border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px;
+}
+input[type=text].mono, textarea.mono { font-family: Consolas, Menlo, monospace; }
+input[type=text]:focus, textarea:focus { outline: 2px solid var(--blue); outline-offset: 0; }
+.panel { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin: 10px 0; }
+.muted { color: var(--muted); }
+.small { font-size: 14px; }
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 10px 0; }
+.controls label { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--muted); }
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.cols-32 { display: grid; grid-template-columns: 3fr 2fr; gap: 16px; }
+@media (max-width: 800px) { .cols, .cols-32 { grid-template-columns: 1fr; } }
+
+/* highlighted text */
+.textbox {
+  font-family: Consolas, Menlo, monospace; font-size: 19px; line-height: 2.1; white-space: pre-wrap; word-break: break-word;
+  background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; margin: 10px 0;
+}
+.textbox.compact { font-size: 17px; line-height: 1.9; }
+.hit { background: var(--green-f); border-bottom: 3px solid var(--green); border-radius: 3px; }
+.hit.current { background: var(--orange-f); border-bottom-color: var(--orange); }
+.g1, .hit.current.g1 { background: var(--blue-f); box-shadow: inset 0 -3px 0 var(--blue); }
+.g2, .hit.current.g2 { background: var(--green-f); box-shadow: inset 0 -3px 0 var(--green); }
+.g3, .hit.current.g3 { background: var(--violet-f); box-shadow: inset 0 -3px 0 var(--violet); }
+.g4, .hit.current.g4 { background: var(--red-f); box-shadow: inset 0 -3px 0 var(--red); }
+.hit.current.g1, .hit.current.g2, .hit.current.g3, .hit.current.g4 { border-bottom-color: var(--orange); }
+.rep { background: var(--orange-f); box-shadow: inset 0 -3px 0 var(--orange); border-radius: 3px; }
+.zero { display: inline-block; width: 3px; height: 1.2em; vertical-align: middle; background: var(--orange); margin: 0 1px; }
+.ws { color: var(--muted); }
+.steplist { list-style: none; padding: 0; margin: 8px 0; }
+.steplist li {
+  padding: 6px 10px; border-radius: 6px; margin: 3px 0; cursor: pointer; border: 1px solid transparent;
+}
+.steplist li.active { background: var(--orange-f); border-color: var(--orange); }
+.steplist li.done { color: var(--muted); }
+.status { min-height: 1.6em; margin: 6px 0; }
+.pane-title { font-size: 14px; color: var(--muted); margin: 10px 0 -6px; }
+
+table.data { border-collapse: collapse; width: 100%; font-size: 15px; }
+table.data th, table.data td { border-bottom: 1px solid var(--border); padding: 6px 8px; text-align: left; vertical-align: top; }
+table.data th { color: var(--muted); font-weight: 600; }
+
+/* practice */
+.pattern-row { display: flex; align-items: center; gap: 0; margin: 10px 0; }
+.pattern-row .fix {
+  font-family: Consolas, Menlo, monospace; font-size: 22px; color: var(--muted); padding: 6px 8px;
+  background: var(--code-bg); border: 1px solid var(--border);
+}
+.pattern-row .fix.l { border-radius: 8px 0 0 8px; border-right: none; }
+.pattern-row .fix.r { border-radius: 0 8px 8px 0; border-left: none; }
+.pattern-row input { flex: 1; font-size: 22px; border-radius: 0; min-width: 120px; padding: 6px 10px; }
+.replace-form { display: grid; grid-template-columns: auto 1fr; gap: 8px 10px; align-items: center; margin: 10px 0; }
+.replace-form label { font-size: 15px; color: var(--muted); }
+.replace-form input { font-size: 20px; width: 100%; }
+.msg { padding: 8px 12px; border-radius: 8px; margin: 8px 0; border: 1px solid var(--border); }
+.msg.error { background: var(--red-f); border-color: var(--red); }
+.msg.ok { background: var(--green-f); border-color: var(--green); }
+.msg.info { background: var(--code-bg); }
+.words { list-style: none; padding: 0; margin: 6px 0; display: flex; flex-direction: column; gap: 6px; }
+.words li {
+  font-family: Consolas, Menlo, monospace; font-size: 18px; padding: 4px 10px; border-radius: 6px;
+  border: 2px solid var(--border); display: flex; justify-content: space-between; gap: 8px;
+}
+.words li.good { background: var(--green-f); border-color: var(--green); }
+.words li.bad { background: var(--red-f); border-color: var(--red); }
+.words li .mark { font-family: "Segoe UI", Helvetica, Arial, sans-serif; font-size: 14px; white-space: nowrap; }
+.empty-word { color: var(--muted); font-style: italic; }
+.lines .ln { padding: 0 6px; border-radius: 4px; border-left: 4px solid transparent; min-height: 1.9em; }
+.lines .ln.ok { background: var(--green-f); border-left-color: var(--green); }
+.lines .ln.bad { background: var(--red-f); border-left-color: var(--red); }
+.lines mark.d { background: transparent; color: var(--red); font-weight: 700; text-decoration: underline wavy var(--red); }
+.lines .ln .note { font-family: "Segoe UI", Helvetica, Arial, sans-serif; font-size: 13px; color: var(--muted); }
+.taskgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; margin: 10px 0; }
+.taskgrid button { text-align: left; padding: 8px 10px; }
+.taskgrid button.solved { background: var(--green-f); border-color: var(--green); }
+.tip { margin-top: 8px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Regex-Trainer</h1>
+  <div class="progress">
+    <div class="bar"><div id="barFill"></div></div>
+    <span id="counter">1 / 1</span>
+  </div>
+</header>
+<main id="slide" aria-live="polite"></main>
+<footer>
+  <button id="prevBtn" type="button">◀ Zurück</button>
+  <span class="hint">Blättern mit den Pfeiltasten ← → (nicht während du in ein Eingabefeld tippst)</span>
+  <button id="nextBtn" type="button" class="primary">Weiter ▶</button>
+</footer>
+
+<script>
+'use strict';
+
+/* ---------- storage (optional, page works without it) ---------- */
+
+const STORE_PREFIX = 'ti-14-';
+// Version 2 uses new keys, so progress saved by an older version of this page is never read.
+const STORE_VERSION = 'v2-';
+const OBSOLETE_KEYS = ['solved', 'answers', 'slide'];
+
+/** Reads a JSON value from localStorage; returns the fallback if storage is unavailable or the value is broken. */
+function loadValue(key, fallback) {
+  try {
+    const raw = window.localStorage.getItem(STORE_PREFIX + STORE_VERSION + key);
+    return raw === null ? fallback : JSON.parse(raw);
+  } catch (e) {
+    return fallback;
+  }
+}
+
+/** Writes a JSON value to localStorage and silently ignores missing storage. */
+function saveValue(key, value) {
+  try {
+    window.localStorage.setItem(STORE_PREFIX + STORE_VERSION + key, JSON.stringify(value));
+  } catch (e) {
+    /* storage disabled: progress is kept only in memory */
+  }
+}
+
+/** Removes the keys of the previous version of this page. */
+function removeObsoleteKeys() {
+  try {
+    OBSOLETE_KEYS.forEach(k => window.localStorage.removeItem(STORE_PREFIX + k));
+  } catch (e) {
+    /* nothing to clean up without storage */
+  }
+}
+
+/* ---------- small DOM helpers ---------- */
+
+function el(tag, attrs, children) {
+  const node = document.createElement(tag);
+  if (attrs) {
+    for (const [k, v] of Object.entries(attrs)) {
+      if (k === 'class') node.className = v;
+      else if (k === 'html') node.innerHTML = v;
+      else if (k === 'text') node.textContent = v;
+      else if (k.startsWith('on')) node.addEventListener(k.slice(2), v);
+      else node.setAttribute(k, v);
+    }
+  }
+  for (const c of [].concat(children || [])) {
+    if (c !== null && c !== undefined) node.append(c);
+  }
+  return node;
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+/** Escapes text and, if wanted, makes spaces and tabs visible. */
+function fmt(text, showWs) {
+  const html = escapeHtml(text);
+  if (!showWs) return html;
+  return html.replace(/ /g, '<span class="ws">·</span>').replace(/\t/g, '<span class="ws">→</span>');
+}
+
+/** Shows the empty string so that it is visible in word lists. */
+function showWord(w) {
+  return w === '' ? '<span class="empty-word">(leerer String)</span>' : escapeHtml(w);
+}
+
+/** CSS class for capture group number n (1-based). */
+function groupClass(n) {
+  return 'g' + (((n - 1) % 4) + 1);
+}
+
+/* ---------- regex execution in a Web Worker (guards against patterns that never finish) ---------- */
+
+/**
+ * Executes one regex job. This function runs inside the worker (its source is copied there) and,
+ * as a fallback without workers, directly on the page.
+ */
+function regexTask(d) {
+  if (d.kind === 'words') {
+    const re = new RegExp('^(?:' + d.source + ')$', d.flags || '');
+    return d.words.map(w => re.test(w));
+  }
+  if (d.kind === 'timed') {
+    const re = new RegExp(d.source, d.flags || '');
+    const t0 = performance.now();
+    const found = re.test(d.text);
+    return { found: found, ms: performance.now() - t0 };
+  }
+  let re;
+  try {
+    re = new RegExp(d.source, (d.flags || '') + 'gd');
+  } catch (e) {
+    re = new RegExp(d.source, (d.flags || '') + 'g');
+  }
+  const out = [];
+  let m;
+  while ((m = re.exec(d.text)) !== null && out.length < 500) {
+    const groups = [];
+    for (let i = 1; i < m.length; i++) {
+      const span = m.indices ? m.indices[i] : undefined;
+      groups.push({ num: i, text: m[i] === undefined ? null : m[i], start: span ? span[0] : -1, end: span ? span[1] : -1 });
+    }
+    out.push({ index: m.index, text: m[0], groups: groups });
+    // an empty match would otherwise be found again at the same position forever
+    if (m[0].length === 0) re.lastIndex++;
+  }
+  return out;
+}
+
+const SafeRunner = (function () {
+  const TIMEOUT_MS = 1000;
+  const FALLBACK_MAX_LENGTH = 40;
+  const workerSource = regexTask.toString() +
+    '\nself.onmessage = function (e) {' +
+    '  let r;' +
+    '  try { r = { ok: true, result: regexTask(e.data) }; }' +
+    '  catch (err) { r = { ok: false, error: String(err && err.message || err) }; }' +
+    '  r.id = e.data.id; self.postMessage(r);' +
+    '};';
+  let worker = null;
+  let workerUsable = true;
+  let pending = null;
+  let nextId = 1;
+
+  function createWorker() {
+    try {
+      const url = URL.createObjectURL(new Blob([workerSource], { type: 'text/javascript' }));
+      worker = new Worker(url);
+      worker.onmessage = function (e) {
+        if (!pending || e.data.id !== pending.id) return;
+        clearTimeout(pending.timer);
+        const p = pending;
+        pending = null;
+        p.callback(e.data);
+      };
+      worker.onerror = function (e) {
+        e.preventDefault();
+        if (!pending) return;
+        clearTimeout(pending.timer);
+        const p = pending;
+        pending = null;
+        p.callback({ ok: false, error: e.message || 'Fehler im Worker' });
+      };
+    } catch (e) {
+      worker = null;
+      workerUsable = false;
+    }
+  }
+
+  function killWorker() {
+    if (worker) worker.terminate();
+    worker = null;
+  }
+
+  /** Runs a job; a newer job cancels an older one that is still running. */
+  function run(job, callback) {
+    if (pending) {
+      clearTimeout(pending.timer);
+      pending = null;
+      killWorker();
+    }
+    if (workerUsable && !worker) createWorker();
+    if (!worker) {
+      // without workers only short inputs are executed, so the tab cannot freeze for long
+      const tooLong = (job.words || []).some(w => w.length > FALLBACK_MAX_LENGTH) || (job.text || '').length > 300;
+      if (tooLong) {
+        callback({ ok: false, timeout: true });
+        return;
+      }
+      try {
+        callback({ ok: true, result: regexTask(job) });
+      } catch (err) {
+        callback({ ok: false, error: String(err.message || err) });
+      }
+      return;
+    }
+    const id = nextId++;
+    job.id = id;
+    pending = {
+      id: id,
+      callback: callback,
+      timer: setTimeout(function () {
+        if (!pending || pending.id !== id) return;
+        pending = null;
+        killWorker();
+        callback({ ok: false, timeout: true });
+      }, TIMEOUT_MS)
+    };
+    worker.postMessage(job);
+  }
+
+  /** Cancels a running job without calling its callback (used when a slide is left). */
+  function cancel() {
+    if (!pending) return;
+    clearTimeout(pending.timer);
+    pending = null;
+    killWorker();
+  }
+
+  return { run: run, cancel: cancel, timeoutMs: TIMEOUT_MS };
+})();
+
+/* ---------- pattern and replacement validation with friendly German messages ---------- */
+
+const ERROR_RULES = [
+  [/unterminated (group|parenthetical)|missing \)/i, 'Eine runde Klammer „(“ wird nicht geschlossen.'],
+  [/unmatched|unbalanced/i, 'Es gibt mehr schließende Klammern „)“ als öffnende.'],
+  [/nothing to repeat/i, 'Ein Quantor (*, +, ?, {…}) steht ohne etwas davor oder doppelt hintereinander.'],
+  [/unterminated character class/i, 'Eine eckige Klammer „[“ wird nicht geschlossen.'],
+  [/range out of order/i, 'Ein Bereich in […] ist verkehrt herum, z. B. [z-a] statt [a-z].'],
+  [/numbers out of order/i, 'Im Quantor {m,n} ist m größer als n.'],
+  [/\\ at end of pattern/i, 'Am Ende steht ein einzelner Backslash \\.'],
+  [/duplicate capture group name/i, 'Zwei Gruppen haben denselben Namen.'],
+  [/capture group name|invalid named|named reference/i, 'Ein Gruppenname ist ungültig oder \\k<…> verweist auf eine Gruppe, die es nicht gibt.'],
+  [/invalid (regexp |regular expression )?group|invalid group/i, 'Nach „(?“ folgt etwas Unbekanntes. Erlaubt sind (?:…), (?=…), (?!…), (?<=…), (?<!…) und (?<name>…).']
+];
+
+/**
+ * Returns null for a usable pattern, otherwise an HTML message in German.
+ * wholeWord tells whether the page anchors the pattern itself (match tasks).
+ */
+function checkPattern(src, wholeWord) {
+  for (let i = 0; i < src.length; i++) {
+    if (src[i] === '\\') {
+      const next = src[i + 1];
+      if (next === 'A' || next === 'Z' || next === 'z') {
+        return '<code>\\' + next + '</code> gibt es in JavaScript nicht (dort wäre <code>\\A</code> einfach ein „A“). ' +
+          (wholeWord ? 'Du brauchst hier keine Anker: Die Seite prüft ohnehin das ganze Wort.'
+            : 'Verwende hier <code>^</code> und <code>$</code>, sie gelten wie im Editor für jede Zeile.');
+      }
+      i++;
+    }
+  }
+  if (/\(\?[imsxn-]+[):]/.test(src)) {
+    return 'Inline-Optionen wie <code>(?i)</code> gibt es in .NET, aber nicht überall in JavaScript. Die Aufgaben brauchen keine Optionen.';
+  }
+  try {
+    new RegExp(src);
+  } catch (e) {
+    const raw = String(e.message || e);
+    const rule = ERROR_RULES.find(r => r[0].test(raw));
+    const text = rule ? rule[1] : 'Der Ausdruck ist ungültig.';
+    return '<strong>Ungültiger Ausdruck:</strong> ' + escapeHtml(text) +
+      '<br><span class="small muted">Meldung des Browsers: ' + escapeHtml(raw) + '</span>';
+  }
+  return null;
+}
+
+/** Maps capture group numbers (1-based) to names by scanning the pattern from left to right. */
+function groupNames(src) {
+  const names = [];
+  let inClass = false;
+  for (let i = 0; i < src.length; i++) {
+    const c = src[i];
+    if (c === '\\') { i++; continue; }
+    if (inClass) { if (c === ']') inClass = false; continue; }
+    if (c === '[') { inClass = true; continue; }
+    if (c !== '(') continue;
+    if (src[i + 1] !== '?') { names.push(null); continue; }
+    const m = /^\(\?<([A-Za-z_$][\w$]*)>/.exec(src.slice(i));
+    if (m) names.push(m[1]);
+  }
+  return names;
+}
+
+/**
+ * Parses a replacement text. Only $1 … $9 and $$ are substitutions, because they behave the same
+ * in JavaScript, .NET and both editors. Everything else is literal text.
+ * Returns { pieces, error } where a piece is { lit: string } or { group: number }.
+ */
+function parseTemplate(rep) {
+  const pieces = [];
+  let lit = '';
+  for (let i = 0; i < rep.length; i++) {
+    const c = rep[i];
+    if (c !== '$' || i === rep.length - 1) { lit += c; continue; }
+    const next = rep[i + 1];
+    if (next === '$') { lit += '$'; i++; continue; }
+    if (next >= '1' && next <= '9') {
+      if (lit) pieces.push({ lit: lit });
+      lit = '';
+      pieces.push({ group: Number(next) });
+      i++;
+      continue;
+    }
+    if (next === '<' || next === '{') {
+      return { pieces: [], error: 'Benannte Gruppen schreibt jede Umgebung anders: JavaScript <code>$&lt;name&gt;</code>, .NET und Visual Studio ' +
+        '<code>${name}</code>, der VS-Code-Editor kennt sie gar nicht. Verwende hier die Nummer: <code>$1</code> … <code>$9</code>.' };
+    }
+    if (next === '&' || next === '0' || next === '`' || next === "'" || next === '_' || next === '+') {
+      return { pieces: [], error: '<code>$' + escapeHtml(next) + '</code> verhält sich in JavaScript, .NET und den Editoren unterschiedlich. ' +
+        'Verwende hier nur <code>$1</code> … <code>$9</code> (und <code>$$</code> für ein Dollarzeichen).' };
+    }
+    lit += c;
+  }
+  if (lit) pieces.push({ lit: lit });
+  return { pieces: pieces, error: null };
+}
+
+/** Number of capture groups in a valid pattern (matching the pattern-or-empty alternative on '' is instant). */
+function groupCount(src) {
+  return new RegExp('(?:' + src + ')|').exec('').length - 1;
+}
+
+/** Builds the replacement for one match as colored segments. */
+function expandMatch(match, pieces) {
+  return pieces.map(p => {
+    if (p.lit !== undefined) return { text: p.lit, cls: 'rep' };
+    const g = match.groups[p.group - 1];
+    // a reference to a group that does not exist stays literal text, as in .NET and JavaScript
+    if (!g) return { text: '$' + p.group, cls: 'rep' };
+    return { text: g.text === null ? '' : g.text, cls: groupClass(p.group) };
+  });
+}
+
+/**
+ * Replaces the first `count` matches in text. The newest replacement keeps its group colors,
+ * older ones are drawn as plain hits. Returns { out, segs }.
+ */
+function applyReplace(text, matches, pieces, count, colorAll) {
+  const segs = [];
+  let pos = 0;
+  const n = Math.min(count, matches.length);
+  for (let k = 0; k < n; k++) {
+    const m = matches[k];
+    if (m.index > pos) segs.push({ text: text.slice(pos, m.index), cls: '' });
+    const parts = expandMatch(m, pieces);
+    if (colorAll || k === n - 1) parts.forEach(p => segs.push(p));
+    else segs.push({ text: parts.map(p => p.text).join(''), cls: 'hit' });
+    if (parts.every(p => p.text === '')) segs.push({ text: '', cls: 'zero' });
+    pos = m.index + m.text.length;
+  }
+  segs.push({ text: text.slice(pos), cls: '' });
+  return { out: segs.map(s => s.text).join(''), segs: segs };
+}
+
+/** Renders segments from applyReplace. */
+function renderSegments(segs, showWs) {
+  return segs.map(s => {
+    if (s.cls === 'zero') return '<span class="zero" title="hier wurde etwas entfernt"></span>';
+    const html = fmt(s.text, showWs);
+    return s.cls ? '<span class="' + s.cls + '">' + html + '</span>' : html;
+  }).join('');
+}
+
+/** Shows a replacement text with $n in the color of group n. */
+function templateHtml(rep) {
+  if (rep === '') return '<span class="muted">(leer)</span>';
+  return escapeHtml(rep).replace(/\$([1-9])/g, (all, n) => '<span class="' + groupClass(Number(n)) + '">' + all + '</span>');
+}
+
+/* ---------- rendering of matches inside a text ---------- */
+
+/**
+ * Renders text with highlighted matches. Matches with index < revealed are shown,
+ * the one at currentIdx is drawn as current and gets its groups colored
+ * (with opts.allGroups every shown match gets its groups colored).
+ */
+function renderMatches(text, matches, revealed, currentIdx, opts) {
+  const o = opts || {};
+  const cls = new Array(text.length).fill('');
+  const zeroAt = {};
+  const shown = Math.min(revealed, matches.length);
+  for (let k = 0; k < shown; k++) {
+    const m = matches[k];
+    if (m.text.length === 0) { zeroAt[m.index] = true; continue; }
+    for (let i = m.index; i < m.index + m.text.length; i++) {
+      cls[i] = 'hit' + (k === currentIdx ? ' current' : '');
+    }
+  }
+  for (let k = 0; k < shown; k++) {
+    if (!o.allGroups && k !== currentIdx) continue;
+    const cur = matches[k];
+    // color every character with the smallest group that contains it
+    for (let i = cur.index; i < cur.index + cur.text.length; i++) {
+      let best = null;
+      cur.groups.forEach((g, gi) => {
+        if (g.start >= 0 && g.start <= i && i < g.end && (!best || g.end - g.start <= best.len)) {
+          best = { gi: gi, len: g.end - g.start };
+        }
+      });
+      if (best) cls[i] += ' ' + groupClass(best.gi + 1);
+    }
+  }
+  let html = '';
+  let i = 0;
+  while (i <= text.length) {
+    if (zeroAt[i]) html += '<span class="zero" title="leerer Treffer"></span>';
+    if (i === text.length) break;
+    let j = i;
+    while (j < text.length && cls[j] === cls[i] && !(j > i && zeroAt[j])) j++;
+    let chunk = fmt(text.slice(i, j), o.showWs);
+    // a line break inside a match would be invisible, so it gets a symbol
+    if (cls[i]) chunk = chunk.replace(/\n/g, '<span class="ws">↵</span>\n');
+    html += cls[i] ? '<span class="' + cls[i] + '">' + chunk + '</span>' : chunk;
+    i = j;
+  }
+  return html;
+}
+
+/** Finds all matches with a trusted, built-in pattern (used by the intro slides). */
+function findAll(source, flags, text) {
+  return regexTask({ kind: 'matches', source: source, flags: flags, text: text });
+}
+
+/* ---------- line diff for the replace tasks ---------- */
+
+/** Renders one line, the differing middle part (after a common prefix and suffix) is marked. */
+function diffLine(line, other, showWs) {
+  let p = 0;
+  while (p < line.length && p < other.length && line[p] === other[p]) p++;
+  let s = 0;
+  while (s < line.length - p && s < other.length - p && line[line.length - 1 - s] === other[other.length - 1 - s]) s++;
+  const mid = line.slice(p, line.length - s);
+  return fmt(line.slice(0, p), showWs) +
+    (mid === '' ? '<span class="zero" title="hier fehlt etwas"></span>' : '<mark class="d">' + fmt(mid, showWs) + '</mark>') +
+    fmt(line.slice(line.length - s), showWs);
+}
+
+/** Renders a text line by line compared to the other text. Returns { html, okLines, total }. */
+function renderDiff(text, other, showWs, missingNote) {
+  const a = text.split('\n');
+  const b = other.split('\n');
+  const total = Math.max(a.length, b.length);
+  let ok = 0;
+  let html = '';
+  for (let i = 0; i < total; i++) {
+    if (i >= a.length) {
+      html += '<div class="ln bad"><span class="note">' + missingNote + '</span></div>';
+    } else if (i < b.length && a[i] === b[i]) {
+      ok++;
+      html += '<div class="ln ok">' + (fmt(a[i], showWs) || '&nbsp;') + '</div>';
+    } else if (i >= b.length) {
+      html += '<div class="ln bad"><mark class="d">' + (fmt(a[i], showWs) || '&nbsp;') + '</mark></div>';
+    } else {
+      html += '<div class="ln bad">' + diffLine(a[i], b[i], showWs) + '</div>';
+    }
+  }
+  return { html: html, okLines: ok, total: total };
+}
+
+/* ---------- animation controls: step, play/pause, speed, restart ---------- */
+
+/**
+ * Creates the animation control bar. onStep advances one step and returns false at the end,
+ * onRestart resets the animation.
+ */
+function makeAnimator(onStep, onRestart) {
+  let timer = null;
+  const stepBtn = el('button', { type: 'button', text: 'Schritt ⏭' });
+  const playBtn = el('button', { type: 'button', class: 'primary', text: '▶ Abspielen' });
+  const restartBtn = el('button', { type: 'button', text: '↺ Neustart' });
+  const speed = el('input', { type: 'range', min: '1', max: '5', value: '3', 'aria-label': 'Geschwindigkeit' });
+  const speedLabel = el('span', { class: 'mono', text: '3' });
+  const bar = el('div', { class: 'controls' }, [stepBtn, playBtn, restartBtn,
+    el('label', null, ['Geschwindigkeit', speed, speedLabel])]);
+
+  function delay() {
+    return [2200, 1500, 1000, 600, 300][Number(speed.value) - 1];
+  }
+  function stop() {
+    if (timer) clearTimeout(timer);
+    timer = null;
+    playBtn.textContent = '▶ Abspielen';
+  }
+  function tick() {
+    if (!onStep()) { stop(); return; }
+    timer = setTimeout(tick, delay());
+  }
+  stepBtn.addEventListener('click', () => { stop(); onStep(); });
+  playBtn.addEventListener('click', () => {
+    if (timer) { stop(); return; }
+    playBtn.textContent = '⏸ Pause';
+    tick();
+  });
+  restartBtn.addEventListener('click', () => { stop(); onRestart(); });
+  speed.addEventListener('input', () => { speedLabel.textContent = speed.value; });
+  return { element: bar, stop: stop };
+}
+
+/* ---------- intro slides ---------- */
+
+function slideWelcome(root) {
+  root.append(
+    el('h2', { text: 'Regex-Trainer' }),
+    el('p', { html: 'Ein regulärer Ausdruck beschreibt ein Muster in einem Text. Damit prüfst du Eingaben (ist das eine Postleitzahl?), ' +
+      'holst Daten aus einem Text und baust im Editor hunderte Zeilen auf einmal um. Auf den nächsten Folien siehst du die Bausteine, ' +
+      'wie eine Regex über einen Text läuft und wie Suchen und Ersetzen funktioniert.' }),
+    el('p', { html: 'Danach kommen <strong>' + TASKS.length + ' Aufgaben</strong>: ' + MATCH_TASKS.length + ' Mal schreibst du einen Ausdruck, der bestimmte Wörter erkennt und andere nicht, ' +
+      REPLACE_TASKS.length + ' Mal bringst du einen Text mit Suchen und Ersetzen in eine Zielform. Beim Tippen siehst du sofort, was passiert.' }),
+    el('div', { class: 'panel' }, [
+      el('h3', { text: 'So bedienst du die Seite' }),
+      el('ul', { html:
+        '<li><strong>Weiter/Zurück</strong> oder die Pfeiltasten ← → blättern durch die Folien.</li>' +
+        '<li>Animierte Folien haben die Knöpfe <strong>Schritt</strong>, <strong>Abspielen/Pause</strong>, <strong>Neustart</strong> und einen Regler für die Geschwindigkeit.</li>' +
+        '<li>Dein Fortschritt im Übungsteil wird im Browser gespeichert (localStorage), wenn der Browser das erlaubt.</li>' })
+    ]),
+    el('p', { class: 'muted small', text: 'Alle Beispiele laufen hier mit der JavaScript-Engine des Browsers. Die Unterschiede zu .NET zeigt eine eigene Folie.' })
+  );
+}
+
+/** Generic slide: several patterns run one after another over the same text, match by match. */
+function textStepSlide(root, title, introHtml, text, steps) {
+  let si = 0;
+  let revealed = 0;
+  let matches = findAll(steps[0].re, steps[0].flags, text);
+  const box = el('div', { class: 'textbox' });
+  const status = el('p', { class: 'status' });
+  const items = steps.map((s, i) => el('li', {
+    html: '<code>' + escapeHtml(s.re) + '</code>' + (s.flags ? ' <span class="small muted">Flag ' + s.flags + '</span>' : '') +
+      '<div class="small">' + s.note + '</div>',
+    onclick: () => { anim.stop(); select(i); }
+  }));
+
+  function select(i) {
+    si = i;
+    revealed = 0;
+    matches = findAll(steps[si].re, steps[si].flags, text);
+    draw();
+  }
+  function draw() {
+    box.innerHTML = renderMatches(text, matches, revealed, revealed - 1);
+    items.forEach((li, i) => { li.className = i === si ? 'active' : (i < si ? 'done' : ''); });
+    if (matches.length === 0) {
+      status.innerHTML = '<code>' + escapeHtml(steps[si].re) + '</code>: <strong>kein Treffer</strong> in diesem Text.';
+    } else if (revealed === 0) {
+      status.innerHTML = '<code>' + escapeHtml(steps[si].re) + '</code> startet links und sucht den ersten Treffer …';
+    } else {
+      const m = matches[revealed - 1];
+      status.innerHTML = 'Treffer ' + revealed + ' von ' + matches.length + ': <code>' + escapeHtml(m.text) +
+        '</code> an Index ' + m.index + (revealed === matches.length ? ' – weiter rechts gibt es keinen Treffer mehr.' : '');
+    }
+  }
+  const anim = makeAnimator(() => {
+    if (revealed < matches.length) { revealed++; draw(); return true; }
+    if (si < steps.length - 1) { select(si + 1); return true; }
+    return false;
+  }, () => select(0));
+  root.append(
+    el('h2', { text: title }),
+    el('p', { html: introHtml }),
+    anim.element,
+    el('div', { class: 'cols-32' }, [
+      el('div', null, [box, status]),
+      el('div', { class: 'panel' }, [el('strong', { text: 'Ausdrücke' }), el('ul', { class: 'steplist' }, items)])
+    ])
+  );
+  draw();
+  return anim.stop;
+}
+
+function slideClasses(root) {
+  return textStepSlide(root, 'Zeichenklassen und Quantoren',
+    'Eine Zeichenklasse wie <code>[0-9]</code> passt auf <em>ein</em> Zeichen. Ein Quantor (<code>+</code>, <code>*</code>, <code>?</code>, ' +
+    '<code>{4}</code>) sagt, wie oft. Ohne Anker sucht die Regex überall im Text, von links nach rechts. Nach einem Treffer sucht sie hinter ihm weiter.',
+    'PLZ 1010 Wien, Tel. 0316 12345, Code 10100',
+    [
+      { re: '[0-9]+', note: 'Eine oder mehr Ziffern: jede Zahl ist ein Treffer.' },
+      { re: '[0-9]{4}', note: 'Genau vier Ziffern – auch mitten aus längeren Zahlen.' },
+      { re: '\\b[0-9]{4}\\b', note: 'Mit Wortgrenzen: nur alleinstehende vierstellige Zahlen.' },
+      { re: '\\b[1-9][0-9]{3}\\b', note: 'Postleitzahl: die erste Ziffer ist nicht 0.' }
+    ]);
+}
+
+function slideGreedy(root) {
+  return textStepSlide(root, 'Gierig oder genügsam',
+    'Quantoren sind <strong>gierig</strong>: Sie nehmen so viel wie möglich. Mit einem angehängten <code>?</code> werden sie ' +
+    '<strong>genügsam</strong> und nehmen so wenig wie möglich. Oft ist eine negierte Klasse wie <code>[^\\]]</code> die klarste Lösung.',
+    'Treffpunkt [Wien] oder [Graz]',
+    [
+      { re: '\\[.*\\]', note: 'Gierig: <code>.*</code> läuft bis zum letzten <code>]</code>.' },
+      { re: '\\[.*?\\]', note: 'Genügsam: <code>.*?</code> hört beim ersten <code>]</code> auf.' },
+      { re: '\\[[^\\]]*\\]', note: 'Negierte Klasse: „alles außer ]“.' }
+    ]);
+}
+
+function slideAnchors(root) {
+  return textStepSlide(root, 'Anker und Flags',
+    'Anker passen auf eine <em>Position</em>, nicht auf ein Zeichen: <code>^</code> Anfang, <code>$</code> Ende, ' +
+    '<code>\\b</code> Wortgrenze. Ein Flag ändert, wie die Regex sucht.',
+    'Wien und Wiener Neustadt, nicht Neuwien, sondern Wien',
+    [
+      { re: 'Wien', note: 'Ohne Anker: auch das „Wien“ in „Wiener“.' },
+      { re: '\\bWien\\b', note: 'Wortgrenzen: nur das alleinstehende Wort.' },
+      { re: '^Wien', note: 'Nur am Anfang des Texts.' },
+      { re: 'Wien$', note: 'Nur am Ende des Texts.' },
+      { re: '^Wien$', note: 'Der <em>ganze</em> Text müsste „Wien“ sein.' },
+      { re: 'wien', flags: 'i', note: 'Flag <code>i</code> (in .NET <code>RegexOptions.IgnoreCase</code>): Groß/klein egal.' }
+    ]);
+}
+
+const RUNNER_PRESETS = [
+  { name: 'Datum mit benannten Gruppen', re: '(?<tag>[0-9]{2})\\.(?<monat>[0-9]{2})\\.(?<jahr>[0-9]{4})',
+    text: 'Abgabe am 24.12.2026, Nachtrag bis 07.01.2027, Prüfung am 3.2.2027' },
+  { name: 'Matrikelnummern (8 Ziffern)', re: '\\b[0-9]{8}\\b',
+    text: 'Angemeldet: 01234567 (Huber), 12345678 (Gruber), 1234567 (Tippfehler), 123456789' },
+  { name: 'Postleitzahlen', re: '\\b[1-9][0-9]{3}\\b', text: '1010 Wien, 4020 Linz, 0123 ungültig, 8010 Graz, 10100 zu lang' },
+  { name: 'Felder einer CSV-Zeile', re: '(?:^|;)(?<feld>"(?:[^"]|"")*"|[^;]*)', text: '4711;"Huber; Anna";;"Er sagt ""Servus""";Wien' },
+  { name: 'Gierig: Text in Klammern', re: '\\(.*\\)', text: 'f(x) + g(y)' }
+];
+
+function slideRunner(root) {
+  const presetSel = el('select', { 'aria-label': 'Beispiel' }, RUNNER_PRESETS.map((p, i) => el('option', { value: String(i), text: p.name })));
+  const reInput = el('input', { type: 'text', class: 'mono', spellcheck: 'false', style: 'width:100%', 'aria-label': 'Regulärer Ausdruck' });
+  const flagI = el('input', { type: 'checkbox' });
+  const textInput = el('textarea', { class: 'mono', rows: '2', spellcheck: 'false', style: 'width:100%', 'aria-label': 'Text' });
+  const box = el('div', { class: 'textbox' });
+  const status = el('div', { class: 'status' });
+  const groupTable = el('div');
+  let matches = [];
+  let names = [];
+  let current = -1;
+  let debounce = null;
+
+  function draw() {
+    box.innerHTML = renderMatches(textInput.value, matches, current + 1, current);
+    if (current < 0) {
+      groupTable.innerHTML = '';
+      return;
+    }
+    const m = matches[current];
+    let rows = '<tr><td>0</td><td class="muted">ganzer Treffer</td><td><code>' + escapeHtml(m.text) + '</code></td><td>' + m.index + '</td></tr>';
+    m.groups.forEach((g, i) => {
+      const name = names[i] ? '<code>' + escapeHtml(names[i]) + '</code>' : '<span class="muted">–</span>';
+      const value = g.text === null ? '<span class="muted">nicht beteiligt</span>' : '<code class="' + groupClass(i + 1) + '">' + escapeHtml(g.text) + '</code>';
+      rows += '<tr><td>' + g.num + '</td><td>' + name + '</td><td>' + value + '</td><td>' + (g.start >= 0 ? g.start : '') + '</td></tr>';
+    });
+    groupTable.innerHTML = '<table class="data"><tr><th>Gruppe</th><th>Name</th><th>Text</th><th>Index</th></tr>' + rows + '</table>';
+  }
+  function describe() {
+    if (matches.length === 0) return '<strong>Kein Treffer.</strong>';
+    if (current < 0) return matches.length + ' Treffer gefunden. Drücke <strong>Schritt</strong>, um sie der Reihe nach anzusehen.';
+    return 'Treffer ' + (current + 1) + ' von ' + matches.length + ' an Index ' + matches[current].index +
+      (matches[current].text === '' ? ' (leerer Treffer)' : '');
+  }
+  function evaluate() {
+    anim.stop();
+    const src = reInput.value;
+    current = -1;
+    matches = [];
+    names = [];
+    const problem = src === '' ? 'Gib einen Ausdruck ein.' : checkPattern(src, false);
+    if (problem) {
+      status.innerHTML = '<div class="msg error">' + problem + '</div>';
+      draw();
+      return;
+    }
+    status.innerHTML = '<span class="muted">Suche läuft …</span>';
+    SafeRunner.run({ kind: 'matches', source: src, flags: flagI.checked ? 'i' : '', text: textInput.value }, res => {
+      if (res.timeout) {
+        status.innerHTML = '<div class="msg error">Abgebrochen: Die Suche dauerte länger als ' + SafeRunner.timeoutMs + ' ms (siehe Folie „Zeitlimit“).</div>';
+      } else if (!res.ok) {
+        status.innerHTML = '<div class="msg error">' + escapeHtml(res.error) + '</div>';
+      } else {
+        matches = res.result;
+        names = groupNames(src);
+        status.innerHTML = describe();
+      }
+      draw();
+    });
+  }
+  function loadPreset(i) {
+    reInput.value = RUNNER_PRESETS[i].re;
+    textInput.value = RUNNER_PRESETS[i].text;
+    flagI.checked = false;
+    evaluate();
+  }
+  const anim = makeAnimator(() => {
+    if (current >= matches.length - 1) return false;
+    current++;
+    status.innerHTML = describe();
+    draw();
+    return current < matches.length - 1;
+  }, () => { current = -1; status.innerHTML = describe(); draw(); });
+  function schedule() {
+    clearTimeout(debounce);
+    debounce = setTimeout(evaluate, 150);
+  }
+  reInput.addEventListener('input', schedule);
+  textInput.addEventListener('input', schedule);
+  flagI.addEventListener('change', evaluate);
+  presetSel.addEventListener('change', () => loadPreset(Number(presetSel.value)));
+
+  root.append(
+    el('h2', { text: 'Gruppen: Treffer Schritt für Schritt' }),
+    el('p', { html: 'Wähle ein Beispiel oder ändere Ausdruck und Text. <strong>Schritt</strong> springt zum nächsten Treffer, ' +
+      'die Tabelle zeigt seine Gruppen. Gruppen speichern Teile des Treffers, benannte Gruppen <code>(?&lt;name&gt;…)</code> haben zusätzlich einen Namen.' }),
+    el('div', { class: 'controls' }, [el('label', null, ['Beispiel', presetSel]), el('label', null, [flagI, 'Flag i (Groß/klein egal)'])]),
+    reInput, textInput,
+    anim.element,
+    el('div', { class: 'cols' }, [el('div', null, [box, status]), el('div', null, [groupTable])])
+  );
+  loadPreset(0);
+  return () => { anim.stop(); clearTimeout(debounce); };
+}
+
+const REPLACE_DEMOS = [
+  { name: 'Datum ins ISO-Format', re: '([0-9]{2})\\.([0-9]{2})\\.([0-9]{4})', rep: '$3-$2-$1',
+    text: 'Abgabe 24.12.2026\nNachtrag 07.01.2027\nPrüfung 03.02.2027',
+    note: 'Drei Gruppen, im Ersetzungstext in umgekehrter Reihenfolge.' },
+  { name: 'CSV: zwei Spalten tauschen', re: '^([^;]*);([^;]*)', rep: '$2;$1',
+    text: 'Huber;Anna;5AHIF\nGruber;Max;5BHIF\nAigner;Lena;5AHIF',
+    note: '<code>^</code> gilt wie im Editor für jede Zeile. Die dritte Spalte gehört nicht zum Treffer und bleibt stehen.' },
+  { name: 'Properties → Record-Parameter', re: 'public (\\S+) (\\w+) \\{ get; set; \\}', rep: '$1 $2,',
+    text: 'public string Firstname { get; set; }\npublic DateOnly? Birthdate { get; set; }\npublic int Age { get; set; }',
+    note: 'Code umbauen: Typ und Name werden behalten, der Rest fällt weg.' },
+  { name: 'Leerzeichen am Zeilenende', re: '[ \\t]+$', rep: '', ws: true,
+    text: 'int a = 1;   \nint b = 2;\t\nint c = 3;  ',
+    note: 'Leerer Ersetzungstext: Der Treffer wird gelöscht. · ist ein Leerzeichen, → ein Tab.' }
+];
+
+function slideReplaceAnim(root) {
+  let di = 0;
+  let revealed = 0;
+  let matches = [];
+  let pieces = [];
+  const head = el('div', { class: 'panel' });
+  const before = el('div', { class: 'textbox compact' });
+  const after = el('div', { class: 'textbox compact' });
+  const status = el('p', { class: 'status' });
+  const items = REPLACE_DEMOS.map((d, i) => el('li', {
+    html: '<strong>' + escapeHtml(d.name) + '</strong><div class="small">' + d.note + '</div>',
+    onclick: () => { anim.stop(); select(i); }
+  }));
+
+  function select(i) {
+    di = i;
+    revealed = 0;
+    const d = REPLACE_DEMOS[di];
+    matches = findAll(d.re, 'm', d.text);
+    pieces = parseTemplate(d.rep).pieces;
+    draw();
+  }
+  function draw() {
+    const d = REPLACE_DEMOS[di];
+    head.innerHTML = '<div>Suchen: <code>' + escapeHtml(d.re) + '</code></div><div>Ersetzen: <code>' + templateHtml(d.rep) + '</code></div>';
+    before.innerHTML = renderMatches(d.text, matches, revealed, revealed - 1, { showWs: d.ws });
+    after.innerHTML = renderSegments(applyReplace(d.text, matches, pieces, revealed, false).segs, d.ws);
+    items.forEach((li, i) => { li.className = i === di ? 'active' : (i < di ? 'done' : ''); });
+    if (revealed === 0) {
+      status.innerHTML = 'Drücke <strong>Schritt</strong>: Die Regex sucht den ersten Treffer und ersetzt ihn.';
+      return;
+    }
+    const m = matches[revealed - 1];
+    const used = [];
+    pieces.forEach(p => { if (p.group && used.indexOf(p.group) < 0) used.push(p.group); });
+    const groupsText = used.map(n => '<code class="' + groupClass(n) + '">$' + n + '</code> = <code>' +
+      fmt(m.groups[n - 1].text || '', d.ws) + '</code>').join(', ');
+    const result = expandMatch(m, pieces).map(p => p.text).join('');
+    status.innerHTML = 'Treffer ' + revealed + ' von ' + matches.length + ': <code>' + fmt(m.text, d.ws) + '</code>' +
+      (groupsText ? ' → ' + groupsText : '') + ' → ' + (result === '' ? '<em>(nichts)</em>' : '<code>' + fmt(result, d.ws) + '</code>') +
+      (revealed === matches.length ? '. <strong>Fertig</strong>, das ist „Alle ersetzen“.' : '');
+  }
+  const anim = makeAnimator(() => {
+    if (revealed < matches.length) { revealed++; draw(); return true; }
+    if (di < REPLACE_DEMOS.length - 1) { select(di + 1); return true; }
+    return false;
+  }, () => select(0));
+  root.append(
+    el('h2', { text: 'Suchen und Ersetzen' }),
+    el('p', { html: 'Das Suchmuster speichert die Teile, die du behalten willst, in Gruppen. Im Ersetzungstext setzt du sie mit ' +
+      '<code class="g1">$1</code>, <code class="g2">$2</code>, … neu zusammen. Alles außerhalb der Treffer bleibt unverändert. ' +
+      'Im Editor: <code>Strg+H</code>, Regex mit <code>Alt+R</code> (VS Code) bzw. <code>Alt+E</code> (Visual Studio) einschalten.' }),
+    anim.element,
+    el('div', { class: 'cols-32' }, [
+      el('div', null, [head, el('div', { class: 'pane-title', text: 'vorher' }), before,
+        el('div', { class: 'pane-title', text: 'nachher' }), after, status]),
+      el('div', { class: 'panel' }, [el('strong', { text: 'Beispiele' }), el('ul', { class: 'steplist' }, items)])
+    ])
+  );
+  select(0);
+  return anim.stop;
+}
+
+function slideRedos(root) {
+  const out = el('div', { class: 'status' });
+  const btn = el('button', { type: 'button', text: 'Ausprobieren: (a+)+$ auf 32 × a und !' });
+  btn.addEventListener('click', () => {
+    out.innerHTML = '<span class="muted">Läuft …</span>';
+    SafeRunner.run({ kind: 'timed', source: '(a+)+$', text: 'a'.repeat(32) + '!' }, res => {
+      if (res.timeout) {
+        out.innerHTML = '<div class="msg error">Nach ' + SafeRunner.timeoutMs + ' ms abgebrochen. Ohne diesen Schutz wäre der Tab eingefroren – bei 33 Zeichen doppelt so lange.</div>';
+      } else if (res.ok) {
+        out.innerHTML = '<div class="msg info">' + (res.result.found ? 'Treffer' : 'Kein Treffer') + ' nach ' + res.result.ms.toFixed(0) + ' ms.</div>';
+      } else {
+        out.innerHTML = '<div class="msg error">' + escapeHtml(res.error || 'Fehler') + '</div>';
+      }
+    });
+  });
+  root.append(
+    el('h2', { text: 'Zeitlimit für Benutzereingaben (ReDoS)' }),
+    el('p', { html: 'Manche Ausdrücke werden bei langen Eingaben extrem langsam. Typisch sind verschachtelte Quantoren wie <code>(a+)+$</code>: ' +
+      'Passt der Text am Ende nicht, probiert die Regex jede Aufteilung der <code>a</code> durch. Jedes weitere Zeichen verdoppelt die Arbeit.' }),
+    el('p', { html: 'Kommt der Text von Benutzern (Formular, Datei, Web-API), kann ein Angreifer mit einem passenden langen String den Server lahmlegen. ' +
+      'Das heißt <strong>ReDoS</strong> (Regular Expression Denial of Service).' }),
+    el('div', { class: 'controls' }, [btn]),
+    out,
+    el('div', { class: 'panel' }, [
+      el('strong', { text: 'Was du in .NET tust' }),
+      el('ul', { html:
+        '<li>Eingaben von Benutzern prüfst du <strong>immer mit Zeitlimit</strong>. Ohne Angabe gibt es keines.</li>' +
+        '<li>Verschachtle keine Quantoren über dieselben Zeichen: <code>(a+)+</code> bedeutet dasselbe wie <code>a+</code>.</li>' +
+        '<li><code>RegexOptions.NonBacktracking</code> schließt das Problem aus, kann aber keine Lookaheads und Rückreferenzen.</li>' }),
+      el('pre', { class: 'code', text:
+        'var regex = new Regex(pattern, RegexOptions.None, TimeSpan.FromMilliseconds(100));\n\n' +
+        '[GeneratedRegex(@"^[1-9][0-9]{3}\\z", RegexOptions.None, matchTimeoutMilliseconds: 100)]\n' +
+        'public static partial Regex PostalCode();\n\n' +
+        '// exceeded: RegexMatchTimeoutException' })
+    ]),
+    el('p', { class: 'small muted', text: 'JavaScript kennt kein Zeitlimit. Darum prüft diese Seite deine Ausdrücke in einem Hintergrund-Thread (Web Worker) und bricht nach 1 s ab.' })
+  );
+  return () => SafeRunner.cancel();
+}
+
+function slideJsVsDotnet(root) {
+  const rows = [
+    ['Optionen', 'Flags nach dem Literal: <code>/wien/i</code>, <code>/x/gm</code>', '<code>RegexOptions.IgnoreCase | RegexOptions.Multiline</code> oder inline <code>(?i)</code>'],
+    ['Alle Treffer', 'Flag <code>g</code> nötig: <code>text.matchAll(/…/g)</code>', '<code>regex.Matches(text)</code>, kein Flag'],
+    ['Anfang/Ende des Strings', 'nur <code>^</code> und <code>$</code>. <code>\\A</code> ist ein „A“, <code>\\z</code> ein „z“', 'zusätzlich <code>\\A</code> und <code>\\z</code>, unabhängig von Multiline'],
+    ['<code>$</code> bei <code>"1010\\n"</code>', '<code>/^[0-9]{4}$/</code> passt <strong>nicht</strong>: <code>$</code> ist nur das echte Ende', '<code>^[0-9]{4}$</code> passt: <code>$</code> erlaubt ein abschließendes <code>\\n</code>. Streng: <code>\\z</code>'],
+    ['Benannte Gruppen', '<code>(?&lt;name&gt;…)</code>, Zugriff <code>m.groups.name</code>', '<code>(?&lt;name&gt;…)</code>, Zugriff <code>m.Groups["name"].Value</code>'],
+    ['Nummern der Gruppen', 'alle Gruppen von links nach rechts', 'zuerst die unbenannten, danach die benannten'],
+    ['Gruppe im Ersetzungstext', '<code>$1</code>, benannt <code>$&lt;name&gt;</code>', '<code>$1</code>, benannt <code>${name}</code>'],
+    ['Im Editor', 'VS Code (JavaScript): <code>$1</code>, benannte Gruppen nur über die Nummer', 'Visual Studio (.NET): <code>$1</code> und <code>${name}</code>'],
+    ['<code>\\d</code> und <code>\\w</code>', 'nur ASCII: <code>[0-9]</code> bzw. <code>[A-Za-z0-9_]</code>', 'Unicode: <code>\\d</code> passt auf <code>٣</code>, <code>\\w</code> auf <code>ä</code>'],
+    ['Zeitlimit', 'keines: eine böse Regex friert den Tab ein', '<code>matchTimeout</code> → <code>RegexMatchTimeoutException</code>'],
+    ['Übersetzen', 'Literal <code>/…/</code> wird beim Laden des Skripts geparst', '<code>[GeneratedRegex]</code> erzeugt C#-Code beim Kompilieren']
+  ];
+  root.append(
+    el('h2', { text: 'JavaScript und .NET: die wichtigsten Unterschiede' }),
+    el('p', { html: 'Die Grundsyntax (Klassen, Quantoren, Gruppen, Alternativen, Lookahead, <code>\\1</code>) ist gleich. Unterschiede gibt es an den Rändern:' }),
+    el('div', { class: 'panel', html: '<table class="data"><tr><th>Thema</th><th>JavaScript</th><th>.NET (C#)</th></tr>' +
+      rows.map(r => '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td><td>' + r[2] + '</td></tr>').join('') + '</table>' }),
+    el('p', { class: 'small muted', html: 'Die Aufgaben im Übungsteil verwenden nur Syntax, die sich überall gleich verhält. Die Testwörter enthalten nur ASCII-Zeichen. ' +
+      'Im Ersetzungstext sind deshalb nur die Nummern <code>$1</code> bis <code>$9</code> erlaubt: Sie funktionieren in JavaScript, .NET, VS Code und Visual Studio gleich, ' +
+      'benannte Gruppen dagegen nicht.' })
+  );
+}
+
+/* ---------- practice tasks ---------- */
+
+/*TASKS-BEGIN*/
+const MATCH_TASKS = [
+  { id: 'klasse', title: 'Zeichenklasse', text: 'Genau die Wörter <code>cat</code>, <code>cot</code> und <code>cut</code>.',
+    tip: 'Eine Zeichenklasse <code>[…]</code> steht für genau ein Zeichen.',
+    yes: ['cat', 'cot', 'cut'], no: ['cet', 'ct', 'coat', 'cats', 'Cat'] },
+  { id: 'matrikel', title: 'Matrikelnummer', text: 'Eine Matrikelnummer: genau 8 Ziffern.',
+    tip: '<code>{n}</code> wiederholt das Zeichen davor genau n Mal.',
+    yes: ['01234567', '12345678', '00000001'], no: ['1234567', '123456789', '1234567a', '1234 5678', ''] },
+  { id: 'plz', title: 'Postleitzahl', text: 'Österreichische Postleitzahl: 4 Ziffern, die erste ist nicht 0.',
+    tip: 'Zwei verschiedene Zeichenklassen hintereinander.',
+    yes: ['1010', '4020', '8010', '9020', '6900'], no: ['0123', '101', '10100', '1O10', 'A-1010'] },
+  { id: 'bild', title: 'Bilddatei', text: 'Dateiname eines Bildes: mindestens ein Kleinbuchstabe, eine Ziffer, <code>_</code> oder <code>-</code>, danach die Endung <code>.png</code>, <code>.jpg</code> oder <code>.jpeg</code>.',
+    tip: 'Der Punkt vor der Endung muss maskiert werden. Für die Endung brauchst du eine Gruppe mit Alternative, <code>jpg</code> und <code>jpeg</code> unterscheiden sich nur durch ein optionales <code>e</code>.',
+    yes: ['foto.png', 'urlaub_2026.jpg', 'img-01.jpeg', 'a.png'], no: ['foto.gif', 'foto.PNG', '.png', 'foto.jpgx', 'foto png', 'foto.jpeg.txt'] },
+  { id: 'bezeichner', title: 'Bezeichner', text: 'Vereinfachter C#-Bezeichner: ein Buchstabe (a–z, A–Z) oder <code>_</code>, danach beliebig viele Buchstaben, Ziffern oder <code>_</code>.',
+    tip: 'Das erste Zeichen hat eine andere Klasse als der Rest.',
+    yes: ['x', '_count', 'Person2', 'MAX_VALUE', 'a1b2'], no: ['2fast', 'my-var', '', 'a b', '$x'] },
+  { id: 'ganzzahl', title: 'Ganzzahl', text: 'Ganzzahl mit optionalem Vorzeichen <code>+</code> oder <code>-</code>, ohne führende Nullen. Die <code>0</code> allein ist erlaubt.',
+    tip: '<code>?</code> macht etwas optional. Für „0 oder eine Zahl ohne führende Null“ brauchst du eine Alternative.',
+    yes: ['0', '7', '-7', '+42', '1000', '-105'], no: ['007', '01', '+', '1.5', '--3', '', '1 000'] },
+  { id: 'hexfarbe', title: 'CSS-Farbe', text: 'CSS-Farbe: <code>#</code>, danach genau 3 oder genau 6 Hexadezimalziffern (0–9, a–f, A–F).',
+    tip: 'Eine Gruppe aus 3 Hexziffern, die 1- oder 2-mal vorkommt – oder eine Alternative.',
+    yes: ['#fff', '#000', '#1A2b3C', '#ff8800'], no: ['fff', '#ffff', '#12345', '#1234567', '#12345g', '##fff'] },
+  { id: 'datum', title: 'Datum', text: 'Datum <code>dd.mm.yyyy</code> mit Tag 01–31 und Monat 01–12. Ob es den 31.02. gibt, ist hier egal (das prüfst du in C# mit <code>DateOnly.TryParseExact</code>).',
+    tip: 'Für den Tag brauchst du drei Fälle: 01–09, 10–29 und 30–31. Der Punkt muss maskiert werden.',
+    yes: ['01.01.2026', '24.12.2026', '31.12.1999', '29.02.2028', '10.10.2010'], no: ['32.01.2026', '00.05.2026', '15.13.2026', '15.00.2026', '1.1.2026', '24-12-2026', '24.12.26'] },
+  { id: 'doppelt', title: 'Doppelter Buchstabe', text: 'Wörter aus Kleinbuchstaben, in denen irgendwo zwei gleiche Buchstaben direkt nebeneinander stehen.',
+    tip: 'Eine Rückreferenz <code>\\1</code> verlangt denselben Text, den Gruppe 1 gefunden hat.',
+    yes: ['ball', 'see', 'otto', 'mitte', 'kaffee', 'aa'], no: ['ast', 'ufo', 'katze', 'aba', 'abcabc', 'a'] },
+  { id: 'kennwort', title: 'Kennwort-Regel', text: '6 bis 10 Zeichen, nur Kleinbuchstaben und Ziffern, mindestens eine Ziffer und mindestens ein Buchstabe.',
+    tip: 'Ein Lookahead <code>(?=…)</code> prüft eine Bedingung, ohne Zeichen zu verbrauchen. Du kannst mehrere hintereinander schreiben.',
+    yes: ['abc123', '1a2b3c', 'geheim7', '9zzzzz', 'abcdefghi1'], no: ['abcdef', '123456', 'ab1', 'abc123abc12', 'Abc123', 'abc-12'] },
+  { id: 'csv', title: 'CSV-Zeile', text: 'CSV-Zeile mit genau 3 Feldern, getrennt durch <code>;</code>. Ein Feld ist leer, ein Text ohne <code>;</code> und <code>"</code> oder ein Text in Anführungszeichen, der <code>;</code> enthalten darf (aber kein <code>"</code>).',
+    tip: 'Beschreibe zuerst ein Feld als Alternative. Danach: Feld, dann zweimal <code>;</code> und Feld.',
+    yes: ['a;b;c', ';;', 'Wien;1010;AT', '"Huber; Anna";x;y', '"";1;"a;b"'], no: ['a;b', 'a;b;c;d', 'a"b;c;d', 'x;"y;z', '"a;b;c'] },
+  { id: 'euro', title: 'Euro-Betrag', text: 'Betrag in österreichischer Schreibweise: Tausenderpunkte, Komma und genau zwei Nachkommastellen. Keine führenden Nullen (außer <code>0,99</code>).',
+    tip: 'Vor dem ersten Punkt stehen 1 bis 3 Ziffern, danach Gruppen aus Punkt und genau 3 Ziffern.',
+    yes: ['0,99', '12,50', '999,00', '1.234,00', '12.345.678,90'], no: ['1234,00', '01,00', ',50', '1.23,00', '12,5', '1.234.56,00', '1,234.00'] }
+];
+
+const REPLACE_TASKS = [
+  { id: 'r-datum', title: 'Datum umstellen', text: 'Stelle jedes Datum vom Format <code>TT.MM.JJJJ</code> auf <code>JJJJ-MM-TT</code> um.',
+    tip: 'Drei Gruppen für Tag, Monat und Jahr. Im Ersetzungstext kommen sie in umgekehrter Reihenfolge.',
+    source: 'Abgabe: 24.12.2026\nNachtrag: 07.01.2027\nPrüfung am 03.02.2027 um 08:00',
+    target: 'Abgabe: 2026-12-24\nNachtrag: 2027-01-07\nPrüfung am 2027-02-03 um 08:00' },
+  { id: 'r-namen', title: 'Namen umdrehen', text: 'Aus <code>Nachname, Vorname</code> wird <code>Vorname Nachname</code>.',
+    tip: 'Gruppe 1: alles bis zum Beistrich. Gruppe 2: alles nach dem Beistrich und dem Leerzeichen.',
+    source: 'Huber, Anna\nGruber, Max\nAigner, Lena-Marie',
+    target: 'Anna Huber\nMax Gruber\nLena-Marie Aigner' },
+  { id: 'r-csv', title: 'CSV-Spalten', text: 'Drehe die Reihenfolge der drei Spalten um, auch in der Kopfzeile.',
+    tip: '<code>[^;]*</code> nimmt alles bis zum nächsten Strichpunkt. Mit <code>^</code> und <code>$</code> erfasst du die ganze Zeile.',
+    source: 'Nachname;Vorname;Klasse\nHuber;Anna;5AHIF\nGruber;Max;5BHIF',
+    target: 'Klasse;Vorname;Nachname\n5AHIF;Anna;Huber\n5BHIF;Max;Gruber' },
+  { id: 'r-leer', title: 'Leerzeichen am Ende', ws: true, text: 'Entferne Leerzeichen und Tabs am Zeilenende. Die Einrückung am Zeilenanfang und die Leerzeile bleiben. (· ist ein Leerzeichen, → ein Tab.)',
+    tip: 'Eine Klasse aus Leerzeichen und <code>\\t</code>, mindestens einmal, direkt vor <code>$</code>. Der Ersetzungstext bleibt leer.',
+    source: 'int a = 1;   \nint b = 2;\t\nint c = 3;\n\n    int d = 4;  ',
+    target: 'int a = 1;\nint b = 2;\nint c = 3;\n\n    int d = 4;' },
+  { id: 'r-ausgabe', title: 'Code umbauen', text: 'Mache aus jeder Property eine Ausgabe mit <code>Console.WriteLine</code>.',
+    tip: 'Die Klammern <code>{</code> und <code>}</code> brauchen im Suchmuster einen Backslash. Den Namen brauchst du im Ersetzungstext zweimal.',
+    source: 'public string Firstname { get; set; }\npublic string Lastname { get; set; }\npublic int Age { get; set; }',
+    target: 'Console.WriteLine("Firstname: " + Firstname);\nConsole.WriteLine("Lastname: " + Lastname);\nConsole.WriteLine("Age: " + Age);' },
+  { id: 'r-telefon', title: 'Telefonnummern', text: 'Vereinheitliche die Telefonnummern auf <code>+43 Vorwahl Nummer</code>. Die Vorwahl hat hier immer 3 Ziffern nach der <code>0</code>.',
+    tip: 'Die <code>0</code> gehört nicht in die Gruppe. Das Trennzeichen ist eine Klasse aus Leerzeichen, <code>/</code> und <code>-</code>.',
+    source: 'Anna: 0664/1234567\nMax: 0676-9876543\nLena: 0699 1112223',
+    target: 'Anna: +43 664 1234567\nMax: +43 676 9876543\nLena: +43 699 1112223' },
+  { id: 'r-fett', title: 'Markdown zu HTML', text: 'Mache aus <code>**Text**</code> den HTML-Code <code>&lt;b&gt;Text&lt;/b&gt;</code>.',
+    tip: 'Der Stern muss maskiert werden. Ein gieriges <code>.*</code> läuft bis zum letzten <code>**</code> der Zeile.',
+    source: 'Das ist **wichtig** und **sehr wichtig**.\n**Achtung:** Abgabe bis Freitag.',
+    target: 'Das ist <b>wichtig</b> und <b>sehr wichtig</b>.\n<b>Achtung:</b> Abgabe bis Freitag.' },
+  { id: 'r-doppelt', title: 'Doppelte Wörter', text: 'Entferne Wörter, die direkt zweimal hintereinander stehen. Achte auf die letzte Zeile.',
+    tip: 'Eine Rückreferenz <code>\\1</code> verlangt denselben Text wie Gruppe 1. Wortgrenzen <code>\\b</code> verhindern Treffer mitten im Wort.',
+    source: 'Das ist ist ein Test.\nWir sehen uns morgen morgen.\nDie Abgabe ist am am Freitag.\nDas sind sie.',
+    target: 'Das ist ein Test.\nWir sehen uns morgen.\nDie Abgabe ist am Freitag.\nDas sind sie.' }
+];
+/*TASKS-END*/
+
+const TASKS = MATCH_TASKS.map(t => Object.assign({ kind: 'match' }, t))
+  .concat(REPLACE_TASKS.map(t => Object.assign({ kind: 'replace' }, t)));
+const TASK_IDS = TASKS.map(t => t.id);
+
+/** Loads the saved progress and drops everything that does not fit the current tasks. */
+function loadProgress() {
+  const rawSolved = loadValue('solved', []);
+  const rawAnswers = loadValue('answers', {});
+  const solvedIds = Array.isArray(rawSolved) ? rawSolved.filter(id => TASK_IDS.indexOf(id) >= 0) : [];
+  const clean = {};
+  if (rawAnswers && typeof rawAnswers === 'object' && !Array.isArray(rawAnswers)) {
+    TASKS.forEach(t => {
+      const a = rawAnswers[t.id];
+      if (t.kind === 'match' && typeof a === 'string') clean[t.id] = a;
+      if (t.kind === 'replace' && a && typeof a === 'object' && typeof a.p === 'string' && typeof a.r === 'string') clean[t.id] = { p: a.p, r: a.r };
+    });
+  }
+  return { solved: new Set(solvedIds), answers: clean };
+}
+
+removeObsoleteKeys();
+let { solved, answers } = loadProgress();
+
+function markSolved(id) {
+  if (solved.has(id)) return;
+  solved.add(id);
+  saveValue('solved', Array.from(solved));
+}
+
+function slidePracticeIntro(root) {
+  const matchGrid = el('div', { class: 'taskgrid' });
+  const replaceGrid = el('div', { class: 'taskgrid' });
+  const summary = el('p', { class: 'muted' });
+  function draw() {
+    matchGrid.innerHTML = '';
+    replaceGrid.innerHTML = '';
+    TASKS.forEach((t, i) => {
+      (t.kind === 'match' ? matchGrid : replaceGrid).append(el('button', {
+        type: 'button', class: solved.has(t.id) ? 'solved' : '',
+        text: (solved.has(t.id) ? '✓ ' : '') + (i + 1) + '. ' + t.title,
+        onclick: () => goTo(FIRST_TASK_SLIDE + i)
+      }));
+    });
+    summary.textContent = solved.size + ' von ' + TASKS.length + ' Aufgaben gelöst.';
+  }
+  const resetBtn = el('button', { type: 'button', text: 'Fortschritt zurücksetzen', onclick: () => {
+    solved = new Set();
+    answers = {};
+    saveValue('solved', []);
+    saveValue('answers', {});
+    draw();
+  } });
+  root.append(
+    el('h2', { text: 'Übungsteil' }),
+    el('div', { class: 'cols' }, [
+      el('div', { class: 'panel', html:
+        '<strong>Muster: matche diese Wörter, aber nicht jene</strong><ul class="small">' +
+        '<li>Die Seite testet jedes Wort mit <code>^(?:dein Ausdruck)$</code>. Dein Ausdruck muss also das <strong>ganze Wort</strong> beschreiben. ' +
+        'In C# entspricht das <code>Regex.IsMatch(word, $@"^(?:{pattern})\\z")</code>.</li>' +
+        '<li>Beim Tippen wird jedes Wort sofort eingefärbt: grün = richtig eingeordnet, rot = falsch eingeordnet.</li></ul>' }),
+      el('div', { class: 'panel', html:
+        '<strong>Suchen und Ersetzen: bring den Text in die Zielform</strong><ul class="small">' +
+        '<li>Die Seite ersetzt alle Treffer wie <em>Alle ersetzen</em> im Editor. <code>^</code> und <code>$</code> gelten für jede Zeile. ' +
+        'In C#: <code>Regex.Replace(text, pattern, replacement, RegexOptions.Multiline)</code>.</li>' +
+        '<li>Im Ersetzungstext verwendest du <code>$1</code> bis <code>$9</code>. Gelöst ist die Aufgabe, wenn dein Ergebnis genau dem Ziel entspricht.</li></ul>' })
+    ]),
+    el('p', { class: 'small muted', text: 'Ein ungültiger Ausdruck wird erklärt. Braucht dein Ausdruck länger als 1 Sekunde, wird er abgebrochen.' }),
+    summary,
+    el('h3', { text: 'Muster' }), matchGrid,
+    el('h3', { text: 'Suchen und Ersetzen' }), replaceGrid,
+    resetBtn
+  );
+  draw();
+}
+
+/** Tip button and box shared by both task kinds. */
+function makeTip(task) {
+  const tipBox = el('div', { class: 'msg info tip', html: 'Tipp: ' + task.tip, style: 'display:none' });
+  const tipBtn = el('button', { type: 'button', text: 'Tipp anzeigen', onclick: () => {
+    const hidden = tipBox.style.display === 'none';
+    tipBox.style.display = hidden ? 'block' : 'none';
+    tipBtn.textContent = hidden ? 'Tipp ausblenden' : 'Tipp anzeigen';
+  } });
+  return { button: tipBtn, box: tipBox };
+}
+
+function taskHeading(taskIndex) {
+  const task = TASKS[taskIndex];
+  return el('h2', { text: 'Aufgabe ' + (taskIndex + 1) + ' von ' + TASKS.length + ': ' + task.title + (solved.has(task.id) ? ' ✓' : '') });
+}
+
+function solvedMessage(taskIndex, detail) {
+  return '<div class="msg ok"><strong>Gelöst!</strong> ' + detail +
+    (taskIndex < TASKS.length - 1 ? ' Weiter zur nächsten Aufgabe mit „Weiter ▶“.' : ' Das war die letzte Aufgabe.') + '</div>';
+}
+
+function slideMatchTask(root, taskIndex) {
+  const task = TASKS[taskIndex];
+  const input = el('input', { type: 'text', class: 'mono', spellcheck: 'false', autocomplete: 'off', 'aria-label': 'Dein regulärer Ausdruck',
+    placeholder: 'dein Ausdruck' });
+  input.value = typeof answers[task.id] === 'string' ? answers[task.id] : '';
+  const feedback = el('div', { class: 'status' });
+  const yesList = el('ul', { class: 'words' });
+  const noList = el('ul', { class: 'words' });
+  const ownInput = el('input', { type: 'text', class: 'mono', spellcheck: 'false', autocomplete: 'off', 'aria-label': 'Eigenes Testwort', placeholder: 'eigenes Wort' });
+  const ownResult = el('span', { class: 'small' });
+  const tip = makeTip(task);
+  let debounce = null;
+
+  function fillList(list, words, results, expected) {
+    list.innerHTML = '';
+    words.forEach((w, i) => {
+      let cls = '';
+      let mark = '';
+      if (results) {
+        const correct = results[i] === expected;
+        cls = correct ? 'good' : 'bad';
+        mark = results[i] ? (correct ? '✓ passt' : '✗ passt, soll aber nicht') : (correct ? '✓ passt nicht' : '✗ passt nicht');
+      }
+      list.append(el('li', { class: cls, html: '<span>' + showWord(w) + '</span><span class="mark">' + mark + '</span>' }));
+    });
+  }
+  function neutral(messageHtml, kind) {
+    fillList(yesList, task.yes, null, true);
+    fillList(noList, task.no, null, false);
+    feedback.innerHTML = messageHtml ? '<div class="msg ' + (kind || 'info') + '">' + messageHtml + '</div>' : '';
+    ownResult.textContent = '';
+  }
+  function evaluate() {
+    const src = input.value;
+    answers[task.id] = src;
+    saveValue('answers', answers);
+    if (src === '') {
+      neutral('Tippe einen Ausdruck in das Feld. Die Wörter werden sofort eingefärbt.');
+      return;
+    }
+    const problem = checkPattern(src, true);
+    if (problem) {
+      neutral(problem, 'error');
+      return;
+    }
+    const own = ownInput.value;
+    const words = task.yes.concat(task.no, [own]);
+    SafeRunner.run({ kind: 'words', source: src, words: words }, res => {
+      if (res.timeout) {
+        neutral('Abgebrochen: Dein Ausdruck braucht länger als ' + SafeRunner.timeoutMs + ' ms. Verschachtelte Quantoren wie <code>(a+)+</code> ' +
+          'probieren sehr viele Möglichkeiten durch.', 'error');
+        return;
+      }
+      if (!res.ok) {
+        neutral('<strong>Ungültiger Ausdruck:</strong> ' + escapeHtml(res.error || ''), 'error');
+        return;
+      }
+      const r = res.result;
+      const yesRes = r.slice(0, task.yes.length);
+      const noRes = r.slice(task.yes.length, task.yes.length + task.no.length);
+      fillList(yesList, task.yes, yesRes, true);
+      fillList(noList, task.no, noRes, false);
+      const correct = yesRes.filter(x => x).length + noRes.filter(x => !x).length;
+      const total = task.yes.length + task.no.length;
+      if (correct === total) {
+        markSolved(task.id);
+        feedback.innerHTML = solvedMessage(taskIndex, 'Alle ' + total + ' Wörter sind richtig eingeordnet.');
+      } else {
+        feedback.innerHTML = '<div class="msg info">' + correct + ' von ' + total + ' Wörtern richtig eingeordnet.</div>';
+      }
+      ownResult.innerHTML = own === '' ? '' : (r[r.length - 1] ? '<strong>passt</strong>' : '<strong>passt nicht</strong>');
+    });
+  }
+  function schedule() {
+    clearTimeout(debounce);
+    debounce = setTimeout(evaluate, 120);
+  }
+  input.addEventListener('input', schedule);
+  ownInput.addEventListener('input', schedule);
+
+  root.append(
+    taskHeading(taskIndex),
+    el('p', { html: task.text }),
+    el('div', { class: 'pattern-row' }, [el('span', { class: 'fix l', text: '^(?:' }), input, el('span', { class: 'fix r', text: ')$' })]),
+    feedback,
+    el('div', { class: 'cols' }, [
+      el('div', null, [el('h3', { text: 'Soll passen' }), yesList]),
+      el('div', null, [el('h3', { text: 'Soll nicht passen' }), noList])
+    ]),
+    el('div', { class: 'controls' }, [tip.button, el('label', null, ['Eigenes Wort testen:', ownInput]), ownResult]),
+    tip.box
+  );
+  evaluate();
+  return () => clearTimeout(debounce);
+}
+
+function slideReplaceTask(root, taskIndex) {
+  const task = TASKS[taskIndex];
+  const saved = answers[task.id];
+  const patternInput = el('input', { type: 'text', class: 'mono', spellcheck: 'false', autocomplete: 'off', id: 'pat-' + task.id,
+    'aria-label': 'Suchmuster', placeholder: 'Suchmuster' });
+  const replInput = el('input', { type: 'text', class: 'mono', spellcheck: 'false', autocomplete: 'off', id: 'rep-' + task.id,
+    'aria-label': 'Ersetzungstext', placeholder: 'Ersetzungstext (darf leer sein)' });
+  patternInput.value = saved ? saved.p : '';
+  replInput.value = saved ? saved.r : '';
+  const feedback = el('div', { class: 'status' });
+  const sourceBox = el('div', { class: 'textbox compact' });
+  const outBox = el('div', { class: 'textbox compact lines' });
+  const targetBox = el('div', { class: 'textbox compact lines' });
+  const tip = makeTip(task);
+  let debounce = null;
+
+  function show(outText, matches, messageHtml, kind) {
+    sourceBox.innerHTML = renderMatches(task.source, matches, matches.length, -1, { showWs: task.ws, allGroups: true });
+    const mine = renderDiff(outText, task.target, task.ws, '(Zeile fehlt)');
+    outBox.innerHTML = mine.html;
+    targetBox.innerHTML = renderDiff(task.target, outText, task.ws, '').html.replace(/<div class="ln bad"><span class="note"><\/span><\/div>/g, '');
+    feedback.innerHTML = messageHtml ? '<div class="msg ' + (kind || 'info') + '">' + messageHtml + '</div>' : '';
+    return mine;
+  }
+  function evaluate() {
+    const src = patternInput.value;
+    const rep = replInput.value;
+    answers[task.id] = { p: src, r: rep };
+    saveValue('answers', answers);
+    if (src === '') {
+      show(task.source, [], 'Gib ein Suchmuster und einen Ersetzungstext ein. Treffer werden im Ausgangstext markiert, ' +
+        'dein Ergebnis wird Zeile für Zeile mit dem Ziel verglichen.');
+      return;
+    }
+    const problem = checkPattern(src, false);
+    if (problem) {
+      show(task.source, [], problem, 'error');
+      return;
+    }
+    const template = parseTemplate(rep);
+    if (template.error) {
+      show(task.source, [], template.error, 'error');
+      return;
+    }
+    const count = groupCount(src);
+    const missing = template.pieces.filter(p => p.group && p.group > count).map(p => '$' + p.group);
+    SafeRunner.run({ kind: 'matches', source: src, flags: 'm', text: task.source }, res => {
+      if (res.timeout) {
+        show(task.source, [], 'Abgebrochen: Dein Ausdruck braucht länger als ' + SafeRunner.timeoutMs + ' ms.', 'error');
+        return;
+      }
+      if (!res.ok) {
+        show(task.source, [], '<strong>Ungültiger Ausdruck:</strong> ' + escapeHtml(res.error || ''), 'error');
+        return;
+      }
+      const matches = res.result;
+      if (matches.length >= 500) {
+        show(task.source, [], 'Dein Muster findet zu viele Treffer (auch leere). Passt es vielleicht auf den leeren String?', 'error');
+        return;
+      }
+      const out = applyReplace(task.source, matches, template.pieces, matches.length, true).out;
+      const warn = missing.length ? ' <strong>' + missing.join(', ') + '</strong>: Diese Gruppe gibt es im Muster nicht, sie bleibt als Text stehen.' : '';
+      if (out === task.target) {
+        markSolved(task.id);
+        show(out, matches, '');
+        feedback.innerHTML = solvedMessage(taskIndex, matches.length + ' Treffer ersetzt, das Ergebnis entspricht genau dem Ziel.');
+        return;
+      }
+      const mine = show(out, matches, '');
+      feedback.innerHTML = '<div class="msg info">' + matches.length + ' Treffer ersetzt. ' + mine.okLines + ' von ' + mine.total +
+        ' Zeilen stimmen.' + warn + '</div>';
+    });
+  }
+  function schedule() {
+    clearTimeout(debounce);
+    debounce = setTimeout(evaluate, 150);
+  }
+  patternInput.addEventListener('input', schedule);
+  replInput.addEventListener('input', schedule);
+
+  root.append(
+    taskHeading(taskIndex),
+    el('p', { html: task.text }),
+    el('div', { class: 'replace-form' }, [
+      el('label', { for: 'pat-' + task.id, text: 'Suchen' }), patternInput,
+      el('label', { for: 'rep-' + task.id, text: 'Ersetzen' }), replInput
+    ]),
+    feedback,
+    el('div', { class: 'pane-title', text: 'Ausgangstext (Treffer markiert, Gruppen farbig)' }), sourceBox,
+    el('div', { class: 'cols' }, [
+      el('div', null, [el('div', { class: 'pane-title', text: 'Dein Ergebnis' }), outBox]),
+      el('div', null, [el('div', { class: 'pane-title', text: 'Ziel' }), targetBox])
+    ]),
+    el('div', { class: 'controls' }, [tip.button]),
+    tip.box
+  );
+  evaluate();
+  return () => clearTimeout(debounce);
+}
+
+/* ---------- slide navigation ---------- */
+
+const SLIDES = [slideWelcome, slideClasses, slideGreedy, slideAnchors, slideRunner, slideReplaceAnim, slideRedos, slideJsVsDotnet, slidePracticeIntro];
+const FIRST_TASK_SLIDE = SLIDES.length;
+TASKS.forEach((t, i) => SLIDES.push(root => (t.kind === 'match' ? slideMatchTask(root, i) : slideReplaceTask(root, i))));
+
+const slideRoot = document.getElementById('slide');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+let currentSlide = 0;
+let cleanup = null;
+
+function goTo(index) {
+  if (index < 0 || index >= SLIDES.length) return;
+  if (cleanup) cleanup();
+  cleanup = null;
+  currentSlide = index;
+  slideRoot.innerHTML = '';
+  const result = SLIDES[index](slideRoot);
+  if (typeof result === 'function') cleanup = result;
+  document.getElementById('counter').textContent = (index + 1) + ' / ' + SLIDES.length;
+  document.getElementById('barFill').style.width = ((index + 1) / SLIDES.length * 100) + '%';
+  prevBtn.disabled = index === 0;
+  nextBtn.disabled = index === SLIDES.length - 1;
+  saveValue('slide', index);
+  window.scrollTo(0, 0);
+}
+
+prevBtn.addEventListener('click', () => goTo(currentSlide - 1));
+nextBtn.addEventListener('click', () => goTo(currentSlide + 1));
+document.addEventListener('keydown', e => {
+  const t = e.target;
+  const typing = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable);
+  if (typing || e.altKey || e.ctrlKey || e.metaKey) return;
+  if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); goTo(currentSlide + 1); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); goTo(currentSlide - 1); }
+});
+
+const savedSlide = Number(loadValue('slide', 0));
+goTo(Number.isInteger(savedSlide) && savedSlide >= 0 && savedSlide < SLIDES.length ? savedSlide : 0);
+</script>
+</body>
+</html>

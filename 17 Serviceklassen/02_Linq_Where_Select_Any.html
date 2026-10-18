@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LINQ Trainer</title>
+<style>
+  :root {
+    --bg: #f6f6f6; --card: #ffffff; --fg: #1d1d1b; --muted: #5f5f5e; --border: #9d9d9c; --soft: #ededed;
+    --n-stroke: #0090d4; --n-fill: #d1ebf7; --n-text: #00628f;
+    --a-stroke: #f39000; --a-fill: #fdebd1; --a-text: #a35f00;
+    --ok-stroke: #71af2e; --ok-fill: #e5f1d9; --ok-text: #4a7a1c;
+    --err-stroke: #cc0935; --err-fill: #f6d3db; --err-text: #a8072c;
+    --c2-stroke: #6cc1b0; --c2-fill: #e5f4f1; --c2-text: #2f7d6e;
+    --btn: #0090d4; --btn-fg: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121212; --card: #1f1f1e; --fg: #ededed; --muted: #b5b5b4; --border: #6f6f6e; --soft: #2e2e2d;
+      --n-stroke: #0090d4; --n-fill: #0d3346; --n-text: #0090d4;
+      --a-stroke: #f39000; --a-fill: #4a2e05; --a-text: #f39000;
+      --ok-stroke: #71af2e; --ok-fill: #23360f; --ok-text: #71af2e;
+      --err-stroke: #f5b4c7; --err-fill: #4a1622; --err-text: #f5b4c7;
+      --c2-stroke: #6cc1b0; --c2-fill: #173832; --c2-text: #6cc1b0;
+      --btn: #0090d4; --btn-fg: #ffffff;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", Helvetica, Arial, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.5; }
+  code, .mono { font-family: Consolas, Menlo, monospace; }
+  code { background: var(--soft); padding: 0 4px; border-radius: 4px; }
+  header { position: sticky; top: 0; z-index: 5; background: var(--card); border-bottom: 1px solid var(--border);
+           padding: 8px 16px; display: flex; align-items: center; gap: 16px; }
+  header h1 { font-size: 18px; margin: 0; flex: 1; }
+  #progressText { font-variant-numeric: tabular-nums; color: var(--muted); }
+  #progressBar { position: absolute; left: 0; bottom: -1px; height: 3px; background: var(--btn); transition: width .3s; }
+  main { max-width: 1180px; margin: 0 auto; padding: 16px; }
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide h2 { margin: 4px 0 8px; font-size: 24px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin: 12px 0; }
+  .nav { display: flex; justify-content: space-between; max-width: 1180px; margin: 0 auto; padding: 0 16px 24px; }
+  button { font: inherit; border: 1px solid var(--border); background: var(--card); color: var(--fg); border-radius: 6px;
+           padding: 5px 12px; cursor: pointer; }
+  button:hover:not(:disabled) { border-color: var(--btn); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  button.primary { background: var(--btn); color: var(--btn-fg); border-color: var(--btn); }
+  .row { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin: 8px 0; }
+  .muted { color: var(--muted); }
+  .hint { font-size: 14px; color: var(--muted); }
+  .stepinfo { font-variant-numeric: tabular-nums; color: var(--muted); }
+  .caption { min-height: 64px; }
+  .appear { animation: appear .6s ease-out; }
+  @keyframes appear { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  .grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: start; }
+  .grid2 > *, .grid3 > * { min-width: 0; }
+  @media (max-width: 860px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
+  pre.code { margin: 0; font-family: Consolas, Menlo, monospace; font-size: 15px; line-height: 1.8; white-space: pre-wrap; word-break: break-word; }
+  .hl { border-radius: 3px; padding: 0 2px; }
+  .hl.where { background: var(--a-fill); box-shadow: inset 0 -3px 0 var(--a-stroke); }
+  .hl.select { background: var(--ok-fill); box-shadow: inset 0 -3px 0 var(--ok-stroke); }
+  .hl.from { background: var(--n-fill); box-shadow: inset 0 -3px 0 var(--n-stroke); }
+  .hl.exec { background: var(--c2-fill); box-shadow: inset 0 -3px 0 var(--c2-stroke); }
+  .hl.dim { opacity: .6; }
+  .item { font-family: Consolas, Menlo, monospace; padding: 5px 10px; margin: 6px 0; border-radius: 6px;
+          border: 1.5px solid var(--n-stroke); background: var(--n-fill); }
+  .item.str { border-color: var(--border); background: var(--card); }
+  .item.current { outline: 3px solid var(--a-stroke); outline-offset: 1px; }
+  .item.ok { border-color: var(--ok-stroke); background: var(--ok-fill); }
+  .item.no { border-color: var(--border); background: var(--soft); opacity: .65; }
+  .item .res { float: right; font-weight: 700; font-family: "Segoe UI", Helvetica, Arial, sans-serif; }
+  .item.ok .res { color: var(--ok-text); }
+  .item.no .res { color: var(--err-text); }
+  .colhead { font-weight: 700; }
+  .typetag { font-family: Consolas, Menlo, monospace; font-size: 13px; color: var(--muted); }
+  .event { border: 1.5px solid var(--n-stroke); background: var(--n-fill); border-radius: 8px; padding: 8px 10px; margin: 8px 0; }
+  .event.current { outline: 3px solid var(--a-stroke); outline-offset: 1px; }
+  .event .name { font-weight: 700; display: inline-block; min-width: 80px; }
+  .event .res { float: right; font-weight: 700; }
+  .event .res.ok { color: var(--ok-text); }
+  .event .res.no { color: var(--err-text); }
+  .show { display: inline-block; font-family: Consolas, Menlo, monospace; font-size: 14px; border: 1.5px solid var(--border);
+          background: var(--card); border-radius: 5px; padding: 1px 6px; margin: 2px 4px 2px 0; }
+  .show.hit { border-color: var(--ok-stroke); background: var(--ok-fill); }
+  .show.miss { border-color: var(--err-stroke); background: var(--err-fill); }
+  .show.skip { opacity: .4; border-style: dashed; }
+  .db { border: 2px solid var(--c2-stroke); background: var(--c2-fill); border-radius: 8px; padding: 10px; min-height: 120px; }
+  .db.idle { border-style: dashed; background: var(--card); }
+
+  /* exercise */
+  .rounds button { min-width: 40px; }
+  .rounds button.solved { background: var(--ok-fill); border-color: var(--ok-stroke); }
+  .rounds button.current { outline: 2px solid var(--btn); outline-offset: 1px; font-weight: 700; }
+  pre.ex { font-family: Consolas, Menlo, monospace; font-size: 16px; background: var(--card); border: 1px solid var(--border);
+           border-radius: 8px; padding: 10px 14px; white-space: pre-wrap; margin: 8px 0; }
+  .choice { display: grid; gap: 8px; margin: 8px 0; }
+  .choice button { text-align: left; font-family: Consolas, Menlo, monospace; font-size: 15px; padding: 8px 12px; white-space: pre-wrap; }
+  .choice button.text { font-family: "Segoe UI", Helvetica, Arial, sans-serif; font-size: 16px; }
+  .choice button.picked-right { background: var(--ok-fill); border-color: var(--ok-stroke); }
+  .choice button.picked-right::after { content: "  ✓"; color: var(--ok-text); font-weight: 700; }
+  .choice button.picked-wrong { background: var(--err-fill); border-color: var(--err-stroke); }
+  .choice button.picked-wrong::after { content: "  ✗"; color: var(--err-text); font-weight: 700; }
+  .feedback { padding: 8px 12px; border-radius: 6px; margin-top: 8px; display: none; }
+  .feedback.ok { display: block; background: var(--ok-fill); border: 1px solid var(--ok-stroke); }
+  .feedback.bad { display: block; background: var(--err-fill); border: 1px solid var(--err-stroke); }
+  .feedback.info { display: block; background: var(--soft); border: 1px solid var(--border); }
+  kbd { font-family: Consolas, Menlo, monospace; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 4px; padding: 0 4px; background: var(--soft); }
+</style>
+</head>
+<body>
+<header>
+  <h1>LINQ: Where, Select und Any</h1>
+  <span id="progressText">1 / 4</span>
+  <div id="progressBar"></div>
+</header>
+
+<main>
+  <!-- Slide 1 -->
+  <section class="slide" data-slide="0">
+    <h2>Where filtert, Select projiziert</h2>
+    <p>Verfolge, wie die Personen durch <code>Where</code> und <code>Select</code> laufen. Rechts entsteht dabei die passende SQL-Abfrage.</p>
+    <div class="row">
+      <button id="a-reset">⏮ Anfang</button>
+      <button id="a-back">◀ Zurück</button>
+      <button id="a-step" class="primary">Schritt ▶</button>
+      <button id="a-play">▶ Play</button>
+      <span class="stepinfo" id="a-info"></span>
+    </div>
+    <div class="card caption" id="a-caption"></div>
+    <div class="grid2">
+      <div class="card"><b>LINQ</b><pre class="code" id="a-linq"></pre></div>
+      <div class="card"><b>SQL</b><pre class="code" id="a-sql"></pre></div>
+    </div>
+    <div class="grid3">
+      <div class="card"><span class="colhead">persons</span> <span class="typetag" id="a-t1"></span><div id="a-col1"></div></div>
+      <div class="card"><span class="colhead">nach Where</span> <span class="typetag" id="a-t2"></span><div id="a-col2"></div></div>
+      <div class="card"><span class="colhead">nach Select</span> <span class="typetag" id="a-t3"></span><div id="a-col3"></div></div>
+    </div>
+  </section>
+
+  <!-- Slide 2 -->
+  <section class="slide" data-slide="1">
+    <h2>Any auf einer Navigation wird zu EXISTS</h2>
+    <p>Gesucht sind alle Events mit mindestens einer Show im Jahr 2024. <code>Any</code> prüft die Shows eines Events, bis es den ersten Treffer findet.</p>
+    <div class="row">
+      <button id="b-reset">⏮ Anfang</button>
+      <button id="b-back">◀ Zurück</button>
+      <button id="b-step" class="primary">Schritt ▶</button>
+      <button id="b-play">▶ Play</button>
+      <span class="stepinfo" id="b-info"></span>
+    </div>
+    <div class="card caption" id="b-caption"></div>
+    <div class="grid2">
+      <div class="card"><b>_db.Events</b><div id="b-events"></div></div>
+      <div>
+        <div class="card"><b>LINQ</b><pre class="code">_db.Events
+  .Where(e => <span class="hl where">e.Shows.Any(s => s.Date.Year == 2024)</span>)
+  .ToList()</pre></div>
+        <div class="card"><b>SQL</b><pre class="code">SELECT e.* FROM Events AS e
+WHERE <span class="hl where">EXISTS (
+    SELECT 1 FROM Shows AS s
+    WHERE s.EventId = e.Id
+      AND strftime('%Y', s.Date) = '2024')</span></pre></div>
+        <div class="card"><b>Ergebnis</b><div id="b-result"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 3 -->
+  <section class="slide" data-slide="2">
+    <h2>Wann läuft die Abfrage?</h2>
+    <p>Eine Abfrage auf einem <code>IQueryable</code> ist zuerst nur eine Beschreibung. Beobachte, wann EF Core wirklich SQL an die Datenbank schickt.</p>
+    <div class="row">
+      <button id="c-reset">⏮ Anfang</button>
+      <button id="c-back">◀ Zurück</button>
+      <button id="c-step" class="primary">Schritt ▶</button>
+      <button id="c-play">▶ Play</button>
+      <span class="stepinfo" id="c-info"></span>
+    </div>
+    <div class="card caption" id="c-caption"></div>
+    <div class="grid2">
+      <div class="card"><b>C#</b><pre class="code" id="c-code"></pre></div>
+      <div class="card"><b>Datenbank</b><div class="db" id="c-db"></div></div>
+    </div>
+  </section>
+
+  <!-- Slide 4 -->
+  <section class="slide" data-slide="3">
+    <h2>Übung: SQL und LINQ verbinden</h2>
+    <div class="row rounds" id="roundButtons"></div>
+    <div class="card" id="roundCard"></div>
+    <pre class="ex" id="exCode"></pre>
+    <div class="choice" id="choices"></div>
+    <div class="row"><button id="solutionBtn">Lösung zeigen</button><button id="nextRoundBtn" class="primary" style="display:none">Nächste Runde →</button></div>
+    <div class="feedback" id="feedback"></div>
+    <p class="hint">Gelöste Runden merkt sich dein Browser. Mit <kbd>Tab</kbd> wählst du eine Antwort, mit <kbd>Enter</kbd> bestätigst du sie.</p>
+  </section>
+</main>
+
+<div class="nav">
+  <button id="prevBtn">← Zurück</button>
+  <button id="nextBtn" class="primary">Weiter →</button>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  const PLAY_DELAY = 2200;
+
+  // ---------- storage (works without localStorage) ----------
+  const store = {
+    get(key, fallback) {
+      try {
+        const raw = window.localStorage.getItem('svc-02-' + key);
+        return raw === null ? fallback : JSON.parse(raw);
+      } catch (e) { return fallback; }
+    },
+    set(key, value) {
+      try { window.localStorage.setItem('svc-02-' + key, JSON.stringify(value)); } catch (e) { /* ignore */ }
+    }
+  };
+
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function hl(text, kind) { return `<span class="hl ${kind}">${esc(text)}</span>`; }
+
+  // ---------- generic step animation ----------
+  /** Connects reset/back/step/play buttons to a render function for steps 0..count-1. */
+  function stepper(prefix, count, render) {
+    let step = 0;
+    let timer = null;
+    const playBtn = document.getElementById(prefix + '-play');
+    const self = {
+      show(i) {
+        step = Math.min(Math.max(i, 0), count - 1);
+        document.getElementById(prefix + '-info').textContent = `Schritt ${step + 1} von ${count}`;
+        document.getElementById(prefix + '-back').disabled = step === 0;
+        document.getElementById(prefix + '-step').disabled = step === count - 1;
+        render(step);
+      },
+      stop() {
+        if (timer) { clearTimeout(timer); timer = null; }
+        playBtn.textContent = '▶ Play';
+      },
+      play() {
+        if (timer) { self.stop(); return; }
+        if (step === count - 1) { self.show(0); }
+        playBtn.textContent = '⏸ Pause';
+        const tick = () => {
+          if (step >= count - 1) { self.stop(); return; }
+          self.show(step + 1);
+          timer = setTimeout(tick, PLAY_DELAY);
+        };
+        timer = setTimeout(tick, 900);
+      }
+    };
+    playBtn.addEventListener('click', self.play);
+    document.getElementById(prefix + '-step').addEventListener('click', () => { self.stop(); self.show(step + 1); });
+    document.getElementById(prefix + '-back').addEventListener('click', () => { self.stop(); self.show(step - 1); });
+    document.getElementById(prefix + '-reset').addEventListener('click', () => { self.stop(); self.show(0); });
+    return self;
+  }
+
+  // ---------- slide 1: Where and Select ----------
+  const PERSONS = [
+    { first: 'Anna', city: 'Wien', age: 17 }, { first: 'Ben', city: 'Graz', age: 24 },
+    { first: 'Clara', city: 'Wien', age: 31 }, { first: 'David', city: 'Linz', age: 16 },
+    { first: 'Emma', city: 'Wien', age: 45 }
+  ];
+  const FILTERED = PERSONS.filter(p => p.city === 'Wien');
+  // Steps: 0 source, 1 Where appears, 2..6 check persons, 7 Select appears, 8..10 project, 11 ToList.
+  const A_COUNT = 2 + PERSONS.length + 1 + FILTERED.length + 1;
+  const aAnim = stepper('a', A_COUNT, step => {
+    const whereOn = step >= 1;
+    const checked = Math.max(0, Math.min(step - 1, PERSONS.length));
+    const selectStart = 2 + PERSONS.length;
+    const selectOn = step >= selectStart;
+    const projected = Math.max(0, Math.min(step - selectStart, FILTERED.length));
+    const done = step === A_COUNT - 1;
+    const checking = step >= 2 && step < 2 + PERSONS.length ? step - 2 : -1;
+    const projecting = step > selectStart && step <= selectStart + FILTERED.length ? step - selectStart - 1 : -1;
+
+    document.getElementById('a-linq').innerHTML =
+      hl('persons', 'from') +
+      (whereOn ? '\n    .' + hl('Where(p => p.City == "Wien")', 'where') : '') +
+      (selectOn ? '\n    .' + hl('Select(p => p.FirstName)', 'select') : '') +
+      (done ? '\n    .' + hl('ToList()', 'exec') : '');
+    document.getElementById('a-sql').innerHTML =
+      (selectOn ? hl('SELECT FirstName', 'select') : 'SELECT *') + '\n' + hl('FROM Persons', 'from') +
+      (whereOn ? '\n' + hl("WHERE City = 'Wien'", 'where') : '');
+
+    document.getElementById('a-t1').textContent = `IEnumerable<Person>, ${PERSONS.length} Elemente`;
+    document.getElementById('a-col1').innerHTML = PERSONS.map((p, i) => {
+      let cls = 'item';
+      let res = '';
+      const evaluated = step >= 2 && i < Math.min(step - 1, PERSONS.length);
+      if (evaluated) {
+        const ok = p.city === 'Wien';
+        cls += ok ? ' ok' : ' no';
+        res = ok ? '✓' : '✗';
+      }
+      if (i === checking) { cls += ' current'; }
+      return `<div class="${cls}">${esc(`${p.first}, ${p.city}, ${p.age}`)}<span class="res">${res}</span></div>`;
+    }).join('');
+    const passed = step >= 2 ? PERSONS.slice(0, Math.min(step - 1, PERSONS.length)).filter(p => p.city === 'Wien') : [];
+    document.getElementById('a-t2').textContent = whereOn ? `IEnumerable<Person>, ${passed.length} Elemente` : '';
+    document.getElementById('a-col2').innerHTML = passed.map((p, i) =>
+      `<div class="item${i === projecting ? ' current' : ''}${i < projected ? ' ok' : ''}">${esc(`${p.first}, ${p.city}, ${p.age}`)}</div>`).join('');
+    document.getElementById('a-t3').textContent = selectOn ? `IEnumerable<string>, ${projected} Elemente` : '';
+    document.getElementById('a-col3').innerHTML = FILTERED.slice(0, projected).map(p => `<div class="item str appear">"${esc(p.first)}"</div>`).join('');
+
+    let caption;
+    if (step === 0) {
+      caption = 'Die Quelle: eine Liste mit 5 Personen. In SQL entspricht das <code>FROM Persons</code>.';
+    } else if (step === 1) {
+      caption = '<code>Where</code> bekommt ein <b>Predicate</b>: eine Lambda, die für jede Person <code>true</code> oder <code>false</code> liefert. In SQL ist das die <code>WHERE</code>-Klausel.';
+    } else if (checking >= 0) {
+      const p = PERSONS[checking];
+      const ok = p.city === 'Wien';
+      caption = `<code>"${esc(p.city)}" == "Wien"</code> ist <b>${ok}</b>. ${ok ? '✓ Die Person bleibt.' : '✗ Die Person fällt weg.'}`;
+    } else if (step === selectStart) {
+      caption = `<code>Where</code> ist fertig: <b>weniger Elemente, gleicher Typ</b> (Person). Jetzt kommt <code>Select</code> mit einer <b>Projection</b>: Was soll aus jeder Person werden? In SQL ist das die Liste nach <code>SELECT</code>.`;
+    } else if (projecting >= 0) {
+      const p = FILTERED[projecting];
+      caption = `<code>p => p.FirstName</code> macht aus der Person ${esc(p.first)} den string <code>"${esc(p.first)}"</code>.`;
+    } else {
+      caption = '<code>Select</code> ist fertig: <b>gleich viele Elemente, anderer Typ</b> (string). <code>ToList()</code> führt die Abfrage aus und liefert eine <code>List&lt;string&gt;</code>.';
+    }
+    document.getElementById('a-caption').innerHTML = caption;
+  });
+
+  // ---------- slide 2: Any and EXISTS ----------
+  const EVENTS = [
+    { name: 'Funk', shows: ['2023-06-16', '2024-05-28', '2024-07-01'] },
+    { name: 'Rap', shows: ['2023-07-28', '2023-10-21'] },
+    { name: 'Country', shows: ['2024-01-12', '2023-09-24'] },
+    { name: 'Jazz', shows: [] }
+  ];
+  // Every check of a show is one step. Any stops at the first hit.
+  const CHECKS = [];
+  EVENTS.forEach((e, ei) => {
+    if (e.shows.length === 0) { CHECKS.push({ ei, si: -1 }); return; }
+    for (let si = 0; si < e.shows.length; si++) {
+      CHECKS.push({ ei, si });
+      if (e.shows[si].startsWith('2024')) { break; }
+    }
+  });
+  function anyResult(e) { return e.shows.some(s => s.startsWith('2024')); }
+  const bAnim = stepper('b', CHECKS.length + 2, step => {
+    const done = step === CHECKS.length + 1;
+    const upTo = step === 0 ? -1 : Math.min(step - 1, CHECKS.length - 1);
+    const current = step >= 1 && !done ? CHECKS[step - 1] : null;
+    const seen = new Set(CHECKS.slice(0, upTo + 1).map(c => `${c.ei}-${c.si}`));
+    const finishedEvents = new Set();
+    EVENTS.forEach((e, ei) => {
+      const lastIndex = CHECKS.map(c => c.ei).lastIndexOf(ei);
+      if (lastIndex <= upTo) { finishedEvents.add(ei); }
+    });
+    document.getElementById('b-events').innerHTML = EVENTS.map((e, ei) => {
+      const shows = e.shows.length === 0 ? '<span class="hint">keine Shows</span>' : e.shows.map((d, si) => {
+        let cls = 'show';
+        if (seen.has(`${ei}-${si}`)) { cls += d.startsWith('2024') ? ' hit' : ' miss'; } else if (finishedEvents.has(ei)) { cls += ' skip'; }
+        return `<span class="${cls}">${d}</span>`;
+      }).join('');
+      const res = finishedEvents.has(ei) ? (anyResult(e) ? '<span class="res ok">✓ true</span>' : '<span class="res no">✗ false</span>') : '';
+      return `<div class="event${current && current.ei === ei ? ' current' : ''}"><span class="name">${esc(e.name)}</span>${res}<br>${shows}</div>`;
+    }).join('');
+    const result = EVENTS.filter((e, ei) => finishedEvents.has(ei) && anyResult(e));
+    document.getElementById('b-result').innerHTML = result.length === 0 ? '<span class="hint">noch leer</span>'
+      : result.map(e => `<div class="item ok appear">${esc(e.name)}</div>`).join('');
+    let caption;
+    if (step === 0) {
+      caption = 'Für jedes Event fragt <code>Any</code>: Gibt es <b>mindestens eine</b> Show im Jahr 2024? In SQL ist das eine Unterabfrage mit <code>EXISTS</code>.';
+    } else if (done) {
+      caption = '<b>Fertig.</b> Gedimmte Shows wurden nie geprüft: Nach dem ersten Treffer steht das Ergebnis fest. Jazz hat keine Shows, <code>Any</code> liefert dort <code>false</code>. <code>All</code> würde für eine leere Liste <code>true</code> liefern.';
+    } else if (current.si < 0) {
+      caption = `${esc(EVENTS[current.ei].name)} hat keine Shows. <code>Any</code> auf einer leeren Liste ist <b>false</b>.`;
+    } else {
+      const e = EVENTS[current.ei];
+      const d = e.shows[current.si];
+      const hit = d.startsWith('2024');
+      caption = `${esc(e.name)}: Show am <code>${d}</code> → ${hit ? '<b>Treffer ✓</b>. Any liefert sofort <code>true</code>, die restlichen Shows werden nicht mehr geprüft.' : 'kein Treffer ✗, weiter mit der nächsten Show.'}`;
+    }
+    document.getElementById('b-caption').innerHTML = caption;
+  });
+
+  // ---------- slide 3: deferred execution ----------
+  const C_STEPS = [
+    { code: [['IQueryable<Show> query = _db.Shows;', 'from']], db: null,
+      c: 'Die Variable <code>query</code> enthält nur eine <b>Beschreibung</b> der Abfrage. Die Datenbank bekommt noch nichts.' },
+    { code: [['IQueryable<Show> query = _db.Shows;', ''], ['query = query.Where(s => s.Date.Year == 2024);', 'where']], db: null,
+      c: '<code>Where</code> erweitert die Beschreibung. Es läuft noch immer keine Abfrage.' },
+    { code: [['IQueryable<Show> query = _db.Shows;', ''], ['query = query.Where(s => s.Date.Year == 2024);', ''], ['IQueryable<DateTime> dates = query.Select(s => s.Date);', 'select']], db: null,
+      c: '<code>Select</code> erweitert sie wieder. Der Typ ist jetzt <code>IQueryable&lt;DateTime&gt;</code>.' },
+    { code: [['IQueryable<Show> query = _db.Shows;', ''], ['query = query.Where(s => s.Date.Year == 2024);', ''], ['IQueryable<DateTime> dates = query.Select(s => s.Date);', ''], ['List<DateTime> list = dates.ToList();', 'exec']],
+      db: "SELECT s.Date FROM Shows AS s\nWHERE strftime('%Y', s.Date) = '2024'\n\n→ liefert das Datum jeder Show aus 2024",
+      c: '<code>ToList()</code> <b>führt die Abfrage aus</b>. EF Core übersetzt die ganze Beschreibung in <b>eine</b> SQL-Anweisung und lädt das Ergebnis.' },
+    { code: [['IQueryable<Show> query = _db.Shows;', ''], ['query = query.Where(s => s.Date.Year == 2024);', ''], ['IQueryable<DateTime> dates = query.Select(s => s.Date);', ''], ['List<DateTime> list = dates.ToList();', ''], ['int count = dates.Count();', 'exec']],
+      db: "SELECT COUNT(*) FROM Shows AS s\nWHERE strftime('%Y', s.Date) = '2024'\n\n→ liefert eine Zahl",
+      c: '<code>Count()</code> führt die Beschreibung <b>noch einmal</b> aus, diesmal als <code>COUNT(*)</code>. Jeder ausführende Aufruf schickt eine eigene Abfrage. Brauchst du das Ergebnis öfter, speichere die Liste.' },
+    { code: [['List<DateTime> list = dates.ToList();', ''], ['var in2024 = list.Where(d => d.Month == 5);', 'where']], db: null, memory: true,
+      c: '<code>list</code> ist eine <code>List&lt;DateTime&gt;</code> im Speicher. Ein <code>Where</code> darauf ist LINQ to Objects: C# führt die Lambda aus, die Datenbank bekommt nichts.' }
+  ];
+  const cAnim = stepper('c', C_STEPS.length, step => {
+    const st = C_STEPS[step];
+    document.getElementById('c-code').innerHTML = st.code.map(([t, k]) => k ? hl(t, k) : `<span class="hl dim">${esc(t)}</span>`).join('\n');
+    const db = document.getElementById('c-db');
+    if (st.db) {
+      db.className = 'db appear';
+      db.innerHTML = `<b>SQL wird ausgeführt</b><pre class="code">${esc(st.db)}</pre>`;
+    } else {
+      db.className = 'db idle';
+      db.innerHTML = st.memory ? '<span class="muted">keine Abfrage: Die Daten sind schon im Speicher.</span>' : '<span class="muted">keine Abfrage</span>';
+    }
+    document.getElementById('c-caption').innerHTML = st.c;
+  });
+
+  // ---------- slide 4: exercise ----------
+  const ROUNDS = [
+    { id: 'sql-where-select', title: 'WHERE und SELECT',
+      q: 'Welcher LINQ-Ausdruck entspricht dieser SQL-Abfrage?',
+      code: 'SELECT LastName FROM Persons WHERE Age >= 18',
+      options: ['persons.Select(p => p.LastName).Where(p => p.Age >= 18)', 'persons.Where(p => p.Age >= 18).Select(p => p.LastName)',
+        'persons.Where(p => p.LastName).Select(p => p.Age >= 18)', 'persons.Select(p => p.Age >= 18).Where(p => p.LastName)'], correct: 1,
+      why: 'Zuerst filtern, dann projizieren. Nach Select(p => p.LastName) sind die Elemente strings, ein Filter auf p.Age geht dann nicht mehr.' },
+    { id: 'sql-exists', title: 'EXISTS',
+      q: 'Welcher LINQ-Ausdruck entspricht dieser SQL-Abfrage?',
+      code: "SELECT e.* FROM Events e\nWHERE EXISTS (SELECT 1 FROM Shows s\n              WHERE s.EventId = e.Id AND s.Date >= '2024-01-01')",
+      options: ['_db.Events.Where(e => e.Shows.All(s => s.Date >= new DateTime(2024, 1, 1)))',
+        '_db.Shows.Where(s => s.Date >= new DateTime(2024, 1, 1)).Select(s => s.Event)',
+        '_db.Events.Where(e => e.Shows.Any(s => s.Date >= new DateTime(2024, 1, 1)))',
+        '_db.Events.Any(e => e.Shows.Count > 0)'], correct: 2,
+      why: 'EXISTS entspricht Any auf der Navigation e.Shows. Die Variante über _db.Shows liefert ein Event pro passender Show, also Duplikate. All prüft, ob alle Shows passen. _db.Events.Any(...) liefert nur einen bool.' },
+    { id: 'sql-not-exists', title: 'NOT EXISTS',
+      q: 'Gesucht sind alle Gäste ohne Ticket. Welcher Ausdruck ist richtig?',
+      code: 'SELECT g.* FROM Guests g\nWHERE NOT EXISTS (SELECT 1 FROM Tickets t WHERE t.GuestId = g.Id)',
+      options: ['_db.Guests.Where(g => g.Tickets == null)', '_db.Guests.Where(g => !g.Tickets.Any())',
+        '_db.Guests.Where(g => g.Tickets.All(t => t.Pax == 0))', '_db.Guests.Where(g => g.Tickets.Any(t => t == null))'], correct: 1,
+      why: '!Any() wird zu NOT EXISTS. Die Liste g.Tickets ist bei einem Gast ohne Tickets leer, aber nicht null. All liefert auch für Gäste mit Tickets true, wenn alle Pax 0 haben.' },
+    { id: 'type-where', title: 'Ergebnis von Where',
+      q: '<code>persons</code> enthält 5 Personen, 3 davon wohnen in Wien. Was liefert der Ausdruck?',
+      code: 'persons.Where(p => p.City == "Wien")',
+      options: ['IEnumerable<Person> mit 3 Elementen', 'List<string> mit 3 Elementen', 'IEnumerable<Person> mit 5 Elementen', 'bool'], correct: 0, text: true,
+      why: 'Where filtert: weniger Elemente, gleicher Typ. Eine List entsteht erst mit ToList().' },
+    { id: 'type-select', title: 'Ergebnis von Select',
+      q: '<code>persons</code> enthält 5 Personen. Was liefert der Ausdruck?',
+      code: 'persons.Select(p => p.Age)',
+      options: ['IEnumerable<Person> mit 5 Elementen', 'int (die Summe)', 'IEnumerable<int> mit 5 Elementen', 'IEnumerable<int> mit so vielen Elementen, wie es verschiedene Alter gibt'], correct: 2, text: true,
+      why: 'Select projiziert jedes Element: gleich viele Elemente, anderer Typ. Duplikate entfernt erst Distinct().' },
+    { id: 'all-empty', title: 'All auf einer leeren Liste',
+      q: 'Das Event Jazz hat <b>keine</b> Shows. Ist es im Ergebnis?',
+      code: '_db.Events.Where(e => e.Shows.All(s => s.Date.Year == 2024)).ToList()',
+      options: ['Ja, All liefert für eine leere Liste true', 'Nein, All liefert für eine leere Liste false', 'Nein, die Abfrage wirft eine Exception', 'Das hängt von der Datenbank ab'], correct: 0, text: true,
+      why: 'All bedeutet: Es gibt kein Element, das die Bedingung verletzt. Bei einer leeren Liste stimmt das immer. In SQL ist es NOT EXISTS (... NOT ...).' },
+    { id: 'translate-year', title: 'Übersetzbar? (1)',
+      q: 'Kann der SQLite-Provider von EF Core diese Abfrage in SQL übersetzen?',
+      code: '_db.Shows.Where(s => s.Date.Year == 2024).ToList()',
+      options: ['Ja', 'Nein, es gibt eine InvalidOperationException'], correct: 0, text: true,
+      why: 'DateTime.Year übersetzt EF Core mit strftime(\'%Y\', ...).' },
+    { id: 'translate-timespan', title: 'Übersetzbar? (2)',
+      q: 'Kann der SQLite-Provider von EF Core diese Abfrage in SQL übersetzen?',
+      code: '_db.Tickets\n    .Where(t => (t.Contingent.Show.Date - t.ReservationDateTime).TotalDays > 20)\n    .ToList()',
+      options: ['Ja', 'Nein, es gibt eine InvalidOperationException'], correct: 1, text: true,
+      why: 'Die Differenz zweier DateTime ist ein TimeSpan. Dafür hat SQLite keinen Typ. Formuliere um: t.ReservationDateTime < t.Contingent.Show.Date.AddDays(-20).' },
+    { id: 'translate-method', title: 'Übersetzbar? (3)',
+      q: '<code>IsAdult</code> ist eine eigene statische Methode. Kann EF Core die Abfrage übersetzen?',
+      code: '_db.Guests.Where(g => IsAdult(g)).ToList()',
+      options: ['Ja', 'Nein, es gibt eine InvalidOperationException'], correct: 1, text: true,
+      why: 'EF Core sieht nur den Aufruf einer Methode, nicht ihren Inhalt. Schreibe die Bedingung direkt in die Lambda.' },
+    { id: 'tolist-early', title: 'Wo wird gezählt?',
+      q: 'Beide Zeilen liefern dieselbe Zahl. Welche ist besser?',
+      code: 'int a = _db.Tickets.ToList().Count(t => t.Pax > 0);\nint b = _db.Tickets.Count(t => t.Pax > 0);',
+      options: ['a, weil ToList() schneller ist', 'b, weil die Datenbank zählt und nur eine Zahl liefert', 'Beide sind gleich gut', 'a, weil b nicht übersetzt werden kann'], correct: 1, text: true,
+      why: 'Bei a lädt ToList() die ganze Tabelle in den Speicher, erst dann zählt C#. Bei b schickt EF Core SELECT COUNT(*) ... WHERE Pax > 0.' }
+  ];
+  let solved = new Set(store.get('solved', []));
+  let roundIndex = Math.min(Math.max(store.get('round', 0) | 0, 0), ROUNDS.length - 1);
+  let answered = false;
+  const feedback = document.getElementById('feedback');
+
+  function drawRounds() {
+    const box = document.getElementById('roundButtons');
+    box.innerHTML = '';
+    ROUNDS.forEach((r, i) => {
+      const b = document.createElement('button');
+      b.textContent = String(i + 1);
+      b.title = r.title;
+      b.className = (solved.has(r.id) ? 'solved ' : '') + (i === roundIndex ? 'current' : '');
+      b.setAttribute('aria-label', `Runde ${i + 1}: ${r.title}${solved.has(r.id) ? ' (gelöst)' : ''}`);
+      b.addEventListener('click', () => selectRound(i));
+      box.appendChild(b);
+    });
+    const r = ROUNDS[roundIndex];
+    document.getElementById('roundCard').innerHTML =
+      `<b>Runde ${roundIndex + 1} von ${ROUNDS.length}: ${esc(r.title)}</b>${solved.has(r.id) ? ' <span class="muted">✓ gelöst</span>' : ''}` +
+      `<br>${r.q}<br><span class="hint">Gelöst: ${solved.size} von ${ROUNDS.length} Runden</span>`;
+  }
+  function pick(i, button) {
+    if (answered) { return; }
+    const r = ROUNDS[roundIndex];
+    if (i === r.correct) {
+      answered = true;
+      button.classList.add('picked-right');
+      solved.add(r.id);
+      store.set('solved', Array.from(solved));
+      feedback.className = 'feedback ok';
+      feedback.innerHTML = `✓ Richtig. ${esc(r.why)}`;
+      drawRounds();
+      document.getElementById('nextRoundBtn').style.display = roundIndex < ROUNDS.length - 1 ? '' : 'none';
+    } else {
+      button.classList.add('picked-wrong');
+      button.disabled = true;
+      feedback.className = 'feedback bad';
+      feedback.innerHTML = '✗ Nicht ganz. Überlege: Was filtert die Abfrage, was projiziert sie, und wo wird sie ausgeführt?';
+    }
+  }
+  function selectRound(i) {
+    roundIndex = i;
+    answered = false;
+    store.set('round', i);
+    feedback.className = 'feedback';
+    feedback.innerHTML = '';
+    document.getElementById('nextRoundBtn').style.display = 'none';
+    const r = ROUNDS[i];
+    document.getElementById('exCode').textContent = r.code;
+    const box = document.getElementById('choices');
+    box.innerHTML = '';
+    r.options.forEach((opt, k) => {
+      const b = document.createElement('button');
+      b.textContent = opt;
+      if (r.text) { b.classList.add('text'); }
+      b.addEventListener('click', () => pick(k, b));
+      box.appendChild(b);
+    });
+    drawRounds();
+  }
+  document.getElementById('solutionBtn').addEventListener('click', () => {
+    const r = ROUNDS[roundIndex];
+    feedback.className = 'feedback info';
+    feedback.innerHTML = `Richtig ist: <code>${esc(r.options[r.correct])}</code>. ${esc(r.why)} Wähle die Antwort selbst aus, damit die Runde als gelöst zählt.`;
+  });
+  document.getElementById('nextRoundBtn').addEventListener('click', () => selectRound(roundIndex + 1));
+
+  // ---------- slides ----------
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  let current = Math.min(Math.max(store.get('slide', 0) | 0, 0), slides.length - 1);
+  function showSlide(i) {
+    current = Math.min(Math.max(i, 0), slides.length - 1);
+    slides.forEach((s, k) => s.classList.toggle('active', k === current));
+    document.getElementById('progressText').textContent = `${current + 1} / ${slides.length}`;
+    document.getElementById('progressBar').style.width = `${(current + 1) / slides.length * 100}%`;
+    document.getElementById('prevBtn').disabled = current === 0;
+    document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    aAnim.stop(); bAnim.stop(); cAnim.stop();
+    store.set('slide', current);
+    window.scrollTo(0, 0);
+  }
+  document.getElementById('prevBtn').addEventListener('click', () => showSlide(current - 1));
+  document.getElementById('nextBtn').addEventListener('click', () => showSlide(current + 1));
+  document.addEventListener('keydown', evt => {
+    const tag = evt.target && evt.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (evt.target && evt.target.isContentEditable)) { return; }
+    if (evt.ctrlKey || evt.altKey || evt.metaKey) { return; }
+    if (evt.key === 'ArrowRight' || evt.key === 'PageDown') { showSlide(current + 1); evt.preventDefault(); }
+    if (evt.key === 'ArrowLeft' || evt.key === 'PageUp') { showSlide(current - 1); evt.preventDefault(); }
+  });
+
+  // ---------- start ----------
+  aAnim.show(0);
+  bAnim.show(0);
+  cAnim.show(0);
+  selectRound(roundIndex);
+  showSlide(current);
+
+  /** Read-only hooks for automated tests. */
+  window.linqDebug = {
+    rounds: () => ROUNDS.map(r => ({ id: r.id, correct: r.correct, count: r.options.length })),
+    selfTest: () => ROUNDS.filter(r => r.correct < 0 || r.correct >= r.options.length || !r.why).map(r => r.id),
+    counts: () => ({ a: A_COUNT, b: CHECKS.length + 2, c: C_STEPS.length })
+  };
+})();
+</script>
+</body>
+</html>

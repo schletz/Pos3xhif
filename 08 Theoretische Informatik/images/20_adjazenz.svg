@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="320" viewBox="0 0 820 320">
+  <rect x="0.5" y="0.5" width="819" height="319" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker>
+    <marker id="arrowOrange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ea580c"/></marker>
+  </defs>
+  <text x="135.0" y="36.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#1f2937" text-anchor="middle" font-weight="600">Graph</text>
+  <line x1="125.1" y1="92.6" x2="89.9" y2="137.4" stroke="#1f2937" stroke-width="1.6"/>
+  <line x1="144.9" y1="92.6" x2="180.1" y2="137.4" stroke="#1f2937" stroke-width="1.6"/>
+  <line x1="96.0" y1="150.0" x2="174.0" y2="150.0" stroke="#1f2937" stroke-width="1.6"/>
+  <line x1="80.0" y1="166.0" x2="80.0" y2="229.0" stroke="#ea580c" stroke-width="2.6"/>
+  <line x1="190.0" y1="166.0" x2="190.0" y2="229.0" stroke="#1f2937" stroke-width="1.6"/>
+  <line x1="96.0" y1="245.0" x2="174.0" y2="245.0" stroke="#1f2937" stroke-width="1.6"/>
+  <circle cx="135.0" cy="80.0" r="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="135.0" y="85.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">A</text>
+  <circle cx="80.0" cy="150.0" r="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="80.0" y="155.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">B</text>
+  <circle cx="190.0" cy="150.0" r="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="190.0" y="155.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">C</text>
+  <circle cx="80.0" cy="245.0" r="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="80.0" y="250.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">D</text>
+  <circle cx="190.0" cy="245.0" r="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="190.0" y="250.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">E</text>
+  <text x="135.0" y="296.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#6b7280" text-anchor="middle">6 Kanten, ungerichtet</text>
+  <text x="402.0" y="36.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#1f2937" text-anchor="middle" font-weight="600">Adjazenzmatrix</text>
+  <text x="351.0" y="82.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle" font-weight="bold">A</text>
+  <text x="317.0" y="116.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle" font-weight="bold">A</text>
+  <text x="385.0" y="82.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle" font-weight="bold">B</text>
+  <text x="317.0" y="150.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle" font-weight="bold">B</text>
+  <text x="419.0" y="82.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle" font-weight="bold">C</text>
+  <text x="317.0" y="184.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle" font-weight="bold">C</text>
+  <text x="453.0" y="82.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle" font-weight="bold">D</text>
+  <text x="317.0" y="218.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle" font-weight="bold">D</text>
+  <text x="487.0" y="82.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle" font-weight="bold">E</text>
+  <text x="317.0" y="252.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle" font-weight="bold">E</text>
+  <rect x="334" y="94" width="34" height="34" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="351.0" y="116.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#9ca3af" text-anchor="middle">0</text>
+  <rect x="368" y="94" width="34" height="34" fill="#dbeafe" stroke="#d1d5db"/>
+  <text x="385.0" y="116.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle" font-weight="bold">1</text>
+  <rect x="402" y="94" width="34" height="34" fill="#dbeafe" stroke="#d1d5db"/>
+  <text x="419.0" y="116.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle" font-weight="bold">1</text>
+  <rect x="436" y="94" width="34" height="34" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="453.0" y="116.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#9ca3af" text-anchor="middle">0</text>
+  <rect x="470" y="94" width="34" height="34" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="487.0" y="116.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#9ca3af" text-anchor="middle">0</text>
+  <rect x="334" y="128" width="34" height="34" fill="#dbeafe" stroke="#d1d5db"/>
+  <text x="351.0" y="150.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle" font-weight="bold">1</text>
+  <rect x="368" y="128" width="34" height="34" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="385.0" y="150.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#9ca3af" text-anchor="middle">0</text>
+  <rect x="402" y="128" width="34" height="34" fill="#dbeafe" stroke="#d1d5db"/>
+  <text x="419.0" y="150.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle" font-weight="bold">1</text>
+  <rect x="436" y="128" width="34" height="34" fill="#ffedd5" stroke="#d1d5db"/>
+  <text x="453.0" y="150.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">1</text>
+  <rect x="470" y="128" width="34" height="34" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="487.0" y="150.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#9ca3af" text-anchor="middle">0</text>
+  <rect x="334" y="162" width="34" height="34" fill="#dbeafe" stroke="#d1d5db"/>
+  <text x="351.0" y="184.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle" font-weight="bold">1</text>
+  <rect x="368" y="162" width="34" height="34" fill="#dbeafe" stroke="#d1d5db"/>
+  <text x="385.0" y="184.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle" font-weight="bold">1</text>
+  <rect x="402" y="162" width="34" height="34" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="419.0" y="184.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#9ca3af" text-anchor="middle">0</text>
+  <rect x="436" y="162" width="34" height="34" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="453.0" y="184.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#9ca3af" text-anchor="middle">0</text>
+  <rect x="470" y="162" width="34" height="34" fill="#dbeafe" stroke="#d1d5db"/>
+  <text x="487.0" y="184.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle" font-weight="bold">1</text>
+  <rect x="334" y="196" width="34" height="34" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="351.0" y="218.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#9ca3af" text-anchor="middle">0</text>
+  <rect x="368" y="196" width="34" height="34" fill="#ffedd5" stroke="#d1d5db"/>
+  <text x="385.0" y="218.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">1</text>
+  <rect x="402" y="196" width="34" height="34" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="419.0" y="218.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#9ca3af" text-anchor="middle">0</text>
+  <rect x="436" y="196" width="34" height="34" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="453.0" y="218.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#9ca3af" text-anchor="middle">0</text>
+  <rect x="470" y="196" width="34" height="34" fill="#dbeafe" stroke="#d1d5db"/>
+  <text x="487.0" y="218.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle" font-weight="bold">1</text>
+  <rect x="334" y="230" width="34" height="34" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="351.0" y="252.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#9ca3af" text-anchor="middle">0</text>
+  <rect x="368" y="230" width="34" height="34" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="385.0" y="252.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#9ca3af" text-anchor="middle">0</text>
+  <rect x="402" y="230" width="34" height="34" fill="#dbeafe" stroke="#d1d5db"/>
+  <text x="419.0" y="252.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle" font-weight="bold">1</text>
+  <rect x="436" y="230" width="34" height="34" fill="#dbeafe" stroke="#d1d5db"/>
+  <text x="453.0" y="252.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle" font-weight="bold">1</text>
+  <rect x="470" y="230" width="34" height="34" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="487.0" y="252.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#9ca3af" text-anchor="middle">0</text>
+  <text x="402.0" y="290.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#6b7280" text-anchor="middle">symmetrisch, weil ungerichtet</text>
+  <text x="670.0" y="36.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#1f2937" text-anchor="middle" font-weight="600">Adjazenzliste</text>
+  <circle cx="574.0" cy="84.0" r="14" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="574.0" y="89.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">A</text>
+  <line x1="592" y1="84" x2="618" y2="84" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <rect x="626" y="70" width="34" height="28" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="643.0" y="89.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">B</text>
+  <rect x="666" y="70" width="34" height="28" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="683.0" y="89.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">C</text>
+  <circle cx="574.0" cy="126.0" r="14" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="574.0" y="131.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">B</text>
+  <line x1="592" y1="126" x2="618" y2="126" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <rect x="626" y="112" width="34" height="28" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="643.0" y="131.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">A</text>
+  <rect x="666" y="112" width="34" height="28" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="683.0" y="131.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">C</text>
+  <rect x="706" y="112" width="34" height="28" rx="4" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+  <text x="723.0" y="131.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">D</text>
+  <circle cx="574.0" cy="168.0" r="14" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="574.0" y="173.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">C</text>
+  <line x1="592" y1="168" x2="618" y2="168" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <rect x="626" y="154" width="34" height="28" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="643.0" y="173.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">A</text>
+  <rect x="666" y="154" width="34" height="28" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="683.0" y="173.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">B</text>
+  <rect x="706" y="154" width="34" height="28" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="723.0" y="173.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">E</text>
+  <circle cx="574.0" cy="210.0" r="14" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="574.0" y="215.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">D</text>
+  <line x1="592" y1="210" x2="618" y2="210" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <rect x="626" y="196" width="34" height="28" rx="4" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+  <text x="643.0" y="215.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">B</text>
+  <rect x="666" y="196" width="34" height="28" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="683.0" y="215.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">E</text>
+  <circle cx="574.0" cy="252.0" r="14" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="574.0" y="257.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">E</text>
+  <line x1="592" y1="252" x2="618" y2="252" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <rect x="626" y="238" width="34" height="28" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="643.0" y="257.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">C</text>
+  <rect x="666" y="238" width="34" height="28" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="683.0" y="257.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">D</text>
+  <text x="670.0" y="296.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#6b7280" text-anchor="middle">pro Knoten die Liste seiner Nachbarn</text>
+</svg>

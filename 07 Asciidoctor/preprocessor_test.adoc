@@ -1,0 +1,56 @@
+= Preprocessor Test
+:source-highlighter: rouge
+
+== Erklärung zu PL/SQL und Stored Procedures
+
+chatgpt_prompt::["Erkläre in eigenen Worten, was PL/SQL ist und wofür es verwendet wird.
+Erkläre was Stored Procedures sind und wie sie in PL/SQL verwendet werden.
+Gib Codebeispiele in einem sql source block an und erkläre sie mit callouts.
+",max_tokens=10000,temperature=0.5]
+
+
+== Generieren der Tabelle
+
+Um Personen in der Datenbank speichern zu können, legen wir eine Tabelle mit Constraints an.
+
+chatgpt_prompt::["Erstelle in SQL eine Tabelle Person mit den Spalten Id, Firstname und Lastname in einem source block.
+Überlege sinnvolle Constraints, die du nachher definierst.
+Verwende Callouts zur Erklärung der Constraints im SQL Code und erkläre sie außerhalb des SQL Blocks. 
+Der Block hat keine Überschrift.
+",max_tokens=10000,temperature=0.5,save_message=true]
+
+== Einfügen mit Musterdaten
+
+Wir wollen die folgenden Daten in die Tabelle einfügen:
+
+chatgpt_prompt::["Erstelle eine Asciidoc Tabelle mit 3 Spalten: ID, Vorname, Nachname.
+Erstelle 10 Zeilen, wobei jeder Wert mit Zufallsdaten gefüllt werden soll.
+",max_tokens=10000,temperature=0.5,save_message=true]
+
+Dafür generieren wir INSERT INTO Anweisungen, die wir an die Datenbank senden:
+
+chatgpt_prompt::["Erstelle ein SQL Skript, das die 10 vorher generierten Datensätze in die vorher erstellte Tabelle Person
+mit den Spalten Id, Firstname und Lastname einfügt in einem source block.
+Es sollen genau die Daten eingefügt werden, die du vorher generiert hast.
+",max_tokens=10000,temperature=0]
+
+Eine mögliche Erweiterung der Datenbank ist das Einfügen der folgenden Tabelle:
+
+== Verwendung einer stored procedure
+
+chatgpt_prompt::["Erstelle eine Stored Procedure in PL/SQL (nicht T-SQL) auf Basis der generierten Tabelle Person.
+Füge sie in einem source block ein.
+Beschreibe darunter mit callouts, was die Stored Procedure macht.
+",max_tokens=10000,temperature=0]
+
+== Erweiterung der Datenbank
+
+chatgpt_prompt::["Stelle die erstellte Tabelle Person mit einer 2. Tabelle als PlantUML Diagramm dar.
+Überlege einen realen Use Case.
+Verwende ein ER Diagramm und Fremdschlüssel.
+Kennzeichne den Fremdschlüssel im ER Diagramm.
+Beschreibe darunter unter der Überschrift
+=== Erklärung
+welchen Use Case dieses Modell abdeckt.
+",max_tokens=10000,temperature=0.5]
+

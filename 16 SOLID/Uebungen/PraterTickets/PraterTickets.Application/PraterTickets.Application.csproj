@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <!-- dotnet build -p:CheckMetrics=true reports every method whose cyclomatic complexity
+       exceeds the limit in CodeMetricsConfig.txt (rule CA1502). -->
+  <ItemGroup Condition="'$(CheckMetrics)' == 'true'">
+    <AdditionalFiles Include="CodeMetricsConfig.txt" />
+    <GlobalAnalyzerConfigFiles Include="CodeMetrics.globalconfig" />
+  </ItemGroup>
+
+</Project>

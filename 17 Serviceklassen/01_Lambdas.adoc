@@ -1,0 +1,391 @@
+= Lambda Expressions
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Eine App verwaltet Personen in einer Liste.
+Die Leitung möchte alle Personen aus Wien sehen.
+Dann alle Volljährigen.
+Dann alle, deren Nachname mit „B“ beginnt.
+Du schreibst drei Methoden, und alle drei sehen fast gleich aus: eine Schleife, ein `if`, ein `Add`.
+Nur die Bedingung im `if` ist anders.
+In diesem Kapitel lernst du, wie du *die Bedingung selbst als Parameter übergibst*.
+Dafür gibt es in C# *Lambda Expressions* (kurz: Lambdas).
+Sie sind die Grundlage für LINQ, mit dem du später Datenbanken abfragst.
+
+[TIP]
+====
+*Zum Selbst-Erarbeiten: Lambdas lesen und schreiben*
+
+In der https://die-spengergasse.github.io/course-pos-csharp_basics/17%20Serviceklassen/01_Lambdas.html[interaktiven Präsentation zu Lambda Expressions] siehst du Schritt für Schritt, wie aus einer Methode eine Lambda wird.
+Danach übst du mit sofortigem Feedback, welchen Typ (`Func` oder `Action`) eine Lambda hat und wie du sie kurz schreibst.
+Das trainiert genau das Lesen, das du für LINQ brauchst.
+====
+
+== Projekt anlegen
+
+Du brauchst eine Solution mit einer Application und einem Testprojekt.
+Führe diese Befehle in der Konsole aus.
+Unter macOS ersetzt du _rd_, _md_ und _move_ durch _rm -rf_, _mkdir_ und _mv_.
+
+[source,text]
+----
+rd /S /Q LambdaDemo
+md LambdaDemo
+cd LambdaDemo
+md LambdaDemo.Application
+cd LambdaDemo.Application
+dotnet new classlib
+cd ..
+md LambdaDemo.Tests
+cd LambdaDemo.Tests
+dotnet new install xunit.v3.templates
+dotnet new xunit3 -f net10.0
+move global.json ..
+dotnet reference add ..\LambdaDemo.Application
+cd ..
+dotnet new sln -f sln
+dotnet sln add LambdaDemo.Application
+dotnet sln add LambdaDemo.Tests
+start LambdaDemo.sln
+----
+
+Lösche _Class1.cs_ und _UnitTest1.cs_.
+Entferne in beiden Projektdateien die Zeile _ImplicitUsings_, im Testprojekt auch `+<Using Include="Xunit" />+`.
+Füge in beiden `+<TreatWarningsAsErrors>true</TreatWarningsAsErrors>+` hinzu.
+Was die einzelnen Befehle und Einstellungen bedeuten, steht im Kapitel link:{github_url}/15%20Unittests/02_xUnit.adoc#projekt-anlegen[Unit Tests mit xUnit].
+
+Lege im Projekt _LambdaDemo.Application_ den Record `Person` an:
+
+*Person.cs* (im Projekt _LambdaDemo.Application_)
+
+[source,csharp]
+----
+namespace LambdaDemo.Application;
+
+public record Person(string FirstName, string LastName, string City, int Age);
+----
+
+== Das Problem: dreimal fast dieselbe Methode
+
+*PersonFilter.cs* (im Projekt _LambdaDemo.Application_)
+
+[source,csharp]
+----
+using System.Collections.Generic;
+
+namespace LambdaDemo.Application;
+
+public static class PersonFilter
+{
+    public static List<Person> FilterByCity(List<Person> persons, string city)
+    {
+        var result = new List<Person>();
+        foreach (Person p in persons)
+        {
+            if (p.City == city) { result.Add(p); }
+        }
+        return result;
+    }
+
+    public static List<Person> FilterAdults(List<Person> persons)
+    {
+        var result = new List<Person>();
+        foreach (Person p in persons)
+        {
+            if (p.Age >= 18) { result.Add(p); }
+        }
+        return result;
+    }
+}
+----
+
+Das widerspricht dem Prinzip _DRY_ (siehe Kapitel link:{github_url}/16%20SOLID/02_DRY.adoc[DRY: Don't Repeat Yourself]).
+Mit einem `string`-Parameter kommen wir nicht weiter: Die Bedingungen sind ganz verschieden (`==` bei der Stadt, `+>=+` beim Alter).
+Was sich unterscheidet, ist nicht ein Wert, sondern *ein Stück Code*: die Bedingung im `if`.
+
+== Die Bedingung als Parameter
+
+C# erlaubt es, eine Funktion als Parameter zu übergeben.
+Der Parameter `condition` hat den Typ `+Func<Person, bool>+`.
+Das bedeutet: eine Funktion, die eine `Person` bekommt und einen `bool` liefert.
+
+[source,csharp]
+----
+public static List<Person> Filter(List<Person> persons, Func<Person, bool> condition)
+{
+    var result = new List<Person>();
+    foreach (Person p in persons)
+    {
+        if (condition(p)) { result.Add(p); }
+    }
+    return result;
+}
+----
+
+`condition(p)` ruft die übergebene Funktion auf, wie eine normale Methode.
+Für `Func` brauchst du `using System;`.
+Beim Aufruf schreibst du die Bedingung als *Lambda* direkt in die Klammern:
+
+[source,csharp]
+----
+List<Person> fromVienna = PersonFilter.Filter(persons, p => p.City == "Wien");
+List<Person> adults = PersonFilter.Filter(persons, p => p.Age >= 18);
+List<Person> startsWithB = PersonFilter.Filter(persons, p => p.LastName.StartsWith("B"));
+----
+
+image::{root_dir}/images/01_callback.svg[Filter ruft die Lambda für jedes Element auf]
+
+Die Methode `Filter` enthält die Schleife nur einmal.
+Die Bedingung kommt von außen.
+Eine Funktion, die eine andere Funktion als Parameter bekommt, nennt man *Higher-Order Function*.
+Eine Funktion, die für ein Element `true` oder `false` liefert, heißt *Predicate*.
+
+== Von der Methode zur Lambda
+
+Eine Lambda ist eine *Methode ohne Namen*, die du direkt dort schreibst, wo du sie brauchst.
+Du kannst jede kurze Methode in eine Lambda umformen:
+
+image::{root_dir}/images/01_lambda_anatomy.svg[Von der Methode zur Lambda Expression]
+
+[%header]
+|===
+|Was |Methode |Lambda
+|Ein Parameter |`+bool IsAdult(Person p) { return p.Age >= 18; }+` |`+p => p.Age >= 18+`
+|Zwei Parameter |`+int Add(int a, int b) { return a + b; }+` |`+(a, b) => a + b+`
+|Kein Parameter |`+bool AlwaysTrue() { return true; }+` |`+() => true+`
+|Kein Rückgabewert |`+void Print(Person p) { Console.WriteLine(p); }+` |`+p => Console.WriteLine(p)+`
+|Mehrere Anweisungen |`+bool Check(Person p) { var a = p.Age; return a >= 18; }+` |`+p => { var a = p.Age; return a >= 18; }+`
+|Typ angeben |`+bool IsAdult(Person p) { ... }+` |`+(Person p) => p.Age >= 18+`
+|===
+
+Die Regeln dahinter:
+
+* Den *Namen* und den *Rückgabetyp* lässt du weg.
+Der Compiler kennt sie aus dem Zusammenhang.
+* Den *Typ der Parameter* leitet der Compiler ebenfalls ab.
+Bei genau einem Parameter fallen auch die runden Klammern weg.
+* Besteht der Body aus *einem Ausdruck*, ist dieser automatisch der Rückgabewert.
+Dann entfallen `+{ }+` und `return`.
+Brauchst du mehrere Anweisungen, schreibst du `+{ }+` und `return` wie in einer Methode.
+* Die Namen der Parameter sind frei wählbar.
+Üblich ist der erste Buchstabe des Typs: `p` für `Person`, `t` für `Trip`.
+
+[NOTE]
+====
+Den Pfeil `+=>+` kennst du schon von Properties wie `+public string Longname => $"{Firstname} {Lastname}";+` (siehe Kapitel link:{github_url}/01%20Types/03_Properties.adoc[Properties]).
+Dort heißt er _expression-bodied member_ und ist eine Kurzform für `+get { return ...; }+`.
+Das ist keine Lambda, verwendet aber dieselbe Idee: Rechts vom Pfeil steht ein Ausdruck, sein Wert ist das Ergebnis.
+====
+
+== Welchen Typ hat eine Lambda? Func und Action
+
+C# ist statisch typisiert.
+Auch eine Lambda hat daher einen Typ.
+Die Typen heißen *Delegates*.
+Für fast alle Fälle reichen zwei generische Delegates aus dem Namespace `System`:
+
+image::{root_dir}/images/01_func_action.svg[Die Delegate-Typen Func und Action]
+
+[%header]
+|===
+|Delegate |Bedeutung |Beispiel
+|`+Func<TResult>+` |kein Parameter, liefert `TResult` |`+Func<bool> f = () => true;+`
+|`+Func<T, TResult>+` |ein Parameter vom Typ `T` |`+Func<Person, bool> f = p => p.Age >= 18;+`
+|`+Func<T1, T2, TResult>+` |zwei Parameter |`+Func<int, int, int> f = (a, b) => a + b;+`
+|`Action` |kein Parameter, kein Rückgabewert |`+Action a = () => Console.WriteLine("Hi");+`
+|`+Action<T>+` |ein Parameter, kein Rückgabewert |`+Action<Person> a = p => Console.WriteLine(p);+`
+|===
+
+Merkregel: Bei `Func` ist der *letzte* Typ immer der Rückgabetyp.
+`Action` liefert nichts (`void`).
+Beide gibt es mit bis zu 16 Parametern.
+
+Eine Lambda in einer Variable rufst du wie eine Methode auf:
+
+[source,csharp]
+----
+Func<int, int> square = x => x * x;
+Func<Person, string> fullName = p => $"{p.FirstName} {p.LastName}";
+Action<string> log = text => Console.WriteLine($"LOG: {text}");
+
+int nine = square(3);
+log(fullName(new Person("Anna", "Huber", "Wien", 17)));   // LOG: Anna Huber
+----
+
+Mit `var` musst du den Parametertyp in die Lambda schreiben, sonst kennt der Compiler ihn nicht: `+var square = (int x) => x * x;+`.
+In älteren Teilen von .NET findest du auch den Delegate `+Predicate<T>+`.
+Er entspricht `+Func<T, bool>+`, z. B. bei `+List<T>.FindAll+`.
+
+== Lambdas, die Variablen von außen verwenden
+
+Eine Lambda darf Variablen verwenden, die außerhalb von ihr deklariert sind:
+
+[source,csharp]
+----
+int minAge = 18;
+Func<Person, bool> isOldEnough = p => p.Age >= minAge;
+minAge = 21;
+List<Person> result = PersonFilter.Filter(persons, isOldEnough);   // uses 21, not 18
+----
+
+Die Lambda speichert *nicht den Wert* 18, sondern einen Verweis auf die Variable `minAge`.
+Sie wird erst ausgeführt, wenn `Filter` sie aufruft.
+Zu diesem Zeitpunkt ist `minAge` schon 21. Unterscheide daher immer zwischen dem *Schreiben* einer Lambda und ihrem *Ausführen*.
+Eine Lambda, die Variablen von außen verwendet, heißt *Closure*.
+
+Das ist besonders praktisch, wenn eine Methode eine Lambda *erzeugt*:
+
+[source,csharp]
+----
+public static Func<Person, bool> LivesIn(string city) => p => p.City == city;
+----
+
+Das erste `+=>+` gehört zur Methode (expression-bodied member), das zweite ist der Pfeil der Lambda.
+Der Aufruf `LivesIn("Graz")` liefert eine Lambda, die sich den Wert `"Graz"` merkt:
+
+[source,csharp]
+----
+Func<Person, bool> livesInGraz = PersonFilter.LivesIn("Graz");
+List<Person> fromGraz = PersonFilter.Filter(persons, livesInGraz);
+----
+
+== Lambdas testen
+
+Weil die Application eine Klassenbibliothek ist, probierst du die Beispiele als Tests aus:
+
+*PersonFilterTests.cs* (im Projekt _LambdaDemo.Tests_)
+
+[source,csharp]
+----
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using LambdaDemo.Application;
+using Xunit;
+
+namespace LambdaDemo.Tests;
+
+public class PersonFilterTests
+{
+    private readonly List<Person> _persons = new()
+    {
+        new Person("Anna", "Huber", "Wien", 17),
+        new Person("Ben", "Bauer", "Graz", 24),
+        new Person("Clara", "Berger", "Wien", 31),
+    };
+
+    [Fact]
+    public void FilterWithLambda()
+    {
+        List<Person> result = PersonFilter.Filter(_persons, p => p.City == "Wien");
+
+        Assert.Equal(new[] { "Anna", "Clara" }, result.Select(p => p.FirstName));
+    }
+
+    [Fact]
+    public void ClosureUsesCurrentValue()
+    {
+        int minAge = 18;
+        Func<Person, bool> isOldEnough = p => p.Age >= minAge;
+        minAge = 30;
+
+        List<Person> result = PersonFilter.Filter(_persons, isOldEnough);
+
+        Assert.Single(result);
+    }
+}
+----
+
+`+result.Select(p => p.FirstName)+` ist schon LINQ.
+Das lernst du im nächsten Kapitel.
+
+== Wo du Lambdas schon verwendet hast
+
+Lambdas begegnen dir in .NET überall.
+Einige kennst du bereits:
+
+[%header]
+|===
+|Wo |Beispiel |Typ der Lambda
+|xUnit |`+Assert.Throws<ArgumentException>(() => calc.Calculate(-1))+` |`Action`
+|xUnit |`+Assert.All(shows, s => Assert.True(s.Date.Year > 2000))+` |`+Action<Show>+`
+|EF Core |`+modelBuilder.Entity<Ticket>().Property(t => t.TicketState)+` |Ausdruck, der ein Property auswählt
+|Bogus |`+new Faker<Event>().CustomInstantiator(f => new Event(f.Music.Genre()))+` |`+Func<Faker, Event>+`
+|`+List<T>+` |`+persons.RemoveAll(p => p.Age < 18)+` |`+Predicate<Person>+`
+|`+List<T>+` |`+persons.Sort((a, b) => a.Age.CompareTo(b.Age))+` |`+Comparison<Person>+`
+|`+List<T>+` |`+persons.ForEach(p => Console.WriteLine(p))+` |`+Action<Person>+`
+|===
+
+Bei EF Core schreibst du eine Lambda, aber EF Core *führt sie nicht aus*.
+Es liest daraus, welches Property gemeint ist.
+Wie das funktioniert, siehst du im Kapitel link:{github_url}/17%20Serviceklassen/02_Linq_Where_Select_Any.adoc[LINQ: Where&#44; Select und Any].
+
+== Zusammenfassung
+
+[%header]
+|===
+|Begriff |Bedeutung
+|Lambda Expression |Methode ohne Namen: `+Parameter => Ausdruck+`
+|Delegate |Typ einer Funktion, z. B. `+Func<Person, bool>+`
+|`+Func<…, TResult>+` |Funktion mit Rückgabewert, der letzte Typ ist der Rückgabetyp
+|`+Action<…>+` |Funktion ohne Rückgabewert (`void`)
+|Predicate |Funktion, die `true` oder `false` liefert
+|Higher-Order Function |Methode, die eine Funktion als Parameter bekommt oder liefert
+|Closure |Lambda, die eine Variable von außen verwendet
+|===
+
+// tag::pdf_exclude[]
+== Übungen
+
+. *BusLambdas:* Werte die Fahrten eines automatisierten Linienbusses aus.
+Du baust Filter- und Map-Methoden selbst, schreibst Regeln als Lambdas und kombinierst beides.
+Lade dazu link:{github_url}/17%20Serviceklassen/Uebungen/BusLambdas.7z[BusLambdas.7z] herunter.
+Die Angabe steht im Archiv in der Datei _README.md_.
+. *Methode oder Lambda?*
+Schreibe jede Methode als Lambda.
+Gib zu jeder Lambda den passenden Typ (`+Func<…>+` oder `+Action<…>+`) an.
+* `+bool IsEven(int n) { return n % 2 == 0; }+`
+* `+string Greet(string name) { return "Hello " + name; }+`
+* `+void Shout(string text) { Console.WriteLine(text.ToUpper()); }+`
+* `+double Average(int a, int b) { return (a + b) / 2.0; }+`
+* `+DateTime Now() { return DateTime.Now; }+`
+. *Typ lesen:* Was bekommt die Lambda, und was liefert sie?
+Schreibe eine passende Lambda.
+* `+Func<string, int>+`
+* `+Func<Person, Person, bool>+`
+* `+Action<int, string>+`
+* `+Func<int>+`
+. *Closure:* Was liefert der folgende Code?
+Begründe deine Antwort, bevor du ihn ausführst.
++
+[source,csharp]
+----
+string city = "Wien";
+Func<Person, bool> condition = p => p.City == city;
+city = "Graz";
+var result = PersonFilter.Filter(persons, condition);
+city = "Linz";
+----
+. *Eigene Higher-Order Function:* Schreibe in `PersonFilter` die Methode `+List<string> Map(List<Person> persons, Func<Person, string> projection)+`.
+Sie liefert für jede Person den Wert von `projection`.
+Teste sie mit zwei verschiedenen Lambdas.
+
+// end::pdf_exclude[]
+
+== Zusatzmaterial
+
+In der https://die-spengergasse.github.io/course-pos-csharp_basics/17%20Serviceklassen/01_Lambdas.html[interaktiven Präsentation zu Lambda Expressions] siehst du die Umformung von der Methode zur Lambda Schritt für Schritt.
+Danach bestimmst du in mehreren Runden den Typ von Lambdas und schreibst Methoden in Kurzform um.

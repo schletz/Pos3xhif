@@ -1,0 +1,300 @@
+= Greedy-Algorithmen
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Viele Probleme bestehen aus einer Folge von Entscheidungen: Welche Münze gebe ich als Nächstes heraus?
+Welchen Termin trage ich als Nächstes in den Raumplan ein?
+Ein *Greedy-Algorithmus* (englisch _greedy_ = gierig) trifft jede dieser Entscheidungen so, wie sie _im Moment_ am besten aussieht.
+Er überlegt nicht, was später passiert, und er nimmt eine Entscheidung nie zurück.
+
+Das macht Greedy-Algorithmen kurz und leicht verständlich.
+Die spannende Frage ist immer: Führt die Folge von lokal besten Entscheidungen auch zur besten Gesamtlösung?
+Manchmal ja, manchmal nein.
+In dieser Einheit lernst du beide Fälle kennen.
+
+== Das Prinzip
+
+Ein Greedy-Algorithmus folgt immer demselben Schema:
+
+[source,text]
+----
+Lösung = leer
+solange das Problem nicht gelöst ist:
+    wähle nach einer festen Regel den besten Kandidaten
+    wenn er zur bisherigen Lösung passt: füge ihn hinzu
+    sonst: verwirf ihn für immer
+----
+
+Zwei Dinge musst du dir für jedes Problem überlegen:
+
+. *Die Auswahlregel.*
+Was heißt „bester Kandidat“?
+Die größte Münze, der kürzeste Termin, der Termin, der am frühesten endet?
+Für dasselbe Problem gibt es oft mehrere Regeln, die vernünftig klingen.
+. *Ist das Ergebnis optimal?*
+Ein Greedy-Algorithmus liefert immer _irgendeine_ Lösung (oder gar keine).
+Ob es die beste ist, hängt vom Problem und von der Regel ab.
+Das musst du begründen oder mit einem Gegenbeispiel widerlegen.
+
+Im Unterschied zum Backtracking probiert Greedy keine Alternativen aus.
+Es gibt keinen Suchbaum, sondern nur einen einzigen Weg vom Anfang bis zum Ende.
+
+== Wechselgeld mit Euro-Münzen
+
+An einer Kassa sollen 2,88 € Wechselgeld mit *möglichst wenigen Münzen* herausgegeben werden.
+Die Euro-Münzen sind 2 €, 1 €, 50 ct, 20 ct, 10 ct, 5 ct, 2 ct und 1 ct.
+Wahrscheinlich machst du das im Kopf schon greedy: Du nimmst immer die größte Münze, die noch in den Restbetrag passt.
+
+image::{root_dir}/images/26_wechselgeld.svg[]
+
+Nach der 2-€-Münze bleiben 0,88 €.
+Die 1-€-Münze ist jetzt zu groß, also geht es mit 50 ct weiter.
+Am Ende stehen 7 Münzen.
+Mit weniger Münzen geht es nicht.
+
+[source,csharp]
+----
+int[] euroCoins = [200, 100, 50, 20, 10, 5, 2, 1];             // (1)
+
+List<int> change = MakeChange(288, euroCoins);
+Console.WriteLine($"{string.Join(" + ", change)} = {change.Sum()} ct");
+Console.WriteLine($"{change.Count} Münzen");
+
+static List<int> MakeChange(int amount, int[] coins)
+{
+    List<int> result = [];
+    foreach (int coin in coins.OrderDescending())               // (2)
+    {
+        while (amount >= coin)                                  // (3)
+        {
+            result.Add(coin);
+            amount -= coin;
+        }
+    }
+    if (amount != 0)                                            // (4)
+    {
+        throw new ArgumentException("Der Betrag lässt sich so nicht wechseln.");
+    }
+    return result;
+}
+----
+
+[source,text]
+----
+200 + 50 + 20 + 10 + 5 + 2 + 1 = 288 ct
+7 Münzen
+----
+
+* *(1)* Die Beträge stehen in Cent als `int`.
+Mit `double` würden Rundungsfehler entstehen, denn 0,1 lässt sich im Binärsystem nicht exakt darstellen.
+Geldbeträge rechnest du deshalb immer in der kleinsten Einheit oder mit `decimal`.
+* *(2)* Die Auswahlregel: größte Münze zuerst.
+`OrderDescending` sortiert die Münzen absteigend, egal in welcher Reihenfolge sie übergeben werden.
+* *(3)* Dieselbe Münze kann mehrmals passen, etwa zweimal 2 € bei 4,50 €.
+Erst wenn sie zu groß ist, kommt die nächstkleinere Münze dran.
+* *(4)* Bleibt ein Rest übrig, gibt es mit diesen Münzen keine Lösung.
+Bei den Euro-Münzen passiert das nie, weil es eine 1-ct-Münze gibt.
+
+Für das Euro-System liefert diese Regel *immer* die kleinste Anzahl an Münzen.
+Ein Münzsystem mit dieser Eigenschaft heißt _kanonisch_.
+Die meisten echten Währungen sind so gebaut, damit Kassierer ohne Nachdenken richtig herausgeben können.
+Selbstverständlich ist das aber nicht, wie der nächste Abschnitt zeigt.
+
+== Wenn Greedy danebenliegt: das Münzsystem {1, 3, 4}
+
+Stell dir eine Währung mit Münzen zu 1, 3 und 4 vor.
+Es sollen 6 Einheiten herausgegeben werden.
+Greedy nimmt zuerst die größte Münze, die passt, also die 4. Für den Rest 2 bleiben nur zwei Einser.
+Das sind 3 Münzen.
+Es geht aber mit 2 Münzen: 3 {plus} 3.
+
+image::{root_dir}/images/26_gegenbeispiel.svg[]
+
+Rufst du `+MakeChange(6, [1, 3, 4])+` aus dem Programm oben auf, bekommst du:
+
+[source,text]
+----
+4 + 1 + 1 = 6 ct
+3 Münzen
+----
+
+Das Problem: Die 4 sieht im ersten Schritt am besten aus, weil sie den Restbetrag am stärksten verkleinert.
+Sie führt aber in eine Lage, aus der es nur noch schlecht weitergeht.
+Greedy merkt das nicht, denn es nimmt keine Entscheidung zurück.
+
+Noch deutlicher wird es mit den Münzen {3, 5} und dem Betrag 9. Greedy nimmt die 5, danach eine 3 und bleibt auf dem Rest 1 sitzen.
+`MakeChange` wirft deshalb eine Exception, obwohl es mit 3 {plus} 3 {plus} 3 eine Lösung gibt.
+
+Ein einziges Gegenbeispiel genügt, um zu zeigen, dass ein Greedy-Algorithmus nicht optimal ist.
+Umgekehrt beweisen noch so viele Beispiele, bei denen er funktioniert, _nicht_, dass er immer funktioniert.
+Dafür braucht es ein Argument wie im nächsten Abschnitt.
+
+== Aktivitätsauswahl: möglichst viele Termine in einem Raum
+
+Für den Besprechungsraum deiner Schule gibt es an einem Tag neun Anfragen.
+Jede hat eine Beginn- und eine Endzeit (in vollen Stunden).
+Zwei Termine dürfen sich nicht überschneiden.
+Endet ein Termin um 10 Uhr, darf der nächste aber um 10 Uhr beginnen.
+Gesucht ist ein Plan mit *möglichst vielen* Terminen.
+Wie lange die Termine dauern, ist egal.
+
+[%header]
+|===
+|Termin |A |B |C |D |E |F |G |H |I
+|Beginn |8 |9 |10 |11 |12 |13 |14 |15 |16
+|Ende |10 |11 |13 |12 |15 |14 |17 |16 |18
+|===
+
+=== Welche Auswahlregel?
+
+Für dieses Problem klingen mehrere Regeln vernünftig.
+Nicht jede liefert das Optimum:
+
+* *Frühester Beginn zuerst.*
+Greedy wählt A (8–10), dann C (10–13), F (13–14) und G (14–17).
+Das sind 4 Termine.
+Ein langer Termin, der früh beginnt, blockiert den Raum für viele kurze.
+* *Kürzester Termin zuerst.*
+Klingt gut, scheitert aber an drei Anfragen X (8–11), Y (10–12) und Z (11–14).
+Y ist am kürzesten und wird gewählt.
+Danach passt weder X noch Z, obwohl X und Z zusammen zwei Termine ergeben.
+* *Frühestes Ende zuerst.*
+Diese Regel ist optimal, wie du gleich siehst.
+
+=== Frühestes Ende zuerst
+
+Du sortierst die Termine nach ihrer Endzeit und gehst sie der Reihe nach durch.
+Ein Termin kommt in den Plan, wenn er nicht vor dem Ende des zuletzt gewählten Termins beginnt.
+
+image::{root_dir}/images/26_aktivitaeten.svg[]
+
+A endet als Erstes und wird gewählt.
+B beginnt um 9, also vor dem Ende von A, und fällt weg.
+D beginnt um 11 und passt.
+So geht es weiter, bis der Plan A, D, F, H und I enthält.
+Mit frühestem Beginn waren es nur 4 Termine.
+
+Warum ist das optimal?
+Der Termin, der als Erstes endet, lässt für den Rest des Tages *am meisten Zeit übrig*.
+Nimm an, jemand hat einen optimalen Plan, der mit einem anderen Termin beginnt.
+Dieser erste Termin endet gleichzeitig mit A oder später.
+Tauschst du ihn gegen A aus, überschneidet sich A mit keinem der übrigen Termine im Plan, und die Anzahl bleibt gleich.
+Also gibt es auch einen optimalen Plan, der mit A beginnt.
+Dasselbe Argument gilt danach für den restlichen Tag ab 10 Uhr, und so weiter.
+Die gierige Wahl verbaut also nie etwas.
+
+[source,csharp]
+----
+List<Activity> requests =
+[
+    new("A", 8, 10), new("B", 9, 11), new("C", 10, 13),
+    new("D", 11, 12), new("E", 12, 15), new("F", 13, 14),
+    new("G", 14, 17), new("H", 15, 16), new("I", 16, 18)
+];
+
+foreach (Activity a in SelectActivities(requests))
+{
+    Console.WriteLine($"{a.Name}: {a.Start,2}–{a.End} Uhr");
+}
+
+static List<Activity> SelectActivities(IEnumerable<Activity> activities)
+{
+    List<Activity> selected = [];
+    int lastEnd = int.MinValue;                                 // (1)
+    foreach (Activity activity in activities.OrderBy(a => a.End))   // (2)
+    {
+        if (activity.Start >= lastEnd)                          // (3)
+        {
+            selected.Add(activity);
+            lastEnd = activity.End;
+        }
+    }
+    return selected;
+}
+
+record Activity(string Name, int Start, int End);
+----
+
+[source,text]
+----
+A:  8–10 Uhr
+D: 11–12 Uhr
+F: 13–14 Uhr
+H: 15–16 Uhr
+I: 16–18 Uhr
+----
+
+* *(1)* Vor dem ersten Termin ist der Raum frei.
+`int.MinValue` sorgt dafür, dass der erste Termin in der sortierten Reihenfolge sicher passt.
+* *(2)* Die Auswahlregel steckt allein in der Sortierung.
+Willst du eine andere Regel ausprobieren, tauschst du nur diesen Ausdruck, z. B. `+OrderBy(a => a.Start)+`.
+* *(3)* `+>=+` erlaubt, dass ein Termin genau dann beginnt, wenn der vorige endet.
+Mit `+>+` müsste zwischen zwei Terminen eine Lücke bleiben.
+
+Beachte, dass der Algorithmus *eine* optimale Lösung findet, nicht alle.
+Auch A, D, F, H und I ist nicht der einzige Plan mit 5 Terminen.
+
+== Wann funktioniert Greedy?
+
+Greedy liefert das Optimum, wenn zwei Dinge zutreffen:
+
+* *Die gierige Wahl ist sicher.*
+Es gibt immer eine optimale Lösung, die mit der Wahl beginnt, die die Regel trifft.
+Bei der Aktivitätsauswahl zeigt das Tauschargument genau das.
+* *Der Rest ist wieder dasselbe Problem.*
+Nach der ersten Wahl bleibt ein kleineres Problem derselben Art übrig: Wechselgeld für den Restbetrag, Termine ab dem Ende des gewählten Termins.
+
+Beim Münzsystem {1, 3, 4} ist der zweite Punkt erfüllt, der erste aber nicht: Keine optimale Lösung für 6 beginnt mit der 4. Greedy-Algorithmen sind deshalb dann ein gutes Werkzeug, wenn du begründen kannst, warum die gierige Wahl sicher ist.
+Kannst du das nicht, such zuerst nach einem Gegenbeispiel.
+
+== Ausblick: alle Möglichkeiten, aber jede nur einmal
+
+Wie findest du für {1, 3, 4} trotzdem die beste Lösung?
+Du könntest wie beim Backtracking jede Münze als ersten Schritt ausprobieren und für den Rest wieder alle Münzen.
+Für den Betrag 6 sieht der Anfang so aus:
+
+[source,text]
+----
+6 ─1─> 5 ─1─> 4 ...
+       5 ─3─> 2 ...
+       5 ─4─> 1 ...
+6 ─3─> 3 ─1─> 2 ...
+       3 ─3─> 0
+6 ─4─> 2 ─1─> 1 ...
+----
+
+Der Restbetrag 2 taucht hier schon dreimal auf, und jedes Mal würde der Suchbaum für 2 komplett neu durchlaufen.
+Bei größeren Beträgen wiederholen sich dieselben Restbeträge immer öfter.
+
+Die Lösung: Du rechnest für jeden Restbetrag nur *einmal* aus, wie viele Münzen er mindestens braucht, und schreibst das Ergebnis in eine Tabelle.
+Braucht ein späterer Schritt denselben Restbetrag, liest du die Tabelle.
+Genau diese Idee heißt _dynamische Programmierung_ und ist das Thema der nächsten Einheit.
+
+// tag::pdf_exclude[]
+== Übungen
+
+. Schreibe ein C#-Programm für eine Kassa.
+Es liest den Rechnungsbetrag und den bezahlten Betrag ein und gibt das Wechselgeld in Scheinen (bis 50 €) und Münzen gruppiert aus, z. B. `+1 x 10 €, 2 x 2 €, 1 x 20 ct+`.
+Die Kassa hat von jeder Sorte nur einen begrenzten Vorrat, den du als `+Dictionary<int, int>+` (Wert in Cent → Anzahl) übergibst.
+Kann nicht herausgegeben werden, soll das Programm das melden.
+. Finde ein eigenes Münzsystem mit der Münze 1 (nicht {1, 3, 4}) und einen Betrag, für die Greedy nicht die kleinste Anzahl an Münzen liefert.
+Gib die Lösung von Greedy und eine bessere Lösung an.
+. Der Turnsaal hat für einen Samstag folgende Anfragen (Beginn–Ende): Volleyball 08:00–10:30, Yoga 09:00–10:00, Basketball 10:00–12:00, Tischtennis 10:30–11:30, Badminton 11:30–13:00, Zumba 12:00–13:00, Fußball 12:30–15:00, Turnen 13:00–14:30, Tanz 14:30–16:00.
+Bestimme den Plan mit den meisten Terminen zuerst per Hand.
+Schreibe danach ein C#-Programm, das die Anfragen mit `TimeOnly` verarbeitet.
+Erweitere es so, dass zwischen zwei Terminen mindestens 15 Minuten zum Lüften frei bleiben.
+
+// end::pdf_exclude[]

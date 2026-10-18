@@ -1,0 +1,482 @@
+= Optimierung
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Mit der O-Notation kannst du sagen, wie ein Algorithmus wächst.
+In diesem Kapitel geht es darum, was du mit diesem Wissen anfängst: Wann lohnt es sich, Code schneller zu machen?
+Wo setzt du an?
+Und was kostet es?
+Denn fast jede Optimierung hat einen Preis, meistens bezahlst du mit Speicher.
+
+== Erst messen, dann optimieren
+
+Von Donald Knuth stammt der bekannte Satz: _„Premature optimization is the root of all evil.“_
+Gemeint ist: Wer optimiert, bevor er weiß, wo die Zeit verloren geht, macht den Code komplizierter und meistens kaum schneller.
+In fast jedem Programm verbringt ein kleiner Teil des Codes den Großteil der Laufzeit.
+Diese Stelle heißt _Hot Spot_ oder _Engstelle_.
+Eine Optimierung an einer anderen Stelle bringt nichts, egal wie geschickt sie ist.
+
+Gehe deshalb immer in dieser Reihenfolge vor:
+
+. *Ziel festlegen.*
+Wie schnell muss es sein?
+„Die Suche antwortet in unter 100 ms“ ist ein Ziel, „schneller“ ist keines.
+. *Messen.*
+Für einzelne Methoden eignet sich BenchmarkDotNet (siehe link:{github_url}/Professional%20C%23/70_Benchmark/README.md[Benchmarks mit Benchmark.NET]), für einen ersten Eindruck eine `Stopwatch` im Release-Build.
+. *Engstelle finden.*
+Bei einem ganzen Programm hilft ein _Profiler_.
+Visual Studio bringt einen mit (_Debuggen → Leistungsprofiler_, Werkzeug _CPU-Auslastung_).
+Er zeigt, welche Methoden wie viel Rechenzeit verbrauchen.
+. *Optimieren*, und zwar zuerst den Algorithmus, erst danach Details.
+. *Wieder messen* und die Tests laufen lassen.
+Eine Optimierung, die falsche Ergebnisse liefert, ist keine.
+
+== Ein besserer Algorithmus schlägt jede Mikrooptimierung
+
+Ein klassisches Beispiel ist das Problem _Two-Sum_: Gegeben sind ein Array mit Zahlen und eine Zielsumme.
+Gibt es zwei Zahlen im Array (an verschiedenen Positionen), deren Summe genau die Zielsumme ist?
+
+Die naheliegende Lösung probiert alle Paare durch.
+Die bessere Lösung geht das Array nur einmal durch und merkt sich in einem `HashSet` alle Zahlen, die sie schon gesehen hat.
+
+[source,csharp]
+----
+int[] numbers = [8, 3, 11, 5, 14, 2, 7];
+Console.WriteLine($"Naiv,  Summe 16: {HasPairNaive(numbers, 16)}");
+Console.WriteLine($"Naiv,  Summe 30: {HasPairNaive(numbers, 30)}");
+Console.WriteLine($"Hash,  Summe 16: {HasPairFast(numbers, 16)}");
+Console.WriteLine($"Hash,  Summe 30: {HasPairFast(numbers, 30)}");
+
+static bool HasPairNaive(int[] numbers, int target)
+{
+    for (int i = 0; i < numbers.Length; i++)
+    {
+        for (int j = i + 1; j < numbers.Length; j++)                // (1)
+        {
+            if (numbers[i] + numbers[j] == target) { return true; }
+        }
+    }
+    return false;
+}
+
+static bool HasPairFast(int[] numbers, int target)
+{
+    HashSet<int> seen = [];                                         // (2)
+    foreach (int x in numbers)
+    {
+        if (seen.Contains(target - x)) { return true; }             // (3)
+        seen.Add(x);                                                // (4)
+    }
+    return false;
+}
+----
+
+[source,text]
+----
+Naiv,  Summe 16: True
+Naiv,  Summe 30: False
+Hash,  Summe 16: True
+Hash,  Summe 30: False
+----
+
+* *(1)* Die innere Schleife beginnt bei `+i + 1+`.
+So wird jedes Paar nur einmal geprüft und keine Zahl mit sich selbst addiert.
+Das sind n(n − 1)/2 Paare, also O(n²).
+* *(2)* Das `HashSet` enthält alle Zahlen _links_ von der aktuellen Position.
+* *(3)* Die Frage „Gibt es ein y mit x {plus} y = target?“ wird zu „Habe ich `target - x` schon gesehen?“.
+`Contains` braucht bei einem `HashSet` im Mittel konstante Zeit.
+* *(4)* Erst nach der Prüfung wird `x` eingefügt.
+Sonst würde bei `target = 16` die Zahl 8 mit sich selbst gepaart.
+
+Die zweite Variante braucht n Durchläufe mit je einem `Contains` und einem `Add`, also O(n).
+Im schlechtesten Fall (es gibt kein Paar) sieht der Unterschied so aus:
+
+[cols=">,>,>",options="header"]
+|===
+|n |Paare (naiv) |Durchläufe (HashSet)
+|1 000 |ca. 500 000 |1 000
+|100 000 |ca. 5 000 000 000 |100 000
+|1 000 000 |ca. 500 000 000 000 |1 000 000
+|===
+
+Auf einem Testrechner dauerte die naive Variante bei n = 100 000 rund 2 Sekunden, die Variante mit `HashSet` rund 4 Millisekunden.
+Bei einer Million Zahlen wären es für die naive Variante schon über drei Minuten.
+
+Was wäre mit _Mikrooptimierungen_ gegangen?
+Damit sind kleine Kniffe gemeint, die am Algorithmus nichts ändern: `numbers.Length` in eine lokale Variable legen, `for` statt `foreach` verwenden, Bereichsprüfungen umgehen.
+Viele dieser Kniffe macht der JIT-Compiler ohnehin schon selbst.
+Im besten Fall gewinnst du einen konstanten Faktor, etwa die doppelte Geschwindigkeit.
+Gegen den Sprung von n² auf n kommt das nicht an: Bei n = 100 000 ist n² um den Faktor 100 000 größer als n. Mikrooptimierungen lohnen sich erst, wenn der Algorithmus schon passt und die Messung zeigt, dass genau diese Stelle der Hot Spot ist.
+
+=== Wenn du die Positionen brauchst
+
+Oft willst du nicht nur wissen, _ob_ es ein Paar gibt, sondern _welches_.
+Dann reicht ein `HashSet` nicht, denn es merkt sich nur die Werte.
+Ein `Dictionary` speichert zu jedem Wert zusätzlich seinen Index:
+
+[source,csharp]
+----
+int[] numbers = [8, 3, 11, 5, 14, 2, 7];
+Console.WriteLine(FindPair(numbers, 16));
+Console.WriteLine(FindPair(numbers, 30));
+
+static (int First, int Second)? FindPair(int[] numbers, int target)
+{
+    Dictionary<int, int> indexOf = [];
+    for (int i = 0; i < numbers.Length; i++)
+    {
+        if (indexOf.TryGetValue(target - numbers[i], out int j)) { return (j, i); }
+        indexOf[numbers[i]] = i;
+    }
+    return null;
+}
+----
+
+[source,text]
+----
+(2, 3)
+----
+
+Die Zahlen an den Positionen 2 und 3 sind 11 und 5. Für die Summe 30 liefert die Methode `null`, `Console.WriteLine` gibt dafür eine leere Zeile aus.
+
+== Primzahlen: Probedivision und Sieb
+
+Wie viele Primzahlen gibt es bis zu einer Million?
+Die direkte Lösung testet jede Zahl einzeln mit _Probedivision_: n ist eine Primzahl, wenn keine Zahl von 2 bis n − 1 sie teilt.
+
+[source,csharp]
+----
+int limit = 1_000_000;
+int count = 0;
+for (int n = 2; n <= limit; n++)
+{
+    if (IsPrime(n)) { count++; }
+}
+Console.WriteLine($"Primzahlen bis {limit}: {count}");
+
+static bool IsPrime(int n)
+{
+    if (n < 2) { return false; }
+    for (int d = 2; d * d <= n; d++)        // (1)
+    {
+        if (n % d == 0) { return false; }
+    }
+    return true;
+}
+----
+
+[source,text]
+----
+Primzahlen bis 1000000: 78498
+----
+
+* *(1)* Hier steckt schon eine erste Optimierung.
+Hat n einen Teiler d mit d · e = n, dann ist einer der beiden Teiler höchstens √n.
+Es reicht also, bis √n zu testen.
+Die Bedingung `+d * d <= n+` vermeidet die Gleitkomma-Funktion `Math.Sqrt`.
+
+Für einen einzelnen Test ist das gut genug.
+Für alle Zahlen bis N sind es aber bis zu √N Divisionen pro Zahl, also O(N · √N).
+Bis zu einer Million rechnet das Programm rund 67,7 Millionen Divisionen.
+
+=== Das Sieb des Eratosthenes
+
+Das Sieb dreht die Frage um.
+Statt jede Zahl auf Teiler zu prüfen, streicht es von jeder Primzahl aus alle ihre Vielfachen:
+
+. Schreibe alle Zahlen von 2 bis N auf.
+Zu Beginn ist keine gestrichen.
+. Nimm die kleinste Zahl p, die nicht gestrichen ist.
+Sie ist eine Primzahl.
+. Streiche alle Vielfachen von p ab p².
+Kleinere Vielfache wie 2p oder 3p sind schon von 2 bzw. 3 gestrichen worden.
+. Wiederhole Schritt 2 und 3, solange p² ≤ N ist.
+Alle Zahlen, die dann noch übrig sind, sind Primzahlen.
+
+Für N = 30 sieht das so aus:
+
+[source,text]
+----
+p = 2: streiche 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30
+p = 3: streiche 9, 15, 21, 27          (6, 12, 18, ... sind schon gestrichen)
+p = 5: streiche 25                     (10, 15, 20, 30 sind schon gestrichen)
+p = 7: 7² = 49 > 30, fertig
+übrig: 2, 3, 5, 7, 11, 13, 17, 19, 23, 29
+----
+
+Das Sieb kommt ohne eine einzige Division aus.
+Bis zu einer Million streicht es rund 2,1 Millionen Mal, also etwa dreißigmal weniger Schritte als die Probedivision.
+Die Laufzeit ist O(N · log log N). log log N wächst so langsam, dass du das in der Praxis fast wie O(N) behandeln kannst.
+
+Der Preis ist Speicher: Das Sieb braucht ein `bool`-Array mit N {plus} 1 Einträgen, bei N = 10⁶ also rund 1 MB.
+Die Probedivision kommt mit ein paar lokalen Variablen aus.
+Bei N = 10¹⁰ bräuchte das Sieb 10 GB und passt nicht mehr in den Arbeitsspeicher.
+Wie du das Sieb implementierst und gegen die Probedivision misst, probierst du in den Übungen aus.
+
+== Speicher gegen Zeit tauschen
+
+Beide Beispiele folgen demselben Muster.
+Die schnelle Variante merkt sich etwas, das die langsame Variante immer wieder neu ausrechnet.
+Das nennt man *Time-Space-Tradeoff*: Du tauschst Speicher gegen Rechenzeit.
+
+image::{root_dir}/images/34_time_space.svg[]
+
+Der Tausch lohnt sich, wenn der Speicher vorhanden ist und das Gemerkte oft genug gebraucht wird.
+Er lohnt sich nicht, wenn die Daten nicht in den Arbeitsspeicher passen oder jedes Ergebnis nur einmal gebraucht wird.
+Zwei Techniken begegnen dir dabei immer wieder.
+
+=== Vorberechnung und Lookup-Tabellen
+
+Wird dieselbe Funktion sehr oft für Werte aus einem kleinen Bereich aufgerufen, kannst du alle Ergebnisse einmal im Voraus berechnen und danach nur noch nachschlagen.
+Ein Beispiel: Wie viele Bits sind in einer Zahl gesetzt?
+Für ein Byte gibt es nur 256 mögliche Werte, also passt das Ergebnis für jedes Byte in eine kleine Tabelle.
+Eine 32-Bit-Zahl besteht aus vier Bytes, sie braucht dann nur noch vier Zugriffe auf die Tabelle.
+
+[source,csharp]
+----
+int[] bitsInByte = new int[256];
+for (int i = 1; i < 256; i++)
+{
+    bitsInByte[i] = bitsInByte[i >> 1] + (i & 1);                  // (1)
+}
+
+uint[] values = [0, 1, 255, 0xF0F0, uint.MaxValue];
+foreach (uint value in values)
+{
+    Console.WriteLine($"{value,10}: {CountBits(value)} Bits gesetzt");
+}
+
+int CountBits(uint value) =>
+    bitsInByte[value & 0xFF] + bitsInByte[(value >> 8) & 0xFF]     // (2)
+    + bitsInByte[(value >> 16) & 0xFF] + bitsInByte[value >> 24];
+----
+
+[source,text]
+----
+         0: 0 Bits gesetzt
+         1: 1 Bits gesetzt
+       255: 8 Bits gesetzt
+     61680: 8 Bits gesetzt
+4294967295: 32 Bits gesetzt
+----
+
+* *(1)* `+i >> 1+` ist i ohne das letzte Bit und ist kleiner als i. Sein Eintrag steht also schon in der Tabelle.
+Dazu kommt das letzte Bit `i & 1`.
+So wird auch die Tabelle selbst schnell aufgebaut.
+* *(2)* Die Zahl wird in ihre vier Bytes zerlegt, jedes Byte wird nachgeschlagen.
+
+Lookup-Tabellen findest du überall: Sinustabellen in alten Spielen, CRC-Prüfsummen, Zeichenklassen in Lexern.
+Prüfe aber vorher, ob .NET das schon kann.
+Für das Zählen von Bits gibt es `System.Numerics.BitOperations.PopCount`.
+Die Methode nutzt einen eigenen Prozessorbefehl und ist noch schneller als jede Tabelle.
+
+=== Memoization als allgemeine Technik
+
+In link:{github_url}/08%20Theoretische%20Informatik/27_Dynamische_Programmierung.adoc[Dynamische Programmierung] hast du gesehen, wie die Fibonacci-Zahlen mit einem `+Dictionary<int, long>+` als Gedächtnis schnell werden.
+Das Prinzip heißt *Memoization* und funktioniert für jede Funktion: Bevor du rechnest, schaust du im Cache nach.
+Wenn du rechnen musst, legst du das Ergebnis im Cache ab.
+
+Die folgende Methode macht aus einer beliebigen Funktion eine Funktion mit Cache.
+Der Zähler `calls` zeigt, wie oft die eigentliche Berechnung wirklich läuft.
+
+[source,csharp]
+----
+int calls = 0;
+Func<int, int> slowSquare = x =>
+{
+    calls++;
+    return x * x;
+};
+Func<int, int> square = Memoize(slowSquare);
+
+int[] inputs = [3, 5, 3, 3, 5, 7];
+foreach (int x in inputs)
+{
+    Console.Write($"{square(x)} ");
+}
+Console.WriteLine();
+Console.WriteLine($"{inputs.Length} Aufrufe, {calls} Berechnungen");
+
+static Func<TIn, TOut> Memoize<TIn, TOut>(Func<TIn, TOut> function) where TIn : notnull
+{
+    Dictionary<TIn, TOut> cache = [];                               // (1)
+    return x =>
+    {
+        if (cache.TryGetValue(x, out var cached)) { return cached; }
+        TOut result = function(x);
+        cache[x] = result;
+        return result;
+    };
+}
+----
+
+[source,text]
+----
+9 25 9 9 25 49 
+6 Aufrufe, 3 Berechnungen
+----
+
+* *(1)* Das Lambda, das `Memoize` zurückgibt, hält das `Dictionary` fest (_Closure_).
+Jede memoisierte Funktion hat so ihren eigenen Cache.
+
+Memoization ist nur dann korrekt und sinnvoll, wenn drei Bedingungen erfüllt sind:
+
+* *Die Funktion ist rein.*
+Dieselbe Eingabe liefert immer dasselbe Ergebnis, und die Funktion hat keine Nebenwirkungen.
+Eine Methode, die die aktuelle Uhrzeit oder Daten aus einer Datenbank liest, darfst du nicht einfach so cachen.
+* *Eingaben wiederholen sich.*
+Kommt jede Eingabe nur einmal vor, kostet der Cache nur Speicher.
+* *Der Cache bleibt beherrschbar.*
+Er wächst mit jeder neuen Eingabe.
+In einem Server, der wochenlang läuft, brauchst du deshalb eine Obergrenze oder ein Ablaufdatum für die Einträge.
+
+Übrigens: `Memoize(Fib)` würde die naive Fibonacci-Funktion nicht schnell machen.
+Die rekursiven Aufrufe innerhalb von `Fib` gehen direkt an die ursprüngliche Methode und am Cache vorbei.
+Bei rekursiven Funktionen muss der Cache deshalb wie in 27 _in_ die Funktion eingebaut werden.
+
+== Speicherkomplexität
+
+Für den Speicher verwendest du dieselbe Notation wie für die Zeit.
+Gezählt wird der *zusätzliche Speicher*, den ein Algorithmus neben der Eingabe braucht.
+Das Array, das du an `HasPairNaive` übergibst, zählt also nicht mit.
+Die Variablen `i` und `j` brauchen immer gleich viel Platz, egal wie groß n ist.
+Der zusätzliche Speicher ist O(1).
+
+[%header]
+|===
+|Algorithmus |Zeit |Zusätzlicher Speicher
+|Two-Sum naiv |O(n²) |O(1)
+|Two-Sum mit `HashSet` |O(n) |O(n)
+|Primzahlen bis N mit Probedivision |O(N · √N) |O(1)
+|Sieb des Eratosthenes |O(N · log log N) |O(N)
+|Lookup-Tabelle für Bytes |O(1) pro Zahl |O(1), die Tabelle hat immer 256 Einträge
+|===
+
+=== Rekursionstiefe und Stack
+
+Bei rekursiven Methoden versteckt sich Speicher dort, wo du ihn nicht siehst.
+Jeder Aufruf legt einen _Stackrahmen_ (_Stack Frame_) an.
+Darin stehen die Parameter, die lokalen Variablen und die Rücksprungadresse.
+Erst wenn der Aufruf zurückkehrt, wird sein Rahmen wieder frei.
+
+Entscheidend ist deshalb nicht, wie _viele_ Aufrufe es insgesamt gibt, sondern wie viele _gleichzeitig_ offen sind.
+Das ist die *Rekursionstiefe*.
+Die Grafik zeigt die naive Fibonacci-Funktion `+Fib(n) = Fib(n - 1) + Fib(n - 2)+` in dem Moment, in dem `Fib(0)` ganz unten links läuft:
+
+image::{root_dir}/images/34_rekursion_stack.svg[]
+
+`Fib(4)` macht 9 Aufrufe, aber nie mehr als 4 sind gleichzeitig auf dem Stack.
+Allgemein ist die Tiefe n, denn jeder Weg von oben nach unten im Aufrufbaum ist höchstens n Ebenen lang.
+Die naive Variante ist also bei der Zeit katastrophal (exponentiell), beim Speicher aber nur O(n).
+
+Der Stack ist klein.
+Unter Windows hat der Haupt-Thread eines .NET-Programms 1,5 MB.
+Das reicht für einige zehntausend Rahmen, je nachdem, wie groß ein Rahmen ist.
+Eine Rekursion mit linearer Tiefe kommt deshalb schnell an die Grenze:
+
+[source,csharp]
+----
+Console.WriteLine(SumRecursive(10_000));
+Console.WriteLine(SumIterative(10_000));
+Console.WriteLine(SumIterative(1_000_000));
+
+static long SumRecursive(int n) => n == 0 ? 0 : n + SumRecursive(n - 1);
+
+static long SumIterative(int n)
+{
+    long sum = 0;
+    for (int i = 1; i <= n; i++) { sum += i; }
+    return sum;
+}
+----
+
+[source,text]
+----
+50005000
+50005000
+500000500000
+----
+
+`+SumRecursive(100_000)+` beendet das Programm mit der Meldung `Stack overflow.`.
+Auf einem Testrechner lag die Grenze im Debug-Build zwischen 15 000 und 20 000 und im Release-Build zwischen 30 000 und 40 000 Aufrufen.
+Eine `StackOverflowException` kannst du nicht mit `catch` abfangen, der Prozess wird sofort beendet.
+Die iterative Variante braucht O(1) Speicher und hat dieses Problem nicht.
+
+Daraus folgt eine Faustregel: Rekursion mit logarithmischer Tiefe (binäre Suche, Mergesort, Bäume, die ausgeglichen sind) ist unproblematisch.
+Bei linearer Tiefe und großen Eingaben schreibst du die Methode besser iterativ, notfalls mit einem eigenen `+Stack<T>+` auf dem Heap.
+
+=== In-place
+
+Ein Algorithmus arbeitet *in-place*, wenn er die Eingabe direkt verändert und nur O(1) zusätzlichen Speicher braucht (bei manchen Definitionen auch O(log n) für die Rekursion).
+In .NET siehst du den Unterschied beim Sortieren:
+
+[source,csharp]
+----
+int[] data = [5, 2, 9, 1, 7];
+
+int[] sortedCopy = data.Order().ToArray();      // (1)
+Console.WriteLine($"Kopie:    {string.Join(", ", sortedCopy)}");
+Console.WriteLine($"Original: {string.Join(", ", data)}");
+
+Array.Sort(data);                               // (2)
+Console.WriteLine($"Original: {string.Join(", ", data)}");
+----
+
+[source,text]
+----
+Kopie:    1, 2, 5, 7, 9
+Original: 5, 2, 9, 1, 7
+Original: 1, 2, 5, 7, 9
+----
+
+* *(1)* LINQ lässt das Original unverändert und baut ein neues Array.
+Das braucht O(n) zusätzlichen Speicher.
+* *(2)* `Array.Sort` sortiert in-place.
+Es braucht keinen zusätzlichen Platz für die Daten, dafür ist die ursprüngliche Reihenfolge weg.
+
+Auch das ist ein Tradeoff: In-place spart Speicher und Kopierarbeit, verändert aber Daten, die vielleicht noch jemand anderer braucht.
+Bei großen Arrays oder vielen Aufrufen ist in-place die richtige Wahl.
+In den meisten anderen Fällen ist Code ohne Seiteneffekte leichter zu verstehen und zu testen.
+
+// tag::pdf_exclude[]
+== Übungen
+
+. Implementiere das Sieb des Eratosthenes als Methode `+bool[] Sieve(int limit)+` und zähle damit die Primzahlen bis 1 000 000. Miss mit BenchmarkDotNet die Probedivision aus diesem Kapitel und dein Sieb für N = 10⁴, 10⁵ und 10⁶. Passen die Messwerte zur Laufzeit, die du erwartest?
+. Bestimme für die Fibonacci-Varianten mit Memo und bottom-up aus link:{github_url}/08%20Theoretische%20Informatik/27_Dynamische_Programmierung.adoc[Dynamische Programmierung] den zusätzlichen Speicher und die Rekursionstiefe in Abhängigkeit von n. Probiere aus, ab welchem n die Variante mit Memo auf deinem Rechner mit einem Stack Overflow abbricht.
+. Das folgende Programm ordnet jeder Bestellung den Namen des Kunden zu.
+Bei 100 000 Kunden und einer Million Bestellungen wird es sehr langsam.
+Bestimme die Laufzeit in Abhängigkeit von der Zahl der Kunden k und der Bestellungen b, optimiere das Programm und begründe, warum deine Version schneller ist.
+Was kostet sie an Speicher?
++
+[source,csharp]
+----
+Customer[] customers = [new(1, "Huber"), new(2, "Gruber"), new(3, "Wagner")];
+Order[] orders = [new(100, 2), new(101, 3), new(102, 2), new(103, 1)];
+
+foreach (Order order in orders)
+{
+    Customer customer = customers.First(c => c.Id == order.CustomerId);
+    Console.WriteLine($"Bestellung {order.Id}: {customer.Name}");
+}
+
+record Customer(int Id, string Name);
+record Order(int Id, int CustomerId);
+----
+. Erweitere Two-Sum zu _Three-Sum_: Gibt es drei Zahlen an verschiedenen Positionen mit der Summe `target`?
+Schreibe zuerst eine naive Lösung und danach eine schnellere.
+Gib für beide Varianten Zeit und zusätzlichen Speicher an.
+
+// end::pdf_exclude[]

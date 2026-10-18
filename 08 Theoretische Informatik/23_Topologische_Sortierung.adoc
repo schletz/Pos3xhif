@@ -1,0 +1,284 @@
+= Topologische Sortierung
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Bevor du Entity Framework Core lernst, solltest du LINQ und SQL kennen.
+Bevor Visual Studio deine Web-API kompilieren kann, muss es die Projekte bauen, die die Web-API referenziert.
+Bevor NuGet ein Paket installiert, braucht es alle Pakete, von denen dieses Paket abhängt.
+Immer geht es um dieselbe Frage: *In welcher Reihenfolge kann ich Dinge erledigen, die voneinander abhängen?*
+Die Antwort liefert die _topologische Sortierung_.
+
+== Abhängigkeiten als Graph
+
+Abhängigkeiten lassen sich direkt als gerichteter Graph aufschreiben.
+Jede Aufgabe ist ein Knoten.
+Eine Kante A → B bedeutet: *A muss vor B erledigt sein.*
+Der Pfeil zeigt also von der Voraussetzung zu dem, was darauf aufbaut.
+
+[%header]
+|===
+|Anwendung |Knoten |Kante A → B
+|Lehrveranstaltungen |Themen oder Fächer |A ist Voraussetzung für B
+|Build-Schritte |Restore, Build, Test, Publish |B braucht das Ergebnis von A
+|Projekte in einer Solution |Projekte |B referenziert A, also muss A zuerst gebaut werden
+|NuGet-Pakete |Pakete |B hängt von A ab
+|Tabellenkalkulation |Zellen |die Formel in B verwendet A
+|===
+
+Viele Werkzeuge zeichnen den Pfeil übrigens andersherum, als „B hängt ab von A“.
+Das ist nur eine Konvention.
+In dieser Einheit zeigt der Pfeil immer in die Richtung, in der gearbeitet wird.
+
+Als Beispiel dienen Themen aus der Programmierausbildung.
+Die Grafik zeigt, welches Thema auf welchem aufbaut:
+
+image::{root_dir}/images/23_abhaengigkeiten.svg[]
+
+Ein solcher Graph darf *keinen Zyklus* haben.
+Bräuchtest du für LINQ zuerst EF Core und für EF Core zuerst LINQ, könntest du nie anfangen.
+Ein gerichteter Graph ohne Zyklus heißt *DAG* (_directed acyclic graph_).
+
+== Topologische Ordnung
+
+Eine *topologische Ordnung* ist eine Reihenfolge aller Knoten, in der für jede Kante A → B der Knoten A vor B steht.
+Schreibst du die Knoten in dieser Reihenfolge nebeneinander, zeigen alle Pfeile nach rechts.
+Das zeigt der untere Teil der Grafik.
+
+Für den Themengraphen ist zum Beispiel diese Reihenfolge gültig:
+
+[source,text]
+----
+Grundlagen, HTTP, OOP, SQL, Collections, LINQ, EF Core, Web-API
+----
+
+Diese Reihenfolge ist dagegen *ungültig*, denn SQL steht nach EF Core, obwohl es die Kante SQL → EF Core gibt:
+
+[source,text]
+----
+Grundlagen, OOP, Collections, LINQ, EF Core, SQL, HTTP, Web-API
+----
+
+Zwei Tatsachen solltest du dir merken:
+
+* Eine topologische Ordnung gibt es *genau dann*, wenn der Graph ein DAG ist.
+Bei einem Zyklus A → B → C → A müsste A vor B, B vor C und C vor A stehen.
+Das geht nicht.
+* Meist gibt es *mehrere gültige Ordnungen*.
+HTTP hängt von nichts ab und wird nur für die Web-API gebraucht.
+Es kann also an fast jeder Stelle vor der Web-API stehen.
+Auch SQL und der Strang OOP → Collections → LINQ sind unabhängig voneinander.
+Jede dieser Reihenfolgen ist richtig:
+
+[source,text]
+----
+Grundlagen, HTTP, OOP, SQL, Collections, LINQ, EF Core, Web-API
+HTTP, Grundlagen, SQL, OOP, Collections, LINQ, EF Core, Web-API
+Grundlagen, OOP, Collections, LINQ, SQL, EF Core, HTTP, Web-API
+----
+
+Welche davon ein Algorithmus liefert, hängt davon ab, welchen Knoten er bei mehreren Möglichkeiten zuerst nimmt.
+
+== Der Algorithmus von Kahn
+
+Der *Eingangsgrad* eines Knotens ist die Anzahl der Kanten, die in ihn hineinführen.
+Bei Abhängigkeiten ist das die Anzahl der Voraussetzungen.
+EF Core hat den Eingangsgrad 2 (LINQ und SQL), Grundlagen und HTTP haben den Eingangsgrad 0.
+
+Ein Knoten mit Eingangsgrad 0 hat keine offenen Voraussetzungen.
+Mit ihm kannst du sofort anfangen.
+Daraus hat Arthur B. Kahn 1962 folgendes Verfahren gemacht:
+
+. Berechne für jeden Knoten den Eingangsgrad.
+. Lege alle Knoten mit Eingangsgrad 0 in eine Warteschlange.
+. Solange die Warteschlange nicht leer ist: Nimm einen Knoten heraus und hänge ihn an die Ausgabe an.
+Verringere den Eingangsgrad jedes Nachfolgers um 1. Erreicht ein Nachfolger dabei 0, sind alle seine Voraussetzungen erledigt: Er kommt in die Warteschlange.
+. Enthält die Ausgabe alle Knoten, ist sie eine topologische Ordnung.
+Sonst hat der Graph einen Zyklus.
+
+Den Eingangsgrad zu verringern bedeutet anschaulich: Du streichst die Kante aus dem Graphen, weil diese Voraussetzung jetzt erfüllt ist.
+Die Tabelle zeigt den Ablauf für den Themengraphen.
+Am Anfang kommen die Knoten mit Eingangsgrad 0 alphabetisch sortiert in die Queue, danach in der Reihenfolge, in der ihr Eingangsgrad 0 wird.
+
+image::{root_dir}/images/23_kahn_schritte.svg[]
+
+Schau dir Schritt 4 an: SQL ist fertig, EF Core hat aber erst den Eingangsgrad 1, weil LINQ noch fehlt.
+EF Core muss warten.
+Erst in Schritt 6, nach LINQ, erreicht EF Core den Eingangsgrad 0.
+
+== Kahn in C#
+
+Der Graph ist ein `Dictionary`, das jedem Knoten die Liste seiner Nachfolger zuordnet.
+Das Programm sortiert den Themengraphen und danach einen zweiten Graphen, in dem sich ein Zyklus versteckt.
+
+[source,csharp]
+----
+(string Before, string After)[] topics =
+[
+    ("Grundlagen", "OOP"), ("Grundlagen", "SQL"), ("OOP", "Collections"),
+    ("Collections", "LINQ"), ("LINQ", "EF Core"), ("SQL", "EF Core"),
+    ("EF Core", "Web-API"), ("HTTP", "Web-API")
+];
+(string Before, string After)[] packages =
+[
+    ("Core", "Config"), ("Config", "Logging"), ("Logging", "Data"),
+    ("Data", "Config"), ("Data", "App")
+];
+
+foreach ((string Before, string After)[] edges in new[] { topics, packages })
+{
+    (List<string> order, List<string> blocked) = Kahn(BuildGraph(edges));
+    Console.WriteLine($"Ordnung:   {string.Join(", ", order)}");
+    if (blocked.Count > 0)
+    {
+        Console.WriteLine($"Zyklus! Nicht sortierbar: {string.Join(", ", blocked)}");
+    }
+}
+
+static Dictionary<string, List<string>> BuildGraph((string Before, string After)[] edges)
+{
+    Dictionary<string, List<string>> graph = [];
+    foreach ((string before, string after) in edges)
+    {
+        graph.TryAdd(before, []);                                   // (1)
+        graph.TryAdd(after, []);
+        graph[before].Add(after);
+    }
+    return graph;
+}
+
+static (List<string>, List<string>) Kahn(Dictionary<string, List<string>> graph)
+{
+    Dictionary<string, int> inDegree = graph.Keys.ToDictionary(node => node, _ => 0);
+    foreach (List<string> successors in graph.Values)               // (2)
+    {
+        foreach (string next in successors) { inDegree[next]++; }
+    }
+
+    Queue<string> ready = new(inDegree.Keys.Where(node => inDegree[node] == 0).Order());   // (3)
+    List<string> order = [];
+    while (ready.TryDequeue(out string? node))
+    {
+        order.Add(node);
+        foreach (string next in graph[node])
+        {
+            inDegree[next]--;                                       // (4)
+            if (inDegree[next] == 0) { ready.Enqueue(next); }
+        }
+    }
+
+    List<string> blocked = [.. inDegree.Keys.Where(node => inDegree[node] > 0).Order()];   // (5)
+    return (order, blocked);
+}
+----
+
+[source,text]
+----
+Ordnung:   Grundlagen, HTTP, OOP, SQL, Collections, LINQ, EF Core, Web-API
+Ordnung:   Core
+Zyklus! Nicht sortierbar: App, Config, Data, Logging
+----
+
+* *(1)* Jeder Knoten bekommt einen Eintrag, auch wenn er keine Nachfolger hat (wie Web-API).
+`TryAdd` legt den Eintrag nur an, wenn es ihn noch nicht gibt.
+* *(2)* Für jede Kante wird der Eingangsgrad ihres Zielknotens um 1 erhöht.
+Danach hat EF Core den Wert 2.
+* *(3)* Die Startknoten kommen alphabetisch sortiert in die Queue.
+Ohne `Order()` hinge die Ausgabe von der Reihenfolge im `Dictionary` ab.
+Gültig wäre sie trotzdem.
+* *(4)* Das ist das „Streichen“ der Kante.
+Erreicht der Nachfolger 0, kommt er in die Queue.
+* *(5)* Knoten, deren Eingangsgrad nie 0 geworden ist, konnten nicht ausgegeben werden.
+Ist die Liste nicht leer, hat der Graph einen Zyklus.
+
+Statt einer `Queue` funktioniert auch ein `Stack` oder eine beliebige andere Sammlung.
+Entscheidend ist nur, dass ein Knoten erst hineinkommt, wenn sein Eingangsgrad 0 ist.
+Mit einer anderen Sammlung bekommst du eine andere, ebenso gültige Ordnung.
+
+== Zyklen erkennen
+
+Der zweite Graph im Programm beschreibt Pakete, die voneinander abhängen.
+Dabei hat sich ein Fehler eingeschlichen: Data braucht Config, aber Config braucht über Logging indirekt Data.
+
+image::{root_dir}/images/23_zyklus.svg[]
+
+Kahn gibt Core aus und senkt damit den Eingangsgrad von Config von 2 auf 1. Dann ist die Queue leer.
+Kein Knoten auf dem Zyklus kann je den Eingangsgrad 0 erreichen, denn jeder wartet auf seinen Vorgänger im Kreis.
+Der Algorithmus bleibt also nicht hängen, sondern endet mit einer zu kurzen Ausgabe.
+Genau daran erkennst du den Zyklus: *Die Ausgabe enthält weniger Knoten als der Graph.*
+
+Beachte, dass die übrig gebliebenen Knoten nicht alle auf dem Zyklus liegen.
+App ist nur blockiert, weil es von Data abhängt.
+Für eine gute Fehlermeldung („Config → Logging → Data → Config“) musst du den Zyklus selbst noch aus den übrigen Knoten heraussuchen.
+
+Echte Werkzeuge raten in so einem Fall keine Reihenfolge, sondern melden einen Fehler.
+Visual Studio lässt eine Projektreferenz, die einen Zyklus erzeugen würde, gar nicht erst zu.
+Excel zeigt bei einem Zirkelbezug eine Warnung an.
+
+== Variante mit Tiefensuche
+
+Es gibt einen zweiten Weg zur topologischen Ordnung, der auf der Tiefensuche (DFS) aufbaut.
+Die Idee: Die Tiefensuche schließt einen Knoten erst ab, wenn alle seine Nachfolger abgeschlossen sind.
+Schreibst du die Knoten in der Reihenfolge auf, in der sie *abgeschlossen* werden, steht jeder Knoten hinter all seinen Nachfolgern.
+Diese Liste musst du nur noch umdrehen.
+
+[source,csharp]
+----
+Dictionary<string, List<string>> graph = new()
+{
+    ["Grundlagen"] = ["OOP", "SQL"], ["OOP"] = ["Collections"], ["Collections"] = ["LINQ"],
+    ["LINQ"] = ["EF Core"], ["SQL"] = ["EF Core"], ["EF Core"] = ["Web-API"],
+    ["HTTP"] = ["Web-API"], ["Web-API"] = []
+};
+
+HashSet<string> visited = [];
+List<string> finished = [];
+foreach (string node in graph.Keys.Order()) { Visit(node); }
+finished.Reverse();
+Console.WriteLine(string.Join(", ", finished));
+
+void Visit(string node)
+{
+    if (!visited.Add(node)) { return; }
+    foreach (string next in graph[node]) { Visit(next); }
+    finished.Add(node);                         // all successors are finished before node
+}
+----
+
+[source,text]
+----
+HTTP, Grundlagen, SQL, OOP, Collections, LINQ, EF Core, Web-API
+----
+
+Das Ergebnis ist eine andere, ebenfalls gültige Ordnung.
+Diese Variante erkennt Zyklen allerdings nicht von selbst.
+Dafür braucht die Tiefensuche einen dritten Zustand „in Bearbeitung“: Trifft sie auf einen Knoten, der gerade in Bearbeitung ist, hat sie einen Zyklus gefunden.
+Beim Kahn-Algorithmus ergibt sich die Zykluserkennung dagegen von selbst.
+
+// tag::pdf_exclude[]
+== Übungen
+
+. Für Palatschinken gibt es diese Abhängigkeiten (A → B: A muss vor B erledigt sein): Eier aufschlagen → Teig rühren, Mehl abwiegen → Teig rühren, Milch abmessen → Teig rühren, Teig rühren → Teig rasten lassen, Teig rasten lassen → Backen, Pfanne erhitzen → Backen, Backen → Füllen, Marmelade bereitstellen → Füllen.
+Zeichne den Graphen, gib die Eingangsgrade an und führe Kahn per Hand aus.
+Nimm bei mehreren Knoten in der Queue den, der am längsten drin ist, und sortiere die Startknoten alphabetisch.
+Gib danach zwei weitere gültige Ordnungen an.
+. Schreibe in C# ein Programm, das die Build-Reihenfolge für die Projekte einer Solution bestimmt.
+Die Eingabe sind Zeilen wie `Api: Application, Infrastructure` (das Projekt `Api` referenziert `Application` und `Infrastructure`).
+Gibt es einen Zyklus, soll das Programm keine Reihenfolge ausgeben, sondern den Zyklus selbst melden, z. B. `+Zyklus: Domain -> Application -> Domain+`.
+. Schreibe ein C#-Programm, das *alle* topologischen Ordnungen eines kleinen DAG ausgibt.
+Teste es mit dem Themengraphen aus dieser Einheit.
+Wie viele gültige Ordnungen gibt es?
+
+// end::pdf_exclude[]

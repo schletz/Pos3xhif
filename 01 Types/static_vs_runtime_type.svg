@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="480" viewBox="0 0 960 480">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1d1d1b"/></marker></defs>
+<rect x="1" y="1" width="958" height="478" rx="12" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="480" y="40" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="600" fill="#1d1d1b">Typ der Variable (statisch) und Typ des Objektes (Laufzeit)</text>
+<text x="200" y="78" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="600" fill="#5f5f5e">Stack: Variable mit ihrem Typ</text>
+<text x="590" y="78" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="600" fill="#5f5f5e">Heap: Objekt mit seinem Typ</text>
+
+<!-- Stack -->
+<text x="180" y="130" text-anchor="end" font-family="Cascadia Mono, Consolas, monospace" font-size="16" fill="#1d1d1b">Person p</text>
+<rect x="195" y="104" width="90" height="40" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="2"/>
+<circle cx="240" cy="124" r="6" fill="#1d1d1b"/>
+<text x="180" y="236" text-anchor="end" font-family="Cascadia Mono, Consolas, monospace" font-size="16" fill="#1d1d1b">Student student</text>
+<rect x="195" y="210" width="90" height="40" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="2"/>
+<circle cx="240" cy="230" r="6" fill="#1d1d1b"/>
+<text x="180" y="296" text-anchor="end" font-family="Cascadia Mono, Consolas, monospace" font-size="16" fill="#1d1d1b">Person p3</text>
+<rect x="195" y="270" width="90" height="40" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="2"/>
+<circle cx="240" cy="290" r="6" fill="#1d1d1b"/>
+
+<!-- Arrows -->
+<path d="M240,124 C330,124 360,138 438,138" fill="none" stroke="#1d1d1b" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M240,230 C330,230 360,232 438,232" fill="none" stroke="#1d1d1b" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M240,290 C330,290 360,268 438,268" fill="none" stroke="#1d1d1b" stroke-width="2" marker-end="url(#arrow)"/>
+
+<!-- Heap: Person object -->
+<rect x="440" y="96" width="300" height="88" rx="6" fill="#e5f4f1" stroke="#2f7d6e" stroke-width="2"/>
+<rect x="441" y="97" width="298" height="28" rx="5" fill="#cfeae4"/>
+<line x1="440" y1="125" x2="740" y2="125" stroke="#2f7d6e" stroke-width="1.5"/>
+<text x="590" y="116" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d1d1b">Objekt vom Typ Person</text>
+<text x="454" y="150" font-family="Cascadia Mono, Consolas, monospace" font-size="14" fill="#1d1d1b">FirstName</text>
+<text x="726" y="150" text-anchor="end" font-family="Cascadia Mono, Consolas, monospace" font-size="14" fill="#1d1d1b">"Max"</text>
+<text x="454" y="174" font-family="Cascadia Mono, Consolas, monospace" font-size="14" fill="#1d1d1b">LastName</text>
+<text x="726" y="174" text-anchor="end" font-family="Cascadia Mono, Consolas, monospace" font-size="14" fill="#1d1d1b">"Mustermann"</text>
+
+<!-- Heap: Student object -->
+<rect x="440" y="200" width="300" height="114" rx="6" fill="#e5f4f1" stroke="#2f7d6e" stroke-width="2"/>
+<rect x="441" y="201" width="298" height="28" rx="5" fill="#cfeae4"/>
+<line x1="440" y1="229" x2="740" y2="229" stroke="#2f7d6e" stroke-width="1.5"/>
+<text x="590" y="220" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d1d1b">Objekt vom Typ Student</text>
+<rect x="447" y="235" width="286" height="50" rx="4" fill="none" stroke="#f39000" stroke-width="2.5" stroke-dasharray="7 4"/>
+<text x="454" y="255" font-family="Cascadia Mono, Consolas, monospace" font-size="14" fill="#1d1d1b">FirstName</text>
+<text x="726" y="255" text-anchor="end" font-family="Cascadia Mono, Consolas, monospace" font-size="14" fill="#1d1d1b">"Max"</text>
+<text x="454" y="278" font-family="Cascadia Mono, Consolas, monospace" font-size="14" fill="#1d1d1b">LastName</text>
+<text x="726" y="278" text-anchor="end" font-family="Cascadia Mono, Consolas, monospace" font-size="14" fill="#1d1d1b">"Muster"</text>
+<text x="454" y="303" font-family="Cascadia Mono, Consolas, monospace" font-size="14" fill="#1d1d1b">DateOfBirth</text>
+<text x="726" y="303" text-anchor="end" font-family="Cascadia Mono, Consolas, monospace" font-size="14" fill="#1d1d1b">2008-12-31</text>
+
+<!-- Legend for the views -->
+<line x1="752" y1="260" x2="772" y2="260" stroke="#f39000" stroke-width="2.5" stroke-dasharray="7 4"/>
+<text x="780" y="256" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#a35f00">über p3 sichtbar</text>
+<text x="780" y="274" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#a35f00">(nur Person)</text>
+<text x="752" y="303" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#00628f">über student: alles</text>
+
+<!-- Consequences -->
+<line x1="30" y1="345" x2="930" y2="345" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="40" y="380" font-family="Cascadia Mono, Consolas, monospace" font-size="15" fill="#4a7a1c">✓ ((Student)p3).DateOfBirth</text>
+<text x="380" y="380" font-family="Segoe UI, Arial, sans-serif" font-size="15" fill="#1d1d1b">OK: Das Objekt ist ein Student.</text>
+<text x="40" y="412" font-family="Cascadia Mono, Consolas, monospace" font-size="15" fill="#a8072c">✗ ((Student)p).DateOfBirth</text>
+<text x="380" y="412" font-family="Segoe UI, Arial, sans-serif" font-size="15" fill="#1d1d1b">InvalidCastException: Das Objekt ist nur eine Person.</text>
+<text x="40" y="444" font-family="Cascadia Mono, Consolas, monospace" font-size="15" fill="#a8072c">✗ p3.DateOfBirth</text>
+<text x="380" y="444" font-family="Segoe UI, Arial, sans-serif" font-size="15" fill="#1d1d1b">Compilerfehler: Der Typ Person hat kein DateOfBirth.</text>
+</svg>

@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="450" viewBox="0 0 880 450">
+  <rect x="0.5" y="0.5" width="879" height="449" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1f2937"/>
+    </marker>
+  </defs>
+
+  <!-- Titles -->
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1f2937" text-anchor="middle">
+    <text x="196" y="32">Eigener AST (Expr)</text>
+    <text x="636" y="32">System.Linq.Expressions</text>
+  </g>
+
+  <!-- Edges of our AST -->
+  <g stroke="#1f2937" stroke-width="1.5">
+    <line x1="176" y1="190" x2="86" y2="240"/>
+    <line x1="216" y1="190" x2="276" y2="240"/>
+    <line x1="256" y1="290" x2="204" y2="340"/>
+    <line x1="296" y1="290" x2="348" y2="340"/>
+  </g>
+  <!-- Edges of the expression tree -->
+  <g stroke="#1f2937" stroke-width="1.5">
+    <line x1="636" y1="100" x2="636" y2="140"/>
+    <line x1="616" y1="190" x2="526" y2="240"/>
+    <line x1="656" y1="190" x2="716" y2="240"/>
+    <line x1="696" y1="290" x2="644" y2="340"/>
+    <line x1="736" y1="290" x2="788" y2="340"/>
+  </g>
+  <g font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280">
+    <text x="122" y="210" text-anchor="end">Left</text>
+    <text x="252" y="210">Right</text>
+    <text x="222" y="312" text-anchor="end">Left</text>
+    <text x="328" y="312">Right</text>
+    <text x="644" y="124">Body</text>
+    <text x="562" y="210" text-anchor="end">Left</text>
+    <text x="692" y="210">Right</text>
+    <text x="662" y="312" text-anchor="end">Left</text>
+    <text x="768" y="312">Right</text>
+  </g>
+
+  <!-- Lambda wrapped around the tree by Compile() -->
+  <rect x="541" y="50" width="190" height="50" rx="6" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+  <!-- Inner nodes -->
+  <g fill="#dbeafe" stroke="#2563eb" stroke-width="1.5">
+    <rect x="130" y="140" width="132" height="50" rx="6"/>
+    <rect x="210" y="240" width="132" height="50" rx="6"/>
+    <rect x="561" y="140" width="150" height="50" rx="6"/>
+    <rect x="641" y="240" width="150" height="50" rx="6"/>
+  </g>
+  <!-- Leaves -->
+  <g fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5">
+    <rect x="20" y="240" width="132" height="50" rx="6"/>
+    <rect x="138" y="340" width="132" height="50" rx="6"/>
+    <rect x="282" y="340" width="132" height="50" rx="6"/>
+    <rect x="460" y="240" width="132" height="50" rx="6"/>
+    <rect x="578" y="340" width="132" height="50" rx="6"/>
+    <rect x="722" y="340" width="132" height="50" rx="6"/>
+  </g>
+
+  <!-- Type names -->
+  <g font-family="Consolas, Menlo, monospace" font-size="12" fill="#1f2937" text-anchor="middle">
+    <text x="636" y="71">Expression&lt;Func&lt;double&gt;&gt;</text>
+    <text x="196" y="161">BinaryExpr</text>
+    <text x="276" y="261">BinaryExpr</text>
+    <text x="86" y="261">NumberExpr</text>
+    <text x="204" y="361">NumberExpr</text>
+    <text x="348" y="361">NumberExpr</text>
+    <text x="636" y="161">BinaryExpression</text>
+    <text x="716" y="261">BinaryExpression</text>
+    <text x="526" y="261">ConstantExpression</text>
+    <text x="644" y="361">ConstantExpression</text>
+    <text x="788" y="361">ConstantExpression</text>
+  </g>
+  <!-- Properties -->
+  <g font-family="Consolas, Menlo, monospace" font-size="12" text-anchor="middle">
+    <text x="636" y="89" fill="#ea580c">NodeType = Lambda</text>
+    <g fill="#2563eb">
+      <text x="196" y="179">Multiply</text>
+      <text x="276" y="279">Add</text>
+      <text x="636" y="179">NodeType = Multiply</text>
+      <text x="716" y="279">NodeType = Add</text>
+    </g>
+    <g fill="#6b7280">
+      <text x="86" y="279">Value = 2</text>
+      <text x="204" y="379">Value = 3</text>
+      <text x="348" y="379">Value = 4</text>
+      <text x="526" y="279">Value = 2</text>
+      <text x="644" y="379">Value = 3</text>
+      <text x="788" y="379">Value = 4</text>
+    </g>
+  </g>
+
+  <!-- Translation -->
+  <line x1="266" y1="165" x2="557" y2="165" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="416" y="156" font-family="Consolas, Menlo, monospace" font-size="12" fill="#1f2937" text-anchor="middle">ExpressionCompiler.ToExpression()</text>
+
+  <text x="440" y="424" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Gleiche Form, andere Typen: Aus BinaryExpr wird BinaryExpression, aus NumberExpr wird ConstantExpression.</text>
+</svg>

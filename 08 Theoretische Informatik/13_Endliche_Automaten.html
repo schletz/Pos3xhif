@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DEA-Simulator</title>
+<style>
+  :root {
+    --bg: #f8fafc; --card: #ffffff; --fg: #1f2937; --muted: #6b7280; --border: #d1d5db; --soft: #f3f4f6;
+    --line: #1f2937;
+    --n-stroke: #2563eb; --n-fill: #dbeafe;
+    --a-stroke: #ea580c; --a-fill: #ffedd5;
+    --ok-stroke: #16a34a; --ok-fill: #dcfce7;
+    --err-stroke: #dc2626; --err-fill: #fee2e2;
+    --gray-stroke: #6b7280; --gray-fill: #e5e7eb;
+    --btn: #2563eb; --btn-fg: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f172a; --card: #1e293b; --fg: #e5e7eb; --muted: #9ca3af; --border: #475569; --soft: #334155;
+      --line: #e5e7eb;
+      --n-stroke: #60a5fa; --n-fill: #1e3a8a;
+      --a-stroke: #fb923c; --a-fill: #7c2d12;
+      --ok-stroke: #4ade80; --ok-fill: #14532d;
+      --err-stroke: #f87171; --err-fill: #7f1d1d;
+      --gray-stroke: #9ca3af; --gray-fill: #374151;
+      --btn: #3b82f6; --btn-fg: #ffffff;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", Helvetica, Arial, sans-serif; background: var(--bg); color: var(--fg);
+         line-height: 1.5; }
+  code, .mono { font-family: Consolas, Menlo, monospace; }
+  code { background: var(--soft); padding: 0 4px; border-radius: 4px; }
+  header { position: sticky; top: 0; z-index: 5; background: var(--card); border-bottom: 1px solid var(--border);
+           padding: 8px 16px; display: flex; align-items: center; gap: 16px; }
+  header h1 { font-size: 18px; margin: 0; flex: 1; }
+  #progressText { font-variant-numeric: tabular-nums; color: var(--muted); }
+  #progressBar { position: absolute; left: 0; bottom: -1px; height: 3px; background: var(--btn); transition: width .3s; }
+  main { max-width: 1120px; margin: 0 auto; padding: 16px; }
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide h2 { margin: 4px 0 8px; font-size: 24px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin: 12px 0; }
+  .nav { display: flex; justify-content: space-between; max-width: 1120px; margin: 0 auto; padding: 0 16px 24px; }
+  button { font: inherit; border: 1px solid var(--border); background: var(--card); color: var(--fg); border-radius: 6px;
+           padding: 5px 12px; cursor: pointer; }
+  button:hover:not(:disabled) { border-color: var(--btn); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  button.primary { background: var(--btn); color: var(--btn-fg); border-color: var(--btn); }
+  button[aria-pressed="true"] { background: var(--n-fill); border-color: var(--n-stroke); font-weight: 600; }
+  input[type=text] { font: inherit; font-family: Consolas, Menlo, monospace; padding: 4px 8px; border: 1px solid var(--border);
+                     border-radius: 6px; background: var(--card); color: var(--fg); }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0; }
+  .muted { color: var(--muted); }
+  .grid2 { display: grid; grid-template-columns: minmax(0, 3fr) minmax(240px, 2fr); gap: 16px; align-items: start; }
+  .grid2.practice { grid-template-columns: minmax(0, 1fr) 300px; }
+  @media (max-width: 860px) { .grid2, .grid2.practice { grid-template-columns: 1fr; } }
+  svg.automaton { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--border);
+                  border-radius: 8px; user-select: none; -webkit-user-select: none; }
+  svg.automaton text { font-family: "Segoe UI", Helvetica, Arial, sans-serif; fill: var(--fg); }
+  svg.automaton .lbl { font-family: Consolas, Menlo, monospace; font-size: 16px; paint-order: stroke; stroke: var(--card);
+                       stroke-width: 5px; stroke-linejoin: round; }
+  .edge { fill: none; stroke: var(--line); stroke-width: 1.7; }
+  .edge.active { stroke: var(--a-stroke); stroke-width: 3; }
+  .edge.error { stroke: var(--err-stroke); stroke-dasharray: 6 4; }
+  .edge.selected { stroke: var(--n-stroke); stroke-width: 3; }
+  .edge.unlabeled { stroke: var(--err-stroke); stroke-dasharray: 4 4; }
+  .lbl.active { fill: var(--a-stroke); font-weight: 700; }
+  .lbl.error { fill: var(--err-stroke); font-family: "Segoe UI", Helvetica, Arial, sans-serif; font-size: 14px; }
+  .lbl.unlabeled { fill: var(--err-stroke); }
+  .edge-hit { fill: none; stroke: transparent; stroke-width: 16; pointer-events: stroke; cursor: pointer; }
+  .st circle { fill: var(--n-fill); stroke: var(--n-stroke); stroke-width: 2; }
+  .st .inner { fill: none; }
+  .st.active circle { fill: var(--a-fill); stroke: var(--a-stroke); stroke-width: 3; }
+  .st.accept circle { fill: var(--ok-fill); stroke: var(--ok-stroke); stroke-width: 3; }
+  .st.reject circle { fill: var(--err-fill); stroke: var(--err-stroke); stroke-width: 3; }
+  .st.error circle { fill: var(--err-fill); stroke: var(--err-stroke); }
+  .st.selected circle.outer { stroke-width: 4; stroke-dasharray: 5 3; }
+  .st.pending circle { fill: var(--a-fill); stroke: var(--a-stroke); stroke-dasharray: 5 3; }
+  .st.hover circle.outer { stroke: var(--a-stroke); stroke-width: 3; }
+  .st text { font-size: 16px; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+  .start-arrow { stroke: var(--line); stroke-width: 1.7; }
+  .rubber { stroke: var(--a-stroke); stroke-width: 2; stroke-dasharray: 6 4; pointer-events: none; }
+  .mk-n { fill: var(--line); } .mk-a { fill: var(--a-stroke); } .mk-e { fill: var(--err-stroke); } .mk-s { fill: var(--n-stroke); }
+  .tape { display: flex; flex-wrap: wrap; gap: 4px; margin: 8px 0 4px; padding-top: 22px; }
+  .cell { position: relative; width: 36px; height: 40px; border: 2px solid var(--border); border-radius: 6px; display: flex;
+          align-items: center; justify-content: center; font-family: Consolas, Menlo, monospace; font-size: 20px; background: var(--card); }
+  .cell.read { background: var(--gray-fill); color: var(--muted); }
+  .cell.current { border-color: var(--a-stroke); background: var(--a-fill); }
+  .cell.stuck { border-color: var(--err-stroke); background: var(--err-fill); }
+  .cell.end { border-style: dashed; color: var(--muted); font-size: 14px; width: 44px; }
+  .cell.current::before { content: "▼"; position: absolute; top: -22px; color: var(--a-stroke); font-size: 16px; }
+  table.delta { border-collapse: collapse; font-family: Consolas, Menlo, monospace; }
+  table.delta th, table.delta td { border: 1px solid var(--border); padding: 3px 12px; text-align: center; }
+  table.delta th { background: var(--soft); }
+  table.delta tr.cur td, table.delta tr.cur th { background: var(--a-fill); }
+  table.delta td.used { outline: 3px solid var(--a-stroke); outline-offset: -3px; font-weight: 700; }
+  .status { min-height: 1.5em; font-weight: 600; }
+  .status.ok { color: var(--ok-stroke); } .status.bad { color: var(--err-stroke); }
+  .log { font-family: Consolas, Menlo, monospace; font-size: 14px; color: var(--muted); min-height: 1.5em; word-break: break-word; }
+  [data-role=samples] { display: inline-flex; flex-wrap: wrap; gap: 4px; }
+  .controls label { display: inline-flex; align-items: center; gap: 6px; }
+  .legend { display: grid; grid-template-columns: 70px 1fr; gap: 6px 12px; align-items: center; }
+  .legend svg { width: 70px; height: 40px; }
+  .tasks button { min-width: 40px; }
+  .tasks button.solved { background: var(--ok-fill); border-color: var(--ok-stroke); }
+  .tasks button.current { outline: 2px solid var(--btn); outline-offset: 1px; font-weight: 700; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { font-family: Consolas, Menlo, monospace; padding: 1px 8px; border-radius: 12px; border: 1px solid var(--border);
+          background: var(--soft); }
+  .chip.good { background: var(--ok-fill); border-color: var(--ok-stroke); }
+  .chip.wrong { background: var(--err-fill); border-color: var(--err-stroke); }
+  .symbtn { font-family: Consolas, Menlo, monospace; min-width: 44px; font-size: 18px; }
+  .feedback { padding: 8px 12px; border-radius: 6px; margin-top: 8px; display: none; }
+  .feedback.ok { display: block; background: var(--ok-fill); border: 1px solid var(--ok-stroke); }
+  .feedback.bad { display: block; background: var(--err-fill); border: 1px solid var(--err-stroke); }
+  .feedback.info { display: block; background: var(--soft); border: 1px solid var(--border); }
+  .toolbar button { min-width: 110px; }
+  .panel h3 { margin: 0 0 6px; font-size: 16px; }
+  .hint { font-size: 14px; color: var(--muted); }
+  details summary { cursor: pointer; color: var(--muted); }
+  kbd { font-family: Consolas, Menlo, monospace; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 4px;
+        padding: 0 4px; background: var(--soft); }
+</style>
+</head>
+<body>
+<header>
+  <h1>DEA-Simulator</h1>
+  <span id="progressText">1 / 5</span>
+  <div id="progressBar"></div>
+</header>
+
+<main>
+  <!-- Slide 1 -->
+  <section class="slide" data-slide="0">
+    <h2>Deterministischer endlicher Automat</h2>
+    <div class="grid2">
+      <div>
+        <p>Ein <b>DEA</b> M = (Q, Σ, δ, q₀, F) liest ein Wort Zeichen für Zeichen von links nach rechts.
+          Er merkt sich dabei nur seinen aktuellen <b>Zustand</b>.</p>
+        <ul>
+          <li><b>Q</b>: endlich viele Zustände (Kreise)</li>
+          <li><b>Σ</b>: das Alphabet, hier {a, b}</li>
+          <li><b>δ</b>: die Übergänge (Pfeile). Aus Zustand und Zeichen folgt genau ein nächster Zustand.</li>
+          <li><b>q₀</b>: der Startzustand (Pfeil von links)</li>
+          <li><b>F</b>: die Endzustände (Doppelkreis)</li>
+        </ul>
+        <p>Ist der Automat nach dem letzten Zeichen in einem Endzustand, <b>akzeptiert</b> er das Wort,
+          sonst <b>lehnt er es ab</b>. Der Automat rechts akzeptiert alle Wörter, die auf <code>ab</code> enden.</p>
+        <p class="muted">Blättern: Pfeiltasten <kbd>←</kbd> <kbd>→</kbd> oder die Buttons unten.</p>
+      </div>
+      <div>
+        <svg class="automaton" id="introSvg" viewBox="0 0 560 240" aria-label="DEA für Wörter, die auf ab enden"></svg>
+        <div class="card legend">
+          <svg viewBox="0 0 70 40"><line x1="4" y1="20" x2="40" y2="20" class="start-arrow" marker-end="url(#legendMk)"/>
+            <defs><marker id="legendMk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="mk-n"/></marker></defs>
+            <circle cx="56" cy="20" r="12" style="fill:var(--n-fill);stroke:var(--n-stroke);stroke-width:2"/></svg>
+          <span>Startzustand</span>
+          <svg viewBox="0 0 70 40"><circle cx="35" cy="20" r="16" style="fill:var(--n-fill);stroke:var(--n-stroke);stroke-width:2"/>
+            <circle cx="35" cy="20" r="12" style="fill:none;stroke:var(--n-stroke);stroke-width:2"/></svg>
+          <span>Endzustand</span>
+          <svg viewBox="0 0 70 40"><circle cx="35" cy="20" r="16" style="fill:var(--a-fill);stroke:var(--a-stroke);stroke-width:3"/></svg>
+          <span>aktueller Zustand in der Animation</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 2 -->
+  <section class="slide" data-slide="1">
+    <h2>Ein Wort lesen</h2>
+    <p>Der Automat akzeptiert Wörter, die auf <code>ab</code> enden. Gib ein Wort ein oder wähle ein Beispiel.
+      Mit <b>Schritt</b> liest der Automat ein Zeichen, mit <b>Play</b> läuft er von selbst.</p>
+    <div id="sim1" class="sim">
+      <div class="row controls">
+        <label>Wort: <input type="text" data-role="word" value="abab" maxlength="16" size="14" aria-label="Wort"></label>
+        <span data-role="samples"></span>
+      </div>
+      <div class="row controls">
+        <button data-role="reset">⏮ Zurück</button>
+        <button data-role="step" class="primary">Schritt</button>
+        <button data-role="play">▶ Play</button>
+        <label>Geschwindigkeit <input type="range" data-role="speed" min="1" max="5" value="3" aria-label="Geschwindigkeit"></label>
+      </div>
+      <div class="grid2">
+        <div>
+          <svg class="automaton" data-role="svg" viewBox="0 0 560 240"></svg>
+        </div>
+        <div>
+          <div data-role="tape" class="tape"></div>
+          <div data-role="status" class="status"></div>
+          <div data-role="log" class="log"></div>
+          <div class="card"><div class="muted">Übergangstabelle</div><table class="delta" data-role="table"></table></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 3 -->
+  <section class="slide" data-slide="2">
+    <h2>Der Fehlerzustand</h2>
+    <p>Dieser DEA erkennt Ganzzahlen mit optionalem Vorzeichen (<code>42</code>, <code>-7</code>, <code>+0815</code>).
+      <code>sonst</code> steht für jedes Zeichen, für das kein anderer Pfeil passt. Aus dem Fehlerzustand F kommt
+      der Automat nie wieder heraus. Meist lässt man F weg: Dann bedeutet ein <b>fehlender Übergang</b>, dass das
+      Wort sofort abgelehnt wird. Schalte F aus und vergleiche.</p>
+    <div id="sim2" class="sim">
+      <div class="row controls">
+        <label>Wort: <input type="text" data-role="word" value="-42" maxlength="16" size="14" aria-label="Wort"></label>
+        <span data-role="samples"></span>
+        <label><input type="checkbox" data-role="trap" checked> Fehlerzustand F zeichnen</label>
+      </div>
+      <div class="row controls">
+        <button data-role="reset">⏮ Zurück</button>
+        <button data-role="step" class="primary">Schritt</button>
+        <button data-role="play">▶ Play</button>
+        <label>Geschwindigkeit <input type="range" data-role="speed" min="1" max="5" value="3" aria-label="Geschwindigkeit"></label>
+      </div>
+      <div class="grid2">
+        <div>
+          <svg class="automaton" data-role="svg" viewBox="0 0 560 320"></svg>
+        </div>
+        <div>
+          <div data-role="tape" class="tape"></div>
+          <div data-role="status" class="status"></div>
+          <div data-role="log" class="log"></div>
+          <div class="card"><div class="muted">Übergangstabelle</div><table class="delta" data-role="table"></table></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 4 -->
+  <section class="slide" data-slide="3">
+    <h2>Selbst einen Automaten bauen</h2>
+    <p>Auf der nächsten Folie baust du für eine vorgegebene Sprache selbst einen DEA. So bedienst du den Editor:</p>
+    <div class="card">
+      <ul>
+        <li><b>Zustand</b>: Klick auf eine freie Stelle setzt einen Zustand. Der erste Zustand wird automatisch Startzustand.</li>
+        <li><b>Verschieben</b>: Zustände mit der Maus ziehen. Ein Klick wählt einen Zustand oder Übergang aus.
+          Doppelklick auf einen Zustand macht ihn zum Endzustand (oder wieder zu einem normalen Zustand).</li>
+        <li><b>Übergang</b>: Vom Ausgangszustand zum Zielzustand ziehen. Alternativ klickst du die beiden Zustände
+          nacheinander an. Für eine <b>Schleife</b> klickst du zweimal auf denselben Zustand.</li>
+        <li>Danach wählst du rechts die <b>Zeichen</b> für den Übergang aus. Ein Pfeil darf mehrere Zeichen haben.
+          Zeichen, die aus diesem Zustand schon verwendet werden, sind gesperrt, denn der Automat muss deterministisch sein.
+          Ist ein Übergang ausgewählt, kannst du die Zeichen auch direkt mit der Tastatur umschalten.</li>
+        <li><b>Löschen</b>: Zustand oder Übergang anklicken. Oder auswählen und <kbd>Entf</kbd> drücken.</li>
+        <li>Rechts legst du für einen ausgewählten Zustand fest, ob er Start- oder Endzustand ist.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <p><b>Prüfen</b> vergleicht deinen Automaten mit der Sprache: zuerst alle Wörter bis zur Länge 8, dann exakt mit
+        einem Musterautomaten. Ist dein Automat falsch, siehst du das kürzeste Gegenbeispiel.</p>
+      <p>Ein <b>fehlender Übergang</b> bedeutet Ablehnung. Einen Fehlerzustand musst du also nicht zeichnen.</p>
+      <p>Mit <b>Wort testen</b> lässt du deinen Automaten ein beliebiges Wort lesen. Dein Fortschritt wird im Browser gespeichert.</p>
+    </div>
+  </section>
+
+  <!-- Slide 5 -->
+  <section class="slide" data-slide="4">
+    <h2>Übung: Baue den DEA</h2>
+    <div class="row tasks" id="taskButtons"></div>
+    <div class="card" id="taskCard"></div>
+    <div class="row toolbar" id="toolbar">
+      <button data-mode="state" aria-pressed="false">＋ Zustand</button>
+      <button data-mode="move" aria-pressed="true">✥ Verschieben</button>
+      <button data-mode="edge" aria-pressed="false">→ Übergang</button>
+      <button data-mode="delete" aria-pressed="false">✕ Löschen</button>
+      <button id="clearBtn">Neu beginnen</button>
+    </div>
+    <div class="grid2 practice">
+      <div>
+        <svg class="automaton" id="editorSvg" viewBox="0 0 700 420" style="touch-action:none" aria-label="Editor"></svg>
+        <div class="hint" id="modeHint"></div>
+      </div>
+      <div class="panel">
+        <div class="card" id="selPanel"></div>
+        <div class="card">
+          <h3>Prüfen</h3>
+          <button class="primary" id="checkBtn">Prüfen</button>
+          <div class="feedback" id="feedback"></div>
+        </div>
+        <div class="card">
+          <h3>Wort testen</h3>
+          <div class="row"><input type="text" id="testWord" size="12" maxlength="30" aria-label="Testwort">
+            <button id="testBtn">Testen</button></div>
+          <div class="log" id="testResult"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="nav">
+  <button id="prevBtn">← Zurück</button>
+  <button id="nextBtn" class="primary">Weiter →</button>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  const SVGNS = 'http://www.w3.org/2000/svg';
+  const R = 22;
+  const DIGITS = '0123456789'.split('');
+
+  // ---------- storage (works without localStorage) ----------
+  const store = {
+    get(key, fallback) {
+      try {
+        const raw = window.localStorage.getItem('ti-13-' + key);
+        return raw === null ? fallback : JSON.parse(raw);
+      } catch (e) { return fallback; }
+    },
+    set(key, value) {
+      try { window.localStorage.setItem('ti-13-' + key, JSON.stringify(value)); } catch (e) { /* ignore */ }
+    },
+    remove(key) {
+      try { window.localStorage.removeItem('ti-13-' + key); } catch (e) { /* ignore */ }
+    }
+  };
+
+  // ---------- helpers ----------
+  function svgEl(tag, attrs, parent) {
+    const e = document.createElementNS(SVGNS, tag);
+    for (const k in attrs) { e.setAttribute(k, attrs[k]); }
+    if (parent) { parent.appendChild(e); }
+    return e;
+  }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+  function subscript(n) {
+    return String(n).split('').map(d => '₀₁₂₃₄₅₆₇₈₉'[+d]).join('');
+  }
+  function wordHtml(w) {
+    return w === '' ? '<code>ε</code> (das leere Wort)' : '<code>' + escapeHtml(w) + '</code>';
+  }
+  function stateById(model, id) { return model.states.find(s => s.id === id) || null; }
+  function stateLabel(model, id) { const s = stateById(model, id); return s ? s.label : '?'; }
+
+  // ---------- automaton logic ----------
+  /** Returns the edge used for (stateId, ch) or null if there is no transition. */
+  function findTransition(model, stateId, ch) {
+    let otherwise = null;
+    for (const e of model.edges) {
+      if (e.from !== stateId) { continue; }
+      if (e.otherwise) { otherwise = e; } else if (e.symbols.includes(ch)) { return e; }
+    }
+    return otherwise;
+  }
+  function isFinal(model, id) { const s = stateById(model, id); return !!(s && s.final); }
+
+  /** Runs a word and returns the visited states; stuck = index of the char without transition. */
+  function runWord(model, word) {
+    let cur = model.start;
+    const path = [cur];
+    for (let i = 0; i < word.length; i++) {
+      const e = findTransition(model, cur, word[i]);
+      if (!e) { return { path, accepted: false, stuck: i }; }
+      cur = e.to;
+      path.push(cur);
+    }
+    return { path, accepted: isFinal(model, cur), stuck: -1 };
+  }
+
+  // ---------- renderer ----------
+  function edgeLabel(e) {
+    if (e.label) { return e.label; }
+    return e.symbols.length ? e.symbols.join(', ') : '?';
+  }
+  function approxTextWidth(t) { return t.length * 8.8; }
+
+  /** Computes path data and label position for an edge. */
+  function edgeGeometry(model, e) {
+    const a = stateById(model, e.from), b = stateById(model, e.to);
+    if (a === b) {
+      const t = (e.loopAngle === undefined ? -90 : e.loopAngle) * Math.PI / 180;
+      const p = ang => [a.x + R * Math.cos(t + ang), a.y + R * Math.sin(t + ang)];
+      const c = (ang, d) => [a.x + d * Math.cos(t + ang), a.y + d * Math.sin(t + ang)];
+      const s = p(-0.44), en = p(0.44), c1 = c(-0.40, 68), c2 = c(0.40, 68);
+      const lw = approxTextWidth(edgeLabel(e));
+      const cos = Math.cos(t), sin = Math.sin(t);
+      const dist = 62 + Math.abs(cos) * (lw / 2 + 2) + Math.abs(sin) * 4;
+      return {
+        d: `M${s[0]},${s[1]} C${c1[0]},${c1[1]} ${c2[0]},${c2[1]} ${en[0]},${en[1]}`,
+        lx: a.x + dist * cos, ly: a.y + dist * sin
+      };
+    }
+    const dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy) || 1;
+    const ux = dx / len, uy = dy / len, nx = uy, ny = -ux;
+    let bend = e.bend;
+    if (bend === undefined) {
+      const reverse = model.edges.some(o => o.from === e.to && o.to === e.from);
+      bend = reverse ? 24 : 0;
+    }
+    const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+    const lw = approxTextWidth(edgeLabel(e));
+    const sign = bend < 0 ? -1 : 1;
+    const off = 9 + Math.abs(nx) * (lw / 2) + Math.abs(ny) * 7;
+    if (bend === 0) {
+      return {
+        d: `M${a.x + ux * R},${a.y + uy * R} L${b.x - ux * R},${b.y - uy * R}`,
+        lx: mx + nx * off, ly: my + ny * off
+      };
+    }
+    const cx = mx + nx * 2 * bend, cy = my + ny * 2 * bend;
+    const unit = (x, y) => { const l = Math.hypot(x, y) || 1; return [x / l, y / l]; };
+    const s = unit(cx - a.x, cy - a.y), t = unit(cx - b.x, cy - b.y);
+    return {
+      d: `M${a.x + s[0] * R},${a.y + s[1] * R} Q${cx},${cy} ${b.x + t[0] * R},${b.y + t[1] * R}`,
+      lx: mx + nx * (bend + sign * off), ly: my + ny * (bend + sign * off)
+    };
+  }
+
+  /**
+   * Draws a model into an svg element.
+   * view: { active, activeEdge, verdict, selected, pending, hover, rubber, interactive }
+   */
+  function renderAutomaton(svg, model, view) {
+    view = view || {};
+    while (svg.firstChild) { svg.removeChild(svg.firstChild); }
+    const pre = svg.id || svg.dataset.uid;
+    const defs = svgEl('defs', {}, svg);
+    for (const k of ['n', 'a', 'e', 's']) {
+      const m = svgEl('marker', { id: pre + '-mk-' + k, viewBox: '0 0 10 10', refX: 9, refY: 5,
+        markerWidth: 11, markerHeight: 11, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, defs);
+      svgEl('path', { d: 'M0,0 L10,5 L0,10 z', class: 'mk-' + k }, m);
+    }
+    const gEdges = svgEl('g', {}, svg);
+    model.edges.forEach((e, i) => {
+      const g = edgeGeometry(model, e);
+      let cls = 'edge', mk = 'n', lcls = 'lbl';
+      if (e.error) { cls += ' error'; mk = 'e'; lcls += ' error'; }
+      if (!e.label && !e.otherwise && e.symbols.length === 0) { cls += ' unlabeled'; mk = 'e'; lcls += ' unlabeled'; }
+      if (view.selected && view.selected.edge === e) { cls += ' selected'; mk = 's'; }
+      if (view.activeEdge === e) { cls += ' active'; mk = 'a'; lcls += ' active'; }
+      svgEl('path', { d: g.d, class: cls, 'marker-end': `url(#${pre}-mk-${mk})` }, gEdges);
+      if (view.interactive) { svgEl('path', { d: g.d, class: 'edge-hit', 'data-edge': i }, gEdges); }
+      const t = svgEl('text', { x: g.lx, y: g.ly, class: lcls, 'text-anchor': 'middle', 'dominant-baseline': 'central' }, gEdges);
+      t.textContent = edgeLabel(e);
+    });
+    const startState = stateById(model, model.start);
+    if (startState) {
+      svgEl('line', { x1: startState.x - 62, y1: startState.y, x2: startState.x - R, y2: startState.y,
+        class: 'start-arrow', 'marker-end': `url(#${pre}-mk-n)` }, svg);
+    }
+    for (const s of model.states) {
+      let cls = 'st';
+      if (s.error) { cls += ' error'; }
+      if (view.active === s.id) { cls += view.verdict === 'accept' ? ' accept' : view.verdict === 'reject' ? ' reject' : ' active'; }
+      if (view.selected && view.selected.state === s.id) { cls += ' selected'; }
+      if (view.pending === s.id) { cls += ' pending'; }
+      if (view.hover === s.id) { cls += ' hover'; }
+      const g = svgEl('g', { class: cls, 'data-state': s.id }, svg);
+      svgEl('circle', { cx: s.x, cy: s.y, r: R, class: 'outer' }, g);
+      if (s.final) { svgEl('circle', { cx: s.x, cy: s.y, r: R - 4, class: 'inner' }, g); }
+      const t = svgEl('text', { x: s.x, y: s.y }, g);
+      t.textContent = s.label;
+    }
+    if (view.rubber) {
+      svgEl('line', { x1: view.rubber.x1, y1: view.rubber.y1, x2: view.rubber.x2, y2: view.rubber.y2, class: 'rubber' }, svg);
+    }
+  }
+
+  // ---------- intro models ----------
+  const modelAb = {
+    states: [
+      { id: 'q0', label: 'q₀', x: 120, y: 130 },
+      { id: 'q1', label: 'q₁', x: 280, y: 130 },
+      { id: 'q2', label: 'q₂', x: 440, y: 130, final: true }
+    ],
+    start: 'q0',
+    edges: [
+      { from: 'q0', to: 'q0', symbols: ['b'] },
+      { from: 'q0', to: 'q1', symbols: ['a'] },
+      { from: 'q1', to: 'q1', symbols: ['a'] },
+      { from: 'q1', to: 'q2', symbols: ['b'] },
+      { from: 'q2', to: 'q1', symbols: ['a'] },
+      { from: 'q2', to: 'q0', symbols: ['b'], bend: 62 }
+    ],
+    columns: [{ label: 'a', symbols: ['a'] }, { label: 'b', symbols: ['b'] }]
+  };
+
+  function integerModel(withTrap) {
+    const m = {
+      states: [
+        { id: 'S', label: 'S', x: 100, y: 120 },
+        { id: 'V', label: 'V', x: 260, y: 120 },
+        { id: 'Z', label: 'Z', x: 420, y: 120, final: true }
+      ],
+      start: 'S',
+      edges: [
+        { from: 'S', to: 'V', symbols: ['+', '-'], label: '+, −' },
+        { from: 'V', to: 'Z', symbols: DIGITS, label: '0–9' },
+        { from: 'S', to: 'Z', symbols: DIGITS, label: '0–9', bend: 62 },
+        { from: 'Z', to: 'Z', symbols: DIGITS, label: '0–9', loopAngle: 0 }
+      ],
+      columns: [{ label: '+, −', symbols: ['+', '-'] }, { label: '0–9', symbols: DIGITS }]
+    };
+    if (withTrap) {
+      m.states.push({ id: 'F', label: 'F', x: 260, y: 236, error: true });
+      for (const from of ['S', 'V', 'Z']) { m.edges.push({ from, to: 'F', symbols: [], otherwise: true, error: true, label: 'sonst' }); }
+      m.edges.push({ from: 'F', to: 'F', symbols: [], otherwise: true, error: true, label: 'alle', loopAngle: 90 });
+      m.columns.push({ label: 'sonst', otherwise: true });
+    }
+    return m;
+  }
+
+  renderAutomaton(document.getElementById('introSvg'), modelAb, {});
+
+  // ---------- simulator ----------
+  const SPEEDS = [1600, 1100, 750, 450, 250];
+
+  /** Wires up one simulator block. getModel() returns the current model. */
+  function createSimulator(root, getModel, samples) {
+    const q = r => root.querySelector(`[data-role="${r}"]`);
+    const svg = q('svg'), wordInput = q('word'), playBtn = q('play'), stepBtn = q('step');
+    svg.dataset.uid = root.id + 'svg';
+    let model = getModel();
+    let st, timer = null;
+
+    const sampleBox = q('samples');
+    for (const w of samples) {
+      const b = document.createElement('button');
+      b.textContent = w === '' ? 'ε' : w;
+      b.className = 'mono';
+      b.addEventListener('click', () => { wordInput.value = w; reset(); });
+      sampleBox.appendChild(b);
+    }
+
+    function reset() {
+      stop();
+      model = getModel();
+      st = { pos: 0, cur: model.start, done: false, stuck: false, verdict: null, edge: null, usedCol: -1, rowState: null, log: [] };
+      setStatus(`Start in ${stateLabel(model, model.start)}. Klicke auf Schritt oder Play.`, '');
+      draw();
+    }
+    function word() { return wordInput.value; }
+    function setStatus(text, cls) { const s = q('status'); s.textContent = text; s.className = 'status ' + cls; }
+
+    function columnOf(ch) {
+      const i = model.columns.findIndex(c => c.symbols && c.symbols.includes(ch));
+      if (i >= 0) { return i; }
+      return model.columns.findIndex(c => c.otherwise);
+    }
+
+    function step() {
+      if (st.done) { return; }
+      const w = word();
+      if (st.pos >= w.length) { finish(); return; }
+      const ch = w[st.pos];
+      const from = st.cur;
+      const e = findTransition(model, from, ch);
+      st.rowState = from;
+      st.usedCol = columnOf(ch);
+      if (!e) {
+        st.done = true; st.verdict = 'reject'; st.edge = null;
+        st.log.push(`δ(${stateLabel(model, from)}, ${ch}) fehlt`);
+        st.stuck = true;
+        setStatus(`In ${stateLabel(model, from)} gibt es keinen Übergang für „${ch}“ → abgelehnt ✗`, 'bad');
+        stop(); draw(); return;
+      }
+      st.cur = e.to; st.edge = e; st.pos++;
+      st.log.push(`δ(${stateLabel(model, from)}, ${ch}) = ${stateLabel(model, e.to)}`);
+      const trap = stateById(model, e.to).error ? ' (Fehlerzustand, hier kommt der Automat nicht mehr heraus)' : '';
+      setStatus(`${stateLabel(model, from)} liest „${ch}“ und geht nach ${stateLabel(model, e.to)}${trap}.`, '');
+      if (st.pos >= w.length) { finish(); } else { draw(); }
+    }
+    function finish() {
+      st.done = true;
+      const f = isFinal(model, st.cur);
+      st.verdict = f ? 'accept' : 'reject';
+      const lbl = stateLabel(model, st.cur);
+      setStatus(f ? `Wort zu Ende. ${lbl} ist ein Endzustand → akzeptiert ✓`
+        : `Wort zu Ende. ${lbl} ist kein Endzustand → abgelehnt ✗`, f ? 'ok' : 'bad');
+      stop(); draw();
+    }
+    function play() {
+      if (timer) { stop(); return; }
+      if (st.done) { reset(); }
+      playBtn.textContent = '⏸ Pause';
+      const tick = () => { step(); if (!st.done) { timer = setTimeout(tick, SPEEDS[q('speed').value - 1]); } };
+      timer = setTimeout(tick, 150);
+    }
+    function stop() {
+      if (timer) { clearTimeout(timer); timer = null; }
+      playBtn.textContent = '▶ Play';
+    }
+    function draw() {
+      renderAutomaton(svg, model, { active: st.cur, activeEdge: st.edge, verdict: st.verdict });
+      const w = word();
+      const tape = q('tape');
+      let html = '';
+      for (let i = 0; i < w.length; i++) {
+        const cls = i < st.pos ? 'read' : (i === st.pos && st.stuck ? 'stuck' : (i === st.pos && !st.done ? 'current' : ''));
+        html += `<div class="cell ${cls}">${escapeHtml(w[i])}</div>`;
+      }
+      const endCur = st.pos >= w.length ? 'current' : '';
+      html += `<div class="cell end ${endCur}" title="Wortende">${w.length === 0 ? 'ε' : 'Ende'}</div>`;
+      tape.innerHTML = html;
+      q('log').textContent = st.log.join(',  ');
+      let t = '<tr><th>δ</th>' + model.columns.map(c => `<th>${escapeHtml(c.label)}</th>`).join('') + '</tr>';
+      for (const s of model.states) {
+        const mark = (s.id === model.start ? '→ ' : '') + (s.final ? '* ' : '');
+        const rowCls = s.id === st.cur ? 'cur' : '';
+        t += `<tr class="${rowCls}"><th>${mark}${escapeHtml(s.label)}</th>`;
+        model.columns.forEach((c, ci) => {
+          const probe = c.otherwise ? '\u0000' : c.symbols[0];
+          const e = findTransition(model, s.id, probe);
+          const used = st.rowState === s.id && st.usedCol === ci ? 'used' : '';
+          t += `<td class="${used}">${e ? escapeHtml(stateLabel(model, e.to)) : '–'}</td>`;
+        });
+        t += '</tr>';
+      }
+      q('table').innerHTML = t;
+    }
+
+    q('reset').addEventListener('click', reset);
+    stepBtn.addEventListener('click', () => { stop(); step(); });
+    playBtn.addEventListener('click', play);
+    wordInput.addEventListener('input', reset);
+    const trap = q('trap');
+    if (trap) { trap.addEventListener('change', reset); }
+    reset();
+    return { stop, reset };
+  }
+
+  const sim1 = createSimulator(document.getElementById('sim1'), () => modelAb, ['abab', 'aba', 'bab', 'abba', '']);
+  const trapBox = document.querySelector('#sim2 [data-role="trap"]');
+  const sim2 = createSimulator(document.getElementById('sim2'), () => integerModel(trapBox.checked), ['-42', '+0815', '4-2', '+', '12a', '']);
+
+  // ---------- tasks ----------
+  /** Builds a reference DFA: delta maps state -> { symbol: state }. */
+  function ref(start, finals, delta) { return { start, finals, delta }; }
+  const TASKS = [
+    { id: 'starts-a', title: 'Beginnt mit a', alphabet: ['a', 'b'], text: 'Alle Wörter, die mit <code>a</code> beginnen.',
+      pos: ['a', 'ab', 'abba', 'aaa'], neg: ['', 'b', 'ba', 'bab'],
+      accepts: w => w[0] === 'a',
+      ref: ref(0, [1], { 0: { a: 1 }, 1: { a: 1, b: 1 } }),
+      tip: 'Zwei Zustände reichen. Was passiert, wenn das erste Zeichen ein b ist? Denk an fehlende Übergänge.' },
+    { id: 'even-a', title: 'Gerade Anzahl a', alphabet: ['a', 'b'],
+      text: 'Alle Wörter mit einer geraden Anzahl von <code>a</code>. Null ist auch gerade.',
+      pos: ['', 'b', 'aa', 'abab', 'bbaab'], neg: ['a', 'ba', 'aaa', 'abaa'],
+      accepts: w => w.split('a').length % 2 === 1,
+      ref: ref(0, [0], { 0: { a: 1, b: 0 }, 1: { a: 0, b: 1 } }),
+      tip: 'Der Automat muss sich nur merken: „bisher gerade“ oder „bisher ungerade“.' },
+    { id: 'ends-bb', title: 'Endet auf bb', alphabet: ['a', 'b'], text: 'Alle Wörter, die auf <code>bb</code> enden.',
+      pos: ['bb', 'abb', 'babb', 'bbbb'], neg: ['', 'b', 'ab', 'bba', 'bab'],
+      accepts: w => w.endsWith('bb'),
+      ref: ref(0, [2], { 0: { a: 0, b: 1 }, 1: { a: 0, b: 2 }, 2: { a: 0, b: 2 } }),
+      tip: 'Merke dir, wie viele b zuletzt hintereinander kamen: keins, eins, zwei oder mehr.' },
+    { id: 'two-b', title: 'Genau zwei b', alphabet: ['a', 'b'], text: 'Alle Wörter, die genau zwei <code>b</code> enthalten.',
+      pos: ['bb', 'abab', 'babaa', 'aabba'], neg: ['', 'b', 'aaa', 'bbb', 'babab'],
+      accepts: w => w.split('b').length === 3,
+      ref: ref(0, [2], { 0: { a: 0, b: 1 }, 1: { a: 1, b: 2 }, 2: { a: 2 } }),
+      tip: 'Zähle die b mit: 0, 1, 2. Ein drittes b führt ins Leere.' },
+    { id: 'no-aa', title: 'Kein aa', alphabet: ['a', 'b'],
+      text: 'Alle Wörter, in denen nie zwei <code>a</code> direkt hintereinander stehen.',
+      pos: ['', 'a', 'b', 'ab', 'aba', 'babab'], neg: ['aa', 'baa', 'aaa', 'abaab'],
+      accepts: w => !w.includes('aa'),
+      ref: ref(0, [0, 1], { 0: { a: 1, b: 0 }, 1: { b: 0 } }),
+      tip: 'Merke dir, ob das letzte Zeichen ein a war.' },
+    { id: 'sorted', title: 'Sortiert', alphabet: ['a', 'b', 'c'],
+      text: 'Alle Wörter, deren Zeichen alphabetisch sortiert sind: zuerst beliebig viele <code>a</code>, dann beliebig viele <code>b</code>, dann beliebig viele <code>c</code>.',
+      pos: ['', 'abc', 'aacc', 'bbc', 'c', 'aab'], neg: ['ba', 'cab', 'acb', 'cba', 'abca'],
+      accepts: w => /^a*b*c*$/.test(w),
+      ref: ref(0, [0, 1, 2], { 0: { a: 0, b: 1, c: 2 }, 1: { b: 1, c: 2 }, 2: { c: 2 } }),
+      tip: 'Jeder Zustand steht für den „Abschnitt“, in dem der Automat gerade ist.' },
+    { id: 'len-3', title: 'Länge durch 3 teilbar', alphabet: ['a', 'b'],
+      text: 'Alle Wörter, deren Länge durch 3 teilbar ist.',
+      pos: ['', 'aab', 'bbb', 'abaabb'], neg: ['a', 'ab', 'abab', 'aaaa'],
+      accepts: w => w.length % 3 === 0,
+      ref: ref(0, [0], { 0: { a: 1, b: 1 }, 1: { a: 2, b: 2 }, 2: { a: 0, b: 0 } }),
+      tip: 'Welches Zeichen gelesen wird, ist egal. Wichtig ist nur der Rest bei Division durch 3.' },
+    { id: 'binary', title: 'Binärzahl ohne führende Null', alphabet: ['0', '1'],
+      text: 'Binärzahlen ohne führende Nullen. Die Zahl <code>0</code> selbst ist erlaubt, das leere Wort nicht.',
+      pos: ['0', '1', '10', '101', '1000'], neg: ['', '00', '01', '0101', '001'],
+      accepts: w => w === '0' || /^1[01]*$/.test(w),
+      ref: ref(0, [1, 2], { 0: { 0: 1, 1: 2 }, 1: {}, 2: { 0: 2, 1: 2 } }),
+      tip: 'Nach einer führenden 0 darf nichts mehr kommen.' },
+    { id: 'even-even', title: 'Gerade a und gerade b', alphabet: ['a', 'b'],
+      text: 'Alle Wörter mit einer geraden Anzahl von <code>a</code> <b>und</b> einer geraden Anzahl von <code>b</code>.',
+      pos: ['', 'aa', 'bb', 'abab', 'abba', 'baab'], neg: ['a', 'b', 'ab', 'aab', 'abb'],
+      accepts: w => w.split('a').length % 2 === 1 && w.split('b').length % 2 === 1,
+      ref: ref(0, [0], { 0: { a: 2, b: 1 }, 1: { a: 3, b: 0 }, 2: { a: 0, b: 3 }, 3: { a: 1, b: 2 } }),
+      tip: 'Der Automat muss sich zwei Dinge gleichzeitig merken. Wie viele Kombinationen gibt es?' },
+    { id: 'same-ends', title: 'Gleicher Anfang und gleiches Ende', alphabet: ['a', 'b'],
+      text: 'Alle nicht leeren Wörter, die mit demselben Zeichen beginnen und enden.',
+      pos: ['a', 'b', 'aa', 'aba', 'bab', 'abba', 'baab'], neg: ['', 'ab', 'ba', 'aab', 'bba'],
+      accepts: w => w.length > 0 && w[0] === w[w.length - 1],
+      ref: ref(0, [1, 3], { 0: { a: 1, b: 3 }, 1: { a: 1, b: 2 }, 2: { a: 1, b: 2 }, 3: { a: 4, b: 3 }, 4: { a: 4, b: 3 } }),
+      tip: 'Nach dem ersten Zeichen teilt sich der Automat in zwei getrennte Hälften.' }
+  ];
+  const MAX_LEN = 8;
+
+  /** All words over the alphabet up to maxLen in shortlex order. */
+  function* wordsUpTo(alphabet, maxLen) {
+    let layer = [''];
+    yield '';
+    for (let n = 1; n <= maxLen; n++) {
+      const next = [];
+      for (const w of layer) { for (const c of alphabet) { next.push(w + c); } }
+      for (const w of next) { yield w; }
+      layer = next;
+    }
+  }
+
+  /** Exact comparison of the student model with the reference DFA (product BFS, shortlex counterexample). */
+  function productCounterexample(model, task) {
+    const DEAD = '\u0000dead';
+    const key = (s, r) => s + '|' + r;
+    const acc = (s, r) => [s !== DEAD && isFinal(model, s), r !== DEAD && task.ref.finals.includes(r)];
+    const startPair = [model.start, task.ref.start];
+    const seen = new Set([key(startPair[0], startPair[1])]);
+    const queue = [[startPair[0], startPair[1], '']];
+    while (queue.length) {
+      const [s, r, w] = queue.shift();
+      const [as, ar] = acc(s, r);
+      if (as !== ar) { return { word: w, studentAccepts: as }; }
+      for (const c of task.alphabet) {
+        let s2 = DEAD, r2 = DEAD;
+        if (s !== DEAD) { const e = findTransition(model, s, c); if (e) { s2 = e.to; } }
+        if (r !== DEAD) { const d = task.ref.delta[r]; if (d && d[c] !== undefined) { r2 = d[c]; } }
+        const k = key(s2, r2);
+        if (!seen.has(k)) { seen.add(k); queue.push([s2, r2, w + c]); }
+      }
+    }
+    return null;
+  }
+
+  /** Developer self test: reference DFAs must agree with the predicates. */
+  function selfTest() {
+    const problems = [];
+    for (const t of TASKS) {
+      for (const w of wordsUpTo(t.alphabet, 9)) {
+        let r = t.ref.start, ok = true;
+        for (const c of w) { const d = t.ref.delta[r]; if (!d || d[c] === undefined) { ok = false; break; } r = d[c]; }
+        const refAcc = ok && t.ref.finals.includes(r);
+        if (refAcc !== t.accepts(w)) { problems.push(t.id + ':' + w); break; }
+      }
+      for (const w of t.pos) { if (!t.accepts(w)) { problems.push(t.id + ' pos ' + w); } }
+      for (const w of t.neg) { if (t.accepts(w)) { problems.push(t.id + ' neg ' + w); } }
+    }
+    return problems;
+  }
+
+  // ---------- editor ----------
+  const editorSvg = document.getElementById('editorSvg');
+  const VB = { w: 700, h: 420 };
+  const ed = {
+    taskIndex: Math.min(Math.max(store.get('task', 0) | 0, 0), TASKS.length - 1),
+    solved: new Set(store.get('solved', [])),
+    model: null, mode: 'move', selected: null, pending: null, hover: null, rubber: null,
+    drag: null, link: null, testView: null, clearArmed: null, lastDown: null
+  };
+
+  function task() { return TASKS[ed.taskIndex]; }
+  function emptyModel() { return { states: [], start: null, edges: [] }; }
+
+  /** Loads a saved automaton for the current task; validates the stored shape. */
+  function loadModel() {
+    const raw = store.get('auto-' + task().id, null);
+    const m = emptyModel();
+    if (raw && Array.isArray(raw.states) && Array.isArray(raw.edges)) {
+      for (const s of raw.states) {
+        if (typeof s.id === 'string' && isFinite(s.x) && isFinite(s.y)) {
+          m.states.push({ id: s.id, label: labelFor(s.id), x: clampX(+s.x), y: clampY(+s.y), final: !!s.final });
+        }
+      }
+      const ids = new Set(m.states.map(s => s.id));
+      m.start = ids.has(raw.start) ? raw.start : null;
+      const sigma = task().alphabet;
+      for (const e of raw.edges) {
+        if (ids.has(e.from) && ids.has(e.to) && Array.isArray(e.symbols) &&
+            !m.edges.some(o => o.from === e.from && o.to === e.to)) {
+          const symbols = e.symbols.filter(c => sigma.includes(c) && !m.edges.some(o => o.from === e.from && o.symbols.includes(c)));
+          m.edges.push({ from: e.from, to: e.to, symbols: sortSymbols(symbols) });
+        }
+      }
+    }
+    return m;
+  }
+  function saveModel() {
+    const m = ed.model;
+    store.set('auto-' + task().id, {
+      states: m.states.map(s => ({ id: s.id, x: Math.round(s.x), y: Math.round(s.y), final: !!s.final })),
+      start: m.start,
+      edges: m.edges.map(e => ({ from: e.from, to: e.to, symbols: e.symbols }))
+    });
+  }
+  function labelFor(id) { return 'q' + subscript(id.slice(1)); }
+  function sortSymbols(list) { const sigma = task().alphabet; return list.slice().sort((x, y) => sigma.indexOf(x) - sigma.indexOf(y)); }
+  function clampX(x) { return Math.min(Math.max(x, 75), VB.w - 30); }
+  function clampY(y) { return Math.min(Math.max(y, 80), VB.h - 30); }
+
+  function svgPoint(evt) {
+    const pt = editorSvg.createSVGPoint();
+    pt.x = evt.clientX; pt.y = evt.clientY;
+    const p = pt.matrixTransform(editorSvg.getScreenCTM().inverse());
+    return { x: p.x, y: p.y };
+  }
+  function stateAt(p) {
+    for (let i = ed.model.states.length - 1; i >= 0; i--) {
+      const s = ed.model.states[i];
+      if (Math.hypot(s.x - p.x, s.y - p.y) <= R + 4) { return s; }
+    }
+    return null;
+  }
+
+  function changed() {
+    ed.testView = null;
+    document.getElementById('testResult').textContent = '';
+    saveModel();
+    clearFeedback();
+    draw();
+  }
+
+  function addState(p) {
+    let n = 0;
+    while (ed.model.states.some(s => s.id === 'q' + n)) { n++; }
+    const s = { id: 'q' + n, label: labelFor('q' + n), x: clampX(p.x), y: clampY(p.y), final: false };
+    ed.model.states.push(s);
+    if (!ed.model.start) { ed.model.start = s.id; }
+    ed.selected = { state: s.id };
+    changed();
+  }
+  function deleteState(id) {
+    const m = ed.model;
+    m.states = m.states.filter(s => s.id !== id);
+    m.edges = m.edges.filter(e => e.from !== id && e.to !== id);
+    if (m.start === id) { m.start = null; }
+    if (ed.pending === id) { ed.pending = null; }
+    ed.selected = null;
+    changed();
+  }
+  function deleteEdge(e) {
+    ed.model.edges = ed.model.edges.filter(o => o !== e);
+    ed.selected = null;
+    changed();
+  }
+  function connect(from, to) {
+    let e = ed.model.edges.find(o => o.from === from && o.to === to);
+    if (!e) {
+      e = { from, to, symbols: [] };
+      ed.model.edges.push(e);
+    }
+    ed.selected = { edge: e };
+    changed();
+  }
+  function toggleSymbol(e, c) {
+    if (e.symbols.includes(c)) {
+      e.symbols = e.symbols.filter(x => x !== c);
+    } else {
+      if (ed.model.edges.some(o => o !== e && o.from === e.from && o.symbols.includes(c))) { return; }
+      e.symbols = sortSymbols(e.symbols.concat([c]));
+    }
+    changed();
+  }
+
+  const HINTS = {
+    state: 'Klicke auf eine freie Stelle, um einen Zustand zu setzen.',
+    move: 'Ziehe Zustände an eine neue Position. Klick wählt aus, Doppelklick schaltet Endzustand um.',
+    edge: 'Ziehe von einem Zustand zum Ziel oder klicke beide nacheinander an. Zweimal derselbe Zustand ergibt eine Schleife.',
+    delete: 'Klicke auf einen Zustand oder Übergang, um ihn zu löschen.'
+  };
+  function setMode(mode) {
+    ed.mode = mode; ed.pending = null; ed.link = null; ed.rubber = null;
+    for (const b of document.querySelectorAll('#toolbar [data-mode]')) { b.setAttribute('aria-pressed', String(b.dataset.mode === mode)); }
+    document.getElementById('modeHint').textContent = HINTS[mode];
+    draw();
+  }
+
+  editorSvg.addEventListener('pointerdown', evt => {
+    if (evt.button !== 0) { return; }
+    evt.preventDefault();
+    const p = svgPoint(evt);
+    const s = stateAt(p);
+    const edgeEl = evt.target.closest ? evt.target.closest('[data-edge]') : null;
+    const edge = !s && edgeEl ? ed.model.edges[+edgeEl.dataset.edge] : null;
+    if (ed.mode === 'delete') {
+      if (s) { deleteState(s.id); } else if (edge) { deleteEdge(edge); }
+      return;
+    }
+    if (ed.mode === 'state') {
+      if (s) { ed.selected = { state: s.id }; draw(); } else if (edge) { ed.selected = { edge }; draw(); } else { addState(p); }
+      return;
+    }
+    if (ed.mode === 'move') {
+      // Own double-click detection: the click/dblclick events are unreliable because the SVG is redrawn on pointerdown.
+      const now = performance.now(), last = ed.lastDown;
+      ed.lastDown = { t: now, id: s ? s.id : null, x: p.x, y: p.y };
+      if (last && now - last.t < 450 && last.id === (s ? s.id : null) && Math.hypot(p.x - last.x, p.y - last.y) < 8) {
+        ed.lastDown = null;
+        if (s) { s.final = !s.final; ed.selected = { state: s.id }; changed(); return; }
+        if (!edge) { addState(p); return; }
+      }
+      if (s) {
+        ed.selected = { state: s.id };
+        ed.drag = { id: s.id, dx: s.x - p.x, dy: s.y - p.y, sx: p.x, sy: p.y, moved: false };
+        editorSvg.setPointerCapture(evt.pointerId);
+      } else if (edge) {
+        ed.selected = { edge };
+      } else {
+        ed.selected = null;
+      }
+      draw();
+      return;
+    }
+    // edge mode
+    if (s) {
+      ed.link = { from: ed.pending || s.id, viaPending: !!ed.pending, sx: p.x, sy: p.y, moved: false, leftSource: false };
+      editorSvg.setPointerCapture(evt.pointerId);
+    } else if (edge) {
+      ed.pending = null; ed.selected = { edge };
+    } else {
+      ed.pending = null; ed.selected = null;
+    }
+    draw();
+  });
+
+  editorSvg.addEventListener('pointermove', evt => {
+    const p = svgPoint(evt);
+    if (ed.drag) {
+      const s = stateById(ed.model, ed.drag.id);
+      if (Math.hypot(p.x - ed.drag.sx, p.y - ed.drag.sy) > 4) { ed.drag.moved = true; }
+      if (s && ed.drag.moved) { s.x = clampX(p.x + ed.drag.dx); s.y = clampY(p.y + ed.drag.dy); draw(); }
+      return;
+    }
+    if (ed.link) {
+      if (Math.hypot(p.x - ed.link.sx, p.y - ed.link.sy) > 6) { ed.link.moved = true; }
+      const from = stateById(ed.model, ed.link.from);
+      const over = stateAt(p);
+      if (!over || over.id !== ed.link.from) { ed.link.leftSource = true; }
+      ed.hover = over ? over.id : null;
+      ed.rubber = ed.link.moved && from ? { x1: from.x, y1: from.y, x2: p.x, y2: p.y } : null;
+      draw();
+    }
+  });
+
+  function endPointer(evt, cancelled) {
+    const p = svgPoint(evt);
+    if (ed.drag) {
+      const moved = ed.drag.moved;
+      ed.drag = null;
+      if (moved) { changed(); } else { draw(); }
+      return;
+    }
+    if (ed.link) {
+      const link = ed.link;
+      ed.link = null; ed.rubber = null; ed.hover = null;
+      const target = cancelled ? null : stateAt(p);
+      if (!target) { ed.pending = null; draw(); return; }
+      if (link.viaPending) {
+        ed.pending = null;
+        connect(link.from, target.id);
+      } else if (target.id !== link.from) {
+        ed.pending = null;
+        connect(link.from, target.id);
+      } else if (link.leftSource) {
+        ed.pending = null;
+        connect(link.from, link.from);
+      } else {
+        ed.pending = link.from;
+        ed.selected = null;
+        draw();
+      }
+    }
+  }
+  editorSvg.addEventListener('pointerup', evt => endPointer(evt, false));
+  editorSvg.addEventListener('pointercancel', evt => endPointer(evt, true));
+
+  for (const b of document.querySelectorAll('#toolbar [data-mode]')) {
+    b.addEventListener('click', () => setMode(b.dataset.mode));
+  }
+  const clearBtn = document.getElementById('clearBtn');
+  clearBtn.addEventListener('click', () => {
+    if (!ed.clearArmed) {
+      clearBtn.textContent = 'Wirklich alles löschen?';
+      ed.clearArmed = setTimeout(() => { ed.clearArmed = null; clearBtn.textContent = 'Neu beginnen'; }, 3000);
+      return;
+    }
+    clearTimeout(ed.clearArmed); ed.clearArmed = null; clearBtn.textContent = 'Neu beginnen';
+    ed.model = emptyModel(); ed.selected = null; ed.pending = null;
+    setMode('state');
+    changed();
+  });
+
+  function drawSelPanel() {
+    const panel = document.getElementById('selPanel');
+    const m = ed.model;
+    const sel = ed.selected;
+    if (sel && sel.state && stateById(m, sel.state)) {
+      const s = stateById(m, sel.state);
+      panel.innerHTML = `<h3>Zustand ${s.label}</h3>
+        <div class="row"><button id="pStart" aria-pressed="${m.start === s.id}">Startzustand</button>
+        <button id="pFinal" aria-pressed="${!!s.final}">Endzustand</button>
+        <button id="pDel">Löschen</button></div>`;
+      panel.querySelector('#pStart').addEventListener('click', () => { m.start = m.start === s.id ? null : s.id; changed(); });
+      panel.querySelector('#pFinal').addEventListener('click', () => { s.final = !s.final; changed(); });
+      panel.querySelector('#pDel').addEventListener('click', () => deleteState(s.id));
+      return;
+    }
+    if (sel && sel.edge && m.edges.includes(sel.edge)) {
+      const e = sel.edge;
+      const parts = task().alphabet.map(c => {
+        const other = m.edges.find(o => o !== e && o.from === e.from && o.symbols.includes(c));
+        const title = other ? `schon belegt: ${stateLabel(m, other.from)} → ${stateLabel(m, other.to)}` : `Zeichen ${c} umschalten`;
+        return `<button class="symbtn" data-sym="${escapeHtml(c)}" aria-pressed="${e.symbols.includes(c)}" ${other ? 'disabled' : ''} title="${escapeHtml(title)}">${escapeHtml(c)}</button>`;
+      }).join('');
+      panel.innerHTML = `<h3>Übergang ${stateLabel(m, e.from)} → ${stateLabel(m, e.to)}</h3>
+        <div class="hint">Welche Zeichen führen über diesen Pfeil?</div>
+        <div class="row">${parts}</div>
+        <div class="row"><button id="pDelEdge">Übergang löschen</button></div>`;
+      for (const b of panel.querySelectorAll('[data-sym]')) { b.addEventListener('click', () => toggleSymbol(e, b.dataset.sym)); }
+      panel.querySelector('#pDelEdge').addEventListener('click', () => deleteEdge(e));
+      return;
+    }
+    if (ed.pending) {
+      panel.innerHTML = `<h3>Übergang von ${stateLabel(m, ed.pending)}</h3><div class="hint">Klicke jetzt den Zielzustand an. Für eine Schleife klickst du ${stateLabel(m, ed.pending)} noch einmal an.</div>`;
+      return;
+    }
+    panel.innerHTML = '<h3>Auswahl</h3><div class="hint">Nichts ausgewählt. Klicke im Modus „Verschieben“ auf einen Zustand oder Übergang, um ihn zu bearbeiten.</div>';
+  }
+
+  function draw() {
+    const tv = ed.testView;
+    renderAutomaton(editorSvg, ed.model, {
+      interactive: true, selected: ed.selected, pending: ed.pending, hover: ed.hover, rubber: ed.rubber,
+      active: tv ? tv.state : null, verdict: tv ? tv.verdict : null
+    });
+    if (ed.model.states.length === 0) {
+      const t = svgEl('text', { x: VB.w / 2, y: VB.h / 2, 'text-anchor': 'middle', class: 'muted', style: 'fill: var(--muted)' }, editorSvg);
+      t.textContent = 'Wähle „＋ Zustand“ und klicke hier, um den ersten Zustand zu setzen.';
+    }
+    drawSelPanel();
+  }
+
+  // ---------- task UI ----------
+  function drawTasks() {
+    const box = document.getElementById('taskButtons');
+    box.innerHTML = `<span class="muted">Aufgabe:</span>` + TASKS.map((t, i) =>
+      `<button data-task="${i}" class="${ed.solved.has(t.id) ? 'solved' : ''} ${i === ed.taskIndex ? 'current' : ''}" title="${escapeHtml(t.title)}">${ed.solved.has(t.id) ? '✓ ' : ''}${i + 1}</button>`
+    ).join('') + `<span class="muted" id="solvedCount">${ed.solved.size} von ${TASKS.length} gelöst</span>`;
+    for (const b of box.querySelectorAll('[data-task]')) { b.addEventListener('click', () => selectTask(+b.dataset.task)); }
+    const t = task();
+    const chips = list => list.map(w => `<span class="chip" data-word="${escapeHtml(w)}">${w === '' ? 'ε' : escapeHtml(w)}</span>`).join('');
+    document.getElementById('taskCard').innerHTML = `
+      <div><b>Aufgabe ${ed.taskIndex + 1}: ${escapeHtml(t.title)}</b> ${ed.solved.has(t.id) ? '<span class="status ok">✓ gelöst</span>' : ''}</div>
+      <p style="margin:4px 0">${t.text} Alphabet Σ = {${t.alphabet.join(', ')}}.</p>
+      <div class="row"><span class="muted">Gehört dazu:</span><span class="chips" id="posChips">${chips(t.pos)}</span></div>
+      <div class="row"><span class="muted">Gehört nicht dazu:</span><span class="chips" id="negChips">${chips(t.neg)}</span></div>
+      <details><summary>Tipp</summary>${escapeHtml(t.tip)}</details>`;
+  }
+  function selectTask(i) {
+    ed.taskIndex = i;
+    store.set('task', i);
+    ed.model = loadModel();
+    ed.selected = null; ed.pending = null; ed.testView = null;
+    setMode(ed.model.states.length === 0 ? 'state' : 'move');
+    document.getElementById('testWord').value = '';
+    document.getElementById('testResult').textContent = '';
+    clearFeedback();
+    drawTasks();
+    draw();
+  }
+  function clearFeedback() {
+    const fb = document.getElementById('feedback');
+    fb.className = 'feedback'; fb.innerHTML = '';
+    for (const c of document.querySelectorAll('#taskCard .chip')) { c.classList.remove('good', 'wrong'); }
+  }
+  function showFeedback(cls, html) {
+    const fb = document.getElementById('feedback');
+    fb.className = 'feedback ' + cls; fb.innerHTML = html;
+  }
+
+  function check() {
+    const m = ed.model, t = task();
+    if (m.states.length === 0) { showFeedback('info', 'Setze zuerst einige Zustände.'); return; }
+    if (!m.start) { showFeedback('info', 'Markiere einen Zustand als Startzustand.'); return; }
+    const unlabeled = m.edges.find(e => e.symbols.length === 0);
+    if (unlabeled) {
+      ed.selected = { edge: unlabeled }; draw();
+      showFeedback('info', `Der Übergang ${stateLabel(m, unlabeled.from)} → ${stateLabel(m, unlabeled.to)} hat noch kein Zeichen. Wähle rechts ein Zeichen aus oder lösche den Übergang.`);
+      return;
+    }
+    for (const c of document.querySelectorAll('#taskCard .chip')) {
+      const w = c.dataset.word;
+      c.classList.add(runWord(m, w).accepted === t.accepts(w) ? 'good' : 'wrong');
+    }
+    let counter = null, count = 0;
+    for (const w of wordsUpTo(t.alphabet, MAX_LEN)) {
+      count++;
+      const studentAccepts = runWord(m, w).accepted;
+      if (studentAccepts !== t.accepts(w)) { counter = { word: w, studentAccepts }; break; }
+    }
+    if (!counter) { counter = productCounterexample(m, t); }
+    if (counter) {
+      const msg = counter.studentAccepts
+        ? `Dein Automat akzeptiert ${wordHtml(counter.word)}, das gehört aber nicht zur Sprache.`
+        : `Dein Automat lehnt ${wordHtml(counter.word)} ab, das gehört aber zur Sprache.`;
+      showFeedback('bad', `✗ ${msg}<br><span class="hint">Das ist das kürzeste Gegenbeispiel. Unter „Wort testen“ siehst du, welchen Weg dein Automat nimmt.</span>`);
+      document.getElementById('testWord').value = counter.word;
+      testWord();
+      return;
+    }
+    ed.solved.add(t.id);
+    store.set('solved', Array.from(ed.solved));
+    drawTasks();
+    for (const c of document.querySelectorAll('#taskCard .chip')) { c.classList.add('good'); }
+    const next = TASKS.findIndex((x, i) => i > ed.taskIndex && !ed.solved.has(x.id));
+    showFeedback('ok', `✓ Richtig! Dein Automat erkennt genau diese Sprache. Geprüft wurden alle ${count} Wörter bis Länge ${MAX_LEN} und ein exakter Vergleich mit einem Musterautomaten.` +
+      (next >= 0 ? ` <button id="nextTask">Weiter zu Aufgabe ${next + 1}</button>` : (ed.solved.size === TASKS.length ? ' Du hast alle Aufgaben gelöst!' : '')));
+    const nb = document.getElementById('nextTask');
+    if (nb) { nb.addEventListener('click', () => selectTask(next)); }
+  }
+
+  function testWord() {
+    const m = ed.model, w = document.getElementById('testWord').value;
+    const out = document.getElementById('testResult');
+    if (!m.start) { out.textContent = 'Es gibt noch keinen Startzustand.'; return; }
+    const bad = w.split('').find(c => !task().alphabet.includes(c));
+    const r = runWord(m, w);
+    let text = r.path.map(id => stateLabel(m, id)).reduce((acc, lbl, i) => i === 0 ? lbl : `${acc} –${w[i - 1]}→ ${lbl}`, '');
+    if (r.stuck >= 0) {
+      text += ` –${w[r.stuck]}→ ? Kein Übergang, abgelehnt ✗`;
+    } else {
+      text += r.accepted ? '  Endzustand, akzeptiert ✓' : '  kein Endzustand, abgelehnt ✗';
+    }
+    if (bad !== undefined) { text += `  (Achtung: „${bad}“ gehört nicht zum Alphabet.)`; }
+    out.textContent = (w === '' ? 'ε: ' : w + ': ') + text;
+    ed.testView = { state: r.path[r.path.length - 1], verdict: r.accepted ? 'accept' : 'reject' };
+    draw();
+  }
+
+  document.getElementById('checkBtn').addEventListener('click', check);
+  document.getElementById('testBtn').addEventListener('click', testWord);
+  document.getElementById('testWord').addEventListener('keydown', e => { if (e.key === 'Enter') { testWord(); } });
+
+  // ---------- slides ----------
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  let current = Math.min(Math.max(store.get('slide', 0) | 0, 0), slides.length - 1);
+  function showSlide(i) {
+    current = Math.min(Math.max(i, 0), slides.length - 1);
+    slides.forEach((s, k) => s.classList.toggle('active', k === current));
+    document.getElementById('progressText').textContent = `${current + 1} / ${slides.length}`;
+    document.getElementById('progressBar').style.width = `${(current + 1) / slides.length * 100}%`;
+    document.getElementById('prevBtn').disabled = current === 0;
+    document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    sim1.stop(); sim2.stop();
+    store.set('slide', current);
+    window.scrollTo(0, 0);
+  }
+  document.getElementById('prevBtn').addEventListener('click', () => showSlide(current - 1));
+  document.getElementById('nextBtn').addEventListener('click', () => showSlide(current + 1));
+
+  document.addEventListener('keydown', evt => {
+    const tag = evt.target && evt.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (evt.target && evt.target.isContentEditable)) { return; }
+    if (evt.ctrlKey || evt.altKey || evt.metaKey) { return; }
+    if (evt.key === 'ArrowRight' || evt.key === 'PageDown') { showSlide(current + 1); evt.preventDefault(); return; }
+    if (evt.key === 'ArrowLeft' || evt.key === 'PageUp') { showSlide(current - 1); evt.preventDefault(); return; }
+    if (current !== slides.length - 1) { return; }
+    if (evt.key === 'Escape') { ed.pending = null; ed.selected = null; draw(); return; }
+    if (evt.key === 'Delete' || evt.key === 'Backspace') {
+      if (ed.selected && ed.selected.state) { deleteState(ed.selected.state); evt.preventDefault(); }
+      else if (ed.selected && ed.selected.edge) { deleteEdge(ed.selected.edge); evt.preventDefault(); }
+      return;
+    }
+    if (ed.selected && ed.selected.edge && task().alphabet.includes(evt.key)) { toggleSymbol(ed.selected.edge, evt.key); }
+  });
+
+  // ---------- start ----------
+  ed.model = loadModel();
+  drawTasks();
+  setMode(ed.model.states.length === 0 ? 'state' : 'move');
+  showSlide(current);
+
+  /** Read-only hooks for automated tests. */
+  window.dfaDebug = {
+    selfTest,
+    model: () => JSON.parse(JSON.stringify({ states: ed.model.states, start: ed.model.start, edges: ed.model.edges })),
+    toScreen: (x, y) => {
+      const r = editorSvg.getBoundingClientRect();
+      return { x: r.left + x * r.width / VB.w, y: r.top + y * r.height / VB.h };
+    }
+  };
+})();
+</script>
+</body>
+</html>

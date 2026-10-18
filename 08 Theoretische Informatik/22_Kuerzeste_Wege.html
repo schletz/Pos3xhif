@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dijkstra-Trainer</title>
+<style>
+  :root {
+    --bg: #f8fafc; --card: #ffffff; --fg: #1f2937; --muted: #6b7280; --border: #d1d5db; --soft: #f3f4f6;
+    --line: #1f2937;
+    --n-stroke: #2563eb; --n-fill: #dbeafe;
+    --a-stroke: #ea580c; --a-fill: #ffedd5;
+    --ok-stroke: #16a34a; --ok-fill: #dcfce7;
+    --err-stroke: #dc2626; --err-fill: #fee2e2;
+    --gray-stroke: #6b7280; --gray-fill: #e5e7eb;
+    --btn: #2563eb; --btn-fg: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f172a; --card: #1e293b; --fg: #e5e7eb; --muted: #9ca3af; --border: #475569; --soft: #334155;
+      --line: #cbd5e1;
+      --n-stroke: #60a5fa; --n-fill: #1e3a8a;
+      --a-stroke: #fb923c; --a-fill: #7c2d12;
+      --ok-stroke: #4ade80; --ok-fill: #14532d;
+      --err-stroke: #f87171; --err-fill: #7f1d1d;
+      --gray-stroke: #9ca3af; --gray-fill: #374151;
+      --btn: #3b82f6; --btn-fg: #ffffff;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", Helvetica, Arial, sans-serif; background: var(--bg); color: var(--fg);
+         line-height: 1.5; }
+  code, .mono { font-family: Consolas, Menlo, monospace; }
+  code { background: var(--soft); padding: 0 4px; border-radius: 4px; }
+  header { position: sticky; top: 0; z-index: 5; background: var(--card); border-bottom: 1px solid var(--border);
+           padding: 8px 16px; display: flex; align-items: center; gap: 16px; }
+  header h1 { font-size: 18px; margin: 0; flex: 1; }
+  #progressText { font-variant-numeric: tabular-nums; color: var(--muted); }
+  #progressBar { position: absolute; left: 0; bottom: -1px; height: 3px; background: var(--btn); transition: width .3s; }
+  main { max-width: 1180px; margin: 0 auto; padding: 16px; }
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide h2 { margin: 4px 0 8px; font-size: 24px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin: 12px 0; }
+  .nav { display: flex; justify-content: space-between; max-width: 1180px; margin: 0 auto; padding: 0 16px 24px; }
+  button, select { font: inherit; border: 1px solid var(--border); background: var(--card); color: var(--fg); border-radius: 6px;
+           padding: 5px 12px; cursor: pointer; }
+  button:hover:not(:disabled) { border-color: var(--btn); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  button.primary { background: var(--btn); color: var(--btn-fg); border-color: var(--btn); }
+  button[aria-pressed="true"] { background: var(--n-fill); border-color: var(--n-stroke); font-weight: 600; }
+  input[type=number] { font: inherit; font-family: Consolas, Menlo, monospace; width: 80px; padding: 2px 6px;
+                       border: 1px solid var(--border); border-radius: 6px; background: var(--card); color: var(--fg); }
+  input.ok { border-color: var(--ok-stroke); background: var(--ok-fill); }
+  input.bad { border-color: var(--err-stroke); background: var(--err-fill); }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0; }
+  .muted { color: var(--muted); }
+  .grid2 { display: grid; grid-template-columns: minmax(0, 3fr) minmax(280px, 2fr); gap: 16px; align-items: start; }
+  @media (max-width: 900px) { .grid2 { grid-template-columns: 1fr; } }
+  svg.graph { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--border);
+              border-radius: 8px; user-select: none; -webkit-user-select: none; }
+  svg.graph text { font-family: "Segoe UI", Helvetica, Arial, sans-serif; fill: var(--fg); }
+  .edge { stroke: var(--line); stroke-width: 1.6; }
+  .edge.tree { stroke: var(--ok-stroke); stroke-width: 3; }
+  .edge.active { stroke: var(--a-stroke); stroke-width: 4; }
+  .edge.path { stroke: var(--ok-stroke); stroke-width: 6; }
+  .edge.bfs { stroke: var(--a-stroke); stroke-width: 6; stroke-dasharray: 10 6; }
+  .wlbl { font-size: 15px; paint-order: stroke; stroke: var(--card); stroke-width: 5px; stroke-linejoin: round; }
+  .wlbl.active { fill: var(--a-stroke); font-weight: 700; }
+  .node rect { fill: var(--n-fill); stroke: var(--n-stroke); stroke-width: 2; }
+  .node text { font-size: 16px; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+  .node.done rect { fill: var(--ok-fill); stroke: var(--ok-stroke); }
+  .node.current rect { fill: var(--a-fill); stroke: var(--a-stroke); stroke-width: 3; }
+  .node.start rect { stroke-width: 3.5; }
+  .node.clickable { cursor: pointer; }
+  .node.clickable:hover rect { stroke: var(--a-stroke); stroke-width: 3; }
+  .node.wrong rect { fill: var(--err-fill); stroke: var(--err-stroke); stroke-width: 3; }
+  .dlbl { font-family: Consolas, Menlo, monospace !important; font-size: 15px; font-weight: 700; text-anchor: middle;
+          paint-order: stroke; stroke: var(--card); stroke-width: 5px; stroke-linejoin: round; fill: var(--n-stroke) !important; }
+  .dlbl.inf { fill: var(--muted) !important; font-weight: 400; }
+  .dlbl.done { fill: var(--ok-stroke) !important; }
+  .dlbl.changed { fill: var(--a-stroke) !important; }
+  table.dist { border-collapse: collapse; width: 100%; }
+  table.dist th, table.dist td { border: 1px solid var(--border); padding: 3px 8px; text-align: left; }
+  table.dist th { background: var(--soft); font-weight: 600; }
+  table.dist td.num { font-family: Consolas, Menlo, monospace; text-align: right; }
+  table.dist tr.done td { background: var(--ok-fill); }
+  table.dist tr.current td { background: var(--a-fill); font-weight: 600; }
+  table.dist td.changed { outline: 3px solid var(--a-stroke); outline-offset: -3px; font-weight: 700; }
+  table.dist tr.clickable { cursor: pointer; }
+  table.dist tr.clickable:hover td { outline: 1px solid var(--a-stroke); outline-offset: -1px; }
+  .pq { display: flex; flex-wrap: wrap; gap: 6px; min-height: 30px; }
+  .chip { font-family: Consolas, Menlo, monospace; padding: 1px 8px; border-radius: 12px; border: 1px solid var(--border);
+          background: var(--soft); white-space: nowrap; }
+  .chip.front { background: var(--a-fill); border-color: var(--a-stroke); font-weight: 700; }
+  .chip.stale { text-decoration: line-through; color: var(--muted); }
+  .chip.popped { background: var(--err-fill); border-color: var(--err-stroke); }
+  .status { min-height: 3em; padding: 8px 12px; border-radius: 6px; background: var(--soft); border: 1px solid var(--border); }
+  .controls label { display: inline-flex; align-items: center; gap: 6px; }
+  .feedback { padding: 8px 12px; border-radius: 6px; margin-top: 8px; display: none; }
+  .feedback.ok { display: block; background: var(--ok-fill); border: 1px solid var(--ok-stroke); }
+  .feedback.bad { display: block; background: var(--err-fill); border: 1px solid var(--err-stroke); }
+  .feedback.info { display: block; background: var(--soft); border: 1px solid var(--border); }
+  .panel h3 { margin: 0 0 6px; font-size: 16px; }
+  .rule { border-left: 4px solid var(--a-stroke); background: var(--a-fill); padding: 6px 12px; border-radius: 4px; margin: 8px 0; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 14px; color: var(--muted); margin-top: 6px; }
+  .sw { display: inline-block; width: 14px; height: 14px; border-radius: 4px; vertical-align: -2px; margin-right: 4px; border: 2px solid; }
+  .sw.open { background: var(--n-fill); border-color: var(--n-stroke); }
+  .sw.cur { background: var(--a-fill); border-color: var(--a-stroke); }
+  .sw.done { background: var(--ok-fill); border-color: var(--ok-stroke); }
+  .log { font-family: Consolas, Menlo, monospace; font-size: 13px; color: var(--muted); max-height: 140px; overflow: auto; }
+  .stats { font-size: 14px; color: var(--muted); }
+  kbd { font-family: Consolas, Menlo, monospace; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 4px;
+        padding: 0 4px; background: var(--soft); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Dijkstra-Trainer</h1>
+  <span id="progressText">1 / 4</span>
+  <div id="progressBar"></div>
+</header>
+
+<main>
+  <!-- Slide 1 -->
+  <section class="slide" data-slide="0">
+    <h2>Warum die Breitensuche nicht reicht</h2>
+    <div class="grid2">
+      <div>
+        <svg class="graph" id="bfsSvg" viewBox="0 0 940 470" aria-label="Straßennetz der Landeshauptstädte"></svg>
+        <p class="muted">Straßennetz stark vereinfacht, Entfernungen in km gerundet.</p>
+      </div>
+      <div>
+        <p>In einem <b>gewichteten Graphen</b> hat jede Kante eine Länge. Die Länge eines Weges ist die
+          <b>Summe der Gewichte</b>, nicht die Anzahl der Kanten.</p>
+        <p>Gesucht ist ein Weg von <b>Eisenstadt</b> nach <b>Linz</b>. Vergleiche die beiden Wege:</p>
+        <div class="row">
+          <button id="showBfs" aria-pressed="false">Wenigste Kanten (BFS)</button>
+          <button id="showDijkstra" aria-pressed="false">Kürzester Weg (Dijkstra)</button>
+        </div>
+        <div class="status" id="bfsStatus">Klicke auf einen der beiden Buttons.</div>
+        <p>Die Breitensuche zählt nur Kanten. Dijkstra arbeitet wie eine Breitensuche, die nicht Kante für Kante,
+          sondern <b>Kilometer für Kilometer</b> wächst.</p>
+        <p class="muted">Blättern: Pfeiltasten <kbd>←</kbd> <kbd>→</kbd> oder die Buttons unten.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 2 -->
+  <section class="slide" data-slide="1">
+    <h2>Dijkstra Schritt für Schritt</h2>
+    <p>Dijkstra nimmt immer den Eintrag mit der <b>kleinsten Distanz</b> aus der Prioritätswarteschlange. Dieser
+      Knoten ist dann fertig. Danach werden seine offenen Nachbarn <b>relaxiert</b>: Ist der Weg über ihn kürzer,
+      bekommt der Nachbar eine neue Distanz, einen neuen Vorgänger und einen neuen Eintrag in der Warteschlange.</p>
+    <div class="row controls">
+      <label>Start <select id="animStart" aria-label="Startknoten"></select></label>
+      <button id="animReset">⏮ Neu</button>
+      <button id="animStep" class="primary">Schritt</button>
+      <button id="animPlay">▶ Play</button>
+      <label>Geschwindigkeit <input type="range" id="animSpeed" min="1" max="5" value="3" aria-label="Geschwindigkeit"></label>
+    </div>
+    <div class="grid2">
+      <div>
+        <svg class="graph" id="animSvg" viewBox="0 0 940 470" aria-label="Animation"></svg>
+        <div class="legend">
+          <span><span class="sw open"></span>offen</span>
+          <span><span class="sw cur"></span>gerade bearbeitet</span>
+          <span><span class="sw done"></span>fertig</span>
+          <span>grüne Kanten: Vorgänger-Kanten (Kürzeste-Wege-Baum)</span>
+        </div>
+      </div>
+      <div>
+        <div class="status" id="animStatus"></div>
+        <div class="card">
+          <h3 style="margin:0 0 6px;font-size:16px">Prioritätswarteschlange</h3>
+          <div class="pq" id="animPq"></div>
+          <div class="muted" style="font-size:14px">Sortiert nach Distanz. Vorne steht der Eintrag, der als Nächstes
+            herauskommt. Durchgestrichen: veraltete Einträge.</div>
+        </div>
+        <div class="card">
+          <h3 style="margin:0 0 6px;font-size:16px">Distanztabelle</h3>
+          <table class="dist" id="animTable"></table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 3 -->
+  <section class="slide" data-slide="2">
+    <h2>Jetzt bist du dran</h2>
+    <p>Auf der nächsten Folie führst du Dijkstra selbst aus. Jeder Durchlauf hat zwei Teile:</p>
+    <div class="card">
+      <ol>
+        <li><b>Nächsten Knoten wählen:</b> Klicke im Graphen oder in der Tabelle den Knoten an, der als Nächstes aus
+          der Warteschlange kommt. Er wird dann fertig.</li>
+        <li><b>Distanzen eintragen:</b> Für jeden offenen Nachbarn erscheint ein Eingabefeld. Trage die Distanz ein,
+          die <b>nach dem Relaxieren</b> in der Tabelle steht. Wird der Weg nicht kürzer, trägst du den alten Wert
+          ein. Mit <b>Prüfen</b> oder <kbd>Enter</kbd> wird jedes Feld geprüft.</li>
+      </ol>
+      <p>Die Vorgänger trägt die Seite selbst ein. Fertige Nachbarn musst du nicht prüfen, ihre Distanz ändert sich nicht mehr.</p>
+    </div>
+    <div class="rule"><b>Regel bei Gleichstand:</b> Haben mehrere offene Knoten dieselbe kleinste Distanz, kommt der
+      Knoten mit dem <b>alphabetisch kleineren Namen</b> zuerst.</div>
+    <div class="rule"><b>Regel beim Relaxieren:</b> Nur ein <b>echt kürzerer</b> Weg ändert die Tabelle. Ist der neue Weg
+      gleich lang, bleiben Distanz und Vorgänger, wie sie sind.</div>
+    <div class="card">
+      <p>Die Warteschlange zeigt die Einträge in der Reihenfolge, in der sie eingefügt wurden. Den kleinsten musst du
+        selbst finden. Veraltete Einträge bleiben stehen, bis sie vorne ankommen. Dann überspringt die Seite sie
+        automatisch.</p>
+      <p>Es gibt mehrere vorgegebene Graphen und Zufallsgraphen mit wählbarer Knotenzahl und Dichte. Bei einem Fehler
+        bekommst du zuerst einen Hinweis, beim zweiten Versuch die Erklärung.</p>
+    </div>
+  </section>
+
+  <!-- Slide 4 -->
+  <section class="slide" data-slide="3">
+    <h2>Übung: Führe Dijkstra aus</h2>
+    <div class="row controls">
+      <label>Graph <select id="exGraph" aria-label="Graph">
+        <option value="cities">Landeshauptstädte</option>
+        <option value="small">Kleiner Graph (A–F)</option>
+        <option value="ties">Gleichstände (A–G)</option>
+        <option value="random">Zufallsgraph</option>
+      </select></label>
+      <label>Start <select id="exStart" aria-label="Startknoten"></select></label>
+      <span id="randomControls" class="row" style="margin:0">
+        <label>Knoten <select id="exCount" aria-label="Knotenzahl">
+          <option>5</option><option selected>6</option><option>7</option><option>8</option><option>9</option>
+        </select></label>
+        <label>Dichte <select id="exDensity" aria-label="Dichte">
+          <option value="0.15">dünn</option><option value="0.45" selected>mittel</option><option value="0.8">dicht</option>
+        </select></label>
+        <button id="exNewRandom">Neuer Zufallsgraph</button>
+      </span>
+      <button id="exRestart">Neu beginnen</button>
+    </div>
+    <div class="rule" style="margin-top:0"><b>Gleichstand:</b> alphabetisch kleinerer Name zuerst.
+      <b>Relaxieren:</b> nur ein echt kürzerer Weg ändert die Tabelle.</div>
+    <div class="grid2">
+      <div>
+        <svg class="graph" id="exSvg" viewBox="0 0 600 380" aria-label="Übungsgraph"></svg>
+        <div class="legend">
+          <span><span class="sw open"></span>offen</span>
+          <span><span class="sw cur"></span>gerade bearbeitet</span>
+          <span><span class="sw done"></span>fertig</span>
+          <span>Zahl über dem Knoten: aktuelle Distanz</span>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="status" id="exTask"></div>
+        <div class="feedback" id="exFeedback"></div>
+        <div class="card">
+          <h3>Distanztabelle</h3>
+          <table class="dist" id="exTable"></table>
+          <div class="row" id="exCheckRow"><button class="primary" id="exCheck">Prüfen</button></div>
+        </div>
+        <div class="card">
+          <h3>Prioritätswarteschlange</h3>
+          <div class="pq" id="exPq"></div>
+          <div class="muted" style="font-size:14px">in Einfügereihenfolge</div>
+        </div>
+        <div class="card">
+          <h3>Protokoll</h3>
+          <div class="log" id="exLog"></div>
+          <div class="stats" id="exStats"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="nav">
+  <button id="prevBtn">← Zurück</button>
+  <button id="nextBtn" class="primary">Weiter →</button>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  const SVGNS = 'http://www.w3.org/2000/svg';
+  const INF = '∞';
+
+  // ---------- storage (works without localStorage) ----------
+  const store = {
+    get(key, fallback) {
+      try {
+        const raw = window.localStorage.getItem('ti-22-' + key);
+        return raw === null ? fallback : JSON.parse(raw);
+      } catch (e) { return fallback; }
+    },
+    set(key, value) {
+      try { window.localStorage.setItem('ti-22-' + key, JSON.stringify(value)); } catch (e) { /* ignore */ }
+    }
+  };
+
+  // ---------- helpers ----------
+  function svgEl(tag, attrs, parent) {
+    const e = document.createElementNS(SVGNS, tag);
+    for (const k in attrs) { e.setAttribute(k, attrs[k]); }
+    if (parent) { parent.appendChild(e); }
+    return e;
+  }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+  function byName(a, b) { return a.localeCompare(b, 'de'); }
+  /** Priority queue order: smaller distance first, on equal distance the alphabetically smaller name. */
+  function cmpEntry(a, b) { return a.d - b.d || byName(a.node, b.node); }
+  function fmt(d) { return d === undefined ? INF : String(d); }
+  function edgeKey(a, b) { return a < b ? a + '|' + b : b + '|' + a; }
+
+  // ---------- graphs ----------
+  /** Builds a graph object from nodes and an edge list [a, b, weight, optional label position]. */
+  function makeGraph(def) {
+    const adj = {};
+    for (const n of def.nodes) { adj[n.id] = []; }
+    for (const [a, b, w] of def.edges) { adj[a].push([b, w]); adj[b].push([a, w]); }
+    for (const id in adj) { adj[id].sort((x, y) => byName(x[0], y[0])); }
+    return Object.assign({ adj, ids: def.nodes.map(n => n.id).sort(byName) }, def);
+  }
+
+  const CITIES = makeGraph({
+    key: 'cities', unit: ' km', vb: [940, 470], start: 'Graz',
+    nodes: [
+      { id: 'Bregenz', x: 85, y: 250 }, { id: 'Innsbruck', x: 255, y: 290 }, { id: 'Salzburg', x: 430, y: 190 },
+      { id: 'Linz', x: 570, y: 90 }, { id: 'St. Pölten', x: 720, y: 90 }, { id: 'Wien', x: 860, y: 110 },
+      { id: 'Eisenstadt', x: 860, y: 230 }, { id: 'Graz', x: 720, y: 330 }, { id: 'Klagenfurt', x: 560, y: 400 }
+    ],
+    edges: [
+      ['Bregenz', 'Innsbruck', 195, [170, 258, 'middle']], ['Innsbruck', 'Salzburg', 185, [354, 258, 'middle']],
+      ['Salzburg', 'Linz', 130, [488, 128, 'middle']], ['Salzburg', 'Klagenfurt', 225, [484, 302, 'end']],
+      ['Linz', 'St. Pölten', 130, [645, 80, 'middle']], ['Linz', 'Graz', 220, [632, 222, 'end']],
+      ['St. Pölten', 'Wien', 65, [800, 90, 'middle']], ['Wien', 'Eisenstadt', 60, [872, 175, 'start']],
+      ['Wien', 'Graz', 200, [776, 210, 'end']], ['Eisenstadt', 'Graz', 165, [802, 298, 'middle']],
+      ['Graz', 'Klagenfurt', 140, [648, 384, 'middle']]
+    ]
+  });
+
+  const PRESETS = {
+    cities: CITIES,
+    small: makeGraph({
+      key: 'small', unit: '', vb: [600, 380], start: 'A',
+      nodes: [{ id: 'A', x: 70, y: 190 }, { id: 'B', x: 220, y: 80 }, { id: 'C', x: 220, y: 300 },
+              { id: 'D', x: 390, y: 80 }, { id: 'E', x: 390, y: 300 }, { id: 'F', x: 540, y: 190 }],
+      edges: [['A', 'B', 4], ['A', 'C', 2], ['B', 'C', 1], ['B', 'D', 5], ['C', 'D', 8], ['C', 'E', 10],
+              ['D', 'E', 2], ['D', 'F', 6], ['E', 'F', 3]]
+    }),
+    ties: makeGraph({
+      key: 'ties', unit: '', vb: [670, 380], start: 'A',
+      nodes: [{ id: 'A', x: 70, y: 190 }, { id: 'B', x: 210, y: 80 }, { id: 'C', x: 210, y: 300 },
+              { id: 'D', x: 350, y: 190 }, { id: 'E', x: 490, y: 80 }, { id: 'F', x: 490, y: 300 },
+              { id: 'G', x: 600, y: 190 }],
+      edges: [['A', 'B', 3], ['A', 'C', 3], ['B', 'D', 2], ['C', 'D', 2], ['B', 'E', 4], ['D', 'E', 1],
+              ['C', 'F', 5], ['D', 'F', 3], ['E', 'G', 2], ['F', 'G', 1]]
+    })
+  };
+
+  // ---------- random graphs ----------
+  function randInt(lo, hi) { return lo + Math.floor(Math.random() * (hi - lo + 1)); }
+  function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = randInt(0, i); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+  function cross(o, a, b) { return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x); }
+  /** True if the open segments p1-p2 and p3-p4 intersect (shared endpoints do not count). */
+  function segmentsCross(p1, p2, p3, p4) {
+    if (p1 === p3 || p1 === p4 || p2 === p3 || p2 === p4) { return false; }
+    const d1 = cross(p3, p4, p1), d2 = cross(p3, p4, p2), d3 = cross(p1, p2, p3), d4 = cross(p1, p2, p4);
+    return ((d1 > 0) !== (d2 > 0)) && ((d3 > 0) !== (d4 > 0));
+  }
+  function pointSegmentDistance(p, a, b) {
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / (dx * dx + dy * dy)));
+    return Math.hypot(p.x - a.x - t * dx, p.y - a.y - t * dy);
+  }
+
+  /** Creates a connected planar-looking graph on a jittered 3x3 grid. */
+  function randomGraph(count, density) {
+    for (let attempt = 0; attempt < 200; attempt++) {
+      const cells = shuffle([0, 1, 2, 3, 4, 5, 6, 7, 8]).slice(0, count);
+      const nodes = cells.map((c, i) => ({
+        id: 'ABCDEFGHI'[i], c: c % 3, r: Math.floor(c / 3),
+        x: 95 + (c % 3) * 205 + randInt(-30, 30), y: 65 + Math.floor(c / 3) * 125 + randInt(-18, 18)
+      }));
+      // Letters follow the reading order on screen, so A is top left.
+      nodes.sort((a, b) => a.r - b.r || a.c - b.c);
+      nodes.forEach((n, i) => { n.id = 'ABCDEFGHI'[i]; });
+      const candidates = [];
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const a = nodes[i], b = nodes[j];
+          if (Math.abs(a.c - b.c) > 1 || Math.abs(a.r - b.r) > 1) {
+            if (!(a.c === b.c || a.r === b.r)) { continue; }
+          }
+          if (nodes.some(o => o !== a && o !== b && pointSegmentDistance(o, a, b) < 34)) { continue; }
+          candidates.push([a, b]);
+        }
+      }
+      shuffle(candidates);
+      const parent = {};
+      nodes.forEach(n => { parent[n.id] = n.id; });
+      const find = x => parent[x] === x ? x : (parent[x] = find(parent[x]));
+      const chosen = [];
+      const fits = (a, b) => !chosen.some(([p, q]) => segmentsCross(a, b, p, q));
+      for (const [a, b] of candidates) {
+        if (find(a.id) !== find(b.id) && fits(a, b)) { chosen.push([a, b]); parent[find(a.id)] = find(b.id); }
+      }
+      if (chosen.length !== nodes.length - 1) { continue; }
+      for (const [a, b] of candidates) {
+        if (!chosen.some(([p, q]) => (p === a && q === b)) && Math.random() < density && fits(a, b)) { chosen.push([a, b]); }
+      }
+      return makeGraph({
+        key: 'random', unit: '', vb: [600, 380], start: 'A',
+        nodes: nodes.map(n => ({ id: n.id, x: n.x, y: n.y })),
+        edges: chosen.map(([a, b]) => [a.id, b.id, randInt(1, 15)])
+      });
+    }
+    return PRESETS.small;
+  }
+
+  // ---------- renderer ----------
+  function nodeById(g, id) { return g.nodes.find(n => n.id === id); }
+  function nodeWidth(id) { return id.length <= 1 ? 40 : Math.max(64, id.length * 8.4 + 26); }
+
+  /** Default label position: middle of the edge, shifted sideways. */
+  function labelPos(g, e) {
+    if (e[3]) { return e[3]; }
+    const a = nodeById(g, e[0]), b = nodeById(g, e[1]);
+    const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+    const len = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+    let nx = (b.y - a.y) / len, ny = -(b.x - a.x) / len;
+    if (ny > 0 || (Math.abs(ny) < 0.2 && nx < 0)) { nx = -nx; ny = -ny; }
+    return [mx + nx * 13, my + ny * 13 + 5, 'middle'];
+  }
+
+  /**
+   * Draws a graph. view: { nodeCls: {id: cls}, edgeCls: {key: cls}, dist: {id: d} or null,
+   * distCls: {id: cls}, clickable: bool, start }
+   */
+  function renderGraph(svg, g, view) {
+    while (svg.firstChild) { svg.removeChild(svg.firstChild); }
+    svg.setAttribute('viewBox', `0 0 ${g.vb[0]} ${g.vb[1]}`);
+    const ge = svgEl('g', {}, svg);
+    const gl = svgEl('g', {}, svg);
+    for (const e of g.edges) {
+      const a = nodeById(g, e[0]), b = nodeById(g, e[1]);
+      const cls = (view.edgeCls && view.edgeCls[edgeKey(e[0], e[1])]) || '';
+      svgEl('line', { x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'edge ' + cls }, ge);
+      const [lx, ly, anchor] = labelPos(g, e);
+      const t = svgEl('text', { x: lx, y: ly, class: 'wlbl' + (cls === 'active' ? ' active' : ''), 'text-anchor': anchor }, gl);
+      t.textContent = e[2];
+    }
+    for (const n of g.nodes) {
+      let cls = 'node ' + ((view.nodeCls && view.nodeCls[n.id]) || '');
+      if (view.start === n.id) { cls += ' start'; }
+      if (view.clickable) { cls += ' clickable'; }
+      const grp = svgEl('g', { class: cls, 'data-node': n.id }, svg);
+      const w = nodeWidth(n.id);
+      svgEl('rect', { x: n.x - w / 2, y: n.y - 16, width: w, height: 32, rx: 16 }, grp);
+      const t = svgEl('text', { x: n.x, y: n.y }, grp);
+      t.textContent = n.id;
+      if (view.dist) {
+        const d = view.dist[n.id];
+        const dc = d === undefined ? 'inf' : ((view.distCls && view.distCls[n.id]) || '');
+        const dt = svgEl('text', { x: n.x, y: n.y - 23, class: 'dlbl ' + dc }, svg);
+        dt.textContent = fmt(d);
+      }
+    }
+  }
+
+  function pathTo(prev, start, target) {
+    const path = [target];
+    let cur = target;
+    while (cur !== start) {
+      cur = prev[cur];
+      if (cur === undefined) { return null; }
+      path.push(cur);
+    }
+    return path.reverse();
+  }
+  function pathEdges(path) {
+    const res = {};
+    for (let i = 1; i < path.length; i++) { res[edgeKey(path[i - 1], path[i])] = 'path'; }
+    return res;
+  }
+  function treeEdges(prev, done) {
+    const res = {};
+    for (const v in prev) { if (done.has(v)) { res[edgeKey(prev[v], v)] = 'tree'; } }
+    return res;
+  }
+  function pathLength(g, path) {
+    let sum = 0;
+    for (let i = 1; i < path.length; i++) { sum += g.adj[path[i - 1]].find(x => x[0] === path[i])[1]; }
+    return sum;
+  }
+
+  // ---------- slide 1: BFS vs Dijkstra ----------
+  const bfsSvg = document.getElementById('bfsSvg');
+  function showCompare(mode) {
+    const edgeCls = {};
+    let text = 'Klicke auf einen der beiden Buttons.';
+    if (mode === 'bfs') {
+      Object.assign(edgeCls, { [edgeKey('Eisenstadt', 'Graz')]: 'bfs', [edgeKey('Graz', 'Linz')]: 'bfs' });
+      text = '<b>BFS</b>: Eisenstadt → Graz → Linz. Nur <b>2 Kanten</b>, aber 165 + 220 = <b>385 km</b>.';
+    } else if (mode === 'dijkstra') {
+      Object.assign(edgeCls, pathEdges(['Eisenstadt', 'Wien', 'St. Pölten', 'Linz']));
+      text = '<b>Dijkstra</b>: Eisenstadt → Wien → St. Pölten → Linz. <b>3 Kanten</b>, aber nur 60 + 65 + 130 = <b>255 km</b>.';
+    }
+    renderGraph(bfsSvg, CITIES, { edgeCls, nodeCls: { Eisenstadt: 'current', Linz: 'current' } });
+    document.getElementById('bfsStatus').innerHTML = text;
+    document.getElementById('showBfs').setAttribute('aria-pressed', String(mode === 'bfs'));
+    document.getElementById('showDijkstra').setAttribute('aria-pressed', String(mode === 'dijkstra'));
+  }
+  document.getElementById('showBfs').addEventListener('click', () => showCompare('bfs'));
+  document.getElementById('showDijkstra').addEventListener('click', () => showCompare('dijkstra'));
+  showCompare(null);
+
+  // ---------- slide 2: animation ----------
+  /** Runs Dijkstra and records a frame after every micro step (take entry, relax one edge). */
+  function buildFrames(g, start) {
+    const u = g.unit;
+    const dist = { [start]: 0 }, prev = {}, done = new Set(), pq = [];
+    let seq = 0;
+    const frames = [];
+    const snap = extra => frames.push(Object.assign({
+      dist: Object.assign({}, dist), prev: Object.assign({}, prev), done: new Set(done),
+      pq: pq.map(e => Object.assign({}, e)), current: null, edge: null, changed: null, popped: null, end: false
+    }, extra));
+    pq.push({ node: start, d: 0, seq: seq++ });
+    snap({ changed: start, msg: `Start: <b>${escapeHtml(start)}</b> bekommt die Distanz 0 und kommt in die Warteschlange. Alle anderen Knoten haben ${INF}.` });
+    while (pq.length) {
+      pq.sort(cmpEntry);
+      const e = pq.shift();
+      if (e.d > dist[e.node]) {
+        snap({ popped: e, msg: `Der Eintrag (${escapeHtml(e.node)}, ${e.d}) ist <b>veraltet</b>: In der Tabelle steht schon ${dist[e.node]}${u}. Er wird übersprungen.` });
+        continue;
+      }
+      done.add(e.node);
+      snap({ current: e.node, msg: `<b>${escapeHtml(e.node)}</b> hat mit ${e.d}${u} die kleinste Distanz in der Warteschlange und ist jetzt <b>fertig</b>.` });
+      for (const [v, w] of g.adj[e.node]) {
+        if (done.has(v)) { continue; }
+        const nd = e.d + w, old = dist[v];
+        const calc = `${escapeHtml(e.node)} → ${escapeHtml(v)}: ${e.d} + ${w} = ${nd}`;
+        if (old === undefined || nd < old) {
+          dist[v] = nd; prev[v] = e.node;
+          pq.push({ node: v, d: nd, seq: seq++ });
+          snap({ current: e.node, edge: [e.node, v], changed: v, msg: old === undefined
+            ? `${calc}. Bisher ${INF}, also bekommt ${escapeHtml(v)} die Distanz ${nd} und den Vorgänger ${escapeHtml(e.node)}.`
+            : `${calc} &lt; ${old}. <b>Kürzerer Weg!</b> ${escapeHtml(v)} bekommt ${nd} und den Vorgänger ${escapeHtml(e.node)}. Der alte Eintrag (${escapeHtml(v)}, ${old}) bleibt in der Warteschlange und ist jetzt veraltet.` });
+        } else {
+          snap({ current: e.node, edge: [e.node, v], msg: `${calc}. Das ist nicht kleiner als ${old}, keine Änderung.` });
+        }
+      }
+    }
+    snap({ end: true, msg: 'Die Warteschlange ist leer, alle Distanzen sind endgültig. <b>Klicke auf einen Knoten</b>, um den kürzesten Weg dorthin zu sehen.' });
+    return frames;
+  }
+
+  function renderPq(el, pq, dist, sorted, poppedEntry) {
+    const list = sorted ? pq.slice().sort(cmpEntry) : pq.slice();
+    let html = '';
+    if (poppedEntry) { html += `<span class="chip popped" title="gerade herausgenommen">${escapeHtml(poppedEntry.node)} ${poppedEntry.d}</span>`; }
+    let front = true;
+    for (const e of list) {
+      const stale = sorted && e.d > dist[e.node];
+      const cls = stale ? 'stale' : (sorted && front ? 'front' : '');
+      if (sorted && !stale) { front = false; }
+      html += `<span class="chip ${cls}">${escapeHtml(e.node)} ${e.d}</span>`;
+    }
+    el.innerHTML = html || '<span class="muted">leer</span>';
+  }
+
+  function renderTable(el, g, state, opts) {
+    let html = '<tr><th>Knoten</th><th>Distanz</th><th>Vorgänger</th>' + (opts.inputs ? '<th>neue Distanz</th>' : '') + '</tr>';
+    for (const id of g.ids) {
+      let cls = state.done.has(id) ? 'done' : '';
+      if (state.current === id) { cls = 'current'; }
+      if (opts.clickable) { cls += ' clickable'; }
+      const changed = state.changed === id ? 'changed' : '';
+      html += `<tr class="${cls}" data-node="${escapeHtml(id)}"><td>${escapeHtml(id)}</td>` +
+        `<td class="num ${changed}">${fmt(state.dist[id])}</td><td>${state.prev[id] ? escapeHtml(state.prev[id]) : '–'}</td>`;
+      if (opts.inputs) {
+        const inp = opts.inputs[id];
+        html += '<td>' + (inp ? `<input type="number" step="1" data-input="${escapeHtml(id)}" aria-label="neue Distanz ${escapeHtml(id)}" value="${escapeHtml(inp.value)}" class="${inp.status}" ${inp.status === 'ok' ? 'disabled' : ''}>` : '') + '</td>';
+      }
+      html += '</tr>';
+    }
+    el.innerHTML = html;
+  }
+
+  const anim = { frames: [], i: 0, timer: null, target: null };
+  const animSvg = document.getElementById('animSvg');
+  const animStart = document.getElementById('animStart');
+  const animPlay = document.getElementById('animPlay');
+  for (const id of CITIES.ids) { animStart.add(new Option(id, id, id === CITIES.start, id === CITIES.start)); }
+
+  function animReset() {
+    animStop();
+    anim.frames = buildFrames(CITIES, animStart.value);
+    anim.i = 0;
+    anim.target = null;
+    animDraw();
+  }
+  function animDraw() {
+    const f = anim.frames[anim.i];
+    const nodeCls = {};
+    for (const id of f.done) { nodeCls[id] = 'done'; }
+    if (f.current) { nodeCls[f.current] = 'current'; }
+    let edgeCls = treeEdges(f.prev, f.done);
+    if (f.edge) { edgeCls[edgeKey(f.edge[0], f.edge[1])] = 'active'; }
+    const distCls = {};
+    for (const id of f.done) { distCls[id] = 'done'; }
+    if (f.changed) { distCls[f.changed] = 'changed'; }
+    let msg = f.msg;
+    if (f.end && anim.target) {
+      const p = pathTo(f.prev, animStart.value, anim.target);
+      edgeCls = pathEdges(p);
+      msg = `Weg nach <b>${escapeHtml(anim.target)}</b> (rückwärts über die Vorgänger): ${p.map(escapeHtml).join(' → ')} = <b>${f.dist[anim.target]} km</b>.`;
+    }
+    renderGraph(animSvg, CITIES, { nodeCls, edgeCls, dist: f.dist, distCls, start: animStart.value, clickable: f.end });
+    document.getElementById('animStatus').innerHTML = `<span class="muted">Schritt ${anim.i + 1} / ${anim.frames.length}:</span> ` + msg;
+    renderPq(document.getElementById('animPq'), f.pq, f.dist, true, f.popped);
+    renderTable(document.getElementById('animTable'), CITIES, f, {});
+    document.getElementById('animStep').disabled = anim.i >= anim.frames.length - 1;
+  }
+  function animStep() {
+    if (anim.i < anim.frames.length - 1) { anim.i++; animDraw(); }
+    if (anim.i >= anim.frames.length - 1) { animStop(); }
+  }
+  const SPEEDS = [2200, 1500, 1000, 600, 300];
+  function animPlayToggle() {
+    if (anim.timer) { animStop(); return; }
+    if (anim.i >= anim.frames.length - 1) { animReset(); }
+    animPlay.textContent = '⏸ Pause';
+    const tick = () => {
+      animStep();
+      if (anim.i < anim.frames.length - 1) { anim.timer = setTimeout(tick, SPEEDS[document.getElementById('animSpeed').value - 1]); }
+    };
+    anim.timer = setTimeout(tick, 200);
+  }
+  function animStop() {
+    if (anim.timer) { clearTimeout(anim.timer); anim.timer = null; }
+    animPlay.textContent = '▶ Play';
+  }
+  document.getElementById('animReset').addEventListener('click', animReset);
+  document.getElementById('animStep').addEventListener('click', () => { animStop(); animStep(); });
+  animPlay.addEventListener('click', animPlayToggle);
+  animStart.addEventListener('change', animReset);
+  animSvg.addEventListener('click', evt => {
+    const g = evt.target.closest ? evt.target.closest('[data-node]') : null;
+    const f = anim.frames[anim.i];
+    if (!g || !f.end) { return; }
+    anim.target = g.getAttribute('data-node');
+    animDraw();
+  });
+  animReset();
+
+  // ---------- slide 4: exercise ----------
+  const exSvg = document.getElementById('exSvg');
+  const exGraphSel = document.getElementById('exGraph');
+  const exStartSel = document.getElementById('exStart');
+  const ex = { graph: null, start: null, dist: {}, prev: {}, done: new Set(), pq: [], seq: 0, phase: 'pick',
+               current: null, changed: null, inputs: null, mistakes: 0, pickTries: 0, wrongNode: null, log: [], target: null };
+  const stats = Object.assign({ runs: 0, perfect: 0 }, store.get('stats', {}));
+
+  function setFeedback(cls, html) {
+    const el = document.getElementById('exFeedback');
+    el.className = 'feedback ' + (cls || '');
+    el.innerHTML = html || '';
+  }
+
+  /** Open node that the priority queue delivers next (smallest distance, ties by name), or null. */
+  function expectedNext() {
+    let best = null;
+    for (const id of ex.graph.ids) {
+      if (ex.done.has(id) || ex.dist[id] === undefined) { continue; }
+      if (best === null || ex.dist[id] < ex.dist[best] || (ex.dist[id] === ex.dist[best] && byName(id, best) < 0)) { best = id; }
+    }
+    return best;
+  }
+
+  function exLoadGraph(newRandom) {
+    const key = exGraphSel.value;
+    if (key === 'random') {
+      if (newRandom || !ex.graph || ex.graph.key !== 'random') {
+        ex.graph = randomGraph(+document.getElementById('exCount').value, +document.getElementById('exDensity').value);
+      }
+    } else {
+      ex.graph = PRESETS[key];
+    }
+    document.getElementById('randomControls').style.display = key === 'random' ? '' : 'none';
+    exStartSel.innerHTML = '';
+    for (const id of ex.graph.ids) { exStartSel.add(new Option(id, id, id === ex.graph.start, id === ex.graph.start)); }
+    store.set('graph', key);
+    exRestart();
+  }
+
+  function exRestart() {
+    ex.start = exStartSel.value;
+    ex.dist = { [ex.start]: 0 }; ex.prev = {}; ex.done = new Set(); ex.seq = 0;
+    ex.pq = [{ node: ex.start, d: 0, seq: ex.seq++ }];
+    ex.phase = 'pick'; ex.current = null; ex.changed = ex.start; ex.inputs = null;
+    ex.mistakes = 0; ex.pickTries = 0; ex.wrongNode = null; ex.target = null;
+    ex.log = [`Start: ${ex.start} = 0`];
+    setFeedback('', '');
+    exDraw();
+  }
+
+  function exDraw() {
+    const g = ex.graph;
+    const nodeCls = {};
+    for (const id of ex.done) { nodeCls[id] = 'done'; }
+    if (ex.current) { nodeCls[ex.current] = 'current'; }
+    if (ex.wrongNode) { nodeCls[ex.wrongNode] = 'wrong'; }
+    let edgeCls = treeEdges(ex.prev, ex.done);
+    if (ex.phase === 'relax') {
+      for (const v in ex.inputs) { edgeCls[edgeKey(ex.current, v)] = 'active'; }
+    }
+    if (ex.phase === 'done' && ex.target) { edgeCls = pathEdges(pathTo(ex.prev, ex.start, ex.target)); }
+    const distCls = {};
+    for (const id of ex.done) { distCls[id] = 'done'; }
+    if (ex.changed) { distCls[ex.changed] = 'changed'; }
+    renderGraph(exSvg, g, { nodeCls, edgeCls, dist: ex.dist, distCls, start: ex.start,
+      clickable: ex.phase === 'pick' || ex.phase === 'done' });
+    renderTable(document.getElementById('exTable'), g, ex, { inputs: ex.phase === 'relax' ? ex.inputs : null,
+      clickable: ex.phase === 'pick' });
+    renderPq(document.getElementById('exPq'), ex.pq, ex.dist, false, null);
+    document.getElementById('exCheckRow').style.display = ex.phase === 'relax' ? '' : 'none';
+    const task = document.getElementById('exTask');
+    if (ex.phase === 'pick') {
+      task.innerHTML = '<b>Welcher Knoten kommt als Nächstes aus der Warteschlange?</b> Klicke ihn im Graphen oder in der Tabelle an.';
+    } else if (ex.phase === 'relax') {
+      task.innerHTML = `<b>${escapeHtml(ex.current)}</b> ist fertig (${ex.dist[ex.current]}). Trage für die offenen Nachbarn ` +
+        'die Distanz nach dem Relaxieren ein und klicke auf <b>Prüfen</b>.';
+    } else {
+      task.innerHTML = '<b>Fertig!</b> Klicke auf einen Knoten, um den kürzesten Weg dorthin zu sehen.' +
+        (ex.target ? `<br>${pathTo(ex.prev, ex.start, ex.target).map(escapeHtml).join(' → ')} = <b>${ex.dist[ex.target]}${ex.graph.unit}</b>` : '');
+    }
+    document.getElementById('exLog').innerHTML = ex.log.map(escapeHtml).join('<br>');
+    document.getElementById('exLog').scrollTop = 1e6;
+    document.getElementById('exStats').textContent = `Fehler in diesem Durchlauf: ${ex.mistakes} · abgeschlossene Durchläufe: ${stats.runs}, davon ohne Fehler: ${stats.perfect}`;
+    if (ex.phase === 'relax') {
+      const first = document.querySelector('#exTable input:not([disabled])');
+      if (first) { first.focus(); }
+    }
+  }
+
+  function exPick(id) {
+    if (ex.phase === 'done') { ex.target = id; exDraw(); return; }
+    if (ex.phase !== 'pick') { return; }
+    const want = expectedNext();
+    if (id !== want) {
+      ex.mistakes++; ex.pickTries++; ex.wrongNode = id;
+      let msg;
+      if (ex.done.has(id)) {
+        msg = `${escapeHtml(id)} ist schon fertig. Ein fertiger Knoten kommt nie wieder an die Reihe.`;
+      } else if (ex.dist[id] === undefined) {
+        msg = `${escapeHtml(id)} hat noch die Distanz ${INF} und steht gar nicht in der Warteschlange.`;
+      } else if (ex.dist[id] === ex.dist[want]) {
+        msg = `Gleichstand: ${escapeHtml(id)} und ${escapeHtml(want)} haben beide ${ex.dist[id]}. Nach der Regel kommt der alphabetisch kleinere Name zuerst, also ${escapeHtml(want)}.`;
+      } else {
+        msg = `${escapeHtml(id)} hat die Distanz ${ex.dist[id]}. Es gibt einen offenen Knoten mit kleinerer Distanz.`;
+      }
+      if (ex.pickTries >= 2 && ex.dist[id] !== ex.dist[want]) {
+        msg += ` Richtig ist <b>${escapeHtml(want)}</b> mit der Distanz ${ex.dist[want]}.`;
+      }
+      setFeedback('bad', '✗ ' + msg);
+      exDraw();
+      return;
+    }
+    ex.pickTries = 0; ex.wrongNode = null;
+    // Entries in front of the chosen one are stale; the queue drops them when they reach the front.
+    const sorted = ex.pq.slice().sort(cmpEntry);
+    const skipped = [];
+    let chosen = null;
+    for (const e of sorted) {
+      if (e.node === id && e.d === ex.dist[id]) { chosen = e; break; }
+      skipped.push(e);
+    }
+    const removed = new Set(skipped.concat([chosen]));
+    ex.pq = ex.pq.filter(e => !removed.has(e));
+    ex.done.add(id);
+    ex.current = id; ex.changed = null;
+    let text = `✓ Richtig, ${escapeHtml(id)} (${ex.dist[id]}) ist fertig.`;
+    if (skipped.length) {
+      text += ' Davor wurden die veralteten Einträge ' + skipped.map(e => `(${escapeHtml(e.node)}, ${e.d})`).join(', ') + ' übersprungen.';
+      ex.log.push('übersprungen: ' + skipped.map(e => `${e.node} ${e.d}`).join(', '));
+    }
+    ex.log.push(`entnommen: ${id} ${ex.dist[id]}`);
+    ex.inputs = {};
+    for (const [v] of ex.graph.adj[id]) {
+      if (!ex.done.has(v)) { ex.inputs[v] = { value: '', status: '', tries: 0 }; }
+    }
+    if (Object.keys(ex.inputs).length === 0) {
+      text += ' Es hat keine offenen Nachbarn, es gibt nichts zu relaxieren.';
+      setFeedback('ok', text);
+      afterRelax();
+      return;
+    }
+    ex.phase = 'relax';
+    setFeedback('ok', text);
+    exDraw();
+  }
+
+  function exCheck() {
+    if (ex.phase !== 'relax') { return; }
+    for (const el of document.querySelectorAll('#exTable input[data-input]')) {
+      ex.inputs[el.getAttribute('data-input')].value = el.value.trim();
+    }
+    const u = ex.current, du = ex.dist[u];
+    const hints = [];
+    let allOk = true;
+    for (const v of Object.keys(ex.inputs).sort(byName)) {
+      const inp = ex.inputs[v];
+      if (inp.status === 'ok') { continue; }
+      const w = ex.graph.adj[u].find(x => x[0] === v)[1];
+      const old = ex.dist[v], nd = du + w;
+      const want = old === undefined ? nd : Math.min(old, nd);
+      if (inp.value === '') { inp.status = 'bad'; allOk = false; hints.push(`${escapeHtml(v)}: Bitte eine Zahl eintragen.`); continue; }
+      if (Number(inp.value) === want && /^\d+$/.test(inp.value)) { inp.status = 'ok'; continue; }
+      inp.status = 'bad'; inp.tries++; ex.mistakes++; allOk = false;
+      if (inp.tries < 2) {
+        hints.push(`${escapeHtml(v)}: Rechne d(${escapeHtml(u)}) + Gewicht der Kante und vergleiche mit dem bisherigen Wert ${fmt(old)}.`);
+      } else {
+        const why = old === undefined ? `bisher ${INF}, also ${nd}`
+          : nd < old ? `${nd} &lt; ${old}, also ${nd}` : `${nd} ist nicht kleiner als ${old}, also bleibt ${old}`;
+        hints.push(`${escapeHtml(v)}: ${du} + ${w} = ${nd}, ${why}.`);
+      }
+    }
+    if (!allOk) {
+      setFeedback('bad', '✗ Noch nicht alles richtig:<br>' + hints.join('<br>'));
+      exDraw();
+      return;
+    }
+    // Apply the relaxation exactly like the algorithm does.
+    const changes = [];
+    for (const v of Object.keys(ex.inputs).sort(byName)) {
+      const w = ex.graph.adj[u].find(x => x[0] === v)[1];
+      const old = ex.dist[v], nd = du + w;
+      if (old === undefined || nd < old) {
+        ex.dist[v] = nd; ex.prev[v] = u;
+        ex.pq.push({ node: v, d: nd, seq: ex.seq++ });
+        changes.push(`${v} ${fmt(old)} → ${nd}`);
+      }
+    }
+    ex.log.push(changes.length ? 'relaxiert: ' + changes.join(', ') : 'relaxiert: keine Änderung');
+    setFeedback('ok', '✓ Alle Distanzen stimmen.' + (changes.length ? ' Neue Einträge in der Warteschlange: ' + changes.map(escapeHtml).join(', ') + '.' : ' Keine Distanz hat sich verbessert.'));
+    afterRelax();
+  }
+
+  function afterRelax() {
+    ex.inputs = null;
+    ex.changed = null;
+    if (expectedNext() === null) {
+      const rest = ex.pq.length;
+      ex.pq = [];
+      ex.phase = 'done'; ex.current = null;
+      if (rest) { ex.log.push(`${rest} veraltete(r) Eintrag/Einträge übersprungen, Warteschlange leer`); }
+      stats.runs++;
+      if (ex.mistakes === 0) { stats.perfect++; }
+      store.set('stats', stats);
+      setFeedback('ok', `✓ Geschafft! Alle Distanzen sind endgültig. Fehler: ${ex.mistakes}.` +
+        (rest ? ' Die restlichen veralteten Einträge wurden übersprungen, die Warteschlange ist leer.' : ''));
+    } else {
+      ex.phase = 'pick';
+    }
+    exDraw();
+  }
+
+  exSvg.addEventListener('click', evt => {
+    const g = evt.target.closest ? evt.target.closest('[data-node]') : null;
+    if (g) { exPick(g.getAttribute('data-node')); }
+  });
+  document.getElementById('exTable').addEventListener('click', evt => {
+    if (ex.phase !== 'pick') { return; }
+    const tr = evt.target.closest ? evt.target.closest('tr[data-node]') : null;
+    if (tr) { exPick(tr.getAttribute('data-node')); }
+  });
+  document.getElementById('exTable').addEventListener('keydown', evt => { if (evt.key === 'Enter') { exCheck(); } });
+  document.getElementById('exCheck').addEventListener('click', exCheck);
+  document.getElementById('exRestart').addEventListener('click', exRestart);
+  exStartSel.addEventListener('change', exRestart);
+  exGraphSel.addEventListener('change', () => exLoadGraph(false));
+  document.getElementById('exNewRandom').addEventListener('click', () => exLoadGraph(true));
+  document.getElementById('exCount').addEventListener('change', () => exLoadGraph(true));
+  document.getElementById('exDensity').addEventListener('change', () => exLoadGraph(true));
+
+  const savedGraph = store.get('graph', 'cities');
+  exGraphSel.value = ['cities', 'small', 'ties', 'random'].includes(savedGraph) ? savedGraph : 'cities';
+  exLoadGraph(true);
+
+  // ---------- slides ----------
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  let current = Math.min(Math.max(store.get('slide', 0) | 0, 0), slides.length - 1);
+  function showSlide(i) {
+    current = Math.min(Math.max(i, 0), slides.length - 1);
+    slides.forEach((s, k) => s.classList.toggle('active', k === current));
+    document.getElementById('progressText').textContent = `${current + 1} / ${slides.length}`;
+    document.getElementById('progressBar').style.width = `${(current + 1) / slides.length * 100}%`;
+    document.getElementById('prevBtn').disabled = current === 0;
+    document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    animStop();
+    store.set('slide', current);
+    window.scrollTo(0, 0);
+  }
+  document.getElementById('prevBtn').addEventListener('click', () => showSlide(current - 1));
+  document.getElementById('nextBtn').addEventListener('click', () => showSlide(current + 1));
+  document.addEventListener('keydown', evt => {
+    const tag = evt.target && evt.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (evt.target && evt.target.isContentEditable)) { return; }
+    if (evt.ctrlKey || evt.altKey || evt.metaKey) { return; }
+    if (evt.key === 'ArrowRight' || evt.key === 'PageDown') { showSlide(current + 1); evt.preventDefault(); }
+    if (evt.key === 'ArrowLeft' || evt.key === 'PageUp') { showSlide(current - 1); evt.preventDefault(); }
+  });
+  showSlide(current);
+
+  /** Read-only hooks for automated tests. */
+  window.dijkstraDebug = {
+    expectedNext,
+    state: () => ({ phase: ex.phase, current: ex.current, dist: Object.assign({}, ex.dist), inputs: ex.inputs, mistakes: ex.mistakes }),
+    expectedInputs: () => {
+      if (ex.phase !== 'relax') { return null; }
+      const res = {};
+      for (const v in ex.inputs) {
+        const nd = ex.dist[ex.current] + ex.graph.adj[ex.current].find(x => x[0] === v)[1];
+        res[v] = ex.dist[v] === undefined ? nd : Math.min(ex.dist[v], nd);
+      }
+      return res;
+    }
+  };
+})();
+</script>
+</body>
+</html>

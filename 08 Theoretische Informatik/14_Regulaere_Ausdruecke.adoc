@@ -1,0 +1,678 @@
+= Reguläre Ausdrücke
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Ist `1010` eine gültige Postleitzahl?
+Wie stellst du in 300 Zeilen jedes Datum von `24.12.2026` auf `2026-12-24` um?
+Welche Matrikelnummern stehen in einer Teilnehmerliste?
+Für solche Aufgaben schreibst du keine Schleife über die Zeichen, sondern einen regulären Ausdruck (_regular expression_, kurz _Regex_).
+Er beschreibt ein Muster in einer kompakten Schreibweise.
+Du findest ihn in jeder Programmiersprache, in jedem Editor und in vielen Tools.
+
+[TIP]
+====
+*Zum Selbst-Erarbeiten: der interaktive Regex-Trainer*
+
+Im https://die-spengergasse.github.io/course-pos-csharp_basics/08%20Theoretische%20Informatik/14_Regulaere_Ausdruecke.html[Regex-Trainer] siehst du als Animation, wie eine Regex über einen Text läuft und wie Suchen und Ersetzen arbeitet.
+Danach schreibst du selbst Ausdrücke und siehst live, welche Wörter sie erkennen.
+Regex lernst du durch Ausprobieren, nicht durch Lesen.
+====
+
+== Wofür Regex gut ist und wofür nicht
+
+Regex ist das richtige Werkzeug für vier Aufgaben:
+
+* *Prüfen*, ob eine Eingabe ein Format hat: Postleitzahl, Matrikelnummer, Uhrzeit.
+* *Suchen und Ersetzen* im Editor: Datumsformat umstellen, Spalten tauschen, Code umbauen.
+* *Daten herausholen*: alle Beträge, Nummern oder Datumsangaben aus einem Text.
+* *Zerlegen*: eine Zeile an einem Trennzeichen aufteilen.
+
+Regex prüft aber nur die *Form*.
+`31.02.2026` sieht aus wie ein Datum, ist aber keines.
+Ob es eine Postleitzahl wirklich gibt, weiß die Regex auch nicht.
+Und für *verschachtelte Strukturen* wie HTML, JSON oder Klammerausdrücke ist sie das falsche Werkzeug.
+Dafür gibt es Parser, z. B. `System.Text.Json`.
+
+Zum Ausprobieren eignet sich https://regex101.com[regex101.com].
+Stelle dort links den _Flavor_ auf _.NET (C#)_.
+Die Seite erklärt jeden Teil deines Ausdrucks in Worten.
+
+== Die Bausteine
+
+=== Zeichen und Zeichenklassen
+
+[%header]
+|===
+|Muster |passt auf |Beispiel
+|`a`, `7`, `-` |genau dieses Zeichen |`Wien` passt auf `Wien`
+|`.` |ein beliebiges Zeichen außer dem Zeilenumbruch |`M..er` passt auf `Maier`, `Meier`, `Mayer`
+|`+[aeiou]+` |eines der Zeichen in der Klammer |`+M[ae][iy]er+` passt auf `Maier`, `Meyer`
+|`+[a-z]+`, `+[0-9A-F]+` |ein Zeichen aus dem Bereich |`+[0-9]+` passt auf eine Ziffer
+|`+[^0-9]+` |ein Zeichen, das _nicht_ in der Klasse steht |passt auf `a`, `-` oder ein Leerzeichen
+|`+\d+`, `+\w+`, `+\s+` |Ziffer, Wortzeichen (Buchstabe, Ziffer, `+_+`), Leerraum |`+\s+` passt auf Leerzeichen, Tab, Umbruch
+|`+\D+`, `+\W+`, `+\S+` |das Gegenteil davon |`+\S+` passt auf alles außer Leerraum
+|===
+
+____
+*Achtung:* In .NET sind `+\d+` und `+\w+` Unicode-fähig.
+`+\d+` passt auch auf die arabisch-indische Ziffer `٣`, `+\w+` passt auf `ä`.
+Willst du nur die Ziffern 0 bis 9 erlauben, schreibst du `+[0-9]+`.
+____
+
+=== Quantoren
+
+Ein Quantor steht hinter einem Zeichen, einer Klasse oder einer Gruppe und gibt an, wie oft sie vorkommen.
+
+[%header]
+|===
+|Quantor |Anzahl |Beispiel
+|`+*+` |0 bis beliebig oft |`+Hal*o+` passt auf `Hao`, `Halo`, `Hallo`
+|`+++` |1 bis beliebig oft |`pass:c[[0-9\]+]` passt auf `7`, `2026`
+|`?` |0 oder 1 Mal |`pass:c[-?[0-9\]+]` passt auf `42`, `-42`
+|`+{4}+` |genau 4 Mal |`+[0-9]{4}+` passt auf `1010`
+|`+{2,}+` |mindestens 2 Mal |`+[0-9]{2,}+` passt auf `10`, `2026`
+|`+{2,4}+` |2 bis 4 Mal |`+[0-9]{2,4}+` passt auf `12`, `1234`
+|===
+
+Quantoren sind *gierig* (_greedy_).
+Sie nehmen so viele Zeichen wie möglich.
+Ein angehängtes `?` macht sie *genügsam* (_lazy_).
+Sie nehmen dann so wenig wie möglich.
+
+[source,csharp]
+----
+using System.Text.RegularExpressions;
+
+string text = "Treffpunkt [Wien] oder [Graz]";
+Console.WriteLine(Regex.Match(text, @"\[.*\]").Value);      // (1)
+Console.WriteLine(Regex.Match(text, @"\[.*?\]").Value);     // (2)
+Console.WriteLine(Regex.Match(text, @"\[[^\]]*\]").Value);  // (3)
+----
+
+[source,text]
+----
+[Wien] oder [Graz]
+[Wien]
+[Wien]
+----
+
+* *(1)* `+.*+` nimmt so viel wie möglich und endet erst beim _letzten_ `+]+` im Text.
+* *(2)* `+.*?+` nimmt so wenig wie möglich und endet beim _ersten_ `+]+`.
+* *(3)* Oft ist eine negierte Klasse die klarste Lösung: „alles außer `+]+`“.
+
+=== Anker
+
+Anker passen nicht auf ein Zeichen, sondern auf eine Position.
+
+[%header]
+|===
+|Anker |Position
+|`+^+` |Anfang des Strings (mit `RegexOptions.Multiline`: Anfang jeder Zeile)
+|`$` |Ende des Strings *oder vor einem abschließenden `+\n+`* (mit Multiline: Ende jeder Zeile)
+|`+\z+` |nur das echte Ende des Strings (gibt es in .NET, nicht in JavaScript)
+|`+\b+` |Wortgrenze: zwischen einem Wortzeichen und einem anderen Zeichen
+|===
+
+Ohne Anker sucht die Regex _irgendwo_ im String.
+Für eine Prüfung „der ganze String hat dieses Format“ brauchst du deshalb Anker.
+Eine österreichische Postleitzahl hat vier Ziffern, die erste ist nicht 0:
+
+[source,csharp]
+----
+using System.Text.RegularExpressions;
+
+string[] inputs = ["1010", "0123", "A-1010", "10100", "1010\n"];
+foreach (string input in inputs)
+{
+    bool noAnchors = Regex.IsMatch(input, @"[1-9][0-9]{3}");
+    bool withDollar = Regex.IsMatch(input, @"^[1-9][0-9]{3}$");
+    bool withZ = Regex.IsMatch(input, @"^[1-9][0-9]{3}\z");
+    Console.WriteLine($"{input.ReplaceLineEndings("\\n"),-8} {noAnchors,-6} {withDollar,-6} {withZ}");
+}
+----
+
+[source,text]
+----
+1010     True   True   True
+0123     False  False  False
+A-1010   True   False  False
+10100    True   False  False
+1010\n   True   True   False
+----
+
+Ohne Anker findet die Regex in `A-1010` und `10100` vier passende Ziffern.
+Die letzte Zeile ist eine Falle: `$` erlaubt am Ende noch ein `+\n+`.
+Für strenge Prüfungen nimmst du in .NET `+\z+`.
+
+=== Gruppen und Alternativen
+
+[%header]
+|===
+|Muster |Bedeutung
+|`+(…)+` |Gruppe, die ihren Text speichert, nummeriert ab 1
+|`+(?<name>…)+` |benannte Gruppe
+|`+(?:…)+` |Gruppe nur zum Zusammenfassen, speichert nichts
+|`+a\|b+` |Alternative: links oder rechts
+|===
+
+Gruppen fassen Teile zusammen, damit ein Quantor oder eine Alternative für den ganzen Teil gilt: `pass:c[(ab)+]` passt auf `ab`, `abab`, …
+Vor allem merkt sich die Regex aber, welcher Text in welcher Gruppe gelandet ist.
+So holst du Tag, Monat und Jahr einzeln aus einem Datum:
+
+image::{root_dir}/images/14_gruppen.svg[]
+
+Gruppe 0 ist immer der ganze Treffer.
+Die benannten Gruppen bekommen in .NET zusätzlich Nummern, hier 1 bis 3.
+
+Im Muster selbst verlangt `+\1+` denselben Text noch einmal, den Gruppe 1 gefunden hat: `pass:c[\b(\w+) \1\b]` findet verdoppelte Wörter wie `das das`.
+
+____
+*Falle:* `+|+` hat die niedrigste Priorität.
+`+^Herr|Frau$+` bedeutet „beginnt mit `Herr`“ _oder_ „endet mit `Frau`“.
+Gemeint ist `+^(?:Herr|Frau)$+`.
+____
+
+=== Escapen
+
+Die Zeichen `+. * + ? ( ) [ ] { } ^ $ | \+` haben eine Bedeutung.
+Meinst du das Zeichen selbst, schreibst du einen Backslash davor: `+\.+` ist ein Punkt, `+\(+` eine Klammer, `+\\+` ein Backslash.
+In einer Zeichenklasse ist fast alles normal, `+[.,;]+` braucht keinen Backslash.
+Dort sind nur `+]+`, `+\+`, `+^+` am Anfang und `-` zwischen zwei Zeichen besonders.
+
+In C# schreibst du Muster als Verbatim-String `+@"…"+`.
+In einem normalen String müsstest du jeden Backslash verdoppeln (`+"\\d"+` statt `+@"\d"+`).
+Baust du Text von Benutzern in ein Muster ein, escapt `Regex.Escape` alle Sonderzeichen für dich.
+Aus `pass:c[C++ (.NET)]` wird `pass:c[C\+\+\ \(\.NET\)]`.
+
+=== Lookahead
+
+Ein Lookahead prüft, was _nach_ der aktuellen Position kommt, ohne die Zeichen zu verbrauchen.
+`+(?=…)+` verlangt, dass das Muster folgt, `+(?!…)+` verlangt, dass es _nicht_ folgt.
+In `3 Bücher um 45 EUR` findet `pass:c[[0-9\]+(?= EUR)]` nur die `45`.
+Das ` EUR` gehört nicht zum Treffer.
+Mehrere Lookaheads am Anfang prüfen mehrere Bedingungen, z. B. bei Kennwortregeln (siehe unten).
+
+=== Fremde Ausdrücke lesen
+
+Einen fremden Ausdruck liest du von links nach rechts und zerlegst ihn in seine Bausteine.
+Als Beispiel eine (vereinfachte) österreichische Telefonnummer:
+
+[source,text]
+----
+^(?:\+43|0)[1-9][0-9]{3,12}\z
+----
+
+[%header]
+|===
+|Teil |Bedeutung
+|`+^+` … `+\z+` |der ganze String, nicht nur ein Teil
+|`+(?:\+43\|0)+` |entweder `++43+` (das Plus escapt) oder `0`
+|`+[1-9]+` |eine Ziffer außer 0 (die Vorwahl beginnt nie mit 0)
+|`+[0-9]{3,12}+` |danach 3 bis 12 Ziffern
+|===
+
+Passt also auf `++436641234567+` und `06641234567`, aber nicht auf `+0043664…+` oder `0664 123`.
+
+== Validierungsmuster zum Anpassen
+
+Die folgenden Muster prüfen die *Form* einer Eingabe.
+Kopiere sie und passe sie an deine Regeln an.
+Sie sind für .NET geschrieben, in JavaScript ersetzt du `+\z+` durch `$`.
+
+[%header]
+|===
+|Format |Muster |passt |passt nicht
+|Postleitzahl (AT) |`+^[1-9][0-9]{3}\z+` |`1010`, `8010` |`0123`, `10100`
+|Matrikelnummer |`+^[0-9]{8}\z+` |`01234567` |`1234567`
+|Ganze Zahl |`pass:c[^[+-\]?[0-9\]+\z]` |`42`, `-7`, `++3+` |`4.2`, `+--7+`
+|Betrag mit Komma |`pass:c[^[0-9\]+(?:,[0-9\]{1,2})?\z]` |`12`, `12,5`, `0,99` |`12,`, `12,345`
+|Datum (nur die Form) |`+^[0-9]{2}\.[0-9]{2}\.[0-9]{4}\z+` |`24.12.2026` |`1.1.2026`, `24-12-2026`
+|Uhrzeit |`+^(?:[01][0-9]\|2[0-3]):[0-5][0-9]\z+` |`08:15`, `23:59` |`24:00`, `8:15`
+|Benutzername |`+^[a-z][a-z0-9_]{2,15}\z+` |`+anna_h+`, `max2` |`2max`, `Anna`
+|Kennwort |`+^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}\z+` |`Sommer2026` |`sommer2026`
+|===
+
+Das Kennwort-Muster besteht aus drei Lookaheads (eine Ziffer, ein Klein-, ein Großbuchstabe irgendwo) und `+.{8,}+` für die Länge.
+Ob es ein Datum wirklich gibt, prüfst du nicht mit der Regex, sondern mit `DateOnly.TryParseExact` (siehe unten).
+Eine Regex, die Schaltjahre kennt, wäre unlesbar.
+
+== Suchen und Ersetzen im Editor
+
+Im Alltag brauchst du Regex am häufigsten im Editor.
+Du willst 200 Zeilen gleich umbauen, und jede Zeile sieht ein bisschen anders aus.
+Die Idee: Das Suchmuster speichert die Teile, die du behalten willst, in Gruppen.
+Im Ersetzungstext setzt du sie mit `$1`, `$2`, … neu zusammen.
+
+image::{root_dir}/images/14_suchen_ersetzen.svg[]
+
+So schaltest du Regex ein:
+
+[%header]
+|===
+| |VS Code |Visual Studio
+|Ersetzen in der Datei |`+Strg+H+` |`+Strg+H+`
+|Ersetzen in allen Dateien |`+Strg+Shift+H+` |`+Strg+Shift+H+`
+|Regex ein/aus |Knopf `+.*+` oder `+Alt+R+` |Knopf `+.*+` oder `+Alt+E+`
+|Engine |JavaScript |.NET (wie in C#)
+|Gruppe im Ersetzungstext |`$1` … `$99` |`$1` … `$99`
+|ganzer Treffer |`$0` oder `$&` |`$0` oder `$&`
+|benannte Gruppe |nur über die Nummer (`$1`) |`+${name}+`
+|Groß-/Kleinschreibung ändern |`+\u+`, `+\l+`, `+\U+`, `+\L+` vor der Gruppe |–
+|===
+
+In beiden Editoren passen `+^+` und `$` am Anfang und Ende jeder *Zeile* (in Visual Studio mit einer Falle bei Windows-Zeilenenden, siehe unten).
+Mit `+Strg+Z+` machst du eine Ersetzung rückgängig.
+Klicke vor _Alle ersetzen_ ein paar Mal auf _Weitersuchen_ und kontrolliere die Treffer.
+
+=== Datum umstellen
+
+[source,text]
+----
+Suchen:    \b([0-9]{2})\.([0-9]{2})\.([0-9]{4})\b
+Ersetzen:  $3-$2-$1
+
+vorher:    Abgabe 24.12.2026, Nachtrag 07.01.2027
+nachher:   Abgabe 2026-12-24, Nachtrag 2027-01-07
+----
+
+In Visual Studio kannst du die Gruppen auch benennen: Suchen `+(?<day>[0-9]{2})\.(?<month>[0-9]{2})\.(?<year>[0-9]{4})+`, Ersetzen `+${year}-${month}-${day}+`.
+Der VS-Code-Editor kennt benannte Gruppen im Ersetzungstext nicht.
+Dort schreibst du `$3-$2-$1`.
+
+=== Spalten einer CSV-Datei tauschen
+
+[source,text]
+----
+Suchen:    ^([^;]*);([^;]*)
+Ersetzen:  $2;$1
+
+vorher:    Huber;Anna;5AHIF          nachher:   Anna;Huber;5AHIF
+           Gruber;Max;5BHIF                     Max;Gruber;5BHIF
+----
+
+`+[^;]*+` nimmt alles bis zum nächsten Strichpunkt.
+Die dritte Spalte gehört nicht zum Treffer und bleibt deshalb unverändert stehen.
+
+=== Leerzeichen am Zeilenende entfernen
+
+[source,text]
+----
+Suchen:    [ \t]+$
+Ersetzen:  (leer lassen)
+----
+
+Das funktioniert in VS Code.
+Visual Studio sieht bei Windows-Zeilenenden noch das `+\r+` vor dem Zeilenumbruch.
+Dort schreibst du `pass:c[[ \t\]+(?=\r?$)]`: Leerzeichen und Tabs, nach denen höchstens ein `+\r+` und das Zeilenende kommen.
+Diese Variante funktioniert in beiden Editoren.
+
+=== Code umbauen
+
+Aus einer Klasse mit Properties soll ein Record werden.
+Statt jede Zeile von Hand umzuschreiben, ersetzt du alle auf einmal:
+
+[source,text]
+----
+Suchen:    public (\S+) (\w+) \{ get; set; \}
+Ersetzen:  $1 $2,
+
+vorher:    public string Firstname { get; set; }     nachher:   string Firstname,
+           public string Lastname { get; set; }                 string Lastname,
+           public DateOnly? Birthdate { get; set; }             DateOnly? Birthdate,
+----
+
+Die Klammern `+{+` und `+}+` sind Sonderzeichen und brauchen einen Backslash.
+`pass:c[\S+]` statt `pass:c[\w+]` nimmt auch Typen wie `DateOnly?` oder `+List<int>+`.
+In VS Code kannst du mit `+\l+` den ersten Buchstaben einer Gruppe kleinschreiben.
+Ersetzen durch `+$2 = \l$2;+` macht aus derselben Zeile `Firstname = firstname;`, also die Zuweisungen für einen Konstruktor.
+
+== Die Klasse Regex in .NET
+
+Alle Typen liegen im Namespace `System.Text.RegularExpressions`.
+Er gehört nicht zu den impliziten Usings, du musst ihn selbst einbinden.
+
+[%header]
+|===
+|Methode |Ergebnis |Wofür
+|`IsMatch` |`bool` |Hat der String das Format?
+|`Match` |`Match` |Den ersten Treffer samt Gruppen holen
+|`Matches` |`MatchCollection` |Alle Treffer durchlaufen
+|`Replace` |`string` |Treffer ersetzen
+|`Split` |`+string[]+` |Den String an den Treffern zerlegen
+|===
+
+Alle Methoden gibt es statisch (`Regex.IsMatch(input, pattern)`) und als Instanzmethode (`regex.IsMatch(input)`).
+
+=== Match und Groups
+
+[source,csharp]
+----
+using System.Text.RegularExpressions;
+
+string text = "Abgabe am 24.12.2026 um 12:00";
+Match m = Regex.Match(text, @"(?<day>[0-9]{2})\.(?<month>[0-9]{2})\.(?<year>[0-9]{4})");
+if (m.Success)                                                             // (1)
+{
+    Console.WriteLine($"{m.Value} at index {m.Index}");
+    Console.WriteLine($"Day {m.Groups["day"].Value}, month {m.Groups["month"].Value}");
+    int year = int.Parse(m.Groups["year"].ValueSpan);                      // (2)
+    Console.WriteLine($"Year {year}");
+}
+
+string[] candidates = ["24.12.2026", "31.02.2026"];
+foreach (string candidate in candidates)
+{
+    bool isDate = DateOnly.TryParseExact(candidate, "dd.MM.yyyy", out DateOnly date);  // (3)
+    Console.WriteLine($"{candidate}: {(isDate ? date.DayOfWeek.ToString() : "no date")}");
+}
+----
+
+[source,text]
+----
+24.12.2026 at index 10
+Day 24, month 12
+Year 2026
+24.12.2026: Thursday
+31.02.2026: no date
+----
+
+* *(1)* Gibt es keinen Treffer, liefert `Match` ein Objekt mit `Success == false`, nicht `null`.
+* *(2)* `ValueSpan` liefert den Text ohne neuen String.
+`int.Parse` nimmt ihn direkt.
+* *(3)* Die Regex prüft nur die Form.
+Ob es den Tag gibt, prüft `DateOnly.TryParseExact`.
+
+=== Matches: alle Treffer
+
+Eine Matrikelnummer hat 8 Ziffern.
+Die folgende Regex sucht alle in einem Text.
+Die Wortgrenzen `+\b+` verhindern, dass sie aus einer längeren Zahl 8 Ziffern herausschneidet.
+
+[source,csharp]
+----
+using System.Text.RegularExpressions;
+
+string text = "Angemeldet: 01234567 (Huber), 12345678 (Gruber), 1234567 (Tippfehler), 123456789";
+MatchCollection matches = Regex.Matches(text, @"\b[0-9]{8}\b");
+foreach (Match m in matches)
+{
+    Console.WriteLine($"{m.Value} at index {m.Index}");
+}
+List<string> numbers = matches.Select(m => m.Value).ToList();             // (1)
+Console.WriteLine(string.Join(", ", numbers));
+----
+
+[source,text]
+----
+01234567 at index 12
+12345678 at index 30
+01234567, 12345678
+----
+
+* *(1)* `MatchCollection` implementiert `+IEnumerable<Match>+`, du kannst also LINQ verwenden.
+
+=== Replace
+
+Der Ersetzungstext funktioniert wie im Editor: `$1` für eine Gruppe, `+${name}+` für eine benannte Gruppe.
+Brauchst du mehr Logik, übergibst du statt des Ersetzungstexts ein Lambda, das jeden Treffer bekommt und den Ersatz liefert.
+
+[source,csharp]
+----
+using System.Text.RegularExpressions;
+
+string text = "Prüfung am 24.12.2026, Matrikelnummer 01234567";
+string iso = Regex.Replace(text,
+    @"(?<day>[0-9]{2})\.(?<month>[0-9]{2})\.(?<year>[0-9]{4})",
+    "${year}-${month}-${day}");                                           // (1)
+Console.WriteLine(iso);
+
+string masked = Regex.Replace(iso, @"\b[0-9]{8}\b",
+    m => new string('*', 5) + m.Value[5..]);                              // (2)
+Console.WriteLine(masked);
+----
+
+[source,text]
+----
+Prüfung am 2026-12-24, Matrikelnummer 01234567
+Prüfung am 2026-12-24, Matrikelnummer *****567
+----
+
+* *(1)* Das Datum wird ins ISO-Format umgestellt.
+Die Gruppen kommen in neuer Reihenfolge.
+* *(2)* Das Lambda bekommt jeden Treffer als `Match` und zeigt nur die letzten drei Ziffern.
+
+=== Split und eine CSV-Zeile
+
+`string.Split` trennt nur an einem festen Zeichen.
+`Regex.Split` trennt an einem Muster, z. B. an einem Strichpunkt mit beliebig viel Leerraum davor und danach:
+
+[source,csharp]
+----
+using System.Text.RegularExpressions;
+
+string[] parts = Regex.Split("Wien ; Graz;Linz ;   Salzburg", @"\s*;\s*");
+Console.WriteLine(string.Join("|", parts));
+----
+
+[source,text]
+----
+Wien|Graz|Linz|Salzburg
+----
+
+Echte CSV-Zeilen sind schwieriger.
+Ein Feld darf in Anführungszeichen stehen und dann selbst einen `;` enthalten.
+Ein Anführungszeichen im Feld wird verdoppelt (`""`).
+Hier hilft `Split` nicht mehr.
+Stattdessen beschreibst du, wie ein _Feld_ aussieht, und holst alle Felder mit `Matches`:
+
+[source,csharp]
+----
+using System.Text.RegularExpressions;
+
+string line = """"4711;"Huber; Anna";;"Er sagt ""Servus""";Wien"""";       // (1)
+var field = new Regex(""""(?:^|;)(?<field>"(?:[^"]|"")*"|[^;]*)"""");       // (2)
+
+foreach (Match m in field.Matches(line))
+{
+    string value = m.Groups["field"].Value;
+    if (value.StartsWith('"'))
+    {
+        value = value[1..^1].Replace("\"\"", "\"");                          // (3)
+    }
+    Console.WriteLine($"[{value}]");
+}
+----
+
+[source,text]
+----
+[4711]
+[Huber; Anna]
+[]
+[Er sagt "Servus"]
+[Wien]
+----
+
+* *(1)* Ein Raw String Literal braucht keine Escapes.
+Der Inhalt enthält bis zu drei Anführungszeichen hintereinander, deshalb steht der String zwischen je vier.
+* *(2)* Jedes Feld beginnt am Zeilenanfang oder nach einem `;`.
+Danach kommt entweder ein Feld in Anführungszeichen (beliebige Zeichen außer `"` oder ein verdoppeltes `""`) oder ein Feld ohne `;`.
+Das zweite `+[^;]*+` darf auch leer sein, so findest du leere Felder.
+* *(3)* Die äußeren Anführungszeichen werden entfernt und `""` wird zu `"`.
+
+Für ganze CSV-Dateien nimmst du besser eine Bibliothek wie _CsvHelper_.
+Sie kann z. B. auch Felder, die über mehrere Zeilen gehen.
+
+=== RegexOptions
+
+Optionen übergibst du als weiteres Argument und kombinierst sie mit `+|+`.
+Die wichtigsten:
+
+[%header]
+|===
+|Option |Wirkung
+|`IgnoreCase` |Groß- und Kleinschreibung egal
+|`Multiline` |`+^+` und `$` passen an jedem Zeilenanfang und -ende
+|`Singleline` |`.` passt auch auf `+\n+`
+|`IgnorePatternWhitespace` |Leerzeichen im Muster werden ignoriert, `+#+` leitet einen Kommentar ein
+|`ExplicitCapture` |nur benannte Gruppen speichern, `+(…)+` wirkt wie `+(?:…)+`
+|===
+
+Im Editor gilt immer das Verhalten von `Multiline`: `+^+` und `$` beziehen sich auf jede Zeile.
+
+=== [GeneratedRegex]
+
+Eine Regex wird vor der ersten Suche übersetzt.
+Lege sie deshalb einmal an und verwende sie oft, statt in einer Schleife immer wieder `+new Regex(…)+` zu schreiben.
+Am besten geht das mit dem Attribut `+[GeneratedRegex]+`.
+Ein _Source Generator_ schreibt beim Kompilieren C#-Code, der genau dein Muster sucht.
+Du deklarierst dafür nur eine `partial`-Methode in einer `partial`-Klasse.
+In einer Konsolen-App steht die Klasse nach den Top-Level-Statements:
+
+[source,csharp]
+----
+using System.Text.RegularExpressions;
+
+string[] inputs = ["1010", "0123", "4020"];
+foreach (string input in inputs)
+{
+    Console.WriteLine($"{input}: {Patterns.PostalCode().IsMatch(input)}");
+}
+
+/// <summary>Regular expressions that are generated at compile time.</summary>
+static partial class Patterns
+{
+    /// <summary>Austrian postal code: four digits, the first one is not 0.</summary>
+    [GeneratedRegex(@"^[1-9][0-9]{3}\z", RegexOptions.None, matchTimeoutMilliseconds: 100)]
+    public static partial Regex PostalCode();
+}
+----
+
+[source,text]
+----
+1010: True
+0123: False
+4020: True
+----
+
+Ein ungültiges Muster ist damit ein *Compilerfehler* und kein Absturz zur Laufzeit.
+In Visual Studio zeigt _Go To Definition_ (F12) den erzeugten Code samt einer Erklärung des Musters in Worten.
+Der Parameter `matchTimeoutMilliseconds` setzt ein Zeitlimit.
+Warum das wichtig ist, zeigt der nächste Abschnitt.
+
+== Sicherheit: immer ein Zeitlimit
+
+Manche Ausdrücke werden bei langen Eingaben extrem langsam.
+Typisch sind verschachtelte Quantoren wie `pass:c[(a+)+$]`: Bei `+aaa…a!+` mit 30 `a` probiert die Regex rund eine Milliarde Möglichkeiten durch, jedes weitere Zeichen verdoppelt die Arbeit.
+Kommt der Text von Benutzern (Formular, Datei, Web-API), kann ein Angreifer mit einem passenden langen String deinen Server lahmlegen.
+Das heißt _ReDoS_ (Regular Expression Denial of Service).
+
+Prüfst du Eingaben von Benutzern, setze deshalb *immer* ein Zeitlimit.
+Ohne Angabe gibt es keines.
+Ist es überschritten, wirft die Regex eine `RegexMatchTimeoutException`:
+
+[source,csharp]
+----
+using System.Text.RegularExpressions;
+
+var regex = new Regex(@"(a+)+$", RegexOptions.None, TimeSpan.FromMilliseconds(100));
+string input = new string('a', 40) + "!";
+try
+{
+    Console.WriteLine(regex.IsMatch(input));
+}
+catch (RegexMatchTimeoutException e)
+{
+    Console.WriteLine($"Timeout after {e.MatchTimeout.TotalMilliseconds} ms: {e.Pattern}");
+}
+----
+
+[source,text]
+----
+Timeout after 100 ms: (a+)+$
+----
+
+Verschachtle außerdem keine Quantoren über dieselben Zeichen: `pass:c[(a+)+]` bedeutet dasselbe wie `pass:c[a+]`.
+Die Option `RegexOptions.NonBacktracking` schließt das Problem ganz aus, unterstützt dafür aber keine Lookaheads und keine Rückreferenzen wie `+\1+`.
+
+== Typische Fehler
+
+[source,csharp]
+----
+using System.Text.RegularExpressions;
+
+Console.WriteLine(Regex.IsMatch("PLZ 1010", @"[1-9][0-9]{3}"));             // (1)
+Console.WriteLine(Regex.IsMatch("24-12-2026", @"^[0-9]{2}.[0-9]{2}.[0-9]{4}$")); // (2)
+Console.WriteLine(Regex.IsMatch("Herrgott", @"^Herr|Frau$"));               // (3)
+Console.WriteLine(Regex.IsMatch("Wien", "\bWien\b"));                        // (4)
+Console.WriteLine(Regex.IsMatch("_", @"^[A-z]$"));                           // (5)
+----
+
+[source,text]
+----
+True
+True
+True
+False
+True
+----
+
+* *(1)* Anker vergessen: Die Regex findet `1010` irgendwo im String.
+Für eine Prüfung brauchst du `+^…\z+`.
+* *(2)* Punkt nicht escapt: `.` ist _jedes_ Zeichen, auch `-`.
+Für den Punkt selbst schreibst du `+\.+`.
+* *(3)* `+|+` ohne Gruppe: Alles, was mit `Herr` beginnt, passt.
+Richtig ist `+^(?:Herr|Frau)$+`.
+* *(4)* Ohne `@` ist `+\b+` im C#-String das Steuerzeichen _Backspace_.
+Der Compiler meldet nichts, die Regex findet nie etwas.
+* *(5)* `+[A-z]+` enthält zwischen `Z` und `a` auch `+[ \ ] ^ _+` und `+++`+++`. Gemeint ist `+[A-Za-z]+`.
+
+Weitere Klassiker, die du schon kennst: das gierige `+.*+` statt `+.*?+` oder `+[^…]+`, `$` statt `+\z+` bei Prüfungen, `+\d+` statt `+[0-9]+`, ein fehlendes Zeitlimit bei Benutzereingaben und der Versuch, HTML oder JSON mit Regex zu zerlegen.
+
+// tag::pdf_exclude[]
+== Übungen
+
+. Schreibe reguläre Ausdrücke für die folgenden Formate und gib je zwei Strings an, die passen, und zwei, die nicht passen:
+* Eine Klasse an einer HTL wie `5AHIF`: Jahrgang 1 bis 5, ein Buchstabe von A bis E, dann eine Abteilung aus drei Großbuchstaben, die mit `H` beginnt (`HIF`, `HWI`, …).
+* Eine Versionsnummer wie `1.0` oder `10.2.3`: zwei oder drei Zahlen ohne führende Nullen, getrennt durch Punkte (`0` allein ist erlaubt).
+* Eine Kalenderwoche von `KW 1` bis `KW 53`.
+. Kopiere den folgenden Text in VS Code oder Visual Studio und baue ihn mit _Suchen und Ersetzen_ (Regex eingeschaltet) in die Zielform um.
+Notiere Suchmuster und Ersetzungstext.
++
+[source,text]
+----
+Huber, Anna    (geb. 03.05.2008)
+Gruber, Max    (geb. 17.11.2007)
+Aigner, Lena   (geb. 29.02.2008)
+----
++
+Zielform: `2008-05-03;Anna;Huber` usw., eine Zeile pro Person.
+. Beschreibe in eigenen Worten, welche Strings die folgenden Ausdrücke erkennen.
+Gib je zwei Strings an, die passen, und zwei, die nicht passen.
+* `pass:c[^[A-Z\][a-z\]+(-[A-Z\][a-z\]+)?\z]`
+* `+^(0|[1-9][0-9]*)(,[0-9]{2})?\z+`
+* `+\b(\w)\w*\1\b+`
+. Schreibe ein C#-Programm, das in einem Text jede Temperatur in Fahrenheit (z. B. `+98.6 °F+` oder `+-4 °F+`) durch den Wert in Celsius mit einer Nachkommastelle ersetzt (`+37.0 °C+`).
+Verwende `Regex.Replace` mit einem Lambda.
+
+Im Übungsprojekt link:{github_url}/08%20Theoretische%20Informatik/Uebungen/RegexLogAnalyzer.7z[RegexLogAnalyzer.7z] wertest du mit benannten Gruppen und `+[GeneratedRegex]+` eine Logdatei aus und schreibst Validatoren.
+Die Angabe steht im Archiv in der Datei _README.md_.
+
+// end::pdf_exclude[]
+
+== Zusatzmaterial
+
+Im Regex-Trainer https://die-spengergasse.github.io/course-pos-csharp_basics/08%20Theoretische%20Informatik/14_Regulaere_Ausdruecke.html[14_Regulaere_Ausdruecke.html] siehst du animiert, wie eine Regex über einen Text läuft und wie Suchen und Ersetzen arbeitet.
+Danach übst du mit Live-Feedback: Ausdrücke, die bestimmte Wörter erkennen und andere nicht, und Ersetzungen, die einen Text in eine Zielform bringen.

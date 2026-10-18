@@ -1,0 +1,388 @@
+= Serviceklassen mit EF Core
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Ein Ticketsystem soll Reservierungen annehmen.
+Die Web-Oberfläche prüft, ob die Show ausverkauft ist.
+Die App fürs Handy prüft das auch, aber etwas anders.
+Der Import aus einer Excel-Liste prüft es gar nicht.
+Bald gibt es mehr verkaufte Plätze, als die Halle hat.
+Die Regel „nicht mehr Tickets als Plätze“ gehört an *genau eine Stelle*.
+Diese Stelle ist eine *Serviceklasse*: Sie enthält die Abfragen und die Geschäftsregeln (Business Logic) einer Anwendung.
+Alle Oberflächen rufen nur ihre Methoden auf.
+In diesem Kapitel schreibst du Serviceklassen, die Daten als *DTOs* liefern und die Datenbank nach festen Regeln ändern.
+
+== Projekt anlegen
+
+Du verwendest wieder das Demoprojekt aus dem Kapitel link:{github_url}/17%20Serviceklassen/02_Linq_Where_Select_Any.adoc[LINQ: Where&#44; Select und Any].
+Lade link:{github_url}/17%20Serviceklassen/Uebungen/Eventmanager.7z[Eventmanager.7z] herunter, falls du es noch nicht hast.
+Die Beschreibung steht im Archiv in der Datei _README.md_.
+Die Serviceklasse aus diesem Kapitel steht in _Eventmanager.Application/Services/EventService.cs_, die Tests dazu in _Eventmanager.Tests/EventServiceTests.cs_.
+
+image::{root_dir}/images/event_model.svg[Klassenmodell des Eventmanagers]
+
+== Was ist eine Serviceklasse?
+
+image::{root_dir}/images/03_service_layers.svg[Die Serviceklasse liegt zwischen Aufrufer und DbContext]
+
+Eine Serviceklasse bekommt den DbContext im *Konstruktor* übergeben.
+Sie erzeugt ihn nicht selbst.
+Das ist *Dependency Injection* (siehe Kapitel link:{github_url}/16%20SOLID/08_Dependency_Inversion.adoc[D: Dependency Inversion]).
+Im Programm übergibt das Framework einen DbContext für die echte Datenbank, im Test einen für eine SQLite-Datenbank im Speicher.
+
+[source,csharp]
+----
+public class EventService
+{
+    private readonly EventContext _db;
+
+    public EventService(EventContext db)
+    {
+        _db = db;
+    }
+}
+----
+
+Über das Feld `+_db+` schreiben die Methoden ihre Abfragen.
+Die erste Methode liefert alle Shows in einem Zeitraum.
+Sie gibt die Entities direkt zurück:
+
+[source,csharp]
+----
+public List<Show> GetShowsInDateRange(DateTime start, DateTime end)
+{
+    return _db.Shows
+        .AsNoTracking()
+        .Where(s => s.Date >= start && s.Date < end)
+        .OrderBy(s => s.Date)
+        .ToList();
+}
+----
+
+Was `AsNoTracking()` bedeutet, steht weiter unten.
+Oft passen die Entities aber nicht zu dem, was der Aufrufer braucht.
+
+== DTOs: typsichere Rückgabewerte
+
+Eine Übersichtsseite soll jedes Event mit der *Anzahl* seiner Shows zeigen.
+Die Entity `Event` hat kein Property dafür.
+Wir definieren daher einen eigenen Typ, ein *DTO* (Data Transfer Object).
+Es enthält genau die Daten, die der Aufrufer braucht:
+
+[source,csharp]
+----
+public record EventWithShowCountDto(int EventId, string EventName, int ShowCount);
+----
+
+Das ist ein *positional record* (siehe Kapitel link:{github_url}/01%20Types/07_Equality.adoc[Equality]).
+Der Compiler erzeugt daraus eine Klasse mit drei read-only Properties und einem passenden Konstruktor.
+Die Parameter beginnen deshalb mit einem Großbuchstaben: Sie werden zu Properties.
+
+[source,csharp]
+----
+public List<EventWithShowCountDto> GetEventsWithShowCount()
+{
+    return _db.Events
+        .Select(e => new EventWithShowCountDto(e.Id, e.Name, e.Shows.Count))
+        .ToList();
+}
+----
+
+[source,sql]
+----
+SELECT "e"."Id", "e"."Name", (
+    SELECT COUNT(*)
+    FROM "Shows" AS "s"
+    WHERE "e"."Id" = "s"."EventId") AS "Count"
+FROM "Events" AS "e"
+----
+
+[source,text]
+----
+EventId  EventName         ShowCount
+      1  Stage And Screen          3
+      2  Funk                      4
+      3  World                     5
+      4  Rap                       9
+      5  Country                   4
+----
+
+Warum ein eigener Record und nicht einfach ein anonymer Typ (`+new { e.Id, e.Name }+`) oder die Entity?
+
+[%header]
+|===
+|Rückgabe |Problem oder Vorteil
+|Entity (`+List<Event>+`) |liefert alle Spalten, aber keine berechneten Werte. Der Aufrufer sieht den internen Aufbau der Datenbank. Beim Umwandeln in JSON können Navigationen Endlosschleifen erzeugen.
+|Anonymer Typ |hat keinen Namen. Eine Methode kann ihn nur als `object` zurückgeben, der Aufrufer weiß nicht, welche Properties es gibt.
+|*DTO* |hat einen Namen und feste Properties. Der *Compiler* prüft jeden Zugriff. Es enthält nur, was der Aufrufer braucht, auch berechnete Werte.
+|===
+
+Eine Web API liefert fast immer DTOs.
+Das Frontend bekommt so eine stabile Struktur, auch wenn sich die Datenbank ändert.
+
+=== Verschachtelte DTOs
+
+Eine Detailseite zeigt ein Event mit allen Shows.
+Ein DTO kann eine Liste anderer DTOs enthalten:
+
+[source,csharp]
+----
+public record ShowDto(int ShowId, DateTime Date);
+public record EventWithShowsDto(int EventId, string EventName, List<ShowDto> Shows);
+
+public EventWithShowsDto? GetEventWithShows(int eventId)
+{
+    return _db.Events
+        .Where(e => e.Id == eventId)
+        .Select(e => new EventWithShowsDto(
+            e.Id, e.Name,
+            e.Shows.OrderBy(s => s.Date).Select(s => new ShowDto(s.Id, s.Date)).ToList()))
+        .FirstOrDefault();
+}
+----
+
+[source,json]
+----
+{"EventId":1,"EventName":"Stage And Screen","Shows":[
+  {"ShowId":15,"Date":"2023-12-23T19:00:00"},
+  {"ShowId":14,"Date":"2024-04-27T18:00:00"},
+  {"ShowId":1,"Date":"2024-05-04T19:00:00"}]}
+----
+
+Beachte drei Dinge:
+
+* Das innere `Select` braucht ein `ToList()`, weil das DTO eine `+List<ShowDto>+` erwartet.
+* `FirstOrDefault()` steht *am Ende*.
+Davor ist die Abfrage noch ein `IQueryable`, und EF Core kann die Navigation `e.Shows` in SQL übersetzen (hier ein `LEFT JOIN`).
+* Gibt es das Event nicht, liefert `FirstOrDefault()` `null`.
+Der Rückgabetyp ist daher `EventWithShowsDto?`.
+
+Ein DTO kann auch Werte enthalten, die erst berechnet werden.
+Die folgende Methode zählt die verkauften und die reservierten Personen eines Kontingents.
+Ein Ticket gilt für `+Pax + 1+` Personen (Gast plus Begleitpersonen):
+
+[source,csharp]
+----
+public record ContingentStatisticsDto(int ContingentId, DateTime ShowDate, int SoldPersons, int ReservedPersons);
+
+public ContingentStatisticsDto GetContingentStatistics(int contingentId)
+{
+    var statistics = _db.Contingents
+        .Where(c => c.Id == contingentId)
+        .Select(c => new ContingentStatisticsDto(
+            c.Id,
+            c.Show.Date,
+            c.Tickets.Where(t => t.TicketState == TicketState.Sold).Sum(t => t.Pax + 1),
+            c.Tickets.Where(t => t.TicketState == TicketState.Reserved).Sum(t => t.Pax + 1)))
+        .FirstOrDefault();
+    if (statistics is null)
+        throw new EventServiceException("Invalid contingent id.");
+    return statistics;
+}
+----
+
+== Eager Loading oder Projektion?
+
+Ein häufiger Irrtum: „Für verknüpfte Daten brauche ich immer `Include()`.“
+Es gibt zwei Wege.
+
+*Eager Loading* lädt ganze Entities mit ihren Navigationen.
+Das Ergebnis sind Objekte deiner Model-Klassen, die du ändern und mit `SaveChanges()` speichern kannst:
+
+[source,csharp]
+----
+Event? ev = _db.Events
+    .Include(e => e.Shows)
+    .FirstOrDefault(e => e.Id == 1);
+int count = ev?.Shows.Count ?? 0;
+----
+
+Bei einer *Projektion* beschreibt `Select`, welche Daten du brauchst.
+EF Core erzeugt die nötigen JOINs selbst.
+Ein zusätzliches `Include()` ist dann *unnötig*, EF Core ignoriert es.
+
+[%header]
+|===
+| |Eager Loading (`Include`) |Projektion (`Select`)
+|Ergebnis |Entities (`Event`) |DTOs (`EventWithShowCountDto`)
+|Geladene Spalten |alle Spalten aller Tabellen |nur die benötigten
+|Verwendung |Daten ändern oder löschen |Daten anzeigen, Web API
+|===
+
+== AsNoTracking: Nur lesen
+
+EF Core merkt sich jede geladene Entity im *Change Tracker*.
+Dazu legt es eine Kopie der Werte an (Snapshot).
+Bei `SaveChanges()` vergleicht es die Entity mit dem Snapshot und erzeugt ein `UPDATE` für jede Änderung.
+Das kostet Speicher und Zeit.
+
+Liefert eine Methode Entities nur zum *Anzeigen*, schaltest du das mit `AsNoTracking()` ab (siehe `GetShowsInDateRange` oben).
+Projektionen auf DTOs werden ohnehin nicht getrackt, dort brauchst du es nicht.
+
+[NOTE]
+====
+Hast du eine Entity mit `AsNoTracking()` geladen, speichert `SaveChanges()` Änderungen an ihr *nicht*.
+Verwende es daher nur in lesenden Methoden.
+====
+
+== Methoden, die die Datenbank ändern
+
+Die DbSets erlauben auch schreibende Zugriffe.
+Die Grundbausteine:
+
+[source,csharp]
+----
+// INSERT: add a new entity and save.
+var guest = new Guest("Lena", "Moser", new DateOnly(2004, 3, 12));
+_db.Guests.Add(guest);
+_db.SaveChanges();              // guest.Id is set now
+
+// UPDATE: load a tracked entity, change it, save.
+var ticket = _db.Tickets.First(t => t.Id == 1);
+ticket.TicketState = TicketState.Sold;
+_db.SaveChanges();              // UPDATE "Tickets" SET "TicketState" = 'Sold' WHERE "Id" = 1
+
+// DELETE without loading: one DELETE statement, SaveChanges is not needed.
+int deleted = _db.Tickets
+    .Where(t => t.TicketState == TicketState.Reserved && t.ReservationDateTime < limit)
+    .ExecuteDelete();
+----
+
+Für viele Datensätze gibt es analog `+ExecuteUpdate(s => s.SetProperty(t => t.Pax, 0))+`.
+
+=== Geschäftsregeln prüfen
+
+Fast jede schreibende Methode muss Regeln prüfen.
+Der Ablauf ist immer gleich:
+
+image::{root_dir}/images/03_write_flow.svg[Ablauf einer Methode, die die Datenbank ändert]
+
+Verletzt ein Aufruf eine Regel, wirft die Methode eine *eigene Exception*.
+So kann der Aufrufer Regelverletzungen von Programmfehlern unterscheiden:
+
+[source,csharp]
+----
+public class EventServiceException : Exception
+{
+    public EventServiceException(string message) : base(message)
+    { }
+}
+----
+
+Die Methode `CreateReservation` legt eine Reservierung an.
+Sie prüft diese Regeln:
+
+* Die Werte in `guestId` und `contingentId` müssen existieren.
+* Eine Reservierung ist nur bis 14 Tage vor der Show möglich.
+* Pro Gast und Kontingent gibt es höchstens ein Ticket.
+* Im Kontingent müssen noch genug Plätze frei sein.
+
+[source,csharp]
+----
+public int CreateReservation(int guestId, int contingentId, int pax, DateTime dateTime)
+{
+    var contingent = _db.Contingents
+        .Include(c => c.Show)
+        .Include(c => c.Tickets)
+        .FirstOrDefault(c => c.Id == contingentId);
+    if (contingent is null)
+        throw new EventServiceException("Invalid contingent id.");
+    if (contingent.Show.Date < dateTime.AddDays(14))
+        throw new EventServiceException("The show is too close in time.");
+
+    var guest = _db.Guests.FirstOrDefault(g => g.Id == guestId);
+    if (guest is null)
+        throw new EventServiceException("Invalid guest id.");
+
+    if (_db.Tickets.Any(t => t.Contingent.Id == contingentId && t.Guest.Id == guestId))
+        throw new EventServiceException("A reservation or purchase has already been made for this contingent.");
+
+    // Each ticket admits the guest plus the accompanying persons (pax).
+    var soldOrReserved = contingent.Tickets.Sum(t => t.Pax + 1);
+    if (soldOrReserved + pax + 1 > contingent.AvailableTickets)
+        throw new EventServiceException("Show is sold out.");
+
+    var ticket = new Ticket(guest, contingent, TicketState.Reserved, dateTime, pax);
+    _db.Tickets.Add(ticket);
+    _db.SaveChanges();
+    return ticket.Id;
+}
+----
+
+Hier brauchen wir `Include()`: Die Methode arbeitet mit der Entity `contingent` und greift auf `contingent.Show` und `contingent.Tickets` zu.
+Ohne `Include()` wären diese Navigationen `null` bzw. leer.
+Die Prüfung auf ein vorhandenes Ticket läuft dagegen mit `Any()` direkt in der Datenbank:
+
+[source,sql]
+----
+SELECT EXISTS (
+    SELECT 1
+    FROM "Tickets" AS "t"
+    INNER JOIN "Contingents" AS "c" ON "t"."ContingentId" = "c"."Id"
+    INNER JOIN "Guests" AS "g" ON "t"."GuestId" = "g"."Id"
+    WHERE "c"."Id" = @contingentId AND "g"."Id" = @guestId)
+----
+
+[IMPORTANT]
+====
+Prüfe *alle* Regeln, bevor du etwas änderst.
+`SaveChanges()` steht am Ende.
+Wirft eine Prüfung davor eine Exception, bleibt die Datenbank unverändert.
+====
+
+== Serviceklassen testen
+
+Weil die Serviceklasse den DbContext von außen bekommt, kannst du sie mit einer SQLite-Datenbank im Speicher testen.
+Die Basisklasse _DatabaseTest.cs_ im Demoprojekt erzeugt für jeden Test eine neue Datenbank mit den Musterdaten:
+
+[source,csharp]
+----
+[Fact]
+public void CreateReservation_ThrowsIfShowIsTooClose()
+{
+    var contingent = _db.Contingents.Include(c => c.Show).First();
+    var guest = _db.Guests.First();
+
+    var e = Assert.Throws<EventServiceException>(
+        () => _service.CreateReservation(guest.Id, contingent.Id, 0, contingent.Show.Date.AddDays(-3)));
+    Assert.Equal("The show is too close in time.", e.Message);
+}
+----
+
+Prüfst du nach einer schreibenden Methode die Datenbank, rufe vorher `+_db.ChangeTracker.Clear()+` auf.
+Sonst liefert EF Core die Objekte aus dem Change Tracker und nicht die gespeicherten Werte.
+Mehr zum Testen steht im Kapitel link:{github_url}/15%20Unittests/02_xUnit.adoc[Unit Tests mit xUnit].
+
+// tag::pdf_exclude[]
+== Übungen
+
+. *BusService:* Die Leitstelle eines automatisierten Linienbusses braucht eine Serviceklasse.
+Du schreibst DTOs (auch verschachtelte), planst Fahrten mit mehreren Geschäftsregeln und speicherst Abfahrten und Eingriffe.
+Vorgegebene Unit Tests prüfen deine Lösung.
+Lade dazu link:{github_url}/17%20Serviceklassen/Uebungen/BusService.7z[BusService.7z] herunter.
+Die Angabe steht im Archiv in der Datei _README.md_.
+. *Fitnesscenter:* Eine größere Serviceklasse für ein Fitnesscenter mit Mitgliedern, Besuchen, Trainings und Bewertungen.
+Die Aufgabe war eine Prüfungsaufgabe und eignet sich gut zur Vorbereitung.
+Lade dazu link:{github_url}/17%20Serviceklassen/Uebungen/Fitnesscenter.7z[Fitnesscenter.7z] herunter.
+Die Angabe steht im Archiv in der Datei _README.md_.
+. *EventService erweitern:* Ergänze im Demoprojekt diese Methoden und schreibe je einen Test.
+* `+List<GuestTicketDto> GetTicketsOfGuest(int guestId)+`: alle Tickets eines Gastes mit dem Namen des Events, dem Datum der Show, dem Kontingent und dem Status.
+Lege das DTO selbst an.
+* `void CancelReservation(int ticketId)`: löscht eine Reservierung.
+Verkaufte Tickets dürfen nicht gelöscht werden.
+Überlege dir passende Fehlermeldungen.
+
+// end::pdf_exclude[]

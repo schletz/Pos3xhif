@@ -1,0 +1,135 @@
+# OR Mapping mit Entity Framework Core
+
+## Inhalt
+
+- [Warum OR Mapping?](01_WhyORMapping/README.adoc)
+- [Erzeugen von Datenbanken](02_CodeFirstEfCore5/README.adoc)
+- [Erweiterte Konfiguration](03_EnhancedCodeFirst/README.adoc)
+- [**Rich Domain Models](04_RichDomainModels/README.adoc)
+- [**Migrations](08_Migrations/README.adoc)
+
+### Musterprogramme
+
+- [Demoprogramm zu Code First](CodeFirstDemo)
+- [Demoprogramm zu Rich Domain Models](RichDomainModelDemo)
+
+## Tools zum Betrachten der Datenbanken
+
+- DBeaver: [Information zur Installation und Konfiguration](Dbeaver.md)
+- JetBrains DataGrip: [Information zur Installation und Konfiguration](DataGrip.md)
+
+## EF Core Connection Strings
+
+Die nachfolgenden Beispiele zeigen verschiedene Connection Strings. In den Programmen wird *UseSqlite*
+beim Erstellen der DbContextOptions zum Instanzieren der DbContext Klasse verwendet.
+
+```c#
+var opt = new DbContextOptionsBuilder()
+    .UseSqlite(@"Data Source=Stores.db")
+    .Options;
+```
+
+Die Methode *UseSqlite()* kann leicht durch andere Methoden ersetzt werden. Die Version 6 von
+den angeführten Providern setzt ein .NET 6 Projekt voraus. Es wird immer der Verbindungsstring
+zur Datenbank *MeineDb* mit dem User *MeinUser* und dem Passwort *MeinPasswort* angegeben. Ersetze
+ggf. diese Daten. Bei MySQL (MariaDB) muss mit *SELECT VERSION()* die Version der Datenbank
+herausgefunden und angepasst werden.
+
+Der Standard Adminuser unter MySql ist *root* (ohne Passwort). Bei SQL Server ist das der User
+*sa* mit dem bei *docker run* angegebenen Passwort.
+
+| Provider             | Package Reference                                                                      | Connection String                                                                                                                      |
+| -------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Oracle               | `<PackageReference Include="Oracle.EntityFrameworkCore" Version="8.*" />`              | `UseOracle($"User Id=MeinUser;Password=MeinPasswort;Data Source=localhost:1521/XEPDB1")`                                               |
+| MySQL                | `<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.*" />`        | `UseMySql(@"server=localhost;database=MeineDb;user=MeinUser;password=MeinPasswort", new MariaDbServerVersion(new Version(10, 4, 22)))` |
+| SQL Server           | `<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.*" />` | `UseSqlServer(@"Server=127.0.0.1,1433;Initial Catalog=MeineDb;User Id=MeinUser;Password=MeinPasswort;TrustServerCertificate=true")`               |
+| SQLite               | `<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.*" />`    | `UseSqlite(@"Data Source=MeineDb.db")`                                                                                                 |
+| SQLite (in-memory)   | `<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.*" />`    | `UseSqlite(@"Data Source=:memory:")`                                                                                                   |
+
+Im Artikel [zu Docker](07_DatabaseFirst/Docker.md) ist beschrieben, wie du zu Docker Images der
+oben genannten Datenbanksysteme kommst.
+
+### Anlegen einer Datenbank
+
+Am Beispiel von SQLite wird hier die Datenbank *stores.db* gelöscht, neu erzeugt und ein CREATE
+TABLE Skript in die Datei *create.sql* geschrieben. Damit werden Änderungen am Model beim
+Erzeugen immer Berücksichtigt.
+
+```c#
+var opt = new DbContextOptionsBuilder()
+    .UseSqlite(@"Data Source=stores.db")
+    .Options;
+using (var db = new StoreContext(opt))
+{
+    db.Database.EnsureDeleted();
+    db.Database.EnsureCreated();
+    // Optional:
+    File.WriteAllText("create.sql", db.Database.GenerateCreateScript());
+    // Optional: Seed Methode, z. B. db.Seed();
+}
+```
+
+### SQLite in-memory Datenbank für Unittests
+
+Die in-memory Datenbank von SQLite ist für Unittests geeignet. Die Verbindung muss allerdings
+vorkonfiguriert werden, damit EF Core die Verbindung nach einer Operation nicht trennt. Daher
+verwenden wir bei Unittests eine Basisklasse *DatabaseTest*. Diese Klasse instanziert z. B.
+einen Context mit dem Namen *StoreContext* im Konstruktor.
+
+```c#
+public class DatabaseTest : IDisposable
+{
+    private readonly SqliteConnection _connection;
+    protected readonly StoreContext _db;
+
+    public DatabaseTest()
+    {
+        _connection = new SqliteConnection("DataSource=:memory:");
+        _connection.Open();
+        var opt = new DbContextOptionsBuilder()
+            .UseSqlite(_connection)  // Keep connection open (only needed with SQLite in memory db)
+            .UseLazyLoadingProxies()
+            .Options;
+
+        _db = new StoreContext(opt);
+    }
+    public void Dispose()
+    {
+        _db.Dispose();
+        _connection.Dispose();
+    }
+}
+```
+
+Der konkrete Test kann nun mit *EnsureCreated* die Datenbank erstellen, d. h. die Tabellen werden
+auf Basis der DbSets angelegt.
+
+```c#
+public class StoreContextTests : DatabaseTest
+{
+    [Fact]
+    public void CreateDatabaseTest()
+    {
+        _db.Database.EnsureCreated();
+    }
+
+    [Fact]
+    public void AddCustomerSuccessTest()
+    {
+        { // Limit scope of variables
+            _db.Database.EnsureCreated();
+            var customer = new Customer(firstname: "fn", lastname: "ln", address: new Address(Street: "street", Zip: "Zip", City: "City"));
+            _db.Customers.Add(customer);
+            // Clear navigations and objects in memory
+            _db.ChangeTracker.Clear();
+        }
+        {
+            // ToList produces a SELECT * FROM Customers query. If we write only
+            // .Count() we are producing a SELCT COUNT(*) FROM Customers query,
+            // so we cannot test the correct mapping.
+            Assert.True(_db.Customers.ToList().Count() == 1);
+        }
+    }    
+}
+
+```

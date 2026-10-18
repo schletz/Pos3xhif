@@ -1,0 +1,76 @@
+﻿<Window x:Class="WeatherDbCrud.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WeatherDbCrud"
+        xmlns:vm="clr-namespace:WeatherDbCrud.ViewModels"
+        mc:Ignorable="d"
+        Title="WeatherDb CRUD Applikation" Height="450" Width="800">
+    <Window.DataContext>
+        <vm:MainViewModel/>
+    </Window.DataContext>
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Left">
+            <ComboBox x:Name="StationList" 
+                      DockPanel.Dock="Top"
+                      ItemsSource="{Binding Stations}"
+                      SelectedItem="{Binding CurrentStation}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding S_ID}" Margin="0 0 3 0" />
+                            <TextBlock Text="{Binding S_Location}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <ListBox x:Name="MeasurementList" MinWidth="160" 
+                     ItemsSource="{Binding Measurements}"
+                     SelectedItem="{Binding CurrentMeasurement}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding M_Date, StringFormat={}{0:dd.MM.yyyy HH:mm}}" Margin="0 0 3 0" />
+                            <TextBlock Text="{Binding M_Temperature, StringFormat={}{0:0.0°C}}" FontWeight="Bold" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
+        <StackPanel>
+            <GroupBox Header="Details des Messwertes" Padding="3 5 0 5">
+                <StackPanel>
+                    <DockPanel>
+                        <TextBlock Width="100" Text="Datum:" DockPanel.Dock="Left"/>
+                        <TextBox Text="{Binding ElementName=MeasurementList, Path=SelectedItem.M_Date}"/>
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock Width="100" Text="Temperatur:" DockPanel.Dock="Left"/>
+                        <TextBox Text="{Binding ElementName=MeasurementList, Path=SelectedItem.M_Temperature}"/>
+                    </DockPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="SaveButton" Content="Save" Width="80" Margin="100 10 0 0" Click="SaveButton_Click"/>
+                        <Button x:Name="DeleteButton" Content="Delete" Width="80" Margin="10 10 0 0" Click="DeleteButton_Click"/>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Header="Neuer Messwert zur Station" Padding="3 5 0 5" Margin="0 10 0 0">
+                <StackPanel>
+                    <DockPanel>
+                        <TextBlock Width="100" Text="Datum:" DockPanel.Dock="Left"/>
+                        <TextBox Text="{Binding NewMeasurement.M_Date}"/>
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock Width="100" Text="Temperatur:" DockPanel.Dock="Left"/>
+                        <TextBox Text="{Binding NewMeasurement.M_Temperature}"/>
+                    </DockPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="CreateButton" Content="Create" Width="80" Margin="100 10 0 0" Click="CreateButton_Click"/>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+    </DockPanel>
+</Window>

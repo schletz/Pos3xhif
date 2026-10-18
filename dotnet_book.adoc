@@ -1,0 +1,170 @@
+= Softwareentwicklung mit .NET
+:doctype: book
+:toc: macro
+:toc-title: Inhaltsverzeichnis
+// Parts are always listed, so 1 means parts and chapters.
+:toclevels: 1
+:pdf-page-size: a4
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:author: Michael Schletz
+:revdate: 18. Oktober 2026
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+:github_url: https://github.com/Die-Spengergasse/course-pos-csharp_basics/blob/master
+
+toc::[]
+:leveloffset: 1
+include::dotnet_book_intro.adoc[tag=!pdf_exclude]
+
+// Parts are level 0 and get a title page of their own (see dotnet_book.yml).
+// Chapters (= in their files) become level 1 via leveloffset.
+// The include needs a blank line after it.
+// root_dir is the folder of the included chapter, used for images.
+
+:leveloffset: 0
+= Types in C#
+
+:leveloffset: 1
+:root_dir: 01 Types
+include::./{root_dir}/01_ValueTypes.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/02_ReferenceTypes.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/03_Properties.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/04_Collections.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/05_Vererbung.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/06_Interfaces.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/07_Equality.adoc[tag=!pdf_exclude]
+
+:leveloffset: 0
+= Unittests mit xUnit
+
+:leveloffset: 1
+:root_dir: 15 Unittests
+include::./{root_dir}/01_Warum_Testen.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/02_xUnit.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/03_Testfaelle_finden.adoc[tag=!pdf_exclude]
+
+:leveloffset: 0
+= SOLID und DRY
+
+:leveloffset: 1
+:root_dir: 16 SOLID
+include::./{root_dir}/01_Einfuehrung.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/02_DRY.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/03_Single_Responsibility.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/04_Open_Closed_Werte.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/05_Open_Closed_Polymorphie.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/06_Liskov.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/07_Interface_Segregation.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/08_Dependency_Inversion.adoc[tag=!pdf_exclude]
+
+:leveloffset: 0
+= Der OR Mapper EF Core
+
+:leveloffset: 1
+:root_dir: 03 EF Core/01_WhyORMapping
+include::./{root_dir}/README.adoc[tag=!pdf_exclude]
+
+:root_dir: 03 EF Core/02_CodeFirstEfCore5
+include::./{root_dir}/README.adoc[tag=!pdf_exclude]
+
+:root_dir: 03 EF Core/03_EnhancedCodeFirst
+include::./{root_dir}/README.adoc[tag=!pdf_exclude]
+
+:root_dir: 03 EF Core/03b_EfCoreInheritance
+include::./{root_dir}/README.adoc[tag=!pdf_exclude]
+
+:root_dir: 03 EF Core/03a_Bogus
+include::./{root_dir}/README.adoc[tag=!pdf_exclude]
+
+:leveloffset: 0
+= Serviceklassen
+
+:leveloffset: 1
+:root_dir: 17 Serviceklassen
+include::./{root_dir}/01_Lambdas.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/02_Linq_Where_Select_Any.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/03_Serviceklassen.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/04_Linq_Erweitert.adoc[tag=!pdf_exclude]
+
+:leveloffset: 0
+= Theoretische Informatik: Formale Sprachen
+
+:leveloffset: 1
+:root_dir: 08 Theoretische Informatik
+include::./{root_dir}/10_Grundbegriffe.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/11_Grammatiken.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/12_Darstellungsformen.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/13_Endliche_Automaten.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/14_Regulaere_Ausdruecke.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/15_Parser.adoc[tag=!pdf_exclude]
+
+:leveloffset: 0
+= Theoretische Informatik: Algorithmen
+
+:leveloffset: 1
+include::./{root_dir}/20_Graphen.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/21_Breiten_und_Tiefensuche.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/22_Kuerzeste_Wege.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/23_Topologische_Sortierung.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/24_Divide_and_Conquer.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/25_Backtracking.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/26_Greedy.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/27_Dynamische_Programmierung.adoc[tag=!pdf_exclude]
+
+:leveloffset: 0
+= Theoretische Informatik: Komplexität
+
+:leveloffset: 1
+include::./{root_dir}/30_Laufzeit_messen.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/31_O_Notation.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/32_Code_analysieren.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/33_Datenstrukturen_in_NET.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/34_Optimierung.adoc[tag=!pdf_exclude]
+
+include::./{root_dir}/35_P_und_NP.adoc[tag=!pdf_exclude]
+
+:leveloffset: 0

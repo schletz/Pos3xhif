@@ -1,0 +1,713 @@
+= Parser für arithmetische Ausdrücke
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Ein Taschenrechner bekommt den Text `+2 * (3 + 4)+` und soll 14 ausgeben.
+Für das Programm ist der Text aber nur eine Folge von Zeichen.
+Es muss zuerst die Struktur erkennen: Was gehört zusammen, was wird zuerst gerechnet?
+Genau das macht ein _Parser_.
+Parser stecken in jedem Compiler, in Excel-Formeln, in SQL-Datenbanken und in jeder Bibliothek, die JSON oder XML liest.
+In diesem Kapitel baust du einen vollständigen Parser für Rechenausdrücke, direkt aus einer Grammatik.
+
+== Vom Text zum Wert
+
+Die Verarbeitung läuft in drei Stufen.
+Jede Stufe hat eine eigene Klasse mit genau einer Aufgabe:
+
+image::{root_dir}/images/15_pipeline.svg[]
+
+[%header]
+|===
+|Stufe |Eingabe |Ausgabe |Aufgabe
+|Tokenizer (Lexer) |`string` |`+List<Token>+` |Zeichen zu Wörtern zusammenfassen, Leerzeichen entfernen
+|Parser |`+List<Token>+` |`Expr` (AST) |Struktur nach der Grammatik erkennen
+|Evaluator |`Expr` |`double` |den Baum ausrechnen
+|===
+
+Die Trennung zwischen Tokenizer und Parser hat einen theoretischen Grund.
+Die Tokens selbst (Zahlen, Operatoren) bilden eine _reguläre_ Sprache, ein endlicher Automat erkennt sie (siehe link:{github_url}/08%20Theoretische%20Informatik/13_Endliche_Automaten.adoc[Endliche Automaten]).
+Ausdrücke mit beliebig tief geschachtelten Klammern sind dagegen _kontextfrei_ (Typ 2 in der Chomsky-Hierarchie, siehe link:{github_url}/08%20Theoretische%20Informatik/11_Grammatiken.adoc[Grammatiken]).
+Dafür braucht der Parser einen Stack.
+Diesen Stack bekommst du gratis: Es ist der Aufrufstack der rekursiven Methoden.
+
+Der vollständige Code liegt in link:{github_url}/08%20Theoretische%20Informatik/Beispiele/15_ExpressionParser[Beispiele/15_ExpressionParser].
+Öffne die Datei _ExpressionParser.sln_ oder starte das Programm in der Konsole:
+
+[source,text]
+----
+cd Beispiele/15_ExpressionParser
+dotnet run --project ExpressionParser
+----
+
+Das Projekt besteht aus diesen Dateien:
+
+[%header]
+|===
+|Datei |Inhalt
+|_TokenKind.cs_, _Token.cs_ |Art eines Tokens, Token als `record`
+|_Tokenizer.cs_ |zerlegt den Text in Tokens
+|_Expr.cs_, _NumberExpr.cs_, _BinaryExpr.cs_, _BinaryOperator.cs_, _NegateExpr.cs_ |Knoten des AST
+|_Parser.cs_ |rekursiver Abstiegsparser
+|_ParseException.cs_ |Fehler mit Position
+|_Evaluator.cs_ |rechnet den AST aus
+|_ExpressionCompiler.cs_ |übersetzt den AST in einen .NET-Ausdrucksbaum
+|_Program.cs_ |Beispiele und Eingabeschleife
+|===
+
+Die Codeblöcke mit _Auszug aus …_ stammen aus diesen Dateien.
+Die XML-Kommentare sind weggelassen, `+// ...+` markiert ausgelassene Stellen.
+Einzeln kompilieren die Auszüge nicht, das ganze Projekt schon.
+
+== Tokens
+
+Ein _Token_ ist die kleinste Einheit mit Bedeutung, so wie ein Wort in einem Satz.
+Der Tokenizer (auch _Lexer_ oder _Scanner_ genannt) macht aus `+2 * (3 + 4)+` die Tokens `2`, `+*+`, `(`, `3`, `+++`, `4` und `)`.
+Jedes Token kennt seine Art, seinen Text und seine Position im Eingabetext.
+Die Position brauchst du später für Fehlermeldungen.
+
+_Auszug aus TokenKind.cs und Token.cs:_
+
+[source,csharp]
+----
+public enum TokenKind
+{
+    Number,
+    Plus,
+    Minus,
+    Star,
+    Slash,
+    LeftParen,
+    RightParen,
+    End
+}
+
+public record Token(TokenKind Kind, string Text, int Position)
+{
+    public override string ToString() => $"{Kind} '{Text}' at {Position}";
+}
+----
+
+Die Art `End` gibt es im Eingabetext nicht.
+Der Tokenizer hängt sie trotzdem immer an.
+So hat der Parser immer ein aktuelles Token und muss nie prüfen, ob die Liste schon zu Ende ist.
+
+Zahlen bestehen aus mehreren Zeichen.
+Ihre Form beschreibt eine kleine Grammatik in EBNF (die Notation kennst du aus link:{github_url}/08%20Theoretische%20Informatik/12_Darstellungsformen.adoc[Darstellungsformen]):
+
+[source,text]
+----
+number = digit { digit } [ "." digit { digit } ]
+digit  = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+----
+
+`42`, `3.5` und `0.25` sind Zahlen, `3.` und `.5` nicht.
+Der Tokenizer geht den Text Zeichen für Zeichen durch:
+
+_Auszug aus Tokenizer.cs:_
+
+[source,csharp]
+----
+public class Tokenizer(string source)
+{
+    private int _pos;
+
+    public List<Token> Tokenize()
+    {
+        var tokens = new List<Token>();
+        _pos = 0;
+        while (_pos < source.Length)
+        {
+            char c = source[_pos];
+            if (char.IsWhiteSpace(c))
+            {
+                _pos++;
+                continue;
+            }
+            if (char.IsAsciiDigit(c))
+            {
+                tokens.Add(ReadNumber());
+                continue;
+            }
+            TokenKind kind = c switch
+            {
+                '+' => TokenKind.Plus,
+                '-' => TokenKind.Minus,
+                '*' => TokenKind.Star,
+                '/' => TokenKind.Slash,
+                '(' => TokenKind.LeftParen,
+                ')' => TokenKind.RightParen,
+                _ => throw new ParseException($"Unexpected character '{c}'", _pos)
+            };
+            tokens.Add(new Token(kind, c.ToString(), _pos));
+            _pos++;
+        }
+        tokens.Add(new Token(TokenKind.End, "", source.Length));
+        return tokens;
+    }
+
+    private Token ReadNumber()
+    {
+        int start = _pos;
+        SkipDigits();
+        if (_pos < source.Length && source[_pos] == '.')
+        {
+            _pos++;
+            // "3." is not a number: at least one digit has to follow the decimal point.
+            if (_pos >= source.Length || !char.IsAsciiDigit(source[_pos]))
+            {
+                throw new ParseException("Expected digit after '.'", _pos);
+            }
+            SkipDigits();
+        }
+        return new Token(TokenKind.Number, source[start.._pos], start);
+    }
+    // ...
+}
+----
+
+* Leerzeichen überspringt der Tokenizer.
+Der Parser sieht sie nie, deshalb ist `+2*(3+4)+` dasselbe wie `+2 * ( 3 + 4 )+`.
+* _ReadNumber()_ liest so viele Ziffern wie möglich.
+`123` wird daher ein Token und nicht drei.
+Diese Regel heißt _longest match_ (längster Treffer).
+* _ReadNumber()_ folgt direkt der EBNF: `+digit { digit }+` ist _SkipDigits()_, der optionale Teil `+[ "." … ]+` ist das `if`.
+
+Das Programm gibt die Tokens für `+2 * (3 + 4)+` aus:
+
+[source,text]
+----
+Tokens of 2 * (3 + 4):
+  Number '2' at 0
+  Star '*' at 2
+  LeftParen '(' at 4
+  Number '3' at 5
+  Plus '+' at 7
+  Number '4' at 9
+  RightParen ')' at 10
+  End '' at 11
+----
+
+== Die Grammatik
+
+Der Parser setzt diese EBNF um:
+
+[source,text]
+----
+expr   = term { ("+" | "-") term }
+term   = factor { ("*" | "/") factor }
+factor = number | "(" expr ")" | "-" factor
+----
+
+Ein _expr_ ist eine Summe oder Differenz von Termen.
+Ein _term_ ist ein Produkt oder Quotient von Faktoren.
+Ein _factor_ ist eine Zahl, ein geklammerter Ausdruck oder ein negierter Faktor.
+
+*Präzedenz.*
+Die Grammatik `+E → E + E | E * E | id+` aus link:{github_url}/08%20Theoretische%20Informatik/11_Grammatiken.adoc[Grammatiken] ist mehrdeutig.
+Für `+id + id * id+` gibt es zwei Ableitungsbäume.
+Die Lösung sind Präzedenzstufen: Jede Stufe bekommt eine eigene Regel.
+Je tiefer eine Regel liegt, desto stärker binden ihre Operatoren.
+`+*+` steht in _term_, also eine Stufe tiefer als `+++`.
+Deshalb ist `+2 * 3 + 4+` immer `+(2 * 3) + 4+`, es gibt nur noch einen Baum.
+
+[%header]
+|===
+|Stufe |Regel |Operatoren |bindet
+|1 |expr |`+++` `-` |am schwächsten
+|2 |term |`+*+` `/` |stärker
+|3 |factor |Vorzeichen `-`, Klammern |am stärksten
+|===
+
+*Assoziativität.*
+`1 - 2 - 3` muss `(1 - 2) - 3 = -4` ergeben und nicht `1 - (2 - 3) = 2`.
+Die Wiederholung `+{ }+` liest die Terme von links nach rechts.
+Der Parser hängt jeden neuen Term rechts an den bisherigen Baum an.
+So entsteht ein linkslastiger Baum, die Operatoren sind _linksassoziativ_.
+
+*Keine Linksrekursion.*
+In BNF würdest du `pass:c[<expr> ::= <expr> "+" <term> | <term>]` schreiben.
+Als Methode umgesetzt ruft _ParseExpr()_ dann als Erstes wieder _ParseExpr()_ auf, ohne ein Token zu lesen.
+Das endet mit einer `StackOverflowException`.
+Die Wiederholung in EBNF vermeidet dieses Problem.
+Deshalb schreibst du Grammatiken für den rekursiven Abstieg immer mit `+{ }+`.
+
+*Vorzeichen.*
+Das Minus steht zweimal in der Grammatik.
+In _expr_ ist es die Subtraktion, in _factor_ das Vorzeichen.
+Welches gemeint ist, entscheidet die Stelle: Am Anfang eines Faktors ist es ein Vorzeichen.
+So sind auch `+-(2 + 3)+` und `2 - -3` gültig.
+
+== Der AST
+
+Der Parser liefert einen _abstrakten Syntaxbaum_ (AST, _abstract syntax tree_).
+„Abstrakt“ heißt: Der Baum enthält nur, was für die Bedeutung wichtig ist.
+Klammern, Leerzeichen und Tokens fehlen.
+Die Klammern in `+2 * (3 + 4)+` stecken nur noch in der Form des Baums:
+
+image::{root_dir}/images/15_ast.svg[]
+
+Für die Knoten reichen drei Records mit einer gemeinsamen Basisklasse:
+
+_Auszug aus Expr.cs, NumberExpr.cs, BinaryOperator.cs, BinaryExpr.cs und NegateExpr.cs:_
+
+[source,csharp]
+----
+public abstract record Expr;
+
+public sealed record NumberExpr(double Value) : Expr
+{
+    public override string ToString() => Value.ToString(CultureInfo.InvariantCulture);
+}
+
+public enum BinaryOperator
+{
+    Add,
+    Subtract,
+    Multiply,
+    Divide
+}
+
+public sealed record BinaryExpr(Expr Left, BinaryOperator Operator, Expr Right) : Expr
+{
+    // ... ToString() returns the prefix notation, e.g. (* 2 (+ 3 4))
+}
+
+public sealed record NegateExpr(Expr Operand) : Expr
+{
+    public override string ToString() => $"(neg {Operand})";
+}
+----
+
+Records passen gut zu einem AST:
+
+* Sie sind unveränderlich.
+Ein fertiger Baum ändert sich nicht mehr.
+* Sie vergleichen nach Wert.
+In einem Test kannst du einen erwarteten Baum mit `new` aufbauen und mit `Assert.Equal` gegen das Ergebnis des Parsers prüfen.
+* Sie lassen sich in Pattern Matching zerlegen.
+Das nutzt der Evaluator.
+
+Für die Konsolenausgabe überschreiben die Records `ToString()`.
+Der Baum oben wird dann zu `pass:c[(* 2 (+ 3 4))]`: zuerst der Operator, dann die beiden Teilbäume.
+Diese Schreibweise heißt _Präfixnotation_.
+Sie braucht keine Präzedenzregeln, weil jede Klammer genau einen Knoten zeigt.
+
+== Rekursiver Abstieg
+
+Ein _rekursiver Abstiegsparser_ (_recursive descent parser_) übersetzt die EBNF fast mechanisch in Code.
+Jedes Nichtterminal wird eine Methode, die einen Teilbaum zurückgibt:
+
+[%header]
+|===
+|EBNF |C#
+|Nichtterminal `term` |Methode _ParseTerm()_, ein Vorkommen in einer Regel ist ein Aufruf
+|Terminal `")"` |_Expect(TokenKind.RightParen, …)_: prüfen und verbrauchen
+|Wiederholung `+{ … }+` |`while`, solange das aktuelle Token die Wiederholung beginnen kann
+|Option `+[ … ]+` |`if`
+|Alternative `+a \| b \| c+` |`switch` über das aktuelle Token
+|===
+
+Der Parser entscheidet immer nur mit dem *aktuellen Token*, welchen Weg er nimmt.
+Er muss nie zurückgehen und etwas anderes probieren.
+Das klappt, weil jede Alternative von _factor_ mit einem anderen Token beginnt: einer Zahl, `(` oder `-`.
+Grammatiken mit dieser Eigenschaft heißen _LL(1)_: Lesen von links, Linksableitung, 1 Token Vorschau.
+
+=== Hilfsmethoden
+
+Der Parser speichert die Tokenliste und die Position des aktuellen Tokens.
+Drei kleine Methoden reichen für den Zugriff:
+
+_Auszug aus Parser.cs:_
+
+[source,csharp]
+----
+private Token Current => _tokens[_pos];
+
+private Token Advance()
+{
+    Token token = Current;
+    if (token.Kind != TokenKind.End)
+    {
+        _pos++;
+    }
+    return token;
+}
+
+private Token Expect(TokenKind kind, string description)
+{
+    if (Current.Kind != kind)
+    {
+        throw new ParseException(
+            $"Expected {description} but found {Describe(Current)}", Current.Position);
+    }
+    return Advance();
+}
+----
+
+* _Current_ ist das Token, das als Nächstes gelesen wird.
+Weil _Advance()_ nie über `End` hinausgeht, ist der Index immer gültig.
+* _Advance()_ verbraucht das aktuelle Token und liefert es zurück.
+* _Expect()_ verbraucht ein Token, das an dieser Stelle stehen *muss*.
+Fehlt es, meldet der Parser einen Fehler.
+_Describe()_ liefert dafür `+'*'+` oder `end of input`.
+
+=== Die Methoden für die Regeln
+
+_Auszug aus Parser.cs:_
+
+[source,csharp]
+----
+// expr = term { ("+" | "-") term }
+private Expr ParseExpr()
+{
+    Expr left = ParseTerm();
+    while (Current.Kind is TokenKind.Plus or TokenKind.Minus)    // (1)
+    {
+        Token op = Advance();
+        Expr right = ParseTerm();
+        left = op.Kind == TokenKind.Plus                         // (2)
+            ? new BinaryExpr(left, BinaryOperator.Add, right)
+            : new BinaryExpr(left, BinaryOperator.Subtract, right);
+    }
+    return left;
+}
+
+// term = factor { ("*" | "/") factor }
+private Expr ParseTerm()
+{
+    Expr left = ParseFactor();
+    while (Current.Kind is TokenKind.Star or TokenKind.Slash)
+    {
+        Token op = Advance();
+        Expr right = ParseFactor();
+        left = op.Kind == TokenKind.Star
+            ? new BinaryExpr(left, BinaryOperator.Multiply, right)
+            : new BinaryExpr(left, BinaryOperator.Divide, right);
+    }
+    return left;
+}
+
+// factor = number | "(" expr ")" | "-" factor
+private Expr ParseFactor()
+{
+    Token token = Current;
+    switch (token.Kind)                                          // (3)
+    {
+        case TokenKind.Number:
+            Advance();
+            return new NumberExpr(double.Parse(token.Text, CultureInfo.InvariantCulture));
+        case TokenKind.LeftParen:
+            Advance();
+            Expr inner = ParseExpr();                            // (4)
+            Expect(TokenKind.RightParen, "')'");
+            return inner;
+        case TokenKind.Minus:
+            Advance();
+            return new NegateExpr(ParseFactor());                // (5)
+        default:
+            throw new ParseException(
+                $"Expected number, '(' or '-' but found {Describe(token)}", token.Position);
+    }
+}
+----
+
+* *(1)* Die Wiederholung `pass:c[{ ("+" | "-") term }]` wird zu `while`.
+Die Bedingung prüft, ob das aktuelle Token eine Wiederholung beginnt.
+Bei jedem anderen Token ist _expr_ fertig.
+Ob das Token danach passt (z. B. `)`), entscheidet die aufrufende Methode.
+* *(2)* Der bisherige Baum wird zum linken Kind des neuen Knotens.
+Daraus entsteht die Linksassoziativität: `1 - 2 - 3` ergibt `(- (- 1 2) 3)`.
+* *(3)* Die drei Alternativen von _factor_ beginnen mit verschiedenen Tokens.
+Ein `switch` über das aktuelle Token wählt die richtige aus.
+Passt keine, ist die Eingabe falsch.
+* *(4)* Hier schließt sich der Kreis: _factor_ ruft _expr_ auf.
+Diese indirekte Rekursion erlaubt beliebig tief geschachtelte Klammern.
+Die Klammern selbst landen nicht im Baum, die Methode gibt den inneren Ausdruck direkt zurück.
+* *(5)* Das Vorzeichen ruft _ParseFactor()_ rekursiv auf.
+So funktionieren auch `+--3+` und `+-(2 + 3)+`.
+
+_ParseTerm()_ ist wie _ParseExpr()_ gebaut, nur eine Stufe tiefer.
+Mehr ist für die Präzedenz nicht nötig: Die Rangfolge steckt allein darin, welche Methode welche aufruft.
+
+=== Der Einstieg
+
+Von außen gibt es nur zwei öffentliche Methoden:
+
+_Auszug aus Parser.cs:_
+
+[source,csharp]
+----
+public static Expr Parse(string source)
+{
+    var parser = new Parser(new Tokenizer(source).Tokenize());
+    return parser.ParseAll();
+}
+
+public Expr ParseAll()
+{
+    _pos = 0;
+    Expr expr = ParseExpr();
+    Expect(TokenKind.End, "end of input");
+    return expr;
+}
+----
+
+Das `+Expect(TokenKind.End, …)+` am Ende ist wichtig.
+Ohne diese Prüfung würde der Parser bei `2 3` die Zahl 2 lesen, aufhören und `3` stillschweigend ignorieren.
+Die ganze Eingabe muss aber ein _expr_ sein, nicht nur ihr Anfang.
+
+=== Ablauf für `+2 * (3 + 4)+`
+
+Die Grafik zeigt, welche Methode welche aufruft und welche Tokens sie selbst verbraucht.
+Die Nummern geben die Reihenfolge der Aufrufe an:
+
+image::{root_dir}/images/15_aufrufbaum.svg[]
+
+. _ParseExpr()_ braucht zuerst einen Term und ruft _ParseTerm()_ auf.
+. _ParseTerm()_ braucht einen Faktor und ruft _ParseFactor()_ auf.
+. Das aktuelle Token ist `2`.
+_ParseFactor()_ liefert `NumberExpr(2)`.
+. Zurück in _ParseTerm()_: Das aktuelle Token ist `+*+`, die Schleife läuft.
+_ParseTerm()_ liest `+*+` und ruft wieder _ParseFactor()_ auf.
+Dieser Aufruf liest `(` und steigt in _ParseExpr()_ ab.
+. Der innere _ParseExpr()_-Aufruf parst `+3 + 4+` (Aufrufe 6 bis 9) und liefert `pass:c[(+ 3 4)]`.
+Bei `)` endet seine Schleife, denn `)` ist weder `+++` noch `-`.
+. _ParseFactor()_ verbraucht `)` mit _Expect()_ und gibt `pass:c[(+ 3 4)]` zurück.
+. _ParseTerm()_ baut `pass:c[(* 2 (+ 3 4))]`.
+Das aktuelle Token ist `End`, beide Schleifen enden.
+
+Die Form des Aufrufbaums entspricht der Form des Ableitungsbaums aus link:{github_url}/08%20Theoretische%20Informatik/11_Grammatiken.adoc[Grammatiken].
+Der Parser baut den Ableitungsbaum aber nie auf, er geht ihn nur einmal mit seinen Aufrufen ab.
+Daher kommt der Name _rekursiver Abstieg_: Der Parser steigt von der Startregel _expr_ zu den Blättern ab.
+
+== Fehlermeldungen mit Position
+
+Eine gute Fehlermeldung sagt, *was* erwartet wurde, *was* stattdessen kam und *wo*.
+Dafür gibt es eine eigene Exception mit der Position:
+
+_Auszug aus ParseException.cs:_
+
+[source,csharp]
+----
+public class ParseException(string message, int position) : Exception(message)
+{
+    public int Position { get; } = position;
+}
+----
+
+Tokenizer und Parser werfen dieselbe Exception.
+Für die fehlerhaften Beispiele aus _Program.cs_ meldet sie diese Positionen und Texte:
+
+[%header]
+|===
+|Eingabe |Position und Meldung |erkannt von
+|`4 % 2` |2: `+Unexpected character '%'+` |Tokenizer
+|`+3. + 1+` |2: `+Expected digit after '.'+` |Tokenizer
+|`+2 + * 3+` |4: `+Expected number, '(' or '-' but found '*'+` |_ParseFactor()_
+|`+2 * (3 + 4+` |10: `+Expected ')' but found end of input+` |_Expect()_
+|`2 3` |2: `+Expected end of input but found '3'+` |_ParseAll()_
+|===
+
+`1 / 0` ist übrigens syntaktisch korrekt.
+Der Parser meldet keinen Fehler, der Evaluator liefert für `double` den Wert ∞.
+Ob das sinnvoll ist, ist eine Frage der *Semantik*, nicht der Syntax.
+
+== Auswerten mit einem switch-Ausdruck
+
+Der Evaluator rechnet den Baum rekursiv aus.
+Zuerst berechnet er die Kinder, dann den Knoten:
+
+_Auszug aus Evaluator.cs:_
+
+[source,csharp]
+----
+public static double Evaluate(Expr expr) => expr switch
+{
+    NumberExpr(var value) => value,
+    NegateExpr(var operand) => -Evaluate(operand),
+    BinaryExpr(var left, BinaryOperator.Add, var right) => Evaluate(left) + Evaluate(right),
+    BinaryExpr(var left, BinaryOperator.Subtract, var right) => Evaluate(left) - Evaluate(right),
+    BinaryExpr(var left, BinaryOperator.Multiply, var right) => Evaluate(left) * Evaluate(right),
+    BinaryExpr(var left, BinaryOperator.Divide, var right) => Evaluate(left) / Evaluate(right),
+    _ => throw new ArgumentException($"Unknown node {expr.GetType().Name}", nameof(expr))
+};
+----
+
+* Jede Zeile ist ein _Positional Pattern_.
+`BinaryExpr(var left, BinaryOperator.Add, var right)` passt nur auf Additionen und zerlegt den Knoten gleich in seine Teile.
+Das geht, weil Records automatisch eine `Deconstruct`-Methode haben.
+* Der letzte Fall `+_+` ist nötig, weil der Compiler nicht weiß, ob es noch weitere Ableitungen von `Expr` gibt.
+Fügst du später einen neuen Knotentyp hinzu und vergisst ihn hier, bekommst du diese Exception.
+
+Für den Baum aus der Grafik oben rechnet der Evaluator zuerst `+3 + 4 = 7+` und dann `+2 * 7 = 14+`.
+
+_Program.cs_ gibt für feste Beispiele den AST und den Wert aus (die fehlerhaften Beispiele stehen in der Tabelle oben).
+Danach liest es Ausdrücke von der Konsole, bis du eine leere Zeile eingibst:
+
+[source,text]
+----
+2 * (3 + 4)    AST: (* 2 (+ 3 4))          Value: 14
+2 * 3 + 4      AST: (+ (* 2 3) 4)          Value: 10
+1 - 2 - 3      AST: (- (- 1 2) 3)          Value: -4
+-(2 + 3) * 4   AST: (* (neg (+ 2 3)) 4)    Value: -20
+7 / 2 - -1.5   AST: (- (/ 7 2) (neg 1.5))  Value: 5
+----
+
+An der AST-Spalte siehst du Präzedenz und Assoziativität direkt: In `+2 * 3 + 4+` ist `+++` die Wurzel, also wird `+*+` zuerst gerechnet.
+In `1 - 2 - 3` steht die erste Subtraktion innen.
+
+== Ausdrucksbäume in .NET
+
+.NET hat im Namespace `System.Linq.Expressions` fertige Klassen für _Ausdrucksbäume_ (_expression trees_).
+Der Basistyp heißt `Expression`, für jede Art von Knoten gibt es eine abgeleitete Klasse.
+
+=== Der Compiler parst für dich
+
+Weist du ein Lambda einer Variable vom Typ `+Expression<Func<…>>+` zu, erzeugt der C#-Compiler keinen ausführbaren Code, sondern einen Baum, der das Lambda beschreibt.
+Dieses eigenständige Programm (kein Auszug) gibt den Baum in derselben Präfixnotation aus wie unser AST:
+
+[source,csharp]
+----
+using System.Globalization;
+using System.Linq.Expressions;
+
+Expression<Func<double, double>> f = x => 2 * (x + 4);       // (1)
+Console.WriteLine(ToPrefix(f.Body));
+Expression<Func<double, double>> g = x => -x / 2;
+Console.WriteLine(ToPrefix(g.Body));
+
+Func<double, double> compiled = f.Compile();                  // (2)
+Console.WriteLine(compiled(3));
+
+// Walks the tree recursively, like the ToString() methods of our AST.
+static string ToPrefix(Expression node) => node switch       // (3)
+{
+    BinaryExpression b => $"({Symbol(b.NodeType)} {ToPrefix(b.Left)} {ToPrefix(b.Right)})",
+    UnaryExpression { NodeType: ExpressionType.Negate } u => $"(neg {ToPrefix(u.Operand)})",
+    ConstantExpression { Value: double value } => value.ToString(CultureInfo.InvariantCulture),
+    ParameterExpression p => p.Name ?? "?",
+    _ => throw new NotSupportedException($"Node type {node.NodeType} is not supported")
+};
+
+static char Symbol(ExpressionType type) => type switch
+{
+    ExpressionType.Add => '+',
+    ExpressionType.Subtract => '-',
+    ExpressionType.Multiply => '*',
+    ExpressionType.Divide => '/',
+    _ => throw new NotSupportedException($"Operator {type} is not supported")
+};
+----
+
+[source,text]
+----
+(* 2 (+ x 4))
+(/ (neg x) 2)
+14
+----
+
+* *(1)* Den Text `+2 * (x + 4)+` hat schon der C#-Compiler geparst.
+`f.Body` ist die Wurzel des Baums, `f.Parameters` enthält `x`.
+Mit dem Typ `+Func<double, double>+` statt `+Expression<…>+` entsteht ganz normaler Code.
+Lambdas mit einem Block `+{ … }+` sind als Baum nicht erlaubt.
+* *(2)* _Compile()_ erzeugt zur Laufzeit IL-Code aus dem Baum und liefert einen Delegate.
+`compiled(3)` rechnet `+2 * (3 + 4)+` und ergibt wie unser Evaluator 14.
+* *(3)* _ToPrefix()_ ist gebaut wie _Evaluate()_.
+`BinaryExpression` entspricht `BinaryExpr`, `ConstantExpression` entspricht `NumberExpr`, `UnaryExpression` mit `NodeType` _Negate_ entspricht `NegateExpr`.
+Neu ist `ParameterExpression` für `x`.
+Andere Knoten wie die `MethodCallExpression` in `+x => Math.Sqrt(x)+` lehnt die Methode ab.
+
+=== Vom eigenen AST zum Ausdrucksbaum
+
+Umgekehrt übersetzt die Klasse `ExpressionCompiler` unseren AST in einen `Expression`-Baum.
+Die Knoten erzeugen statische Methoden wie `Expression.Constant()` und `Expression.Add()`:
+
+image::{root_dir}/images/15_expression_tree.svg[]
+
+_Auszug aus ExpressionCompiler.cs:_
+
+[source,csharp]
+----
+public static Func<double> Compile(Expr expr)
+{
+    Expression body = ToExpression(expr);
+    return Expression.Lambda<Func<double>>(body).Compile();
+}
+
+public static Expression ToExpression(Expr expr) => expr switch
+{
+    NumberExpr(var value) => Expression.Constant(value),
+    NegateExpr(var operand) => Expression.Negate(ToExpression(operand)),
+    BinaryExpr(var left, var op, var right) => Combine(op, ToExpression(left), ToExpression(right)),
+    _ => throw new ArgumentException($"Unknown node {expr.GetType().Name}", nameof(expr))
+};
+
+private static BinaryExpression Combine(BinaryOperator op, Expression left, Expression right) => op switch
+{
+    BinaryOperator.Add => Expression.Add(left, right),
+    BinaryOperator.Subtract => Expression.Subtract(left, right),
+    // ... Multiply and Divide
+};
+----
+
+_ToExpression()_ rechnet nicht, sondern baut für jeden Knoten unseres AST genau einen neuen Knoten.
+_Expression.Lambda()_ macht daraus das Lambda `+() => 2 * (3 + 4)+`.
+_Program.cs_ vergleicht den Delegate mit dem Evaluator, die Werte stimmen überein.
+Der Delegate läuft so schnell wie normaler C#-Code, das Kompilieren kostet aber Zeit.
+Es lohnt sich bei Ausdrücken, die du oft berechnest.
+
+=== Praxis: LINQ-Provider und EF Core
+
+Bei einer `+List<T>+` erwartet _Where()_ einen `+Func<T, bool>+`, das Lambda wird einfach ausgeführt.
+Bei einem `+IQueryable<T>+` wie `db.Students` in EF Core erwartet _Where()_ dagegen einen `+Expression<Func<T, bool>>+`.
+Aus `+db.Students.Where(s => s.Age >= 18)+` bekommt EF Core also einen Baum, geht ihn rekursiv durch wie _ToPrefix()_ und erzeugt daraus SQL mit `+WHERE Age >= 18+`.
+Deshalb kannst du in einem EF-Core-_Where()_ nicht jede C#-Methode verwenden: Eine eigene Methode ist dort nur ein `MethodCallExpression`-Knoten, für den EF Core kein SQL kennt.
+Die Abfrage bricht dann mit einer Exception ab.
+
+== Ausblick: Parser-Generatoren und Roslyn
+
+Für große Grammatiken gibt es _Parser-Generatoren_ wie *ANTLR*.
+Du schreibst nur die Grammatik (in ANTLR z. B. `pass:c[expr : term (('+' | '-') term)* ;]`), ANTLR erzeugt daraus Lexer und Parser, auf Wunsch auch in C#.
+Der C#-Compiler *Roslyn* verwendet dagegen einen handgeschriebenen rekursiven Abstiegsparser nach demselben Prinzip wie in diesem Kapitel, nur viel größer.
+Unser Parser bricht beim ersten Fehler ab, Roslyn hat eine _Fehlererholung_: Er überspringt Tokens bis zu einer sicheren Stelle, z. B. bis zum nächsten `;`, und meldet auch spätere Fehler.
+Über das NuGet-Paket _Microsoft.CodeAnalysis.CSharp_ bekommst du den Syntaxbaum eines C#-Programms.
+
+// tag::pdf_exclude[]
+== Übungen
+
+. Zeichne für `+1 - 2 * -3+` den AST und den Aufrufbaum der Parse-Methoden wie in den Grafiken oben.
+Gib bei jedem Aufruf an, welche Tokens er selbst verbraucht.
+. Ergänze im Beispielprojekt den Potenzoperator `+^+`.
+Er bindet stärker als `+*+` und `/` und ist rechtsassoziativ: `+2 ^ 3 ^ 2+` ergibt 512, `+2 * 3 ^ 2+` ergibt 18. Erweitere zuerst die EBNF, dann Tokenizer, AST, Parser und Evaluator.
+Lege fest, welchen Wert `+-2 ^ 2+` haben soll, und halte das in der EBNF fest.
+. Erlaube Variablen wie `x` oder `rate` (Buchstaben, danach Buchstaben oder Ziffern) als _factor_.
+Der Evaluator bekommt zusätzlich ein `+IReadOnlyDictionary<string, double>+` mit den Werten.
+`+2 * x + y+` ergibt mit x = 3 und y = 1 den Wert 7. Eine unbekannte Variable meldet einen Fehler mit ihrem Namen.
+Erweitere danach den `ExpressionCompiler`: Für einen Ausdruck mit der Variable `x` liefert er einen `+Func<double, double>+`, den du einmal kompilierst und für viele Werte von `x` aufrufst.
+. Markiere bei Fehlern die Fehlerstelle in der Ausgabe.
+Unter der Eingabe steht ein `+^+` genau an der Position des Fehlers:
++
+[source,text]
+----
+2 * (3 + 4
+          ^ Expected ')' but found end of input
+----
+
+Im Übungsprojekt link:{github_url}/08%20Theoretische%20Informatik/Uebungen/JsonParser.7z[JsonParser.7z] schreibst du zuerst die EBNF für eine Teilmenge von JSON.
+Danach baust du Tokenizer und rekursiven Abstiegsparser selbst.
+Die Angabe steht im Archiv in der Datei _README.md_.
+
+// end::pdf_exclude[]

@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="410" viewBox="0 0 640 410">
+  <rect x="0.5" y="0.5" width="639" height="409" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <defs>
+    <marker id="arrowA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#ea580c"/>
+    </marker>
+  </defs>
+  <text x="20" y="30" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600" fill="#1f2937">Aufrufbaum von Fib(5): 15 Aufrufe, aber nur 6 verschiedene Werte</text>
+  <g stroke="#1f2937" stroke-width="1.4">
+    <line x1="96" y1="270" x2="60" y2="306"/>
+    <line x1="96" y1="270" x2="132" y2="306"/>
+    <line x1="150" y1="206" x2="96" y2="242"/>
+    <line x1="150" y1="206" x2="204" y2="242"/>
+    <line x1="312" y1="206" x2="276" y2="242"/>
+    <line x1="312" y1="206" x2="348" y2="242"/>
+    <line x1="231" y1="142" x2="150" y2="178"/>
+    <line x1="231" y1="142" x2="312" y2="178"/>
+    <line x1="456" y1="206" x2="420" y2="242"/>
+    <line x1="456" y1="206" x2="492" y2="242"/>
+    <line x1="510" y1="142" x2="456" y2="178"/>
+    <line x1="510" y1="142" x2="564" y2="178"/>
+    <line x1="370.5" y1="78" x2="231" y2="114"/>
+    <line x1="370.5" y1="78" x2="510" y2="114"/>
+  </g>
+  <g stroke-width="2">
+    <rect x="340.5" y="50" width="60" height="28" rx="6" stroke="#2563eb" fill="#dbeafe"/>
+    <rect x="201" y="114" width="60" height="28" rx="6" stroke="#2563eb" fill="#dbeafe"/>
+    <rect x="120" y="178" width="60" height="28" rx="6" stroke="#2563eb" fill="#dbeafe"/>
+    <rect x="66" y="242" width="60" height="28" rx="6" stroke="#2563eb" fill="#dbeafe"/>
+    <rect x="30" y="306" width="60" height="28" rx="6" stroke="#2563eb" fill="#dbeafe"/>
+    <rect x="102" y="306" width="60" height="28" rx="6" stroke="#2563eb" fill="#dbeafe"/>
+    <rect x="174" y="242" width="60" height="28" rx="6" stroke="#2563eb" fill="#dbeafe"/>
+    <rect x="282" y="178" width="60" height="28" rx="6" stroke="#ea580c" fill="#ffedd5"/>
+    <rect x="246" y="242" width="60" height="28" rx="6" stroke="#6b7280" fill="#e5e7eb" stroke-dasharray="4 3"/>
+    <rect x="318" y="242" width="60" height="28" rx="6" stroke="#6b7280" fill="#e5e7eb" stroke-dasharray="4 3"/>
+    <rect x="480" y="114" width="60" height="28" rx="6" stroke="#ea580c" fill="#ffedd5"/>
+    <rect x="426" y="178" width="60" height="28" rx="6" stroke="#6b7280" fill="#e5e7eb" stroke-dasharray="4 3"/>
+    <rect x="390" y="242" width="60" height="28" rx="6" stroke="#6b7280" fill="#e5e7eb" stroke-dasharray="4 3"/>
+    <rect x="462" y="242" width="60" height="28" rx="6" stroke="#6b7280" fill="#e5e7eb" stroke-dasharray="4 3"/>
+    <rect x="534" y="178" width="60" height="28" rx="6" stroke="#6b7280" fill="#e5e7eb" stroke-dasharray="4 3"/>
+  </g>
+  <g font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">
+    <text x="370.5" y="69">Fib(5)</text>
+    <text x="231" y="133">Fib(4)</text>
+    <text x="150" y="197">Fib(3)</text>
+    <text x="96" y="261">Fib(2)</text>
+    <text x="60" y="325">Fib(1)</text>
+    <text x="132" y="325">Fib(0)</text>
+    <text x="204" y="261">Fib(1)</text>
+    <text x="312" y="197">Fib(2)</text>
+    <text x="276" y="261" fill="#6b7280">Fib(1)</text>
+    <text x="348" y="261" fill="#6b7280">Fib(0)</text>
+    <text x="510" y="133">Fib(3)</text>
+    <text x="456" y="197" fill="#6b7280">Fib(2)</text>
+    <text x="420" y="261" fill="#6b7280">Fib(1)</text>
+    <text x="492" y="261" fill="#6b7280">Fib(0)</text>
+    <text x="564" y="197" fill="#6b7280">Fib(1)</text>
+  </g>
+  <rect x="20" y="360" width="28" height="18" rx="4" stroke="#2563eb" fill="#dbeafe" stroke-width="2"/>
+  <text x="56" y="374" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937">zum ersten Mal berechnet</text>
+  <rect x="225" y="360" width="28" height="18" rx="4" stroke="#ea580c" fill="#ffedd5" stroke-width="2"/>
+  <text x="261" y="374" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937">Wert war schon berechnet</text>
+  <rect x="430" y="360" width="28" height="18" rx="4" stroke="#6b7280" fill="#e5e7eb" stroke-width="2" stroke-dasharray="4 3"/>
+  <text x="466" y="374" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937">dadurch unnötige Aufrufe</text>
+  <text x="20" y="398" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937">Mit Memo bleiben nur die blauen und orangen Aufrufe übrig: 9 statt 15.</text>
+</svg>

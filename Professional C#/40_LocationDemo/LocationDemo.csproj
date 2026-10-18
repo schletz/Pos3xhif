@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bogus" Version="*" />
+    <PackageReference Include="Microsoft.ML" Version="*" />
+    <PackageReference Include="Microsoft.ML.FastTree" Version="*" />
+    <PackageReference Include="Microsoft.ML.LightGBM" Version="1.4.0" />
+  </ItemGroup>
+
+</Project>

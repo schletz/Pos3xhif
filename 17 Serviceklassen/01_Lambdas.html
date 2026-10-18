@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lambda Trainer</title>
+<style>
+  :root {
+    --bg: #f6f6f6; --card: #ffffff; --fg: #1d1d1b; --muted: #5f5f5e; --border: #9d9d9c; --soft: #ededed;
+    --n-stroke: #0090d4; --n-fill: #d1ebf7; --n-text: #00628f;
+    --a-stroke: #f39000; --a-fill: #fdebd1; --a-text: #a35f00;
+    --ok-stroke: #71af2e; --ok-fill: #e5f1d9; --ok-text: #4a7a1c;
+    --err-stroke: #cc0935; --err-fill: #f6d3db; --err-text: #a8072c;
+    --c2-stroke: #6cc1b0; --c2-fill: #e5f4f1; --c2-text: #2f7d6e;
+    --btn: #0090d4; --btn-fg: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121212; --card: #1f1f1e; --fg: #ededed; --muted: #b5b5b4; --border: #6f6f6e; --soft: #2e2e2d;
+      --n-stroke: #0090d4; --n-fill: #0d3346; --n-text: #0090d4;
+      --a-stroke: #f39000; --a-fill: #4a2e05; --a-text: #f39000;
+      --ok-stroke: #71af2e; --ok-fill: #23360f; --ok-text: #71af2e;
+      --err-stroke: #f5b4c7; --err-fill: #4a1622; --err-text: #f5b4c7;
+      --c2-stroke: #6cc1b0; --c2-fill: #173832; --c2-text: #6cc1b0;
+      --btn: #0090d4; --btn-fg: #ffffff;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", Helvetica, Arial, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.5; }
+  code, .mono { font-family: Consolas, Menlo, monospace; }
+  code { background: var(--soft); padding: 0 4px; border-radius: 4px; }
+  header { position: sticky; top: 0; z-index: 5; background: var(--card); border-bottom: 1px solid var(--border);
+           padding: 8px 16px; display: flex; align-items: center; gap: 16px; }
+  header h1 { font-size: 18px; margin: 0; flex: 1; }
+  #progressText { font-variant-numeric: tabular-nums; color: var(--muted); }
+  #progressBar { position: absolute; left: 0; bottom: -1px; height: 3px; background: var(--btn); transition: width .3s; }
+  main { max-width: 1100px; margin: 0 auto; padding: 16px; }
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide h2 { margin: 4px 0 8px; font-size: 24px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin: 12px 0; }
+  .nav { display: flex; justify-content: space-between; max-width: 1100px; margin: 0 auto; padding: 0 16px 24px; }
+  button, select { font: inherit; border: 1px solid var(--border); background: var(--card); color: var(--fg); border-radius: 6px;
+           padding: 5px 12px; cursor: pointer; }
+  button:hover:not(:disabled) { border-color: var(--btn); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  button.primary { background: var(--btn); color: var(--btn-fg); border-color: var(--btn); }
+  .row { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin: 8px 0; }
+  .muted { color: var(--muted); }
+  .hint { font-size: 14px; color: var(--muted); }
+  .stepinfo { font-variant-numeric: tabular-nums; color: var(--muted); }
+  .caption { min-height: 64px; }
+  .appear { animation: appear .6s ease-out; }
+  @keyframes appear { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  /* slide 1: code transformation */
+  .bigcode { font-family: Consolas, Menlo, monospace; font-size: 24px; line-height: 2.2; padding: 16px; background: var(--card);
+             border: 1px solid var(--border); border-radius: 8px; overflow-x: auto; white-space: pre; }
+  .seg { border-radius: 4px; padding: 2px 3px; display: inline-block; }
+  .seg.param { background: var(--n-fill); box-shadow: inset 0 -3px 0 var(--n-stroke); }
+  .seg.body { background: var(--ok-fill); box-shadow: inset 0 -3px 0 var(--ok-stroke); }
+  .seg.del { background: var(--err-fill); outline: 2px dashed var(--err-stroke); text-decoration: line-through; }
+  .seg.del::after { content: " ✗"; font-size: 16px; color: var(--err-text); text-decoration: none; display: inline-block; }
+  .seg.new { background: var(--a-fill); outline: 2px solid var(--a-stroke); }
+  .typeline { font-size: 16px; margin-top: 8px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; }
+  .legend .sw { display: inline-block; width: 28px; height: 16px; vertical-align: -3px; margin-right: 6px; border-radius: 3px; }
+
+  /* slide 2: callback */
+  .grid3 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+  .grid3 > * { min-width: 0; }
+  @media (max-width: 860px) { .grid3 { grid-template-columns: 1fr; } }
+  .person { font-family: Consolas, Menlo, monospace; padding: 6px 10px; margin: 6px 0; border-radius: 6px;
+            border: 1.5px solid var(--n-stroke); background: var(--n-fill); }
+  .person.current { outline: 3px solid var(--a-stroke); outline-offset: 1px; }
+  .person.ok { border-color: var(--ok-stroke); background: var(--ok-fill); }
+  .person.no { border-color: var(--border); background: var(--soft); opacity: .7; }
+  .person .res { float: right; font-weight: 700; font-family: "Segoe UI", Helvetica, Arial, sans-serif; }
+  .person.ok .res { color: var(--ok-text); }
+  .person.no .res { color: var(--err-text); }
+  .predicate { border: 2px solid var(--a-stroke); background: var(--a-fill); border-radius: 8px; padding: 10px; font-family: Consolas, Menlo, monospace; }
+  .predicate .call { font-size: 18px; min-height: 30px; }
+  .predicate .eval { font-size: 16px; color: var(--muted); min-height: 26px; }
+
+  /* exercise */
+  .rounds button { min-width: 40px; }
+  .rounds button.solved { background: var(--ok-fill); border-color: var(--ok-stroke); }
+  .rounds button.current { outline: 2px solid var(--btn); outline-offset: 1px; font-weight: 700; }
+  pre.ex { font-family: Consolas, Menlo, monospace; font-size: 16px; background: var(--card); border: 1px solid var(--border);
+           border-radius: 8px; padding: 10px 14px; white-space: pre-wrap; margin: 8px 0; }
+  .choice { display: grid; gap: 8px; margin: 8px 0; }
+  .choice button { text-align: left; font-family: Consolas, Menlo, monospace; font-size: 16px; padding: 8px 12px; }
+  .choice button.text { font-family: "Segoe UI", Helvetica, Arial, sans-serif; }
+  .choice button.picked-right { background: var(--ok-fill); border-color: var(--ok-stroke); }
+  .choice button.picked-right::after { content: "  ✓"; color: var(--ok-text); font-weight: 700; }
+  .choice button.picked-wrong { background: var(--err-fill); border-color: var(--err-stroke); }
+  .choice button.picked-wrong::after { content: "  ✗"; color: var(--err-text); font-weight: 700; }
+  .feedback { padding: 8px 12px; border-radius: 6px; margin-top: 8px; display: none; }
+  .feedback.ok { display: block; background: var(--ok-fill); border: 1px solid var(--ok-stroke); }
+  .feedback.bad { display: block; background: var(--err-fill); border: 1px solid var(--err-stroke); }
+  .feedback.info { display: block; background: var(--soft); border: 1px solid var(--border); }
+  kbd { font-family: Consolas, Menlo, monospace; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 4px; padding: 0 4px; background: var(--soft); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Lambda Expressions: lesen und schreiben</h1>
+  <span id="progressText">1 / 3</span>
+  <div id="progressBar"></div>
+</header>
+
+<main>
+  <!-- Slide 1 -->
+  <section class="slide" data-slide="0">
+    <h2>Von der Methode zur Lambda</h2>
+    <p>Eine Lambda ist eine Methode ohne Namen. Gehe mit <b>Schritt</b> durch die Umformung oder lass sie mit <b>Play</b> ablaufen.</p>
+    <div class="row">
+      <button id="a-reset">⏮ Anfang</button>
+      <button id="a-back">◀ Zurück</button>
+      <button id="a-step" class="primary">Schritt ▶</button>
+      <button id="a-play">▶ Play</button>
+      <span class="stepinfo" id="a-info"></span>
+    </div>
+    <div class="card caption" id="a-caption"></div>
+    <div class="bigcode" id="a-code"></div>
+    <div class="typeline" id="a-type"></div>
+    <div class="legend hint" style="margin-top:10px">
+      <span><span class="sw" style="background:var(--n-fill);box-shadow:inset 0 -3px 0 var(--n-stroke)"></span>Parameter</span>
+      <span><span class="sw" style="background:var(--ok-fill);box-shadow:inset 0 -3px 0 var(--ok-stroke)"></span>Body (Rückgabewert)</span>
+      <span><span class="sw" style="background:var(--a-fill);outline:2px solid var(--a-stroke)"></span>neu</span>
+      <span><span class="sw" style="background:var(--err-fill);outline:2px dashed var(--err-stroke)"></span>✗ fällt weg</span>
+    </div>
+  </section>
+
+  <!-- Slide 2 -->
+  <section class="slide" data-slide="1">
+    <h2>Filter ruft die Lambda für jede Person auf</h2>
+    <p>Die Methode <code>Filter(List&lt;Person&gt; persons, Func&lt;Person, bool&gt; condition)</code> kennt die Bedingung nicht.
+      Sie bekommt sie als Lambda. Wähle eine Lambda und gehe Schritt für Schritt durch die Schleife.</p>
+    <div class="row">
+      <label for="b-lambda">Lambda:</label>
+      <select id="b-lambda"></select>
+    </div>
+    <div class="row">
+      <button id="b-reset">⏮ Anfang</button>
+      <button id="b-back">◀ Zurück</button>
+      <button id="b-step" class="primary">Schritt ▶</button>
+      <button id="b-play">▶ Play</button>
+      <span class="stepinfo" id="b-info"></span>
+    </div>
+    <div class="card caption" id="b-caption"></div>
+    <div class="grid3">
+      <div class="card"><b>persons</b><div id="b-persons"></div></div>
+      <div class="card"><b>condition(p)</b>
+        <div class="predicate"><div id="b-lambdaText"></div><div class="call" id="b-call"></div><div class="eval" id="b-eval"></div></div>
+      </div>
+      <div class="card"><b>result</b><div id="b-result"></div></div>
+    </div>
+  </section>
+
+  <!-- Slide 3 -->
+  <section class="slide" data-slide="2">
+    <h2>Übung: Typen bestimmen und Lambdas schreiben</h2>
+    <div class="row rounds" id="roundButtons"></div>
+    <div class="card" id="roundCard"></div>
+    <pre class="ex" id="exCode"></pre>
+    <div class="choice" id="choices"></div>
+    <div class="row"><button id="solutionBtn">Lösung zeigen</button><button id="nextRoundBtn" class="primary" style="display:none">Nächste Runde →</button></div>
+    <div class="feedback" id="feedback"></div>
+    <p class="hint">Gelöste Runden merkt sich dein Browser. Mit <kbd>Tab</kbd> wählst du eine Antwort, mit <kbd>Enter</kbd> bestätigst du sie.</p>
+  </section>
+</main>
+
+<div class="nav">
+  <button id="prevBtn">← Zurück</button>
+  <button id="nextBtn" class="primary">Weiter →</button>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  const PLAY_DELAY = 2600;
+
+  // ---------- storage (works without localStorage) ----------
+  const store = {
+    get(key, fallback) {
+      try {
+        const raw = window.localStorage.getItem('svc-01-' + key);
+        return raw === null ? fallback : JSON.parse(raw);
+      } catch (e) { return fallback; }
+    },
+    set(key, value) {
+      try { window.localStorage.setItem('svc-01-' + key, JSON.stringify(value)); } catch (e) { /* ignore */ }
+    }
+  };
+
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // ---------- generic step animation ----------
+  /** Connects reset/back/step/play buttons to a render function for steps 0..count-1. */
+  function stepper(prefix, count, render) {
+    let step = 0;
+    let timer = null;
+    const playBtn = document.getElementById(prefix + '-play');
+    const self = {
+      get step() { return step; },
+      setCount(c) { count = c; },
+      show(i) {
+        step = Math.min(Math.max(i, 0), count - 1);
+        document.getElementById(prefix + '-info').textContent = `Schritt ${step + 1} von ${count}`;
+        document.getElementById(prefix + '-back').disabled = step === 0;
+        document.getElementById(prefix + '-step').disabled = step === count - 1;
+        render(step);
+      },
+      stop() {
+        if (timer) { clearTimeout(timer); timer = null; }
+        playBtn.textContent = '▶ Play';
+      },
+      play() {
+        if (timer) { self.stop(); return; }
+        if (step === count - 1) { self.show(0); }
+        playBtn.textContent = '⏸ Pause';
+        const tick = () => {
+          if (step >= count - 1) { self.stop(); return; }
+          self.show(step + 1);
+          timer = setTimeout(tick, PLAY_DELAY);
+        };
+        timer = setTimeout(tick, 900);
+      }
+    };
+    playBtn.addEventListener('click', self.play);
+    document.getElementById(prefix + '-step').addEventListener('click', () => { self.stop(); self.show(step + 1); });
+    document.getElementById(prefix + '-back').addEventListener('click', () => { self.stop(); self.show(step - 1); });
+    document.getElementById(prefix + '-reset').addEventListener('click', () => { self.stop(); self.show(0); });
+    return self;
+  }
+
+  // ---------- slide 1: method becomes lambda ----------
+  // Each step: caption and segments [text, kind]. kind: '' | 'param' | 'body' | 'del' | 'new'.
+  const STEPS = [
+    { c: 'Eine normale Methode: Rückgabetyp <code>bool</code>, Name <code>IsAdult</code>, ein Parameter und ein Body mit <code>return</code>.',
+      s: [['bool IsAdult', ''], ['(Person p)', 'param'], [' { return ', ''], ['p.Age >= 18', 'body'], ['; }', '']] },
+    { c: 'Rückgabetyp und Name fallen weg. Die Lambda steht direkt dort, wo sie gebraucht wird. Den Rückgabetyp kennt der Compiler aus dem Body.',
+      s: [['bool IsAdult', 'del'], ['(Person p)', 'param'], [' { return ', ''], ['p.Age >= 18', 'body'], ['; }', '']] },
+    { c: 'Der <b>Lambda-Operator</b> <code>=&gt;</code> trennt die Parameter vom Body. Das ist schon gültiger C#-Code.',
+      s: [['(Person p)', 'param'], [' ', ''], ['=>', 'new'], [' { return ', ''], ['p.Age >= 18', 'body'], ['; }', '']] },
+    { c: 'Besteht der Body aus <b>einem Ausdruck</b>, ist dieser automatisch der Rückgabewert. <code>{ return</code> und <code>; }</code> fallen weg.',
+      s: [['(Person p)', 'param'], [' => ', ''], ['{ return ', 'del'], ['p.Age >= 18', 'body'], ['; }', 'del']] },
+    { c: 'Die Kurzform mit Typangabe. Sie ist erlaubt, aber meist unnötig.',
+      s: [['(Person p)', 'param'], [' => ', ''], ['p.Age >= 18', 'body']] },
+    { c: 'Den Typ <code>Person</code> leitet der Compiler aus dem Zusammenhang ab. Bei <b>genau einem</b> Parameter fallen auch die runden Klammern weg.',
+      s: [['(', 'del'], ['Person ', 'del'], ['p', 'param'], [')', 'del'], [' => ', ''], ['p.Age >= 18', 'body']] },
+    { c: 'Die fertige Lambda. Lies: „p geht über zu p.Age &gt;= 18“.',
+      s: [['p', 'param'], [' => ', ''], ['p.Age >= 18', 'body']] },
+    { c: 'So verwendest du sie: Die Lambda ist ein Parameter. <code>Filter</code> ruft sie für jede Person auf (nächste Folie).',
+      s: [['var adults = PersonFilter.Filter(persons, ', ''], ['p', 'param'], [' => ', ''], ['p.Age >= 18', 'body'], [');', '']],
+      t: 'Typ des Parameters: <code>Func&lt;Person, bool&gt;</code>: bekommt eine <code>Person</code>, liefert einen <code>bool</code>.' }
+  ];
+  const aAnim = stepper('a', STEPS.length, step => {
+    const st = STEPS[step];
+    document.getElementById('a-caption').innerHTML = `<b>Schritt ${step + 1}:</b> ${st.c}`;
+    document.getElementById('a-code').innerHTML = st.s
+      .map(([text, kind]) => kind ? `<span class="seg ${kind}${kind === 'new' ? ' appear' : ''}">${esc(text)}</span>` : esc(text)).join('');
+    document.getElementById('a-type').innerHTML = st.t || '';
+  });
+
+  // ---------- slide 2: Filter calls the lambda ----------
+  const PERSONS = [
+    { first: 'Anna', last: 'Huber', city: 'Wien', age: 17 },
+    { first: 'Ben', last: 'Bauer', city: 'Graz', age: 24 },
+    { first: 'Clara', last: 'Berger', city: 'Wien', age: 31 },
+    { first: 'David', last: 'Wagner', city: 'Linz', age: 16 }
+  ];
+  const LAMBDAS = [
+    { text: 'p => p.Age >= 18', eval: p => [`${p.age} >= 18`, p.age >= 18] },
+    { text: 'p => p.City == "Wien"', eval: p => [`"${p.city}" == "Wien"`, p.city === 'Wien'] },
+    { text: 'p => p.LastName.StartsWith("B")', eval: p => [`"${p.last}".StartsWith("B")`, p.last.startsWith('B')] }
+  ];
+  let lambdaIndex = 0;
+  const select = document.getElementById('b-lambda');
+  LAMBDAS.forEach((l, i) => {
+    const o = document.createElement('option');
+    o.value = String(i);
+    o.textContent = l.text;
+    select.appendChild(o);
+  });
+  function personText(p) { return `${p.first} ${p.last}, ${p.city}, ${p.age}`; }
+  const bAnim = stepper('b', PERSONS.length + 2, step => {
+    const lambda = LAMBDAS[lambdaIndex];
+    // Step 0: start, steps 1..n: person n-1 is checked, last step: summary.
+    const checked = Math.min(step, PERSONS.length);
+    const currentIndex = step >= 1 && step <= PERSONS.length ? step - 1 : -1;
+    document.getElementById('b-lambdaText').innerHTML = `<b>${esc(lambda.text)}</b>`;
+    document.getElementById('b-persons').innerHTML = PERSONS.map((p, i) => {
+      let cls = 'person';
+      let res = '';
+      if (i < checked) {
+        const ok = lambda.eval(p)[1];
+        cls += ok ? ' ok' : ' no';
+        res = ok ? '✓ true' : '✗ false';
+      }
+      if (i === currentIndex) { cls += ' current'; }
+      return `<div class="${cls}">${esc(personText(p))}<span class="res">${res}</span></div>`;
+    }).join('');
+    const result = PERSONS.slice(0, checked).filter(p => lambda.eval(p)[1]);
+    document.getElementById('b-result').innerHTML = result.length === 0
+      ? '<p class="hint">noch leer</p>'
+      : result.map(p => `<div class="person ok appear">${esc(personText(p))}</div>`).join('');
+    const caption = document.getElementById('b-caption');
+    if (currentIndex >= 0) {
+      const p = PERSONS[currentIndex];
+      const [expr, ok] = lambda.eval(p);
+      document.getElementById('b-call').textContent = `condition(${p.first})`;
+      document.getElementById('b-eval').textContent = `${expr}  →  ${ok}`;
+      caption.innerHTML = `<b>Durchlauf ${currentIndex + 1}:</b> <code>foreach</code> ist bei ${esc(p.first)}. ` +
+        `<code>if (condition(p))</code> ruft die Lambda auf. Ergebnis: <b>${ok}</b> ${ok ? '✓ – die Person kommt in die Ergebnisliste.' : '✗ – die Person wird übersprungen.'}`;
+    } else if (step === 0) {
+      document.getElementById('b-call').textContent = '';
+      document.getElementById('b-eval').textContent = '';
+      caption.innerHTML = 'Die Schleife in <code>Filter</code> geht jede Person durch. Die Bedingung kommt als Lambda von außen.';
+    } else {
+      document.getElementById('b-call').textContent = '';
+      document.getElementById('b-eval').textContent = '';
+      caption.innerHTML = `<b>Fertig:</b> ${result.length} von ${PERSONS.length} Personen erfüllen <code>${esc(lambda.text)}</code>. ` +
+        'Wähle oben eine andere Lambda: Die Methode <code>Filter</code> bleibt gleich, nur die Bedingung ändert sich.';
+    }
+  });
+  select.addEventListener('change', () => { lambdaIndex = Number(select.value); bAnim.stop(); bAnim.show(0); });
+
+  // ---------- slide 3: exercise ----------
+  const ROUNDS = [
+    { id: 'type-predicate', title: 'Typ einer Bedingung',
+      q: 'Welchen Typ hat diese Lambda? <code>p</code> ist eine <code>Person</code>.',
+      code: 'p => p.Age >= 18',
+      options: ['Func<Person, bool>', 'Func<bool, Person>', 'Action<Person>', 'Func<Person, int>'], correct: 0,
+      why: 'Bei Func ist der letzte Typ der Rückgabetyp. p.Age >= 18 ist ein bool, der Parameter ist eine Person.' },
+    { id: 'type-two', title: 'Zwei Parameter',
+      q: 'Welchen Typ hat diese Lambda? <code>a</code> und <code>b</code> sind <code>int</code>.',
+      code: '(a, b) => a + b',
+      options: ['Func<int, int>', 'Action<int, int>', 'Func<int, int, int>', 'Func<int, int, bool>'], correct: 2,
+      why: 'Zwei Parameter vom Typ int und ein Rückgabewert vom Typ int: Func hat drei Typargumente, der letzte ist der Rückgabetyp.' },
+    { id: 'type-action', title: 'Kein Rückgabewert',
+      q: 'Welchen Typ hat diese Lambda?',
+      code: '() => Console.WriteLine("Hallo")',
+      options: ['Func<void>', 'Action', 'Func<string>', 'Action<string>'], correct: 1,
+      why: 'Console.WriteLine liefert nichts (void), und es gibt keinen Parameter. Das ist eine Action. Func<void> gibt es nicht.' },
+    { id: 'type-string', title: 'Von string zu int',
+      q: 'Welchen Typ hat diese Lambda? <code>name</code> ist ein <code>string</code>.',
+      code: 'name => name.Length',
+      options: ['Func<int, string>', 'Func<string>', 'Action<string>', 'Func<string, int>'], correct: 3,
+      why: 'Der Parameter ist ein string, name.Length ist ein int. Der Rückgabetyp steht bei Func immer zuletzt.' },
+    { id: 'short-twice', title: 'Kurzform finden',
+      q: 'Welche Lambda entspricht dieser Methode?',
+      code: 'int Twice(int x) { return x * 2; }',
+      options: ['x => { x * 2 }', 'x => x * 2', '(int x) -> x * 2', 'Twice => x * 2'], correct: 1,
+      why: 'Ein einzelner Ausdruck ist automatisch der Rückgabewert. In geschweiften Klammern bräuchtest du return und einen Strichpunkt. -> ist die Syntax von Java.' },
+    { id: 'short-log', title: 'Lambda ohne Rückgabewert',
+      q: 'Welche Lambda entspricht dieser Methode?',
+      code: 'void Log(string text) { Console.WriteLine(text); }',
+      options: ['text => return Console.WriteLine(text)', '() => Console.WriteLine(text)', 'text => Console.WriteLine(text)', 'text => { Console.WriteLine(text) }'], correct: 2,
+      why: 'Die Methode hat einen Parameter, also steht text links vom Pfeil. return ist ohne geschweifte Klammern nicht erlaubt, und im Block fehlt der Strichpunkt.' },
+    { id: 'short-two', title: 'Zwei Parameter vergleichen',
+      q: 'Welche Lambda entspricht dieser Methode?',
+      code: 'bool SameCity(Person a, Person b) { return a.City == b.City; }',
+      options: ['a, b => a.City == b.City', '(a, b) => a.City == b.City', '(a, b) => { a.City == b.City; }', '(a, b) => a.City = b.City'], correct: 1,
+      why: 'Bei zwei Parametern sind die runden Klammern Pflicht. Im Block fehlt return. = ist eine Zuweisung, kein Vergleich.' },
+    { id: 'closure', title: 'Closure',
+      q: 'Die Liste enthält Anna (17), Ben (24), Clara (31) und David (16). Wie viele Personen liefert <code>result</code>?',
+      code: 'int limit = 18;\nFunc<Person, bool> ok = p => p.Age >= limit;\nlimit = 30;\nvar result = PersonFilter.Filter(persons, ok);',
+      options: ['2', '1', '0', '3'], correct: 1, text: true,
+      why: 'Die Lambda merkt sich die Variable limit, nicht den Wert 18. Filter ruft sie erst nach limit = 30 auf. Nur Clara (31) erfüllt p.Age >= 30.' },
+    { id: 'factory', title: 'Eine Methode liefert eine Lambda',
+      q: 'Was liefert der Aufruf <code>LivesIn("Graz")</code>?',
+      code: 'static Func<Person, bool> LivesIn(string city) => p => p.City == city;',
+      options: ['true oder false', 'eine Liste aller Personen aus Graz', 'eine Lambda vom Typ Func<Person, bool>, die sich "Graz" merkt', 'einen Compilerfehler, weil zwei Pfeile vorkommen'], correct: 2, text: true,
+      why: 'Das erste => gehört zur Methode (expression-bodied member), das zweite ist der Pfeil der Lambda. Die Methode liefert also eine Funktion. Erst ihr Aufruf mit einer Person liefert true oder false.' },
+    { id: 'not-lambda', title: 'Gleicher Pfeil, keine Lambda',
+      q: 'Welche Zeile enthält <b>keine</b> Lambda?',
+      code: '',
+      options: ['Func<int, int> inc = x => x + 1;', 'Action hello = () => Console.WriteLine("Hi");', 'public string FullName => $"{FirstName} {LastName}";', 'list.RemoveAll(p => p.Age < 18);'], correct: 2,
+      why: 'Bei einem Property bedeutet => „get { return ...; }“. Das heißt expression-bodied member und ist keine Lambda: Es gibt keinen Parameter und keinen Delegate.' }
+  ];
+  let solved = new Set(store.get('solved', []));
+  let roundIndex = Math.min(Math.max(store.get('round', 0) | 0, 0), ROUNDS.length - 1);
+  let answered = false;
+  const feedback = document.getElementById('feedback');
+
+  function drawRounds() {
+    const box = document.getElementById('roundButtons');
+    box.innerHTML = '';
+    ROUNDS.forEach((r, i) => {
+      const b = document.createElement('button');
+      b.textContent = String(i + 1);
+      b.title = r.title;
+      b.className = (solved.has(r.id) ? 'solved ' : '') + (i === roundIndex ? 'current' : '');
+      b.setAttribute('aria-label', `Runde ${i + 1}: ${r.title}${solved.has(r.id) ? ' (gelöst)' : ''}`);
+      b.addEventListener('click', () => selectRound(i));
+      box.appendChild(b);
+    });
+    const r = ROUNDS[roundIndex];
+    document.getElementById('roundCard').innerHTML =
+      `<b>Runde ${roundIndex + 1} von ${ROUNDS.length}: ${esc(r.title)}</b>${solved.has(r.id) ? ' <span class="muted">✓ gelöst</span>' : ''}` +
+      `<br>${r.q}<br><span class="hint">Gelöst: ${solved.size} von ${ROUNDS.length} Runden</span>`;
+  }
+  function pick(i, button) {
+    if (answered) { return; }
+    const r = ROUNDS[roundIndex];
+    if (i === r.correct) {
+      answered = true;
+      button.classList.add('picked-right');
+      solved.add(r.id);
+      store.set('solved', Array.from(solved));
+      feedback.className = 'feedback ok';
+      feedback.innerHTML = `✓ Richtig. ${esc(r.why)}`;
+      drawRounds();
+      document.getElementById('nextRoundBtn').style.display = roundIndex < ROUNDS.length - 1 ? '' : 'none';
+    } else {
+      button.classList.add('picked-wrong');
+      button.disabled = true;
+      feedback.className = 'feedback bad';
+      feedback.innerHTML = '✗ Nicht ganz. Lies die Lambda noch einmal: Was steht links vom Pfeil, und welchen Typ hat der Ausdruck rechts davon?';
+    }
+  }
+  function selectRound(i) {
+    roundIndex = i;
+    answered = false;
+    store.set('round', i);
+    feedback.className = 'feedback';
+    feedback.innerHTML = '';
+    document.getElementById('nextRoundBtn').style.display = 'none';
+    const r = ROUNDS[i];
+    const code = document.getElementById('exCode');
+    code.textContent = r.code;
+    code.style.display = r.code ? '' : 'none';
+    const box = document.getElementById('choices');
+    box.innerHTML = '';
+    r.options.forEach((opt, k) => {
+      const b = document.createElement('button');
+      b.textContent = opt;
+      if (r.text) { b.classList.add('text'); }
+      b.addEventListener('click', () => pick(k, b));
+      box.appendChild(b);
+    });
+    drawRounds();
+  }
+  document.getElementById('solutionBtn').addEventListener('click', () => {
+    const r = ROUNDS[roundIndex];
+    feedback.className = 'feedback info';
+    feedback.innerHTML = `Richtig ist: <code>${esc(r.options[r.correct])}</code>. ${esc(r.why)} Wähle die Antwort selbst aus, damit die Runde als gelöst zählt.`;
+  });
+  document.getElementById('nextRoundBtn').addEventListener('click', () => selectRound(roundIndex + 1));
+
+  // ---------- slides ----------
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  let current = Math.min(Math.max(store.get('slide', 0) | 0, 0), slides.length - 1);
+  function showSlide(i) {
+    current = Math.min(Math.max(i, 0), slides.length - 1);
+    slides.forEach((s, k) => s.classList.toggle('active', k === current));
+    document.getElementById('progressText').textContent = `${current + 1} / ${slides.length}`;
+    document.getElementById('progressBar').style.width = `${(current + 1) / slides.length * 100}%`;
+    document.getElementById('prevBtn').disabled = current === 0;
+    document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    aAnim.stop(); bAnim.stop();
+    store.set('slide', current);
+    window.scrollTo(0, 0);
+  }
+  document.getElementById('prevBtn').addEventListener('click', () => showSlide(current - 1));
+  document.getElementById('nextBtn').addEventListener('click', () => showSlide(current + 1));
+  document.addEventListener('keydown', evt => {
+    const tag = evt.target && evt.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (evt.target && evt.target.isContentEditable)) { return; }
+    if (evt.ctrlKey || evt.altKey || evt.metaKey) { return; }
+    if (evt.key === 'ArrowRight' || evt.key === 'PageDown') { showSlide(current + 1); evt.preventDefault(); }
+    if (evt.key === 'ArrowLeft' || evt.key === 'PageUp') { showSlide(current - 1); evt.preventDefault(); }
+  });
+
+  // ---------- start ----------
+  aAnim.show(0);
+  bAnim.show(0);
+  selectRound(roundIndex);
+  showSlide(current);
+
+  /** Read-only hooks for automated tests. */
+  window.lambdaDebug = {
+    rounds: () => ROUNDS.map(r => ({ id: r.id, correct: r.correct, count: r.options.length })),
+    selfTest: () => ROUNDS.filter(r => r.correct < 0 || r.correct >= r.options.length || !r.why).map(r => r.id)
+  };
+})();
+</script>
+</body>
+</html>

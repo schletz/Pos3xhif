@@ -1,0 +1,60 @@
+@startuml
+hide empty methods
+
+' === Klassen ===
+class Store {
+    +Name : string  <<unique>>
+}
+
+class StoreDetail {
+    +Address : string
+    +Zip : string
+    +City : string
+    +OpeningHours : List<OpeningHour>
+}
+
+enum Weekday {
+    MO, DI, MI, DO, FR, SA, SO
+}
+
+class OpeningHour {
+    +StoreDetail : StoreDetail
+    +Weekday : Weekday
+    +From : TimeOnly
+    +To : TimeOnly
+}
+
+OpeningHour -- Weekday
+OpeningHour "0..*" -- "1" StoreDetail : "> StoreDetail"
+
+class Product {
+    +Ean : int
+    +Name : string <<unique>>
+}
+
+note right of Product::Ean
+  PK
+end note
+
+class ProductDetail {
+    +Description : string
+    +Manufacturer : string
+}
+
+class Offer {
+    +Store : Store
+    +Product : Product
+    +Price : decimal
+    +LastUpdate : DateTime
+}
+
+
+' === Beziehungen ===
+Offer "0..*" -- "1" Store : "> Store"
+Offer "0..*" -- "1" Product : "> Product"
+
+' 1:1-Beziehungen
+Store "1" -- "1" StoreDetail : "Details"
+Product "1" -- "1" ProductDetail : "Details"
+
+@enduml

@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="500" viewBox="0 0 940 500">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5f5f5e"/></marker></defs>
+<rect x="1" y="1" width="938" height="498" rx="12" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<polygon points="30,30 868,30 868,20 908,49 868,78 868,68 30,68" fill="#ededed" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="450" y="55" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="17" font-weight="600" fill="#1d1d1b">Implizite Konvertierung: Der Compiler wandelt ohne Cast um</text>
+<path d="M142,130 C161.0,130 161.0,158.0 180,158.0" fill="none" stroke="#5f5f5e" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M142,228.0 C161.0,228.0 161.0,182.0 180,182.0" fill="none" stroke="#5f5f5e" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M142,252.0 C161.0,252.0 161.0,288.0 180,288.0" fill="none" stroke="#5f5f5e" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M142,350 C161.0,350 161.0,312.0 180,312.0" fill="none" stroke="#5f5f5e" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M294,170 C313.0,170 313.0,198.0 332,198.0" fill="none" stroke="#5f5f5e" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M294,288.0 C313.0,288.0 313.0,222.0 332,222.0" fill="none" stroke="#5f5f5e" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M294,312.0 C313.0,312.0 313.0,330 332,330" fill="none" stroke="#5f5f5e" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M446,210 C465.0,210 465.0,218.0 484,218.0" fill="none" stroke="#5f5f5e" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M446,318.0 C465.0,318.0 465.0,242.0 484,242.0" fill="none" stroke="#5f5f5e" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M446,342.0 C465.0,342.0 465.0,350 484,350" fill="none" stroke="#5f5f5e" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M598,218.0 C617.0,218.0 617.0,218.0 636,218.0" fill="none" stroke="#5f5f5e" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#arrow)"/>
+<path d="M598,242.0 C617.0,242.0 617.0,338.0 636,338.0" fill="none" stroke="#5f5f5e" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M598,338.0 C617.0,338.0 617.0,242.0 636,242.0" fill="none" stroke="#5f5f5e" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#arrow)"/>
+<path d="M598,362.0 C617.0,362.0 617.0,362.0 636,362.0" fill="none" stroke="#5f5f5e" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M750,230 C769.0,230 769.0,230 788,230" fill="none" stroke="#5f5f5e" stroke-width="1.8" marker-end="url(#arrow)"/>
+<rect x="30" y="104.0" width="112" height="52" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="2"/>
+<text x="86.0" y="127" text-anchor="middle" font-family="Cascadia Mono, Consolas, monospace" font-size="18" font-weight="700" fill="#1d1d1b">sbyte</text>
+<text x="86.0" y="146" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" fill="#1d1d1b">8 Bit, ±</text>
+<rect x="30" y="214.0" width="112" height="52" rx="6" fill="#e5f4f1" stroke="#2f7d6e" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="86.0" y="237" text-anchor="middle" font-family="Cascadia Mono, Consolas, monospace" font-size="18" font-weight="700" fill="#1d1d1b">byte</text>
+<text x="86.0" y="256" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" fill="#1d1d1b">8 Bit, ab 0</text>
+<rect x="30" y="324.0" width="112" height="52" rx="6" fill="#ededed" stroke="#5f5f5e" stroke-width="2"/>
+<text x="86.0" y="347" text-anchor="middle" font-family="Cascadia Mono, Consolas, monospace" font-size="18" font-weight="700" fill="#1d1d1b">char</text>
+<text x="86.0" y="366" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" fill="#1d1d1b">16 Bit, Zeichen</text>
+<rect x="182" y="144.0" width="112" height="52" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="2"/>
+<text x="238.0" y="167" text-anchor="middle" font-family="Cascadia Mono, Consolas, monospace" font-size="18" font-weight="700" fill="#1d1d1b">short</text>
+<text x="238.0" y="186" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" fill="#1d1d1b">16 Bit, ±</text>
+<rect x="182" y="274.0" width="112" height="52" rx="6" fill="#e5f4f1" stroke="#2f7d6e" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="238.0" y="297" text-anchor="middle" font-family="Cascadia Mono, Consolas, monospace" font-size="18" font-weight="700" fill="#1d1d1b">ushort</text>
+<text x="238.0" y="316" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" fill="#1d1d1b">16 Bit, ab 0</text>
+<rect x="334" y="184.0" width="112" height="52" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="2"/>
+<text x="390.0" y="207" text-anchor="middle" font-family="Cascadia Mono, Consolas, monospace" font-size="18" font-weight="700" fill="#1d1d1b">int</text>
+<text x="390.0" y="226" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" fill="#1d1d1b">32 Bit, ±</text>
+<rect x="334" y="304.0" width="112" height="52" rx="6" fill="#e5f4f1" stroke="#2f7d6e" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="390.0" y="327" text-anchor="middle" font-family="Cascadia Mono, Consolas, monospace" font-size="18" font-weight="700" fill="#1d1d1b">uint</text>
+<text x="390.0" y="346" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" fill="#1d1d1b">32 Bit, ab 0</text>
+<rect x="486" y="204.0" width="112" height="52" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="2"/>
+<text x="542.0" y="227" text-anchor="middle" font-family="Cascadia Mono, Consolas, monospace" font-size="18" font-weight="700" fill="#1d1d1b">long</text>
+<text x="542.0" y="246" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" fill="#1d1d1b">64 Bit, ±</text>
+<rect x="486" y="324.0" width="112" height="52" rx="6" fill="#e5f4f1" stroke="#2f7d6e" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="542.0" y="347" text-anchor="middle" font-family="Cascadia Mono, Consolas, monospace" font-size="18" font-weight="700" fill="#1d1d1b">ulong</text>
+<text x="542.0" y="366" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" fill="#1d1d1b">64 Bit, ab 0</text>
+<rect x="638" y="204.0" width="112" height="52" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="2"/>
+<text x="694.0" y="227" text-anchor="middle" font-family="Cascadia Mono, Consolas, monospace" font-size="18" font-weight="700" fill="#1d1d1b">float</text>
+<text x="694.0" y="246" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" fill="#1d1d1b">32 Bit</text>
+<rect x="638" y="324.0" width="112" height="52" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="2"/>
+<text x="694.0" y="347" text-anchor="middle" font-family="Cascadia Mono, Consolas, monospace" font-size="18" font-weight="700" fill="#1d1d1b">decimal</text>
+<text x="694.0" y="366" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" fill="#1d1d1b">128 Bit</text>
+<rect x="790" y="204.0" width="112" height="52" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="2"/>
+<text x="846.0" y="227" text-anchor="middle" font-family="Cascadia Mono, Consolas, monospace" font-size="18" font-weight="700" fill="#1d1d1b">double</text>
+<text x="846.0" y="246" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" fill="#1d1d1b">64 Bit</text>
+<rect x="30" y="409.0" width="34" height="22" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="2"/>
+<text x="76" y="425" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#1d1d1b">Ganzzahl mit Vorzeichen (±)</text>
+<rect x="360" y="409.0" width="34" height="22" rx="6" fill="#e5f4f1" stroke="#2f7d6e" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="406" y="425" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#1d1d1b">Ganzzahl ohne Vorzeichen (ab 0)</text>
+<rect x="30" y="443.0" width="34" height="22" rx="6" fill="#ededed" stroke="#5f5f5e" stroke-width="2"/>
+<text x="76" y="459" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#1d1d1b">Zeichen</text>
+<rect x="360" y="443.0" width="34" height="22" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="2"/>
+<text x="406" y="459" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#1d1d1b">Gleitkomma / Dezimal</text>
+<line x1="660" y1="420" x2="694" y2="420" stroke="#5f5f5e" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="706" y="425" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#1d1d1b">verlustfrei</text>
+<line x1="660" y1="454" x2="694" y2="454" stroke="#5f5f5e" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#arrow)"/>
+<text x="706" y="459" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#1d1d1b">Stellen können verloren gehen</text>
+</svg>

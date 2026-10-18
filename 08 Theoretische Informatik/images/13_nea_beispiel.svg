@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="350" viewBox="0 0 520 350">
+  <rect x="0.5" y="0.5" width="519" height="349" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/>
+    </marker>
+  </defs>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" fill="#1f2937">
+    <text x="20" y="28" font-weight="600">NEA: Wörter, die auf ab enden</text>
+    <text x="20" y="200" font-weight="600">ε-NEA: Ganzzahl mit optionalem Vorzeichen</text>
+  </g>
+  <line x1="20" y1="172" x2="500" y2="172" stroke="#d1d5db"/>
+  <g fill="none" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)">
+    <line x1="40" y1="120" x2="88" y2="120"/>
+    <path d="M101,100 C85,58 135,58 119,100"/>
+    <line x1="132" y1="120" x2="238" y2="120"/>
+    <line x1="282" y1="120" x2="388" y2="120"/>
+    <line x1="40" y1="290" x2="88" y2="290"/>
+    <line x1="132" y1="290" x2="238" y2="290"/>
+    <line x1="282" y1="290" x2="388" y2="290"/>
+    <path d="M401,270 C385,228 435,228 419,270"/>
+  </g>
+  <g font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937" text-anchor="middle">
+    <text x="110" y="60">a, b</text>
+    <text x="185" y="112">a</text>
+    <text x="335" y="112">b</text>
+    <text x="185" y="282">+, −, ε</text>
+    <text x="335" y="282">0–9</text>
+    <text x="410" y="230">0–9</text>
+  </g>
+  <g stroke="#2563eb" stroke-width="2" fill="#dbeafe">
+    <circle cx="110" cy="120" r="22"/>
+    <circle cx="260" cy="120" r="22"/>
+    <circle cx="410" cy="120" r="22"/>
+    <circle cx="410" cy="120" r="18" fill="none"/>
+    <circle cx="110" cy="290" r="22"/>
+    <circle cx="260" cy="290" r="22"/>
+    <circle cx="410" cy="290" r="22"/>
+    <circle cx="410" cy="290" r="18" fill="none"/>
+  </g>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#1f2937" text-anchor="middle">
+    <text x="110" y="126">q₀</text>
+    <text x="260" y="126">q₁</text>
+    <text x="410" y="126">q₂</text>
+    <text x="110" y="296">p₀</text>
+    <text x="260" y="296">p₁</text>
+    <text x="410" y="296">p₂</text>
+  </g>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#ea580c">
+    <text x="20" y="160">Mit a kann q₀ in q₀ bleiben oder nach q₁ gehen. q₁ hat keinen Pfeil für a.</text>
+  </g>
+</svg>

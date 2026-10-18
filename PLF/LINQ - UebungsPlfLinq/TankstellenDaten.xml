@@ -1,0 +1,949 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Tankstellen>
+  <Tankstelle Id="1001" Bundesland="B" PLZ="7460" Betreiber="BP">
+    <Tagespreis Tankstelle="1001" Tag="2018-12-03" PreisBenzin="1.2550" PreisDiesel="1.1923">
+      <Verkauf Id="1160" Tankstelle="1001" Tag="2018-12-03" VerkaufDieselLiter="38.9000" />
+      <Verkauf Id="1175" Tankstelle="1001" Tag="2018-12-03" VerkaufDieselLiter="44.4000" />
+      <Verkauf Id="1211" Tankstelle="1001" Tag="2018-12-03" VerkaufBenzinLiter="23.4000" VerkaufShopEuro="3.2200" />
+      <Verkauf Id="1212" Tankstelle="1001" Tag="2018-12-03" VerkaufDieselLiter="77.8000" />
+      <Verkauf Id="1221" Tankstelle="1001" Tag="2018-12-03" VerkaufDieselLiter="58.9000" />
+      <Verkauf Id="1237" Tankstelle="1001" Tag="2018-12-03" VerkaufBenzinLiter="38.7000" VerkaufShopEuro="35.0800" />
+      <Verkauf Id="1240" Tankstelle="1001" Tag="2018-12-03" VerkaufBenzinLiter="38.4000" />
+      <Verkauf Id="1276" Tankstelle="1001" Tag="2018-12-03" VerkaufBenzinLiter="60.8000" />
+      <Verkauf Id="1365" Tankstelle="1001" Tag="2018-12-03" VerkaufDieselLiter="44.9000" />
+      <Verkauf Id="1425" Tankstelle="1001" Tag="2018-12-03" VerkaufDieselLiter="79.5000" />
+      <Verkauf Id="1479" Tankstelle="1001" Tag="2018-12-03" VerkaufDieselLiter="44.5000" />
+      <Verkauf Id="1500" Tankstelle="1001" Tag="2018-12-03" VerkaufDieselLiter="8.0000" />
+      <Verkauf Id="1524" Tankstelle="1001" Tag="2018-12-03" VerkaufDieselLiter="10.1000" />
+      <Verkauf Id="1634" Tankstelle="1001" Tag="2018-12-03" VerkaufDieselLiter="25.2000" />
+      <Verkauf Id="1665" Tankstelle="1001" Tag="2018-12-03" VerkaufDieselLiter="21.5000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1001" Tag="2018-12-04" PreisBenzin="1.2425" PreisDiesel="1.2042">
+      <Verkauf Id="1051" Tankstelle="1001" Tag="2018-12-04" VerkaufBenzinLiter="8.2000" VerkaufShopEuro="45.5000" />
+      <Verkauf Id="1098" Tankstelle="1001" Tag="2018-12-04" VerkaufDieselLiter="53.3000" />
+      <Verkauf Id="1128" Tankstelle="1001" Tag="2018-12-04" VerkaufDieselLiter="39.5000" />
+      <Verkauf Id="1225" Tankstelle="1001" Tag="2018-12-04" VerkaufBenzinLiter="42.9000" />
+      <Verkauf Id="1343" Tankstelle="1001" Tag="2018-12-04" VerkaufBenzinLiter="18.2000" />
+      <Verkauf Id="1405" Tankstelle="1001" Tag="2018-12-04" VerkaufBenzinLiter="58.2000" />
+      <Verkauf Id="1461" Tankstelle="1001" Tag="2018-12-04" VerkaufDieselLiter="45.8000" />
+      <Verkauf Id="1598" Tankstelle="1001" Tag="2018-12-04" VerkaufBenzinLiter="40.5000" />
+      <Verkauf Id="1615" Tankstelle="1001" Tag="2018-12-04" VerkaufBenzinLiter="15.5000" />
+      <Verkauf Id="1650" Tankstelle="1001" Tag="2018-12-04" VerkaufBenzinLiter="21.9000" />
+      <Verkauf Id="1658" Tankstelle="1001" Tag="2018-12-04" VerkaufDieselLiter="56.2000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1001" Tag="2018-12-05" PreisBenzin="1.2673" PreisDiesel="1.1921">
+      <Verkauf Id="1095" Tankstelle="1001" Tag="2018-12-05" VerkaufBenzinLiter="49.0000" />
+      <Verkauf Id="1298" Tankstelle="1001" Tag="2018-12-05" VerkaufDieselLiter="19.2000" />
+      <Verkauf Id="1322" Tankstelle="1001" Tag="2018-12-05" VerkaufDieselLiter="26.7000" />
+      <Verkauf Id="1388" Tankstelle="1001" Tag="2018-12-05" VerkaufBenzinLiter="56.8000" />
+      <Verkauf Id="1450" Tankstelle="1001" Tag="2018-12-05" VerkaufBenzinLiter="53.0000" />
+      <Verkauf Id="1560" Tankstelle="1001" Tag="2018-12-05" VerkaufDieselLiter="54.0000" VerkaufShopEuro="43.6000" />
+      <Verkauf Id="1581" Tankstelle="1001" Tag="2018-12-05" VerkaufDieselLiter="61.3000" />
+      <Verkauf Id="1619" Tankstelle="1001" Tag="2018-12-05" VerkaufDieselLiter="16.0000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1001" Tag="2018-12-06" PreisBenzin="1.2926" PreisDiesel="1.2041">
+      <Verkauf Id="1032" Tankstelle="1001" Tag="2018-12-06" VerkaufBenzinLiter="15.2000" VerkaufShopEuro="8.9600" />
+      <Verkauf Id="1153" Tankstelle="1001" Tag="2018-12-06" VerkaufDieselLiter="30.1000" />
+      <Verkauf Id="1236" Tankstelle="1001" Tag="2018-12-06" VerkaufDieselLiter="45.9000" />
+      <Verkauf Id="1385" Tankstelle="1001" Tag="2018-12-06" VerkaufBenzinLiter="28.9000" />
+      <Verkauf Id="1391" Tankstelle="1001" Tag="2018-12-06" VerkaufBenzinLiter="15.6000" />
+      <Verkauf Id="1513" Tankstelle="1001" Tag="2018-12-06" VerkaufDieselLiter="52.3000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1001" Tag="2018-12-07" PreisBenzin="1.2797" PreisDiesel="1.2281">
+      <Verkauf Id="1004" Tankstelle="1001" Tag="2018-12-07" VerkaufDieselLiter="19.1000" />
+      <Verkauf Id="1019" Tankstelle="1001" Tag="2018-12-07" VerkaufBenzinLiter="20.6000" />
+      <Verkauf Id="1048" Tankstelle="1001" Tag="2018-12-07" VerkaufBenzinLiter="23.8000" />
+      <Verkauf Id="1050" Tankstelle="1001" Tag="2018-12-07" VerkaufDieselLiter="55.2000" />
+      <Verkauf Id="1161" Tankstelle="1001" Tag="2018-12-07" VerkaufDieselLiter="6.1000" />
+      <Verkauf Id="1272" Tankstelle="1001" Tag="2018-12-07" VerkaufBenzinLiter="35.1000" />
+      <Verkauf Id="1369" Tankstelle="1001" Tag="2018-12-07" VerkaufBenzinLiter="13.1000" />
+      <Verkauf Id="1395" Tankstelle="1001" Tag="2018-12-07" VerkaufBenzinLiter="61.5000" />
+      <Verkauf Id="1508" Tankstelle="1001" Tag="2018-12-07" VerkaufDieselLiter="20.0000" />
+      <Verkauf Id="1571" Tankstelle="1001" Tag="2018-12-07" VerkaufDieselLiter="50.9000" VerkaufShopEuro="43.4000" />
+      <Verkauf Id="1597" Tankstelle="1001" Tag="2018-12-07" VerkaufBenzinLiter="18.0000" />
+      <Verkauf Id="1638" Tankstelle="1001" Tag="2018-12-07" VerkaufBenzinLiter="8.7000" />
+      <Verkauf Id="1657" Tankstelle="1001" Tag="2018-12-07" VerkaufBenzinLiter="56.3000" VerkaufShopEuro="49.8800" />
+      <Verkauf Id="1710" Tankstelle="1001" Tag="2018-12-07" VerkaufBenzinLiter="45.8000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1001" Tag="2018-12-08" PreisBenzin="1.2669" PreisDiesel="1.2281">
+      <Verkauf Id="1017" Tankstelle="1001" Tag="2018-12-08" VerkaufDieselLiter="17.9000" />
+      <Verkauf Id="1090" Tankstelle="1001" Tag="2018-12-08" VerkaufDieselLiter="22.3000" />
+      <Verkauf Id="1152" Tankstelle="1001" Tag="2018-12-08" VerkaufDieselLiter="28.5000" />
+      <Verkauf Id="1168" Tankstelle="1001" Tag="2018-12-08" VerkaufBenzinLiter="31.0000" />
+      <Verkauf Id="1242" Tankstelle="1001" Tag="2018-12-08" VerkaufBenzinLiter="50.9000" />
+      <Verkauf Id="1264" Tankstelle="1001" Tag="2018-12-08" VerkaufBenzinLiter="23.8000" />
+      <Verkauf Id="1345" Tankstelle="1001" Tag="2018-12-08" VerkaufDieselLiter="13.5000" />
+      <Verkauf Id="1497" Tankstelle="1001" Tag="2018-12-08" VerkaufBenzinLiter="45.0000" />
+      <Verkauf Id="1549" Tankstelle="1001" Tag="2018-12-08" VerkaufDieselLiter="42.3000" />
+      <Verkauf Id="1580" Tankstelle="1001" Tag="2018-12-08" VerkaufBenzinLiter="18.5000" />
+      <Verkauf Id="1670" Tankstelle="1001" Tag="2018-12-08" VerkaufBenzinLiter="25.4000" />
+      <Verkauf Id="1748" Tankstelle="1001" Tag="2018-12-08" VerkaufBenzinLiter="33.6000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1001" Tag="2018-12-09" PreisBenzin="1.2543" PreisDiesel="1.2281">
+      <Verkauf Id="1024" Tankstelle="1001" Tag="2018-12-09" VerkaufDieselLiter="5.3000" />
+      <Verkauf Id="1055" Tankstelle="1001" Tag="2018-12-09" VerkaufBenzinLiter="7.6000" />
+      <Verkauf Id="1062" Tankstelle="1001" Tag="2018-12-09" VerkaufDieselLiter="23.2000" />
+      <Verkauf Id="1119" Tankstelle="1001" Tag="2018-12-09" VerkaufBenzinLiter="58.9000" />
+      <Verkauf Id="1364" Tankstelle="1001" Tag="2018-12-09" VerkaufBenzinLiter="49.4000" />
+      <Verkauf Id="1372" Tankstelle="1001" Tag="2018-12-09" VerkaufBenzinLiter="52.6000" />
+      <Verkauf Id="1383" Tankstelle="1001" Tag="2018-12-09" VerkaufDieselLiter="51.1000" VerkaufShopEuro="24.9800" />
+      <Verkauf Id="1417" Tankstelle="1001" Tag="2018-12-09" VerkaufBenzinLiter="21.3000" />
+      <Verkauf Id="1449" Tankstelle="1001" Tag="2018-12-09" VerkaufBenzinLiter="47.0000" />
+      <Verkauf Id="1553" Tankstelle="1001" Tag="2018-12-09" VerkaufDieselLiter="44.2000" />
+      <Verkauf Id="1573" Tankstelle="1001" Tag="2018-12-09" VerkaufBenzinLiter="30.5000" />
+      <Verkauf Id="1604" Tankstelle="1001" Tag="2018-12-09" VerkaufDieselLiter="25.2000" />
+      <Verkauf Id="1635" Tankstelle="1001" Tag="2018-12-09" VerkaufBenzinLiter="22.5000" VerkaufShopEuro="9.9600" />
+      <Verkauf Id="1706" Tankstelle="1001" Tag="2018-12-09" VerkaufDieselLiter="68.1000" />
+    </Tagespreis>
+  </Tankstelle>
+  <Tankstelle Id="1002" Bundesland="B" PLZ="7740" Betreiber="BP">
+    <Tagespreis Tankstelle="1002" Tag="2018-12-03" PreisBenzin="1.3500" PreisDiesel="1.2825">
+      <Verkauf Id="1003" Tankstelle="1002" Tag="2018-12-03" VerkaufBenzinLiter="60.7000" />
+      <Verkauf Id="1092" Tankstelle="1002" Tag="2018-12-03" VerkaufBenzinLiter="54.4000" />
+      <Verkauf Id="1247" Tankstelle="1002" Tag="2018-12-03" VerkaufDieselLiter="75.6000" />
+      <Verkauf Id="1401" Tankstelle="1002" Tag="2018-12-03" VerkaufDieselLiter="22.4000" />
+      <Verkauf Id="1439" Tankstelle="1002" Tag="2018-12-03" VerkaufBenzinLiter="49.6000" VerkaufShopEuro="8.4700" />
+      <Verkauf Id="1482" Tankstelle="1002" Tag="2018-12-03" VerkaufBenzinLiter="30.9000" />
+      <Verkauf Id="1757" Tankstelle="1002" Tag="2018-12-03" VerkaufBenzinLiter="49.0000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1002" Tag="2018-12-04" PreisBenzin="1.3635" PreisDiesel="1.2697">
+      <Verkauf Id="1117" Tankstelle="1002" Tag="2018-12-04" VerkaufDieselLiter="32.5000" VerkaufShopEuro="24.8200" />
+      <Verkauf Id="1198" Tankstelle="1002" Tag="2018-12-04" VerkaufBenzinLiter="50.8000" />
+      <Verkauf Id="1313" Tankstelle="1002" Tag="2018-12-04" VerkaufDieselLiter="72.7000" />
+      <Verkauf Id="1361" Tankstelle="1002" Tag="2018-12-04" VerkaufDieselLiter="10.8000" />
+      <Verkauf Id="1436" Tankstelle="1002" Tag="2018-12-04" VerkaufBenzinLiter="14.1000" />
+      <Verkauf Id="1554" Tankstelle="1002" Tag="2018-12-04" VerkaufBenzinLiter="53.9000" />
+      <Verkauf Id="1613" Tankstelle="1002" Tag="2018-12-04" VerkaufDieselLiter="46.1000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1002" Tag="2018-12-05" PreisBenzin="1.3362" PreisDiesel="1.2824">
+      <Verkauf Id="1010" Tankstelle="1002" Tag="2018-12-05" VerkaufDieselLiter="38.8000" />
+      <Verkauf Id="1130" Tankstelle="1002" Tag="2018-12-05" VerkaufBenzinLiter="38.5000" />
+      <Verkauf Id="1252" Tankstelle="1002" Tag="2018-12-05" VerkaufBenzinLiter="36.2000" />
+      <Verkauf Id="1296" Tankstelle="1002" Tag="2018-12-05" VerkaufDieselLiter="78.6000" />
+      <Verkauf Id="1409" Tankstelle="1002" Tag="2018-12-05" VerkaufDieselLiter="43.5000" />
+      <Verkauf Id="1443" Tankstelle="1002" Tag="2018-12-05" VerkaufDieselLiter="65.4000" />
+      <Verkauf Id="1563" Tankstelle="1002" Tag="2018-12-05" VerkaufDieselLiter="28.4000" />
+      <Verkauf Id="1622" Tankstelle="1002" Tag="2018-12-05" VerkaufDieselLiter="77.1000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1002" Tag="2018-12-06" PreisBenzin="1.3630" PreisDiesel="1.2824">
+      <Verkauf Id="1007" Tankstelle="1002" Tag="2018-12-06" VerkaufBenzinLiter="67.1000" />
+      <Verkauf Id="1097" Tankstelle="1002" Tag="2018-12-06" VerkaufBenzinLiter="10.4000" />
+      <Verkauf Id="1183" Tankstelle="1002" Tag="2018-12-06" VerkaufDieselLiter="12.0000" />
+      <Verkauf Id="1208" Tankstelle="1002" Tag="2018-12-06" VerkaufDieselLiter="14.4000" VerkaufShopEuro="6.9600" />
+      <Verkauf Id="1266" Tankstelle="1002" Tag="2018-12-06" VerkaufDieselLiter="37.3000" />
+      <Verkauf Id="1282" Tankstelle="1002" Tag="2018-12-06" VerkaufBenzinLiter="61.6000" />
+      <Verkauf Id="1288" Tankstelle="1002" Tag="2018-12-06" VerkaufBenzinLiter="57.9000" />
+      <Verkauf Id="1386" Tankstelle="1002" Tag="2018-12-06" VerkaufBenzinLiter="40.8000" />
+      <Verkauf Id="1430" Tankstelle="1002" Tag="2018-12-06" VerkaufDieselLiter="15.8000" VerkaufShopEuro="40.1000" />
+      <Verkauf Id="1468" Tankstelle="1002" Tag="2018-12-06" VerkaufBenzinLiter="17.8000" />
+      <Verkauf Id="1470" Tankstelle="1002" Tag="2018-12-06" VerkaufDieselLiter="42.4000" VerkaufShopEuro="43.2600" />
+      <Verkauf Id="1538" Tankstelle="1002" Tag="2018-12-06" VerkaufBenzinLiter="8.9000" VerkaufShopEuro="19.3400" />
+      <Verkauf Id="1750" Tankstelle="1002" Tag="2018-12-06" VerkaufDieselLiter="40.6000" />
+      <Verkauf Id="1755" Tankstelle="1002" Tag="2018-12-06" VerkaufBenzinLiter="55.0000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1002" Tag="2018-12-07" PreisBenzin="1.3902" PreisDiesel="1.2824">
+      <Verkauf Id="1034" Tankstelle="1002" Tag="2018-12-07" VerkaufBenzinLiter="23.1000" />
+      <Verkauf Id="1156" Tankstelle="1002" Tag="2018-12-07" VerkaufBenzinLiter="35.3000" />
+      <Verkauf Id="1241" Tankstelle="1002" Tag="2018-12-07" VerkaufBenzinLiter="54.5000" VerkaufShopEuro="48.6500" />
+      <Verkauf Id="1393" Tankstelle="1002" Tag="2018-12-07" VerkaufBenzinLiter="10.3000" />
+      <Verkauf Id="1404" Tankstelle="1002" Tag="2018-12-07" VerkaufBenzinLiter="52.9000" />
+      <Verkauf Id="1414" Tankstelle="1002" Tag="2018-12-07" VerkaufDieselLiter="62.8000" />
+      <Verkauf Id="1522" Tankstelle="1002" Tag="2018-12-07" VerkaufBenzinLiter="31.6000" />
+      <Verkauf Id="1536" Tankstelle="1002" Tag="2018-12-07" VerkaufDieselLiter="8.4000" />
+      <Verkauf Id="1544" Tankstelle="1002" Tag="2018-12-07" VerkaufDieselLiter="74.1000" />
+      <Verkauf Id="1591" Tankstelle="1002" Tag="2018-12-07" VerkaufBenzinLiter="51.9000" />
+      <Verkauf Id="1633" Tankstelle="1002" Tag="2018-12-07" VerkaufDieselLiter="9.6000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1002" Tag="2018-12-08" PreisBenzin="1.4180" PreisDiesel="1.2695">
+      <Verkauf Id="1285" Tankstelle="1002" Tag="2018-12-08" VerkaufDieselLiter="78.9000" />
+      <Verkauf Id="1456" Tankstelle="1002" Tag="2018-12-08" VerkaufBenzinLiter="62.7000" />
+      <Verkauf Id="1523" Tankstelle="1002" Tag="2018-12-08" VerkaufDieselLiter="27.1000" />
+      <Verkauf Id="1555" Tankstelle="1002" Tag="2018-12-08" VerkaufBenzinLiter="12.3000" />
+      <Verkauf Id="1579" Tankstelle="1002" Tag="2018-12-08" VerkaufBenzinLiter="55.5000" />
+      <Verkauf Id="1609" Tankstelle="1002" Tag="2018-12-08" VerkaufBenzinLiter="67.0000" />
+      <Verkauf Id="1760" Tankstelle="1002" Tag="2018-12-08" VerkaufBenzinLiter="56.0000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1002" Tag="2018-12-09" PreisBenzin="1.3897" PreisDiesel="1.2949">
+      <Verkauf Id="1355" Tankstelle="1002" Tag="2018-12-09" VerkaufDieselLiter="21.0000" />
+      <Verkauf Id="1432" Tankstelle="1002" Tag="2018-12-09" VerkaufDieselLiter="72.0000" />
+      <Verkauf Id="1460" Tankstelle="1002" Tag="2018-12-09" VerkaufBenzinLiter="52.3000" />
+      <Verkauf Id="1462" Tankstelle="1002" Tag="2018-12-09" VerkaufBenzinLiter="6.1000" />
+      <Verkauf Id="1558" Tankstelle="1002" Tag="2018-12-09" VerkaufBenzinLiter="21.9000" />
+      <Verkauf Id="1570" Tankstelle="1002" Tag="2018-12-09" VerkaufDieselLiter="42.6000" />
+      <Verkauf Id="1587" Tankstelle="1002" Tag="2018-12-09" VerkaufDieselLiter="28.2000" />
+      <Verkauf Id="1692" Tankstelle="1002" Tag="2018-12-09" VerkaufBenzinLiter="37.9000" />
+      <Verkauf Id="1738" Tankstelle="1002" Tag="2018-12-09" VerkaufDieselLiter="13.3000" />
+    </Tagespreis>
+  </Tankstelle>
+  <Tankstelle Id="1003" Bundesland="N" PLZ="2500" Betreiber="OMV">
+    <Tagespreis Tankstelle="1003" Tag="2018-12-03" PreisBenzin="1.3330" PreisDiesel="1.2664">
+      <Verkauf Id="1011" Tankstelle="1003" Tag="2018-12-03" VerkaufBenzinLiter="60.4000" />
+      <Verkauf Id="1053" Tankstelle="1003" Tag="2018-12-03" VerkaufDieselLiter="32.0000" />
+      <Verkauf Id="1219" Tankstelle="1003" Tag="2018-12-03" VerkaufDieselLiter="68.7000" />
+      <Verkauf Id="1317" Tankstelle="1003" Tag="2018-12-03" VerkaufBenzinLiter="65.4000" />
+      <Verkauf Id="1352" Tankstelle="1003" Tag="2018-12-03" VerkaufDieselLiter="77.8000" />
+      <Verkauf Id="1415" Tankstelle="1003" Tag="2018-12-03" VerkaufBenzinLiter="67.4000" />
+      <Verkauf Id="1423" Tankstelle="1003" Tag="2018-12-03" VerkaufDieselLiter="58.6000" />
+      <Verkauf Id="1474" Tankstelle="1003" Tag="2018-12-03" VerkaufDieselLiter="13.6000" />
+      <Verkauf Id="1477" Tankstelle="1003" Tag="2018-12-03" VerkaufBenzinLiter="48.3000" />
+      <Verkauf Id="1486" Tankstelle="1003" Tag="2018-12-03" VerkaufBenzinLiter="23.1000" />
+      <Verkauf Id="1559" Tankstelle="1003" Tag="2018-12-03" VerkaufBenzinLiter="49.0000" />
+      <Verkauf Id="1610" Tankstelle="1003" Tag="2018-12-03" VerkaufDieselLiter="55.6000" />
+      <Verkauf Id="1675" Tankstelle="1003" Tag="2018-12-03" VerkaufDieselLiter="79.9000" />
+      <Verkauf Id="1697" Tankstelle="1003" Tag="2018-12-03" VerkaufBenzinLiter="48.4000" />
+      <Verkauf Id="1749" Tankstelle="1003" Tag="2018-12-03" VerkaufBenzinLiter="57.5000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1003" Tag="2018-12-04" PreisBenzin="1.3597" PreisDiesel="1.2537">
+      <Verkauf Id="1111" Tankstelle="1003" Tag="2018-12-04" VerkaufDieselLiter="74.9000" VerkaufShopEuro="34.6500" />
+      <Verkauf Id="1307" Tankstelle="1003" Tag="2018-12-04" VerkaufBenzinLiter="66.1000" />
+      <Verkauf Id="1481" Tankstelle="1003" Tag="2018-12-04" VerkaufDieselLiter="14.9000" />
+      <Verkauf Id="1541" Tankstelle="1003" Tag="2018-12-04" VerkaufBenzinLiter="54.4000" />
+      <Verkauf Id="1583" Tankstelle="1003" Tag="2018-12-04" VerkaufDieselLiter="36.7000" />
+      <Verkauf Id="1606" Tankstelle="1003" Tag="2018-12-04" VerkaufBenzinLiter="64.9000" />
+      <Verkauf Id="1663" Tankstelle="1003" Tag="2018-12-04" VerkaufBenzinLiter="63.8000" VerkaufShopEuro="49.3700" />
+      <Verkauf Id="1707" Tankstelle="1003" Tag="2018-12-04" VerkaufDieselLiter="38.5000" />
+      <Verkauf Id="1711" Tankstelle="1003" Tag="2018-12-04" VerkaufDieselLiter="76.1000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1003" Tag="2018-12-05" PreisBenzin="1.3597" PreisDiesel="1.2411">
+      <Verkauf Id="1035" Tankstelle="1003" Tag="2018-12-05" VerkaufDieselLiter="11.5000" />
+      <Verkauf Id="1129" Tankstelle="1003" Tag="2018-12-05" VerkaufDieselLiter="36.5000" VerkaufShopEuro="29.2400" />
+      <Verkauf Id="1271" Tankstelle="1003" Tag="2018-12-05" VerkaufDieselLiter="74.2000" />
+      <Verkauf Id="1280" Tankstelle="1003" Tag="2018-12-05" VerkaufDieselLiter="72.4000" />
+      <Verkauf Id="1346" Tankstelle="1003" Tag="2018-12-05" VerkaufBenzinLiter="67.5000" />
+      <Verkauf Id="1358" Tankstelle="1003" Tag="2018-12-05" VerkaufBenzinLiter="54.8000" />
+      <Verkauf Id="1453" Tankstelle="1003" Tag="2018-12-05" VerkaufDieselLiter="62.3000" />
+      <Verkauf Id="1455" Tankstelle="1003" Tag="2018-12-05" VerkaufBenzinLiter="57.7000" />
+      <Verkauf Id="1490" Tankstelle="1003" Tag="2018-12-05" VerkaufDieselLiter="55.7000" VerkaufShopEuro="8.4500" />
+      <Verkauf Id="1511" Tankstelle="1003" Tag="2018-12-05" VerkaufBenzinLiter="48.9000" VerkaufShopEuro="34.0000" />
+      <Verkauf Id="1518" Tankstelle="1003" Tag="2018-12-05" VerkaufDieselLiter="31.3000" />
+      <Verkauf Id="1532" Tankstelle="1003" Tag="2018-12-05" VerkaufBenzinLiter="51.4000" />
+      <Verkauf Id="1654" Tankstelle="1003" Tag="2018-12-05" VerkaufBenzinLiter="26.1000" VerkaufShopEuro="43.3900" />
+      <Verkauf Id="1719" Tankstelle="1003" Tag="2018-12-05" VerkaufDieselLiter="14.8000" VerkaufShopEuro="35.0100" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1003" Tag="2018-12-06" PreisBenzin="1.3733" PreisDiesel="1.2163">
+      <Verkauf Id="1121" Tankstelle="1003" Tag="2018-12-06" VerkaufBenzinLiter="62.1000" />
+      <Verkauf Id="1132" Tankstelle="1003" Tag="2018-12-06" VerkaufDieselLiter="70.2000" />
+      <Verkauf Id="1143" Tankstelle="1003" Tag="2018-12-06" VerkaufDieselLiter="22.8000" VerkaufShopEuro="13.7800" />
+      <Verkauf Id="1431" Tankstelle="1003" Tag="2018-12-06" VerkaufBenzinLiter="64.0000" />
+      <Verkauf Id="1653" Tankstelle="1003" Tag="2018-12-06" VerkaufDieselLiter="61.0000" />
+      <Verkauf Id="1745" Tankstelle="1003" Tag="2018-12-06" VerkaufDieselLiter="13.2000" VerkaufShopEuro="14.9800" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1003" Tag="2018-12-07" PreisBenzin="1.4007" PreisDiesel="1.1920">
+      <Verkauf Id="1008" Tankstelle="1003" Tag="2018-12-07" VerkaufDieselLiter="6.7000" />
+      <Verkauf Id="1131" Tankstelle="1003" Tag="2018-12-07" VerkaufDieselLiter="6.3000" VerkaufShopEuro="34.1400" />
+      <Verkauf Id="1284" Tankstelle="1003" Tag="2018-12-07" VerkaufDieselLiter="50.2000" />
+      <Verkauf Id="1384" Tankstelle="1003" Tag="2018-12-07" VerkaufBenzinLiter="18.8000" />
+      <Verkauf Id="1510" Tankstelle="1003" Tag="2018-12-07" VerkaufBenzinLiter="44.6000" />
+      <Verkauf Id="1627" Tankstelle="1003" Tag="2018-12-07" VerkaufDieselLiter="5.6000" />
+      <Verkauf Id="1660" Tankstelle="1003" Tag="2018-12-07" VerkaufBenzinLiter="40.7000" />
+      <Verkauf Id="1691" Tankstelle="1003" Tag="2018-12-07" VerkaufDieselLiter="64.4000" />
+      <Verkauf Id="1702" Tankstelle="1003" Tag="2018-12-07" VerkaufDieselLiter="54.0000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1003" Tag="2018-12-08" PreisBenzin="1.3727" PreisDiesel="1.2158">
+      <Verkauf Id="1005" Tankstelle="1003" Tag="2018-12-08" VerkaufBenzinLiter="26.3000" />
+      <Verkauf Id="1339" Tankstelle="1003" Tag="2018-12-08" VerkaufDieselLiter="77.6000" />
+      <Verkauf Id="1403" Tankstelle="1003" Tag="2018-12-08" VerkaufDieselLiter="24.5000" />
+      <Verkauf Id="1408" Tankstelle="1003" Tag="2018-12-08" VerkaufDieselLiter="54.7000" VerkaufShopEuro="5.6500" />
+      <Verkauf Id="1519" Tankstelle="1003" Tag="2018-12-08" VerkaufBenzinLiter="6.5000" />
+      <Verkauf Id="1543" Tankstelle="1003" Tag="2018-12-08" VerkaufBenzinLiter="22.6000" />
+      <Verkauf Id="1572" Tankstelle="1003" Tag="2018-12-08" VerkaufBenzinLiter="33.0000" />
+      <Verkauf Id="1620" Tankstelle="1003" Tag="2018-12-08" VerkaufDieselLiter="14.6000" />
+      <Verkauf Id="1630" Tankstelle="1003" Tag="2018-12-08" VerkaufBenzinLiter="16.8000" />
+      <Verkauf Id="1652" Tankstelle="1003" Tag="2018-12-08" VerkaufDieselLiter="44.0000" />
+      <Verkauf Id="1722" Tankstelle="1003" Tag="2018-12-08" VerkaufBenzinLiter="61.3000" />
+      <Verkauf Id="1726" Tankstelle="1003" Tag="2018-12-08" VerkaufBenzinLiter="44.9000" />
+      <Verkauf Id="1744" Tankstelle="1003" Tag="2018-12-08" VerkaufDieselLiter="59.8000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1003" Tag="2018-12-09" PreisBenzin="1.3453" PreisDiesel="1.2158">
+      <Verkauf Id="1206" Tankstelle="1003" Tag="2018-12-09" VerkaufBenzinLiter="17.4000" VerkaufShopEuro="44.2700" />
+      <Verkauf Id="1306" Tankstelle="1003" Tag="2018-12-09" VerkaufDieselLiter="30.6000" />
+      <Verkauf Id="1356" Tankstelle="1003" Tag="2018-12-09" VerkaufBenzinLiter="33.1000" />
+      <Verkauf Id="1475" Tankstelle="1003" Tag="2018-12-09" VerkaufBenzinLiter="34.7000" />
+      <Verkauf Id="1492" Tankstelle="1003" Tag="2018-12-09" VerkaufBenzinLiter="20.0000" />
+      <Verkauf Id="1533" Tankstelle="1003" Tag="2018-12-09" VerkaufDieselLiter="72.7000" />
+      <Verkauf Id="1548" Tankstelle="1003" Tag="2018-12-09" VerkaufDieselLiter="50.7000" />
+      <Verkauf Id="1601" Tankstelle="1003" Tag="2018-12-09" VerkaufDieselLiter="66.0000" />
+      <Verkauf Id="1639" Tankstelle="1003" Tag="2018-12-09" VerkaufDieselLiter="6.9000" />
+      <Verkauf Id="1720" Tankstelle="1003" Tag="2018-12-09" VerkaufBenzinLiter="41.1000" />
+      <Verkauf Id="1723" Tankstelle="1003" Tag="2018-12-09" VerkaufDieselLiter="24.7000" />
+    </Tagespreis>
+  </Tankstelle>
+  <Tankstelle Id="1004" Bundesland="N" PLZ="2500" Betreiber="OMV">
+    <Tagespreis Tankstelle="1004" Tag="2018-12-03" PreisBenzin="1.3300" PreisDiesel="1.2635">
+      <Verkauf Id="1020" Tankstelle="1004" Tag="2018-12-03" VerkaufDieselLiter="6.6000" />
+      <Verkauf Id="1139" Tankstelle="1004" Tag="2018-12-03" VerkaufDieselLiter="21.3000" />
+      <Verkauf Id="1192" Tankstelle="1004" Tag="2018-12-03" VerkaufBenzinLiter="17.6000" />
+      <Verkauf Id="1224" Tankstelle="1004" Tag="2018-12-03" VerkaufDieselLiter="41.7000" />
+      <Verkauf Id="1466" Tankstelle="1004" Tag="2018-12-03" VerkaufBenzinLiter="33.4000" VerkaufShopEuro="42.1600" />
+      <Verkauf Id="1647" Tankstelle="1004" Tag="2018-12-03" VerkaufDieselLiter="10.6000" />
+      <Verkauf Id="1677" Tankstelle="1004" Tag="2018-12-03" VerkaufBenzinLiter="44.8000" />
+      <Verkauf Id="1693" Tankstelle="1004" Tag="2018-12-03" VerkaufDieselLiter="76.3000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1004" Tag="2018-12-04" PreisBenzin="1.3566" PreisDiesel="1.2382">
+      <Verkauf Id="1069" Tankstelle="1004" Tag="2018-12-04" VerkaufDieselLiter="78.9000" />
+      <Verkauf Id="1227" Tankstelle="1004" Tag="2018-12-04" VerkaufDieselLiter="24.3000" />
+      <Verkauf Id="1233" Tankstelle="1004" Tag="2018-12-04" VerkaufDieselLiter="45.9000" />
+      <Verkauf Id="1308" Tankstelle="1004" Tag="2018-12-04" VerkaufDieselLiter="60.5000" />
+      <Verkauf Id="1368" Tankstelle="1004" Tag="2018-12-04" VerkaufBenzinLiter="46.8000" />
+      <Verkauf Id="1458" Tankstelle="1004" Tag="2018-12-04" VerkaufBenzinLiter="28.9000" />
+      <Verkauf Id="1514" Tankstelle="1004" Tag="2018-12-04" VerkaufDieselLiter="30.3000" />
+      <Verkauf Id="1530" Tankstelle="1004" Tag="2018-12-04" VerkaufBenzinLiter="47.6000" />
+      <Verkauf Id="1712" Tankstelle="1004" Tag="2018-12-04" VerkaufDieselLiter="32.9000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1004" Tag="2018-12-05" PreisBenzin="1.3837" PreisDiesel="1.2630">
+      <Verkauf Id="1088" Tankstelle="1004" Tag="2018-12-05" VerkaufBenzinLiter="6.5000" />
+      <Verkauf Id="1116" Tankstelle="1004" Tag="2018-12-05" VerkaufDieselLiter="17.5000" VerkaufShopEuro="15.4900" />
+      <Verkauf Id="1232" Tankstelle="1004" Tag="2018-12-05" VerkaufDieselLiter="51.3000" />
+      <Verkauf Id="1239" Tankstelle="1004" Tag="2018-12-05" VerkaufBenzinLiter="32.6000" />
+      <Verkauf Id="1268" Tankstelle="1004" Tag="2018-12-05" VerkaufDieselLiter="23.0000" />
+      <Verkauf Id="1303" Tankstelle="1004" Tag="2018-12-05" VerkaufBenzinLiter="47.9000" />
+      <Verkauf Id="1649" Tankstelle="1004" Tag="2018-12-05" VerkaufBenzinLiter="39.4000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1004" Tag="2018-12-06" PreisBenzin="1.3976" PreisDiesel="1.2756">
+      <Verkauf Id="1033" Tankstelle="1004" Tag="2018-12-06" VerkaufDieselLiter="16.7000" />
+      <Verkauf Id="1068" Tankstelle="1004" Tag="2018-12-06" VerkaufDieselLiter="32.9000" />
+      <Verkauf Id="1205" Tankstelle="1004" Tag="2018-12-06" VerkaufDieselLiter="75.7000" />
+      <Verkauf Id="1314" Tankstelle="1004" Tag="2018-12-06" VerkaufDieselLiter="73.2000" />
+      <Verkauf Id="1321" Tankstelle="1004" Tag="2018-12-06" VerkaufBenzinLiter="62.5000" />
+      <Verkauf Id="1397" Tankstelle="1004" Tag="2018-12-06" VerkaufDieselLiter="61.2000" VerkaufShopEuro="30.8000" />
+      <Verkauf Id="1496" Tankstelle="1004" Tag="2018-12-06" VerkaufDieselLiter="14.5000" />
+      <Verkauf Id="1645" Tankstelle="1004" Tag="2018-12-06" VerkaufDieselLiter="28.0000" />
+      <Verkauf Id="1747" Tankstelle="1004" Tag="2018-12-06" VerkaufDieselLiter="26.5000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1004" Tag="2018-12-07" PreisBenzin="1.4540" PreisDiesel="1.3011">
+      <Verkauf Id="1159" Tankstelle="1004" Tag="2018-12-07" VerkaufDieselLiter="78.6000" />
+      <Verkauf Id="1210" Tankstelle="1004" Tag="2018-12-07" VerkaufBenzinLiter="7.2000" />
+      <Verkauf Id="1253" Tankstelle="1004" Tag="2018-12-07" VerkaufBenzinLiter="59.7000" />
+      <Verkauf Id="1311" Tankstelle="1004" Tag="2018-12-07" VerkaufDieselLiter="14.9000" />
+      <Verkauf Id="1316" Tankstelle="1004" Tag="2018-12-07" VerkaufBenzinLiter="16.9000" VerkaufShopEuro="2.6100" />
+      <Verkauf Id="1340" Tankstelle="1004" Tag="2018-12-07" VerkaufBenzinLiter="28.6000" />
+      <Verkauf Id="1380" Tankstelle="1004" Tag="2018-12-07" VerkaufBenzinLiter="55.1000" />
+      <Verkauf Id="1446" Tankstelle="1004" Tag="2018-12-07" VerkaufBenzinLiter="57.3000" />
+      <Verkauf Id="1499" Tankstelle="1004" Tag="2018-12-07" VerkaufDieselLiter="54.5000" />
+      <Verkauf Id="1728" Tankstelle="1004" Tag="2018-12-07" VerkaufBenzinLiter="15.7000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1004" Tag="2018-12-08" PreisBenzin="1.4255" PreisDiesel="1.3011">
+      <Verkauf Id="1134" Tankstelle="1004" Tag="2018-12-08" VerkaufDieselLiter="8.0000" />
+      <Verkauf Id="1220" Tankstelle="1004" Tag="2018-12-08" VerkaufBenzinLiter="22.3000" />
+      <Verkauf Id="1222" Tankstelle="1004" Tag="2018-12-08" VerkaufBenzinLiter="14.7000" />
+      <Verkauf Id="1244" Tankstelle="1004" Tag="2018-12-08" VerkaufDieselLiter="41.1000" VerkaufShopEuro="40.0300" />
+      <Verkauf Id="1262" Tankstelle="1004" Tag="2018-12-08" VerkaufDieselLiter="40.2000" />
+      <Verkauf Id="1330" Tankstelle="1004" Tag="2018-12-08" VerkaufBenzinLiter="19.9000" />
+      <Verkauf Id="1421" Tankstelle="1004" Tag="2018-12-08" VerkaufBenzinLiter="31.7000" />
+      <Verkauf Id="1467" Tankstelle="1004" Tag="2018-12-08" VerkaufDieselLiter="68.0000" />
+      <Verkauf Id="1483" Tankstelle="1004" Tag="2018-12-08" VerkaufDieselLiter="38.1000" />
+      <Verkauf Id="1721" Tankstelle="1004" Tag="2018-12-08" VerkaufDieselLiter="12.4000" />
+      <Verkauf Id="1727" Tankstelle="1004" Tag="2018-12-08" VerkaufDieselLiter="8.3000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1004" Tag="2018-12-09" PreisBenzin="1.4540" PreisDiesel="1.3272">
+      <Verkauf Id="1012" Tankstelle="1004" Tag="2018-12-09" VerkaufBenzinLiter="69.3000" />
+      <Verkauf Id="1107" Tankstelle="1004" Tag="2018-12-09" VerkaufDieselLiter="55.1000" VerkaufShopEuro="7.2400" />
+      <Verkauf Id="1173" Tankstelle="1004" Tag="2018-12-09" VerkaufDieselLiter="28.6000" />
+      <Verkauf Id="1200" Tankstelle="1004" Tag="2018-12-09" VerkaufDieselLiter="42.7000" />
+      <Verkauf Id="1509" Tankstelle="1004" Tag="2018-12-09" VerkaufBenzinLiter="21.9000" />
+      <Verkauf Id="1520" Tankstelle="1004" Tag="2018-12-09" VerkaufBenzinLiter="34.7000" />
+      <Verkauf Id="1568" Tankstelle="1004" Tag="2018-12-09" VerkaufBenzinLiter="36.5000" />
+      <Verkauf Id="1662" Tankstelle="1004" Tag="2018-12-09" VerkaufBenzinLiter="59.7000" />
+    </Tagespreis>
+  </Tankstelle>
+  <Tankstelle Id="1005" Bundesland="N" PLZ="2503" Betreiber="OMV">
+    <Tagespreis Tankstelle="1005" Tag="2018-12-03" PreisBenzin="1.3330" PreisDiesel="1.2664">
+      <Verkauf Id="1086" Tankstelle="1005" Tag="2018-12-03" VerkaufBenzinLiter="12.7000" />
+      <Verkauf Id="1114" Tankstelle="1005" Tag="2018-12-03" VerkaufDieselLiter="18.7000" />
+      <Verkauf Id="1136" Tankstelle="1005" Tag="2018-12-03" VerkaufBenzinLiter="58.4000" />
+      <Verkauf Id="1142" Tankstelle="1005" Tag="2018-12-03" VerkaufBenzinLiter="41.7000" />
+      <Verkauf Id="1148" Tankstelle="1005" Tag="2018-12-03" VerkaufBenzinLiter="25.0000" />
+      <Verkauf Id="1150" Tankstelle="1005" Tag="2018-12-03" VerkaufBenzinLiter="37.9000" />
+      <Verkauf Id="1184" Tankstelle="1005" Tag="2018-12-03" VerkaufDieselLiter="29.8000" />
+      <Verkauf Id="1218" Tankstelle="1005" Tag="2018-12-03" VerkaufDieselLiter="20.3000" />
+      <Verkauf Id="1223" Tankstelle="1005" Tag="2018-12-03" VerkaufBenzinLiter="54.2000" />
+      <Verkauf Id="1230" Tankstelle="1005" Tag="2018-12-03" VerkaufBenzinLiter="54.9000" />
+      <Verkauf Id="1281" Tankstelle="1005" Tag="2018-12-03" VerkaufDieselLiter="20.4000" />
+      <Verkauf Id="1338" Tankstelle="1005" Tag="2018-12-03" VerkaufDieselLiter="23.0000" />
+      <Verkauf Id="1350" Tankstelle="1005" Tag="2018-12-03" VerkaufBenzinLiter="30.2000" />
+      <Verkauf Id="1382" Tankstelle="1005" Tag="2018-12-03" VerkaufBenzinLiter="23.2000" />
+      <Verkauf Id="1440" Tankstelle="1005" Tag="2018-12-03" VerkaufBenzinLiter="9.6000" />
+      <Verkauf Id="1452" Tankstelle="1005" Tag="2018-12-03" VerkaufBenzinLiter="21.4000" />
+      <Verkauf Id="1561" Tankstelle="1005" Tag="2018-12-03" VerkaufDieselLiter="44.3000" />
+      <Verkauf Id="1629" Tankstelle="1005" Tag="2018-12-03" VerkaufBenzinLiter="23.4000" />
+      <Verkauf Id="1636" Tankstelle="1005" Tag="2018-12-03" VerkaufDieselLiter="54.8000" VerkaufShopEuro="33.0400" />
+      <Verkauf Id="1715" Tankstelle="1005" Tag="2018-12-03" VerkaufBenzinLiter="69.4000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1005" Tag="2018-12-04" PreisBenzin="1.3330" PreisDiesel="1.2917">
+      <Verkauf Id="1063" Tankstelle="1005" Tag="2018-12-04" VerkaufDieselLiter="74.7000" VerkaufShopEuro="41.6800" />
+      <Verkauf Id="1094" Tankstelle="1005" Tag="2018-12-04" VerkaufDieselLiter="22.4000" />
+      <Verkauf Id="1101" Tankstelle="1005" Tag="2018-12-04" VerkaufDieselLiter="67.1000" />
+      <Verkauf Id="1108" Tankstelle="1005" Tag="2018-12-04" VerkaufBenzinLiter="16.7000" />
+      <Verkauf Id="1287" Tankstelle="1005" Tag="2018-12-04" VerkaufDieselLiter="9.9000" />
+      <Verkauf Id="1418" Tankstelle="1005" Tag="2018-12-04" VerkaufDieselLiter="24.2000" />
+      <Verkauf Id="1637" Tankstelle="1005" Tag="2018-12-04" VerkaufDieselLiter="68.0000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1005" Tag="2018-12-05" PreisBenzin="1.3463" PreisDiesel="1.2658">
+      <Verkauf Id="1025" Tankstelle="1005" Tag="2018-12-05" VerkaufDieselLiter="56.1000" />
+      <Verkauf Id="1030" Tankstelle="1005" Tag="2018-12-05" VerkaufDieselLiter="55.8000" />
+      <Verkauf Id="1084" Tankstelle="1005" Tag="2018-12-05" VerkaufDieselLiter="45.5000" />
+      <Verkauf Id="1144" Tankstelle="1005" Tag="2018-12-05" VerkaufBenzinLiter="68.2000" />
+      <Verkauf Id="1334" Tankstelle="1005" Tag="2018-12-05" VerkaufBenzinLiter="57.8000" />
+      <Verkauf Id="1335" Tankstelle="1005" Tag="2018-12-05" VerkaufDieselLiter="26.8000" />
+      <Verkauf Id="1354" Tankstelle="1005" Tag="2018-12-05" VerkaufDieselLiter="28.0000" />
+      <Verkauf Id="1363" Tankstelle="1005" Tag="2018-12-05" VerkaufBenzinLiter="36.6000" />
+      <Verkauf Id="1416" Tankstelle="1005" Tag="2018-12-05" VerkaufBenzinLiter="51.6000" VerkaufShopEuro="17.8200" />
+      <Verkauf Id="1501" Tankstelle="1005" Tag="2018-12-05" VerkaufBenzinLiter="48.4000" />
+      <Verkauf Id="1643" Tankstelle="1005" Tag="2018-12-05" VerkaufBenzinLiter="49.4000" />
+      <Verkauf Id="1736" Tankstelle="1005" Tag="2018-12-05" VerkaufDieselLiter="15.5000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1005" Tag="2018-12-06" PreisBenzin="1.3329" PreisDiesel="1.2532">
+      <Verkauf Id="1167" Tankstelle="1005" Tag="2018-12-06" VerkaufDieselLiter="47.2000" />
+      <Verkauf Id="1324" Tankstelle="1005" Tag="2018-12-06" VerkaufBenzinLiter="64.7000" />
+      <Verkauf Id="1331" Tankstelle="1005" Tag="2018-12-06" VerkaufDieselLiter="59.3000" />
+      <Verkauf Id="1505" Tankstelle="1005" Tag="2018-12-06" VerkaufDieselLiter="7.4000" />
+      <Verkauf Id="1589" Tankstelle="1005" Tag="2018-12-06" VerkaufBenzinLiter="21.2000" />
+      <Verkauf Id="1656" Tankstelle="1005" Tag="2018-12-06" VerkaufDieselLiter="23.9000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1005" Tag="2018-12-07" PreisBenzin="1.3329" PreisDiesel="1.2407">
+      <Verkauf Id="1036" Tankstelle="1005" Tag="2018-12-07" VerkaufBenzinLiter="25.9000" />
+      <Verkauf Id="1149" Tankstelle="1005" Tag="2018-12-07" VerkaufDieselLiter="40.1000" />
+      <Verkauf Id="1337" Tankstelle="1005" Tag="2018-12-07" VerkaufBenzinLiter="42.5000" />
+      <Verkauf Id="1413" Tankstelle="1005" Tag="2018-12-07" VerkaufDieselLiter="15.1000" />
+      <Verkauf Id="1457" Tankstelle="1005" Tag="2018-12-07" VerkaufBenzinLiter="24.9000" />
+      <Verkauf Id="1491" Tankstelle="1005" Tag="2018-12-07" VerkaufBenzinLiter="42.0000" />
+      <Verkauf Id="1590" Tankstelle="1005" Tag="2018-12-07" VerkaufBenzinLiter="59.3000" />
+      <Verkauf Id="1596" Tankstelle="1005" Tag="2018-12-07" VerkaufDieselLiter="39.4000" />
+      <Verkauf Id="1626" Tankstelle="1005" Tag="2018-12-07" VerkaufBenzinLiter="51.6000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1005" Tag="2018-12-08" PreisBenzin="1.3062" PreisDiesel="1.2158">
+      <Verkauf Id="1023" Tankstelle="1005" Tag="2018-12-08" VerkaufDieselLiter="15.3000" VerkaufShopEuro="37.0600" />
+      <Verkauf Id="1079" Tankstelle="1005" Tag="2018-12-08" VerkaufBenzinLiter="30.1000" />
+      <Verkauf Id="1096" Tankstelle="1005" Tag="2018-12-08" VerkaufBenzinLiter="52.5000" />
+      <Verkauf Id="1503" Tankstelle="1005" Tag="2018-12-08" VerkaufBenzinLiter="58.6000" />
+      <Verkauf Id="1535" Tankstelle="1005" Tag="2018-12-08" VerkaufBenzinLiter="40.8000" />
+      <Verkauf Id="1729" Tankstelle="1005" Tag="2018-12-08" VerkaufBenzinLiter="35.3000" />
+      <Verkauf Id="1766" Tankstelle="1005" Tag="2018-12-08" VerkaufDieselLiter="27.7000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1005" Tag="2018-12-09" PreisBenzin="1.2801" PreisDiesel="1.2402">
+      <Verkauf Id="1009" Tankstelle="1005" Tag="2018-12-09" VerkaufDieselLiter="74.7000" />
+      <Verkauf Id="1077" Tankstelle="1005" Tag="2018-12-09" VerkaufBenzinLiter="35.2000" />
+      <Verkauf Id="1172" Tankstelle="1005" Tag="2018-12-09" VerkaufBenzinLiter="11.2000" />
+      <Verkauf Id="1181" Tankstelle="1005" Tag="2018-12-09" VerkaufDieselLiter="51.8000" />
+      <Verkauf Id="1259" Tankstelle="1005" Tag="2018-12-09" VerkaufDieselLiter="38.3000" />
+      <Verkauf Id="1327" Tankstelle="1005" Tag="2018-12-09" VerkaufDieselLiter="60.2000" />
+      <Verkauf Id="1577" Tankstelle="1005" Tag="2018-12-09" VerkaufDieselLiter="79.1000" />
+      <Verkauf Id="1600" Tankstelle="1005" Tag="2018-12-09" VerkaufBenzinLiter="31.9000" />
+      <Verkauf Id="1733" Tankstelle="1005" Tag="2018-12-09" VerkaufBenzinLiter="21.7000" />
+    </Tagespreis>
+  </Tankstelle>
+  <Tankstelle Id="1006" Bundesland="N" PLZ="2684" Betreiber="OMV">
+    <Tagespreis Tankstelle="1006" Tag="2018-12-03" PreisBenzin="1.2850" PreisDiesel="1.2208">
+      <Verkauf Id="1059" Tankstelle="1006" Tag="2018-12-03" VerkaufDieselLiter="30.2000" />
+      <Verkauf Id="1066" Tankstelle="1006" Tag="2018-12-03" VerkaufBenzinLiter="58.8000" />
+      <Verkauf Id="1155" Tankstelle="1006" Tag="2018-12-03" VerkaufBenzinLiter="55.1000" />
+      <Verkauf Id="1207" Tankstelle="1006" Tag="2018-12-03" VerkaufBenzinLiter="33.8000" />
+      <Verkauf Id="1716" Tankstelle="1006" Tag="2018-12-03" VerkaufDieselLiter="32.5000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1006" Tag="2018-12-04" PreisBenzin="1.2979" PreisDiesel="1.2085">
+      <Verkauf Id="1029" Tankstelle="1006" Tag="2018-12-04" VerkaufDieselLiter="23.3000" />
+      <Verkauf Id="1163" Tankstelle="1006" Tag="2018-12-04" VerkaufDieselLiter="66.6000" />
+      <Verkauf Id="1309" Tankstelle="1006" Tag="2018-12-04" VerkaufDieselLiter="26.6000" />
+      <Verkauf Id="1315" Tankstelle="1006" Tag="2018-12-04" VerkaufBenzinLiter="64.2000" />
+      <Verkauf Id="1428" Tankstelle="1006" Tag="2018-12-04" VerkaufDieselLiter="60.4000" />
+      <Verkauf Id="1552" Tankstelle="1006" Tag="2018-12-04" VerkaufDieselLiter="61.1000" />
+      <Verkauf Id="1623" Tankstelle="1006" Tag="2018-12-04" VerkaufDieselLiter="42.1000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1006" Tag="2018-12-05" PreisBenzin="1.3238" PreisDiesel="1.1844">
+      <Verkauf Id="1018" Tankstelle="1006" Tag="2018-12-05" VerkaufDieselLiter="74.6000" />
+      <Verkauf Id="1049" Tankstelle="1006" Tag="2018-12-05" VerkaufDieselLiter="47.7000" />
+      <Verkauf Id="1064" Tankstelle="1006" Tag="2018-12-05" VerkaufDieselLiter="20.0000" />
+      <Verkauf Id="1113" Tankstelle="1006" Tag="2018-12-05" VerkaufBenzinLiter="9.6000" />
+      <Verkauf Id="1126" Tankstelle="1006" Tag="2018-12-05" VerkaufBenzinLiter="52.6000" />
+      <Verkauf Id="1133" Tankstelle="1006" Tag="2018-12-05" VerkaufDieselLiter="27.1000" />
+      <Verkauf Id="1169" Tankstelle="1006" Tag="2018-12-05" VerkaufDieselLiter="57.6000" />
+      <Verkauf Id="1203" Tankstelle="1006" Tag="2018-12-05" VerkaufBenzinLiter="6.2000" VerkaufShopEuro="5.6800" />
+      <Verkauf Id="1374" Tankstelle="1006" Tag="2018-12-05" VerkaufBenzinLiter="63.8000" />
+      <Verkauf Id="1407" Tankstelle="1006" Tag="2018-12-05" VerkaufBenzinLiter="13.6000" />
+      <Verkauf Id="1433" Tankstelle="1006" Tag="2018-12-05" VerkaufDieselLiter="52.4000" />
+      <Verkauf Id="1594" Tankstelle="1006" Tag="2018-12-05" VerkaufBenzinLiter="42.1000" />
+      <Verkauf Id="1678" Tankstelle="1006" Tag="2018-12-05" VerkaufBenzinLiter="12.9000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1006" Tag="2018-12-06" PreisBenzin="1.3238" PreisDiesel="1.1962">
+      <Verkauf Id="1021" Tankstelle="1006" Tag="2018-12-06" VerkaufBenzinLiter="68.4000" />
+      <Verkauf Id="1028" Tankstelle="1006" Tag="2018-12-06" VerkaufBenzinLiter="44.7000" />
+      <Verkauf Id="1170" Tankstelle="1006" Tag="2018-12-06" VerkaufBenzinLiter="48.6000" VerkaufShopEuro="33.9400" />
+      <Verkauf Id="1197" Tankstelle="1006" Tag="2018-12-06" VerkaufBenzinLiter="21.7000" />
+      <Verkauf Id="1215" Tankstelle="1006" Tag="2018-12-06" VerkaufDieselLiter="44.4000" />
+      <Verkauf Id="1251" Tankstelle="1006" Tag="2018-12-06" VerkaufBenzinLiter="48.5000" />
+      <Verkauf Id="1381" Tankstelle="1006" Tag="2018-12-06" VerkaufDieselLiter="8.0000" />
+      <Verkauf Id="1454" Tankstelle="1006" Tag="2018-12-06" VerkaufBenzinLiter="10.9000" />
+      <Verkauf Id="1498" Tankstelle="1006" Tag="2018-12-06" VerkaufDieselLiter="34.8000" />
+      <Verkauf Id="1540" Tankstelle="1006" Tag="2018-12-06" VerkaufDieselLiter="47.2000" />
+      <Verkauf Id="1687" Tankstelle="1006" Tag="2018-12-06" VerkaufBenzinLiter="60.8000" />
+      <Verkauf Id="1700" Tankstelle="1006" Tag="2018-12-06" VerkaufBenzinLiter="35.7000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1006" Tag="2018-12-07" PreisBenzin="1.2973" PreisDiesel="1.1962">
+      <Verkauf Id="1072" Tankstelle="1006" Tag="2018-12-07" VerkaufBenzinLiter="46.4000" />
+      <Verkauf Id="1347" Tankstelle="1006" Tag="2018-12-07" VerkaufDieselLiter="30.5000" />
+      <Verkauf Id="1371" Tankstelle="1006" Tag="2018-12-07" VerkaufDieselLiter="58.0000" />
+      <Verkauf Id="1398" Tankstelle="1006" Tag="2018-12-07" VerkaufDieselLiter="12.3000" />
+      <Verkauf Id="1478" Tankstelle="1006" Tag="2018-12-07" VerkaufBenzinLiter="39.3000" />
+      <Verkauf Id="1495" Tankstelle="1006" Tag="2018-12-07" VerkaufDieselLiter="59.9000" />
+      <Verkauf Id="1616" Tankstelle="1006" Tag="2018-12-07" VerkaufDieselLiter="29.1000" />
+      <Verkauf Id="1625" Tankstelle="1006" Tag="2018-12-07" VerkaufBenzinLiter="20.8000" />
+      <Verkauf Id="1640" Tankstelle="1006" Tag="2018-12-07" VerkaufDieselLiter="39.8000" />
+      <Verkauf Id="1708" Tankstelle="1006" Tag="2018-12-07" VerkaufBenzinLiter="55.1000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1006" Tag="2018-12-08" PreisBenzin="1.2973" PreisDiesel="1.2201">
+      <Verkauf Id="1013" Tankstelle="1006" Tag="2018-12-08" VerkaufBenzinLiter="64.9000" />
+      <Verkauf Id="1070" Tankstelle="1006" Tag="2018-12-08" VerkaufBenzinLiter="16.8000" VerkaufShopEuro="40.3300" />
+      <Verkauf Id="1085" Tankstelle="1006" Tag="2018-12-08" VerkaufBenzinLiter="28.4000" />
+      <Verkauf Id="1138" Tankstelle="1006" Tag="2018-12-08" VerkaufDieselLiter="21.7000" />
+      <Verkauf Id="1178" Tankstelle="1006" Tag="2018-12-08" VerkaufBenzinLiter="34.1000" />
+      <Verkauf Id="1576" Tankstelle="1006" Tag="2018-12-08" VerkaufBenzinLiter="11.0000" />
+      <Verkauf Id="1621" Tankstelle="1006" Tag="2018-12-08" VerkaufDieselLiter="9.9000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1006" Tag="2018-12-09" PreisBenzin="1.2973" PreisDiesel="1.2323">
+      <Verkauf Id="1040" Tankstelle="1006" Tag="2018-12-09" VerkaufDieselLiter="40.7000" />
+      <Verkauf Id="1057" Tankstelle="1006" Tag="2018-12-09" VerkaufDieselLiter="63.7000" />
+      <Verkauf Id="1216" Tankstelle="1006" Tag="2018-12-09" VerkaufBenzinLiter="21.3000" />
+      <Verkauf Id="1217" Tankstelle="1006" Tag="2018-12-09" VerkaufBenzinLiter="4.4000" />
+      <Verkauf Id="1319" Tankstelle="1006" Tag="2018-12-09" VerkaufBenzinLiter="42.4000" />
+      <Verkauf Id="1353" Tankstelle="1006" Tag="2018-12-09" VerkaufBenzinLiter="52.8000" VerkaufShopEuro="38.9700" />
+      <Verkauf Id="1526" Tankstelle="1006" Tag="2018-12-09" VerkaufDieselLiter="14.5000" />
+      <Verkauf Id="1584" Tankstelle="1006" Tag="2018-12-09" VerkaufDieselLiter="11.0000" />
+      <Verkauf Id="1603" Tankstelle="1006" Tag="2018-12-09" VerkaufDieselLiter="61.9000" />
+      <Verkauf Id="1624" Tankstelle="1006" Tag="2018-12-09" VerkaufBenzinLiter="62.3000" />
+      <Verkauf Id="1646" Tankstelle="1006" Tag="2018-12-09" VerkaufBenzinLiter="18.1000" />
+      <Verkauf Id="1672" Tankstelle="1006" Tag="2018-12-09" VerkaufDieselLiter="54.3000" />
+      <Verkauf Id="1734" Tankstelle="1006" Tag="2018-12-09" VerkaufDieselLiter="56.5000" />
+    </Tagespreis>
+  </Tankstelle>
+  <Tankstelle Id="1007" Bundesland="W" PLZ="1050" Betreiber="BP">
+    <Tagespreis Tankstelle="1007" Tag="2018-12-03" PreisBenzin="1.3060" PreisDiesel="1.2407">
+      <Verkauf Id="1164" Tankstelle="1007" Tag="2018-12-03" VerkaufDieselLiter="12.9000" />
+      <Verkauf Id="1283" Tankstelle="1007" Tag="2018-12-03" VerkaufDieselLiter="30.6000" />
+      <Verkauf Id="1400" Tankstelle="1007" Tag="2018-12-03" VerkaufDieselLiter="11.6000" />
+      <Verkauf Id="1444" Tankstelle="1007" Tag="2018-12-03" VerkaufDieselLiter="79.7000" />
+      <Verkauf Id="1504" Tankstelle="1007" Tag="2018-12-03" VerkaufBenzinLiter="15.8000" />
+      <Verkauf Id="1512" Tankstelle="1007" Tag="2018-12-03" VerkaufDieselLiter="8.2000" />
+      <Verkauf Id="1695" Tankstelle="1007" Tag="2018-12-03" VerkaufDieselLiter="61.2000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1007" Tag="2018-12-04" PreisBenzin="1.3060" PreisDiesel="1.2655">
+      <Verkauf Id="1016" Tankstelle="1007" Tag="2018-12-04" VerkaufDieselLiter="37.4000" VerkaufShopEuro="33.6100" />
+      <Verkauf Id="1054" Tankstelle="1007" Tag="2018-12-04" VerkaufBenzinLiter="47.9000" />
+      <Verkauf Id="1073" Tankstelle="1007" Tag="2018-12-04" VerkaufDieselLiter="74.0000" />
+      <Verkauf Id="1115" Tankstelle="1007" Tag="2018-12-04" VerkaufBenzinLiter="30.6000" />
+      <Verkauf Id="1176" Tankstelle="1007" Tag="2018-12-04" VerkaufBenzinLiter="31.0000" />
+      <Verkauf Id="1180" Tankstelle="1007" Tag="2018-12-04" VerkaufBenzinLiter="61.8000" />
+      <Verkauf Id="1394" Tankstelle="1007" Tag="2018-12-04" VerkaufDieselLiter="38.9000" />
+      <Verkauf Id="1412" Tankstelle="1007" Tag="2018-12-04" VerkaufDieselLiter="49.0000" />
+      <Verkauf Id="1435" Tankstelle="1007" Tag="2018-12-04" VerkaufDieselLiter="43.1000" />
+      <Verkauf Id="1550" Tankstelle="1007" Tag="2018-12-04" VerkaufDieselLiter="67.5000" />
+      <Verkauf Id="1605" Tankstelle="1007" Tag="2018-12-04" VerkaufDieselLiter="43.0000" />
+      <Verkauf Id="1644" Tankstelle="1007" Tag="2018-12-04" VerkaufBenzinLiter="36.1000" />
+      <Verkauf Id="1718" Tankstelle="1007" Tag="2018-12-04" VerkaufBenzinLiter="24.7000" />
+      <Verkauf Id="1732" Tankstelle="1007" Tag="2018-12-04" VerkaufDieselLiter="10.5000" />
+      <Verkauf Id="1770" Tankstelle="1007" Tag="2018-12-04" VerkaufBenzinLiter="16.3000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1007" Tag="2018-12-05" PreisBenzin="1.2799" PreisDiesel="1.2908">
+      <Verkauf Id="1047" Tankstelle="1007" Tag="2018-12-05" VerkaufBenzinLiter="23.7000" />
+      <Verkauf Id="1102" Tankstelle="1007" Tag="2018-12-05" VerkaufBenzinLiter="21.3000" />
+      <Verkauf Id="1125" Tankstelle="1007" Tag="2018-12-05" VerkaufBenzinLiter="35.0000" />
+      <Verkauf Id="1140" Tankstelle="1007" Tag="2018-12-05" VerkaufBenzinLiter="14.3000" />
+      <Verkauf Id="1195" Tankstelle="1007" Tag="2018-12-05" VerkaufDieselLiter="19.5000" />
+      <Verkauf Id="1261" Tankstelle="1007" Tag="2018-12-05" VerkaufDieselLiter="11.5000" />
+      <Verkauf Id="1279" Tankstelle="1007" Tag="2018-12-05" VerkaufBenzinLiter="61.2000" />
+      <Verkauf Id="1359" Tankstelle="1007" Tag="2018-12-05" VerkaufBenzinLiter="65.1000" VerkaufShopEuro="49.2800" />
+      <Verkauf Id="1420" Tankstelle="1007" Tag="2018-12-05" VerkaufDieselLiter="43.6000" />
+      <Verkauf Id="1463" Tankstelle="1007" Tag="2018-12-05" VerkaufBenzinLiter="7.1000" />
+      <Verkauf Id="1537" Tankstelle="1007" Tag="2018-12-05" VerkaufDieselLiter="73.4000" />
+      <Verkauf Id="1556" Tankstelle="1007" Tag="2018-12-05" VerkaufDieselLiter="62.3000" />
+      <Verkauf Id="1628" Tankstelle="1007" Tag="2018-12-05" VerkaufBenzinLiter="57.2000" />
+      <Verkauf Id="1763" Tankstelle="1007" Tag="2018-12-05" VerkaufDieselLiter="51.6000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1007" Tag="2018-12-06" PreisBenzin="1.2799" PreisDiesel="1.3037">
+      <Verkauf Id="1038" Tankstelle="1007" Tag="2018-12-06" VerkaufDieselLiter="70.2000" />
+      <Verkauf Id="1052" Tankstelle="1007" Tag="2018-12-06" VerkaufBenzinLiter="14.2000" />
+      <Verkauf Id="1158" Tankstelle="1007" Tag="2018-12-06" VerkaufDieselLiter="21.8000" />
+      <Verkauf Id="1257" Tankstelle="1007" Tag="2018-12-06" VerkaufBenzinLiter="30.6000" />
+      <Verkauf Id="1377" Tankstelle="1007" Tag="2018-12-06" VerkaufDieselLiter="47.3000" />
+      <Verkauf Id="1411" Tankstelle="1007" Tag="2018-12-06" VerkaufBenzinLiter="4.2000" />
+      <Verkauf Id="1521" Tankstelle="1007" Tag="2018-12-06" VerkaufDieselLiter="73.6000" />
+      <Verkauf Id="1551" Tankstelle="1007" Tag="2018-12-06" VerkaufDieselLiter="26.2000" />
+      <Verkauf Id="1566" Tankstelle="1007" Tag="2018-12-06" VerkaufBenzinLiter="44.3000" />
+      <Verkauf Id="1739" Tankstelle="1007" Tag="2018-12-06" VerkaufDieselLiter="35.4000" />
+      <Verkauf Id="1746" Tankstelle="1007" Tag="2018-12-06" VerkaufBenzinLiter="10.6000" />
+      <Verkauf Id="1768" Tankstelle="1007" Tag="2018-12-06" VerkaufDieselLiter="66.3000" VerkaufShopEuro="7.7400" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1007" Tag="2018-12-07" PreisBenzin="1.2671" PreisDiesel="1.3298">
+      <Verkauf Id="1043" Tankstelle="1007" Tag="2018-12-07" VerkaufDieselLiter="22.5000" VerkaufShopEuro="41.5400" />
+      <Verkauf Id="1089" Tankstelle="1007" Tag="2018-12-07" VerkaufBenzinLiter="59.1000" VerkaufShopEuro="34.6400" />
+      <Verkauf Id="1302" Tankstelle="1007" Tag="2018-12-07" VerkaufDieselLiter="31.8000" />
+      <Verkauf Id="1378" Tankstelle="1007" Tag="2018-12-07" VerkaufDieselLiter="60.0000" />
+      <Verkauf Id="1424" Tankstelle="1007" Tag="2018-12-07" VerkaufBenzinLiter="34.1000" />
+      <Verkauf Id="1752" Tankstelle="1007" Tag="2018-12-07" VerkaufBenzinLiter="59.5000" VerkaufShopEuro="40.1200" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1007" Tag="2018-12-08" PreisBenzin="1.2798" PreisDiesel="1.3431">
+      <Verkauf Id="1001" Tankstelle="1007" Tag="2018-12-08" VerkaufBenzinLiter="67.4000" />
+      <Verkauf Id="1075" Tankstelle="1007" Tag="2018-12-08" VerkaufBenzinLiter="63.7000" />
+      <Verkauf Id="1191" Tankstelle="1007" Tag="2018-12-08" VerkaufDieselLiter="12.3000" />
+      <Verkauf Id="1263" Tankstelle="1007" Tag="2018-12-08" VerkaufBenzinLiter="56.6000" />
+      <Verkauf Id="1267" Tankstelle="1007" Tag="2018-12-08" VerkaufBenzinLiter="65.6000" />
+      <Verkauf Id="1305" Tankstelle="1007" Tag="2018-12-08" VerkaufDieselLiter="6.3000" />
+      <Verkauf Id="1320" Tankstelle="1007" Tag="2018-12-08" VerkaufBenzinLiter="63.1000" />
+      <Verkauf Id="1618" Tankstelle="1007" Tag="2018-12-08" VerkaufBenzinLiter="37.9000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1007" Tag="2018-12-09" PreisBenzin="1.2925" PreisDiesel="1.3162">
+      <Verkauf Id="1231" Tankstelle="1007" Tag="2018-12-09" VerkaufBenzinLiter="44.2000" />
+      <Verkauf Id="1275" Tankstelle="1007" Tag="2018-12-09" VerkaufBenzinLiter="43.1000" />
+      <Verkauf Id="1289" Tankstelle="1007" Tag="2018-12-09" VerkaufBenzinLiter="43.3000" />
+      <Verkauf Id="1484" Tankstelle="1007" Tag="2018-12-09" VerkaufDieselLiter="68.6000" />
+      <Verkauf Id="1494" Tankstelle="1007" Tag="2018-12-09" VerkaufDieselLiter="23.9000" />
+      <Verkauf Id="1667" Tankstelle="1007" Tag="2018-12-09" VerkaufBenzinLiter="33.3000" />
+    </Tagespreis>
+  </Tankstelle>
+  <Tankstelle Id="1008" Bundesland="W" PLZ="1050" Betreiber="BP">
+    <Tagespreis Tankstelle="1008" Tag="2018-12-03" PreisBenzin="1.3380" PreisDiesel="1.2711">
+      <Verkauf Id="1074" Tankstelle="1008" Tag="2018-12-03" VerkaufDieselLiter="64.3000" />
+      <Verkauf Id="1087" Tankstelle="1008" Tag="2018-12-03" VerkaufDieselLiter="34.2000" />
+      <Verkauf Id="1255" Tankstelle="1008" Tag="2018-12-03" VerkaufDieselLiter="24.8000" />
+      <Verkauf Id="1274" Tankstelle="1008" Tag="2018-12-03" VerkaufBenzinLiter="42.0000" />
+      <Verkauf Id="1506" Tankstelle="1008" Tag="2018-12-03" VerkaufDieselLiter="76.5000" />
+      <Verkauf Id="1578" Tankstelle="1008" Tag="2018-12-03" VerkaufDieselLiter="34.9000" />
+      <Verkauf Id="1681" Tankstelle="1008" Tag="2018-12-03" VerkaufBenzinLiter="45.6000" VerkaufShopEuro="19.2900" />
+      <Verkauf Id="1705" Tankstelle="1008" Tag="2018-12-03" VerkaufDieselLiter="38.8000" />
+      <Verkauf Id="1765" Tankstelle="1008" Tag="2018-12-03" VerkaufBenzinLiter="26.1000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1008" Tag="2018-12-04" PreisBenzin="1.3380" PreisDiesel="1.2965">
+      <Verkauf Id="1039" Tankstelle="1008" Tag="2018-12-04" VerkaufDieselLiter="32.7000" />
+      <Verkauf Id="1067" Tankstelle="1008" Tag="2018-12-04" VerkaufBenzinLiter="45.4000" />
+      <Verkauf Id="1104" Tankstelle="1008" Tag="2018-12-04" VerkaufBenzinLiter="34.2000" />
+      <Verkauf Id="1109" Tankstelle="1008" Tag="2018-12-04" VerkaufDieselLiter="59.6000" />
+      <Verkauf Id="1194" Tankstelle="1008" Tag="2018-12-04" VerkaufBenzinLiter="66.7000" />
+      <Verkauf Id="1254" Tankstelle="1008" Tag="2018-12-04" VerkaufDieselLiter="50.0000" />
+      <Verkauf Id="1357" Tankstelle="1008" Tag="2018-12-04" VerkaufDieselLiter="80.0000" />
+      <Verkauf Id="1360" Tankstelle="1008" Tag="2018-12-04" VerkaufBenzinLiter="44.6000" />
+      <Verkauf Id="1471" Tankstelle="1008" Tag="2018-12-04" VerkaufDieselLiter="5.2000" VerkaufShopEuro="35.5300" />
+      <Verkauf Id="1534" Tankstelle="1008" Tag="2018-12-04" VerkaufDieselLiter="72.2000" />
+      <Verkauf Id="1545" Tankstelle="1008" Tag="2018-12-04" VerkaufBenzinLiter="49.0000" />
+      <Verkauf Id="1574" Tankstelle="1008" Tag="2018-12-04" VerkaufDieselLiter="47.3000" />
+      <Verkauf Id="1666" Tankstelle="1008" Tag="2018-12-04" VerkaufBenzinLiter="10.1000" />
+      <Verkauf Id="1740" Tankstelle="1008" Tag="2018-12-04" VerkaufDieselLiter="5.9000" />
+      <Verkauf Id="1767" Tankstelle="1008" Tag="2018-12-04" VerkaufDieselLiter="51.5000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1008" Tag="2018-12-05" PreisBenzin="1.3380" PreisDiesel="1.3225">
+      <Verkauf Id="1006" Tankstelle="1008" Tag="2018-12-05" VerkaufBenzinLiter="49.8000" />
+      <Verkauf Id="1438" Tankstelle="1008" Tag="2018-12-05" VerkaufBenzinLiter="69.3000" VerkaufShopEuro="43.8800" />
+      <Verkauf Id="1611" Tankstelle="1008" Tag="2018-12-05" VerkaufBenzinLiter="58.2000" />
+      <Verkauf Id="1664" Tankstelle="1008" Tag="2018-12-05" VerkaufDieselLiter="12.9000" />
+      <Verkauf Id="1701" Tankstelle="1008" Tag="2018-12-05" VerkaufDieselLiter="74.7000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1008" Tag="2018-12-06" PreisBenzin="1.3380" PreisDiesel="1.3092">
+      <Verkauf Id="1081" Tankstelle="1008" Tag="2018-12-06" VerkaufDieselLiter="24.2000" />
+      <Verkauf Id="1127" Tankstelle="1008" Tag="2018-12-06" VerkaufBenzinLiter="52.5000" VerkaufShopEuro="31.3600" />
+      <Verkauf Id="1145" Tankstelle="1008" Tag="2018-12-06" VerkaufDieselLiter="39.9000" VerkaufShopEuro="48.6800" />
+      <Verkauf Id="1177" Tankstelle="1008" Tag="2018-12-06" VerkaufDieselLiter="17.1000" />
+      <Verkauf Id="1235" Tankstelle="1008" Tag="2018-12-06" VerkaufBenzinLiter="6.3000" />
+      <Verkauf Id="1292" Tankstelle="1008" Tag="2018-12-06" VerkaufBenzinLiter="28.9000" />
+      <Verkauf Id="1300" Tankstelle="1008" Tag="2018-12-06" VerkaufBenzinLiter="23.1000" />
+      <Verkauf Id="1333" Tankstelle="1008" Tag="2018-12-06" VerkaufBenzinLiter="57.6000" />
+      <Verkauf Id="1373" Tankstelle="1008" Tag="2018-12-06" VerkaufBenzinLiter="69.8000" />
+      <Verkauf Id="1375" Tankstelle="1008" Tag="2018-12-06" VerkaufBenzinLiter="4.7000" />
+      <Verkauf Id="1451" Tankstelle="1008" Tag="2018-12-06" VerkaufBenzinLiter="66.8000" />
+      <Verkauf Id="1459" Tankstelle="1008" Tag="2018-12-06" VerkaufBenzinLiter="25.3000" />
+      <Verkauf Id="1493" Tankstelle="1008" Tag="2018-12-06" VerkaufBenzinLiter="7.5000" />
+      <Verkauf Id="1516" Tankstelle="1008" Tag="2018-12-06" VerkaufDieselLiter="9.1000" />
+      <Verkauf Id="1517" Tankstelle="1008" Tag="2018-12-06" VerkaufBenzinLiter="27.8000" />
+      <Verkauf Id="1565" Tankstelle="1008" Tag="2018-12-06" VerkaufBenzinLiter="18.8000" />
+      <Verkauf Id="1673" Tankstelle="1008" Tag="2018-12-06" VerkaufDieselLiter="36.6000" />
+      <Verkauf Id="1690" Tankstelle="1008" Tag="2018-12-06" VerkaufDieselLiter="26.9000" />
+      <Verkauf Id="1756" Tankstelle="1008" Tag="2018-12-06" VerkaufBenzinLiter="62.9000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1008" Tag="2018-12-07" PreisBenzin="1.3648" PreisDiesel="1.3092">
+      <Verkauf Id="1078" Tankstelle="1008" Tag="2018-12-07" VerkaufBenzinLiter="62.6000" />
+      <Verkauf Id="1188" Tankstelle="1008" Tag="2018-12-07" VerkaufBenzinLiter="46.2000" />
+      <Verkauf Id="1278" Tankstelle="1008" Tag="2018-12-07" VerkaufDieselLiter="44.7000" />
+      <Verkauf Id="1312" Tankstelle="1008" Tag="2018-12-07" VerkaufDieselLiter="34.1000" />
+      <Verkauf Id="1480" Tankstelle="1008" Tag="2018-12-07" VerkaufBenzinLiter="48.1000" />
+      <Verkauf Id="1502" Tankstelle="1008" Tag="2018-12-07" VerkaufBenzinLiter="35.5000" />
+      <Verkauf Id="1588" Tankstelle="1008" Tag="2018-12-07" VerkaufBenzinLiter="57.0000" />
+      <Verkauf Id="1680" Tankstelle="1008" Tag="2018-12-07" VerkaufDieselLiter="24.0000" />
+      <Verkauf Id="1696" Tankstelle="1008" Tag="2018-12-07" VerkaufBenzinLiter="52.8000" />
+      <Verkauf Id="1762" Tankstelle="1008" Tag="2018-12-07" VerkaufBenzinLiter="67.8000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1008" Tag="2018-12-08" PreisBenzin="1.3511" PreisDiesel="1.3223">
+      <Verkauf Id="1031" Tankstelle="1008" Tag="2018-12-08" VerkaufBenzinLiter="51.2000" />
+      <Verkauf Id="1110" Tankstelle="1008" Tag="2018-12-08" VerkaufDieselLiter="45.8000" />
+      <Verkauf Id="1137" Tankstelle="1008" Tag="2018-12-08" VerkaufBenzinLiter="41.0000" />
+      <Verkauf Id="1348" Tankstelle="1008" Tag="2018-12-08" VerkaufBenzinLiter="66.4000" />
+      <Verkauf Id="1367" Tankstelle="1008" Tag="2018-12-08" VerkaufBenzinLiter="30.1000" />
+      <Verkauf Id="1429" Tankstelle="1008" Tag="2018-12-08" VerkaufBenzinLiter="57.7000" />
+      <Verkauf Id="1612" Tankstelle="1008" Tag="2018-12-08" VerkaufBenzinLiter="11.1000" VerkaufShopEuro="37.5600" />
+      <Verkauf Id="1668" Tankstelle="1008" Tag="2018-12-08" VerkaufDieselLiter="34.1000" />
+      <Verkauf Id="1682" Tankstelle="1008" Tag="2018-12-08" VerkaufBenzinLiter="31.6000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1008" Tag="2018-12-09" PreisBenzin="1.3376" PreisDiesel="1.2959">
+      <Verkauf Id="1037" Tankstelle="1008" Tag="2018-12-09" VerkaufDieselLiter="19.6000" />
+      <Verkauf Id="1080" Tankstelle="1008" Tag="2018-12-09" VerkaufDieselLiter="34.3000" />
+      <Verkauf Id="1326" Tankstelle="1008" Tag="2018-12-09" VerkaufDieselLiter="47.4000" />
+      <Verkauf Id="1599" Tankstelle="1008" Tag="2018-12-09" VerkaufDieselLiter="26.3000" />
+      <Verkauf Id="1648" Tankstelle="1008" Tag="2018-12-09" VerkaufBenzinLiter="58.1000" />
+    </Tagespreis>
+  </Tankstelle>
+  <Tankstelle Id="1009" Bundesland="W" PLZ="1050" Betreiber="BP">
+    <Tagespreis Tankstelle="1009" Tag="2018-12-03" PreisBenzin="1.2670" PreisDiesel="1.2037">
+      <Verkauf Id="1122" Tankstelle="1009" Tag="2018-12-03" VerkaufDieselLiter="51.1000" />
+      <Verkauf Id="1162" Tankstelle="1009" Tag="2018-12-03" VerkaufBenzinLiter="17.4000" />
+      <Verkauf Id="1226" Tankstelle="1009" Tag="2018-12-03" VerkaufDieselLiter="60.3000" />
+      <Verkauf Id="1299" Tankstelle="1009" Tag="2018-12-03" VerkaufBenzinLiter="48.9000" />
+      <Verkauf Id="1389" Tankstelle="1009" Tag="2018-12-03" VerkaufDieselLiter="22.0000" />
+      <Verkauf Id="1422" Tankstelle="1009" Tag="2018-12-03" VerkaufDieselLiter="32.1000" />
+      <Verkauf Id="1525" Tankstelle="1009" Tag="2018-12-03" VerkaufBenzinLiter="40.1000" VerkaufShopEuro="8.7100" />
+      <Verkauf Id="1586" Tankstelle="1009" Tag="2018-12-03" VerkaufBenzinLiter="19.1000" />
+      <Verkauf Id="1714" Tankstelle="1009" Tag="2018-12-03" VerkaufBenzinLiter="50.5000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1009" Tag="2018-12-04" PreisBenzin="1.2670" PreisDiesel="1.2037">
+      <Verkauf Id="1190" Tankstelle="1009" Tag="2018-12-04" VerkaufDieselLiter="54.0000" />
+      <Verkauf Id="1301" Tankstelle="1009" Tag="2018-12-04" VerkaufBenzinLiter="22.4000" VerkaufShopEuro="1.4400" />
+      <Verkauf Id="1366" Tankstelle="1009" Tag="2018-12-04" VerkaufDieselLiter="78.8000" />
+      <Verkauf Id="1410" Tankstelle="1009" Tag="2018-12-04" VerkaufBenzinLiter="61.3000" />
+      <Verkauf Id="1419" Tankstelle="1009" Tag="2018-12-04" VerkaufDieselLiter="76.1000" />
+      <Verkauf Id="1445" Tankstelle="1009" Tag="2018-12-04" VerkaufDieselLiter="64.9000" />
+      <Verkauf Id="1489" Tankstelle="1009" Tag="2018-12-04" VerkaufBenzinLiter="20.7000" />
+      <Verkauf Id="1515" Tankstelle="1009" Tag="2018-12-04" VerkaufDieselLiter="9.3000" />
+      <Verkauf Id="1595" Tankstelle="1009" Tag="2018-12-04" VerkaufBenzinLiter="34.9000" />
+      <Verkauf Id="1769" Tankstelle="1009" Tag="2018-12-04" VerkaufBenzinLiter="68.4000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1009" Tag="2018-12-05" PreisBenzin="1.2670" PreisDiesel="1.1796">
+      <Verkauf Id="1027" Tankstelle="1009" Tag="2018-12-05" VerkaufDieselLiter="12.3000" />
+      <Verkauf Id="1046" Tankstelle="1009" Tag="2018-12-05" VerkaufDieselLiter="32.3000" />
+      <Verkauf Id="1083" Tankstelle="1009" Tag="2018-12-05" VerkaufBenzinLiter="69.3000" />
+      <Verkauf Id="1091" Tankstelle="1009" Tag="2018-12-05" VerkaufDieselLiter="34.2000" />
+      <Verkauf Id="1093" Tankstelle="1009" Tag="2018-12-05" VerkaufBenzinLiter="58.7000" />
+      <Verkauf Id="1189" Tankstelle="1009" Tag="2018-12-05" VerkaufDieselLiter="36.0000" />
+      <Verkauf Id="1201" Tankstelle="1009" Tag="2018-12-05" VerkaufBenzinLiter="17.5000" />
+      <Verkauf Id="1325" Tankstelle="1009" Tag="2018-12-05" VerkaufDieselLiter="63.3000" VerkaufShopEuro="31.6000" />
+      <Verkauf Id="1402" Tankstelle="1009" Tag="2018-12-05" VerkaufDieselLiter="78.2000" />
+      <Verkauf Id="1567" Tankstelle="1009" Tag="2018-12-05" VerkaufDieselLiter="10.4000" />
+      <Verkauf Id="1688" Tankstelle="1009" Tag="2018-12-05" VerkaufDieselLiter="38.3000" />
+      <Verkauf Id="1699" Tankstelle="1009" Tag="2018-12-05" VerkaufDieselLiter="74.5000" />
+      <Verkauf Id="1730" Tankstelle="1009" Tag="2018-12-05" VerkaufBenzinLiter="29.8000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1009" Tag="2018-12-06" PreisBenzin="1.2417" PreisDiesel="1.1678">
+      <Verkauf Id="1256" Tankstelle="1009" Tag="2018-12-06" VerkaufDieselLiter="15.0000" />
+      <Verkauf Id="1286" Tankstelle="1009" Tag="2018-12-06" VerkaufBenzinLiter="39.5000" VerkaufShopEuro="48.4100" />
+      <Verkauf Id="1295" Tankstelle="1009" Tag="2018-12-06" VerkaufDieselLiter="25.6000" />
+      <Verkauf Id="1332" Tankstelle="1009" Tag="2018-12-06" VerkaufBenzinLiter="13.0000" />
+      <Verkauf Id="1406" Tankstelle="1009" Tag="2018-12-06" VerkaufBenzinLiter="24.4000" />
+      <Verkauf Id="1487" Tankstelle="1009" Tag="2018-12-06" VerkaufBenzinLiter="29.5000" VerkaufShopEuro="32.1700" />
+      <Verkauf Id="1674" Tankstelle="1009" Tag="2018-12-06" VerkaufDieselLiter="52.6000" />
+      <Verkauf Id="1676" Tankstelle="1009" Tag="2018-12-06" VerkaufDieselLiter="56.8000" />
+      <Verkauf Id="1703" Tankstelle="1009" Tag="2018-12-06" VerkaufBenzinLiter="9.6000" />
+      <Verkauf Id="1725" Tankstelle="1009" Tag="2018-12-06" VerkaufDieselLiter="38.1000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1009" Tag="2018-12-07" PreisBenzin="1.2665" PreisDiesel="1.1561">
+      <Verkauf Id="1002" Tankstelle="1009" Tag="2018-12-07" VerkaufDieselLiter="11.8000" />
+      <Verkauf Id="1076" Tankstelle="1009" Tag="2018-12-07" VerkaufDieselLiter="71.2000" VerkaufShopEuro="19.8200" />
+      <Verkauf Id="1105" Tankstelle="1009" Tag="2018-12-07" VerkaufBenzinLiter="14.0000" />
+      <Verkauf Id="1112" Tankstelle="1009" Tag="2018-12-07" VerkaufDieselLiter="37.9000" />
+      <Verkauf Id="1249" Tankstelle="1009" Tag="2018-12-07" VerkaufDieselLiter="43.3000" />
+      <Verkauf Id="1290" Tankstelle="1009" Tag="2018-12-07" VerkaufDieselLiter="40.7000" />
+      <Verkauf Id="1318" Tankstelle="1009" Tag="2018-12-07" VerkaufBenzinLiter="42.9000" />
+      <Verkauf Id="1379" Tankstelle="1009" Tag="2018-12-07" VerkaufDieselLiter="24.3000" VerkaufShopEuro="22.6100" />
+      <Verkauf Id="1542" Tankstelle="1009" Tag="2018-12-07" VerkaufBenzinLiter="55.8000" />
+      <Verkauf Id="1557" Tankstelle="1009" Tag="2018-12-07" VerkaufBenzinLiter="66.2000" VerkaufShopEuro="21.0200" />
+      <Verkauf Id="1592" Tankstelle="1009" Tag="2018-12-07" VerkaufDieselLiter="47.7000" />
+      <Verkauf Id="1651" Tankstelle="1009" Tag="2018-12-07" VerkaufBenzinLiter="31.1000" />
+      <Verkauf Id="1731" Tankstelle="1009" Tag="2018-12-07" VerkaufBenzinLiter="46.6000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1009" Tag="2018-12-08" PreisBenzin="1.2412" PreisDiesel="1.1561">
+      <Verkauf Id="1065" Tankstelle="1009" Tag="2018-12-08" VerkaufBenzinLiter="11.8000" />
+      <Verkauf Id="1229" Tankstelle="1009" Tag="2018-12-08" VerkaufDieselLiter="40.4000" VerkaufShopEuro="9.5700" />
+      <Verkauf Id="1234" Tankstelle="1009" Tag="2018-12-08" VerkaufDieselLiter="18.1000" />
+      <Verkauf Id="1238" Tankstelle="1009" Tag="2018-12-08" VerkaufDieselLiter="5.3000" />
+      <Verkauf Id="1329" Tankstelle="1009" Tag="2018-12-08" VerkaufBenzinLiter="53.3000" />
+      <Verkauf Id="1441" Tankstelle="1009" Tag="2018-12-08" VerkaufDieselLiter="38.2000" VerkaufShopEuro="22.1900" />
+      <Verkauf Id="1546" Tankstelle="1009" Tag="2018-12-08" VerkaufBenzinLiter="24.9000" />
+      <Verkauf Id="1655" Tankstelle="1009" Tag="2018-12-08" VerkaufDieselLiter="56.0000" />
+      <Verkauf Id="1735" Tankstelle="1009" Tag="2018-12-08" VerkaufBenzinLiter="53.8000" />
+      <Verkauf Id="1751" Tankstelle="1009" Tag="2018-12-08" VerkaufBenzinLiter="14.9000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1009" Tag="2018-12-09" PreisBenzin="1.2288" PreisDiesel="1.1561">
+      <Verkauf Id="1157" Tankstelle="1009" Tag="2018-12-09" VerkaufBenzinLiter="21.2000" />
+      <Verkauf Id="1166" Tankstelle="1009" Tag="2018-12-09" VerkaufDieselLiter="58.5000" />
+      <Verkauf Id="1246" Tankstelle="1009" Tag="2018-12-09" VerkaufDieselLiter="41.7000" />
+      <Verkauf Id="1434" Tankstelle="1009" Tag="2018-12-09" VerkaufBenzinLiter="40.5000" />
+      <Verkauf Id="1473" Tankstelle="1009" Tag="2018-12-09" VerkaufBenzinLiter="34.0000" />
+      <Verkauf Id="1539" Tankstelle="1009" Tag="2018-12-09" VerkaufBenzinLiter="26.4000" />
+      <Verkauf Id="1742" Tankstelle="1009" Tag="2018-12-09" VerkaufBenzinLiter="65.8000" />
+      <Verkauf Id="1761" Tankstelle="1009" Tag="2018-12-09" VerkaufDieselLiter="14.2000" />
+    </Tagespreis>
+  </Tankstelle>
+  <Tankstelle Id="1010" Bundesland="W" PLZ="1040" Betreiber="BP">
+    <Tagespreis Tankstelle="1010" Tag="2018-12-03" PreisBenzin="1.3460" PreisDiesel="1.2787">
+      <Verkauf Id="1015" Tankstelle="1010" Tag="2018-12-03" VerkaufBenzinLiter="53.5000" />
+      <Verkauf Id="1061" Tankstelle="1010" Tag="2018-12-03" VerkaufBenzinLiter="37.1000" VerkaufShopEuro="19.9500" />
+      <Verkauf Id="1213" Tankstelle="1010" Tag="2018-12-03" VerkaufBenzinLiter="49.6000" VerkaufShopEuro="6.3700" />
+      <Verkauf Id="1258" Tankstelle="1010" Tag="2018-12-03" VerkaufBenzinLiter="39.0000" />
+      <Verkauf Id="1260" Tankstelle="1010" Tag="2018-12-03" VerkaufDieselLiter="62.4000" />
+      <Verkauf Id="1273" Tankstelle="1010" Tag="2018-12-03" VerkaufBenzinLiter="30.7000" VerkaufShopEuro="31.8800" />
+      <Verkauf Id="1396" Tankstelle="1010" Tag="2018-12-03" VerkaufDieselLiter="27.4000" />
+      <Verkauf Id="1569" Tankstelle="1010" Tag="2018-12-03" VerkaufBenzinLiter="55.0000" />
+      <Verkauf Id="1686" Tankstelle="1010" Tag="2018-12-03" VerkaufBenzinLiter="17.4000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1010" Tag="2018-12-04" PreisBenzin="1.3729" PreisDiesel="1.2915">
+      <Verkauf Id="1022" Tankstelle="1010" Tag="2018-12-04" VerkaufBenzinLiter="29.9000" />
+      <Verkauf Id="1026" Tankstelle="1010" Tag="2018-12-04" VerkaufBenzinLiter="7.4000" />
+      <Verkauf Id="1099" Tankstelle="1010" Tag="2018-12-04" VerkaufBenzinLiter="21.0000" />
+      <Verkauf Id="1135" Tankstelle="1010" Tag="2018-12-04" VerkaufBenzinLiter="30.2000" />
+      <Verkauf Id="1146" Tankstelle="1010" Tag="2018-12-04" VerkaufBenzinLiter="54.5000" />
+      <Verkauf Id="1250" Tankstelle="1010" Tag="2018-12-04" VerkaufDieselLiter="20.2000" />
+      <Verkauf Id="1269" Tankstelle="1010" Tag="2018-12-04" VerkaufDieselLiter="72.5000" />
+      <Verkauf Id="1399" Tankstelle="1010" Tag="2018-12-04" VerkaufDieselLiter="36.0000" />
+      <Verkauf Id="1485" Tankstelle="1010" Tag="2018-12-04" VerkaufDieselLiter="67.7000" VerkaufShopEuro="20.3600" />
+      <Verkauf Id="1564" Tankstelle="1010" Tag="2018-12-04" VerkaufBenzinLiter="6.2000" />
+      <Verkauf Id="1614" Tankstelle="1010" Tag="2018-12-04" VerkaufBenzinLiter="6.9000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1010" Tag="2018-12-05" PreisBenzin="1.3729" PreisDiesel="1.2915">
+      <Verkauf Id="1045" Tankstelle="1010" Tag="2018-12-05" VerkaufDieselLiter="69.4000" />
+      <Verkauf Id="1100" Tankstelle="1010" Tag="2018-12-05" VerkaufDieselLiter="79.5000" />
+      <Verkauf Id="1204" Tankstelle="1010" Tag="2018-12-05" VerkaufBenzinLiter="61.4000" />
+      <Verkauf Id="1293" Tankstelle="1010" Tag="2018-12-05" VerkaufBenzinLiter="69.1000" />
+      <Verkauf Id="1342" Tankstelle="1010" Tag="2018-12-05" VerkaufDieselLiter="11.2000" />
+      <Verkauf Id="1344" Tankstelle="1010" Tag="2018-12-05" VerkaufBenzinLiter="32.8000" />
+      <Verkauf Id="1362" Tankstelle="1010" Tag="2018-12-05" VerkaufDieselLiter="7.0000" />
+      <Verkauf Id="1392" Tankstelle="1010" Tag="2018-12-05" VerkaufDieselLiter="47.3000" />
+      <Verkauf Id="1617" Tankstelle="1010" Tag="2018-12-05" VerkaufBenzinLiter="45.4000" />
+      <Verkauf Id="1698" Tankstelle="1010" Tag="2018-12-05" VerkaufBenzinLiter="51.8000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1010" Tag="2018-12-06" PreisBenzin="1.3729" PreisDiesel="1.2786">
+      <Verkauf Id="1041" Tankstelle="1010" Tag="2018-12-06" VerkaufDieselLiter="39.7000" />
+      <Verkauf Id="1056" Tankstelle="1010" Tag="2018-12-06" VerkaufBenzinLiter="55.5000" VerkaufShopEuro="20.4400" />
+      <Verkauf Id="1154" Tankstelle="1010" Tag="2018-12-06" VerkaufBenzinLiter="38.8000" />
+      <Verkauf Id="1182" Tankstelle="1010" Tag="2018-12-06" VerkaufDieselLiter="68.3000" />
+      <Verkauf Id="1243" Tankstelle="1010" Tag="2018-12-06" VerkaufBenzinLiter="12.1000" />
+      <Verkauf Id="1265" Tankstelle="1010" Tag="2018-12-06" VerkaufBenzinLiter="29.3000" />
+      <Verkauf Id="1277" Tankstelle="1010" Tag="2018-12-06" VerkaufBenzinLiter="48.6000" />
+      <Verkauf Id="1297" Tankstelle="1010" Tag="2018-12-06" VerkaufDieselLiter="70.7000" />
+      <Verkauf Id="1323" Tankstelle="1010" Tag="2018-12-06" VerkaufBenzinLiter="25.3000" />
+      <Verkauf Id="1472" Tankstelle="1010" Tag="2018-12-06" VerkaufDieselLiter="36.8000" />
+      <Verkauf Id="1582" Tankstelle="1010" Tag="2018-12-06" VerkaufDieselLiter="39.1000" />
+      <Verkauf Id="1607" Tankstelle="1010" Tag="2018-12-06" VerkaufDieselLiter="26.9000" />
+      <Verkauf Id="1685" Tankstelle="1010" Tag="2018-12-06" VerkaufDieselLiter="39.2000" />
+      <Verkauf Id="1704" Tankstelle="1010" Tag="2018-12-06" VerkaufDieselLiter="27.4000" VerkaufShopEuro="38.0800" />
+      <Verkauf Id="1724" Tankstelle="1010" Tag="2018-12-06" VerkaufDieselLiter="71.3000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1010" Tag="2018-12-07" PreisBenzin="1.3729" PreisDiesel="1.2530">
+      <Verkauf Id="1120" Tankstelle="1010" Tag="2018-12-07" VerkaufBenzinLiter="25.2000" />
+      <Verkauf Id="1228" Tankstelle="1010" Tag="2018-12-07" VerkaufBenzinLiter="18.8000" />
+      <Verkauf Id="1427" Tankstelle="1010" Tag="2018-12-07" VerkaufBenzinLiter="20.5000" />
+      <Verkauf Id="1442" Tankstelle="1010" Tag="2018-12-07" VerkaufBenzinLiter="20.3000" />
+      <Verkauf Id="1465" Tankstelle="1010" Tag="2018-12-07" VerkaufDieselLiter="53.9000" />
+      <Verkauf Id="1529" Tankstelle="1010" Tag="2018-12-07" VerkaufBenzinLiter="37.9000" VerkaufShopEuro="8.3400" />
+      <Verkauf Id="1575" Tankstelle="1010" Tag="2018-12-07" VerkaufDieselLiter="63.4000" />
+      <Verkauf Id="1641" Tankstelle="1010" Tag="2018-12-07" VerkaufDieselLiter="6.2000" VerkaufShopEuro="49.9100" />
+      <Verkauf Id="1684" Tankstelle="1010" Tag="2018-12-07" VerkaufDieselLiter="64.1000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1010" Tag="2018-12-08" PreisBenzin="1.4540" PreisDiesel="1.2279">
+      <Verkauf Id="1044" Tankstelle="1010" Tag="2018-12-08" VerkaufDieselLiter="44.1000" />
+      <Verkauf Id="1071" Tankstelle="1010" Tag="2018-12-08" VerkaufDieselLiter="63.5000" />
+      <Verkauf Id="1118" Tankstelle="1010" Tag="2018-12-08" VerkaufDieselLiter="34.6000" />
+      <Verkauf Id="1141" Tankstelle="1010" Tag="2018-12-08" VerkaufBenzinLiter="51.2000" />
+      <Verkauf Id="1291" Tankstelle="1010" Tag="2018-12-08" VerkaufBenzinLiter="46.1000" />
+      <Verkauf Id="1349" Tankstelle="1010" Tag="2018-12-08" VerkaufDieselLiter="55.0000" />
+      <Verkauf Id="1437" Tankstelle="1010" Tag="2018-12-08" VerkaufDieselLiter="74.5000" />
+      <Verkauf Id="1531" Tankstelle="1010" Tag="2018-12-08" VerkaufBenzinLiter="61.5000" />
+      <Verkauf Id="1602" Tankstelle="1010" Tag="2018-12-08" VerkaufDieselLiter="75.7000" />
+      <Verkauf Id="1642" Tankstelle="1010" Tag="2018-12-08" VerkaufBenzinLiter="12.7000" />
+      <Verkauf Id="1713" Tankstelle="1010" Tag="2018-12-08" VerkaufBenzinLiter="53.3000" />
+      <Verkauf Id="1741" Tankstelle="1010" Tag="2018-12-08" VerkaufDieselLiter="22.7000" VerkaufShopEuro="22.4400" />
+      <Verkauf Id="1753" Tankstelle="1010" Tag="2018-12-08" VerkaufDieselLiter="6.7000" />
+      <Verkauf Id="1754" Tankstelle="1010" Tag="2018-12-08" VerkaufDieselLiter="22.9000" />
+      <Verkauf Id="1759" Tankstelle="1010" Tag="2018-12-08" VerkaufDieselLiter="80.0000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1010" Tag="2018-12-09" PreisBenzin="1.4004" PreisDiesel="1.2034">
+      <Verkauf Id="1106" Tankstelle="1010" Tag="2018-12-09" VerkaufDieselLiter="62.0000" />
+      <Verkauf Id="1186" Tankstelle="1010" Tag="2018-12-09" VerkaufBenzinLiter="15.2000" />
+      <Verkauf Id="1193" Tankstelle="1010" Tag="2018-12-09" VerkaufDieselLiter="24.4000" />
+      <Verkauf Id="1199" Tankstelle="1010" Tag="2018-12-09" VerkaufDieselLiter="71.9000" />
+      <Verkauf Id="1214" Tankstelle="1010" Tag="2018-12-09" VerkaufDieselLiter="62.8000" />
+      <Verkauf Id="1304" Tankstelle="1010" Tag="2018-12-09" VerkaufDieselLiter="51.7000" />
+      <Verkauf Id="1310" Tankstelle="1010" Tag="2018-12-09" VerkaufDieselLiter="76.8000" VerkaufShopEuro="21.9800" />
+      <Verkauf Id="1370" Tankstelle="1010" Tag="2018-12-09" VerkaufDieselLiter="15.5000" />
+      <Verkauf Id="1448" Tankstelle="1010" Tag="2018-12-09" VerkaufBenzinLiter="36.0000" />
+      <Verkauf Id="1659" Tankstelle="1010" Tag="2018-12-09" VerkaufBenzinLiter="37.6000" />
+      <Verkauf Id="1661" Tankstelle="1010" Tag="2018-12-09" VerkaufBenzinLiter="25.6000" />
+      <Verkauf Id="1669" Tankstelle="1010" Tag="2018-12-09" VerkaufDieselLiter="8.2000" VerkaufShopEuro="26.6400" />
+      <Verkauf Id="1671" Tankstelle="1010" Tag="2018-12-09" VerkaufBenzinLiter="25.6000" />
+      <Verkauf Id="1679" Tankstelle="1010" Tag="2018-12-09" VerkaufBenzinLiter="52.2000" />
+      <Verkauf Id="1689" Tankstelle="1010" Tag="2018-12-09" VerkaufBenzinLiter="66.3000" />
+      <Verkauf Id="1764" Tankstelle="1010" Tag="2018-12-09" VerkaufDieselLiter="58.9000" />
+    </Tagespreis>
+  </Tankstelle>
+  <Tankstelle Id="1011" Bundesland="W" PLZ="1120" Betreiber="OMV">
+    <Tagespreis Tankstelle="1011" Tag="2018-12-03" PreisBenzin="1.3280" PreisDiesel="1.2616">
+      <Verkauf Id="1060" Tankstelle="1011" Tag="2018-12-03" VerkaufBenzinLiter="6.2000" />
+      <Verkauf Id="1151" Tankstelle="1011" Tag="2018-12-03" VerkaufDieselLiter="51.6000" />
+      <Verkauf Id="1174" Tankstelle="1011" Tag="2018-12-03" VerkaufDieselLiter="62.6000" />
+      <Verkauf Id="1187" Tankstelle="1011" Tag="2018-12-03" VerkaufBenzinLiter="9.3000" />
+      <Verkauf Id="1351" Tankstelle="1011" Tag="2018-12-03" VerkaufBenzinLiter="67.4000" />
+      <Verkauf Id="1469" Tankstelle="1011" Tag="2018-12-03" VerkaufDieselLiter="76.2000" />
+      <Verkauf Id="1488" Tankstelle="1011" Tag="2018-12-03" VerkaufDieselLiter="24.7000" />
+      <Verkauf Id="1608" Tankstelle="1011" Tag="2018-12-03" VerkaufDieselLiter="27.9000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1011" Tag="2018-12-04" PreisBenzin="1.3413" PreisDiesel="1.2364">
+      <Verkauf Id="1082" Tankstelle="1011" Tag="2018-12-04" VerkaufDieselLiter="54.5000" />
+      <Verkauf Id="1103" Tankstelle="1011" Tag="2018-12-04" VerkaufDieselLiter="26.2000" />
+      <Verkauf Id="1464" Tankstelle="1011" Tag="2018-12-04" VerkaufDieselLiter="19.7000" />
+      <Verkauf Id="1528" Tankstelle="1011" Tag="2018-12-04" VerkaufBenzinLiter="40.7000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1011" Tag="2018-12-05" PreisBenzin="1.3145" PreisDiesel="1.2364">
+      <Verkauf Id="1294" Tankstelle="1011" Tag="2018-12-05" VerkaufBenzinLiter="44.8000" />
+      <Verkauf Id="1336" Tankstelle="1011" Tag="2018-12-05" VerkaufBenzinLiter="21.1000" />
+      <Verkauf Id="1585" Tankstelle="1011" Tag="2018-12-05" VerkaufDieselLiter="11.0000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1011" Tag="2018-12-06" PreisBenzin="1.3145" PreisDiesel="1.2364">
+      <Verkauf Id="1014" Tankstelle="1011" Tag="2018-12-06" VerkaufDieselLiter="12.9000" />
+      <Verkauf Id="1196" Tankstelle="1011" Tag="2018-12-06" VerkaufDieselLiter="49.1000" />
+      <Verkauf Id="1245" Tankstelle="1011" Tag="2018-12-06" VerkaufDieselLiter="47.4000" />
+      <Verkauf Id="1328" Tankstelle="1011" Tag="2018-12-06" VerkaufDieselLiter="36.5000" />
+      <Verkauf Id="1341" Tankstelle="1011" Tag="2018-12-06" VerkaufDieselLiter="17.2000" />
+      <Verkauf Id="1426" Tankstelle="1011" Tag="2018-12-06" VerkaufDieselLiter="76.6000" />
+      <Verkauf Id="1694" Tankstelle="1011" Tag="2018-12-06" VerkaufBenzinLiter="31.3000" />
+      <Verkauf Id="1743" Tankstelle="1011" Tag="2018-12-06" VerkaufDieselLiter="14.6000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1011" Tag="2018-12-07" PreisBenzin="1.3276" PreisDiesel="1.2487">
+      <Verkauf Id="1058" Tankstelle="1011" Tag="2018-12-07" VerkaufDieselLiter="28.9000" />
+      <Verkauf Id="1124" Tankstelle="1011" Tag="2018-12-07" VerkaufBenzinLiter="28.3000" />
+      <Verkauf Id="1185" Tankstelle="1011" Tag="2018-12-07" VerkaufBenzinLiter="53.9000" />
+      <Verkauf Id="1209" Tankstelle="1011" Tag="2018-12-07" VerkaufDieselLiter="32.9000" />
+      <Verkauf Id="1390" Tankstelle="1011" Tag="2018-12-07" VerkaufBenzinLiter="27.6000" />
+      <Verkauf Id="1476" Tankstelle="1011" Tag="2018-12-07" VerkaufDieselLiter="10.0000" />
+      <Verkauf Id="1527" Tankstelle="1011" Tag="2018-12-07" VerkaufBenzinLiter="38.0000" />
+      <Verkauf Id="1547" Tankstelle="1011" Tag="2018-12-07" VerkaufDieselLiter="54.8000" />
+      <Verkauf Id="1593" Tankstelle="1011" Tag="2018-12-07" VerkaufDieselLiter="40.3000" />
+      <Verkauf Id="1737" Tankstelle="1011" Tag="2018-12-07" VerkaufDieselLiter="71.7000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1011" Tag="2018-12-08" PreisBenzin="1.3143" PreisDiesel="1.2362">
+      <Verkauf Id="1042" Tankstelle="1011" Tag="2018-12-08" VerkaufBenzinLiter="25.1000" />
+      <Verkauf Id="1123" Tankstelle="1011" Tag="2018-12-08" VerkaufBenzinLiter="66.4000" />
+      <Verkauf Id="1165" Tankstelle="1011" Tag="2018-12-08" VerkaufBenzinLiter="41.1000" />
+      <Verkauf Id="1202" Tankstelle="1011" Tag="2018-12-08" VerkaufBenzinLiter="25.0000" />
+      <Verkauf Id="1248" Tankstelle="1011" Tag="2018-12-08" VerkaufDieselLiter="21.9000" />
+      <Verkauf Id="1376" Tankstelle="1011" Tag="2018-12-08" VerkaufDieselLiter="75.2000" />
+      <Verkauf Id="1447" Tankstelle="1011" Tag="2018-12-08" VerkaufBenzinLiter="6.8000" VerkaufShopEuro="8.1000" />
+      <Verkauf Id="1507" Tankstelle="1011" Tag="2018-12-08" VerkaufBenzinLiter="38.3000" />
+      <Verkauf Id="1631" Tankstelle="1011" Tag="2018-12-08" VerkaufDieselLiter="76.3000" VerkaufShopEuro="41.3700" />
+      <Verkauf Id="1632" Tankstelle="1011" Tag="2018-12-08" VerkaufBenzinLiter="60.6000" />
+      <Verkauf Id="1717" Tankstelle="1011" Tag="2018-12-08" VerkaufBenzinLiter="59.6000" />
+    </Tagespreis>
+    <Tagespreis Tankstelle="1011" Tag="2018-12-09" PreisBenzin="1.3275" PreisDiesel="1.2115">
+      <Verkauf Id="1147" Tankstelle="1011" Tag="2018-12-09" VerkaufDieselLiter="52.9000" />
+      <Verkauf Id="1171" Tankstelle="1011" Tag="2018-12-09" VerkaufDieselLiter="10.4000" />
+      <Verkauf Id="1179" Tankstelle="1011" Tag="2018-12-09" VerkaufDieselLiter="6.9000" VerkaufShopEuro="37.2600" />
+      <Verkauf Id="1270" Tankstelle="1011" Tag="2018-12-09" VerkaufBenzinLiter="61.6000" />
+      <Verkauf Id="1387" Tankstelle="1011" Tag="2018-12-09" VerkaufDieselLiter="10.6000" />
+      <Verkauf Id="1562" Tankstelle="1011" Tag="2018-12-09" VerkaufBenzinLiter="70.0000" />
+      <Verkauf Id="1683" Tankstelle="1011" Tag="2018-12-09" VerkaufBenzinLiter="59.4000" />
+      <Verkauf Id="1709" Tankstelle="1011" Tag="2018-12-09" VerkaufBenzinLiter="52.0000" />
+      <Verkauf Id="1758" Tankstelle="1011" Tag="2018-12-09" VerkaufBenzinLiter="39.4000" />
+    </Tagespreis>
+  </Tankstelle>
+</Tankstellen>

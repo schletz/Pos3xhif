@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DRY Trainer</title>
+<style>
+  :root {
+    --bg: #f6f6f6; --card: #ffffff; --fg: #1d1d1b; --muted: #5f5f5e; --border: #9d9d9c; --soft: #ededed;
+    --n-stroke: #0090d4; --n-fill: #d1ebf7; --n-text: #00628f;
+    --a-stroke: #f39000; --a-fill: #fdebd1; --a-text: #a35f00;
+    --ok-stroke: #71af2e; --ok-fill: #e5f1d9; --ok-text: #4a7a1c;
+    --err-stroke: #cc0935; --err-fill: #f6d3db; --err-text: #a8072c;
+    --c2-stroke: #6cc1b0; --c2-fill: #e5f4f1; --c2-text: #2f7d6e;
+    --btn: #0090d4; --btn-fg: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121212; --card: #1f1f1e; --fg: #ededed; --muted: #b5b5b4; --border: #6f6f6e; --soft: #2e2e2d;
+      --n-stroke: #0090d4; --n-fill: #0d3346; --n-text: #0090d4;
+      --a-stroke: #f39000; --a-fill: #4a2e05; --a-text: #f39000;
+      --ok-stroke: #71af2e; --ok-fill: #23360f; --ok-text: #71af2e;
+      --err-stroke: #f5b4c7; --err-fill: #4a1622; --err-text: #f5b4c7;
+      --c2-stroke: #6cc1b0; --c2-fill: #173832; --c2-text: #6cc1b0;
+      --btn: #0090d4; --btn-fg: #ffffff;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", Helvetica, Arial, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.5; }
+  code, .mono { font-family: Consolas, Menlo, monospace; }
+  code { background: var(--soft); padding: 0 4px; border-radius: 4px; }
+  header { position: sticky; top: 0; z-index: 5; background: var(--card); border-bottom: 1px solid var(--border);
+           padding: 8px 16px; display: flex; align-items: center; gap: 16px; }
+  header h1 { font-size: 18px; margin: 0; flex: 1; }
+  #progressText { font-variant-numeric: tabular-nums; color: var(--muted); }
+  #progressBar { position: absolute; left: 0; bottom: -1px; height: 3px; background: var(--btn); transition: width .3s; }
+  main { max-width: 1240px; margin: 0 auto; padding: 16px; }
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide h2 { margin: 4px 0 8px; font-size: 24px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin: 12px 0; }
+  .nav { display: flex; justify-content: space-between; max-width: 1240px; margin: 0 auto; padding: 0 16px 24px; }
+  button { font: inherit; border: 1px solid var(--border); background: var(--card); color: var(--fg); border-radius: 6px;
+           padding: 5px 12px; cursor: pointer; }
+  button:hover:not(:disabled) { border-color: var(--btn); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  button.primary { background: var(--btn); color: var(--btn-fg); border-color: var(--btn); }
+  .row { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin: 8px 0; }
+  .row label { display: inline-flex; align-items: center; gap: 6px; }
+  .muted { color: var(--muted); }
+  .hint { font-size: 14px; color: var(--muted); }
+  .stepinfo { font-variant-numeric: tabular-nums; color: var(--muted); }
+
+  /* code panels */
+  .panels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 960px) { .panels { grid-template-columns: 1fr; } }
+  .panel { background: var(--card); border: 1.5px solid var(--border); border-radius: 8px; padding: 8px 10px; min-width: 0; }
+  .panel h3 { margin: 0 0 6px; font-size: 15px; }
+  .panel.new { border-color: var(--n-stroke); border-width: 2px; }
+  pre.code { margin: 0; font-family: Consolas, Menlo, monospace; font-size: 12.5px; line-height: 1.75; white-space: pre; overflow-x: auto; }
+  .ln { display: block; border-radius: 3px; padding: 0 2px; }
+  .same { background: var(--n-fill); box-shadow: inset 3px 0 0 var(--n-stroke); }
+  .tk { border-radius: 3px; padding: 0 1px; }
+  .diff { background: var(--a-fill); outline: 2px dashed var(--a-stroke); outline-offset: 0; }
+  .bug { background: var(--err-fill); outline: 2px solid var(--err-stroke); }
+  .param { background: var(--a-fill); outline: 2px dashed var(--a-stroke); }
+  .rule { background: var(--c2-fill); outline: 2px solid var(--c2-stroke); }
+  .badge { display: inline-block; min-width: 20px; text-align: center; font-weight: 700; font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+           font-size: 12px; border-radius: 10px; padding: 0 6px; margin-left: 6px; vertical-align: 1px; }
+  .badge.same { background: var(--n-fill); color: var(--n-text); border: 1px solid var(--n-stroke); box-shadow: none; }
+  .badge.diff { background: var(--a-fill); color: var(--a-text); border: 1px dashed var(--a-stroke); outline: none; }
+  .badge.bug { background: var(--err-fill); color: var(--err-text); border: 1px solid var(--err-stroke); outline: none; }
+  .appear { animation: appear .6s ease-out; }
+  @keyframes appear { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .caption { min-height: 72px; }
+  .caption b.step { color: var(--n-text); }
+  table.params { border-collapse: collapse; margin-top: 6px; display: block; overflow-x: auto; max-width: 100%; }
+  table.params th, table.params td { border: 1px solid var(--border); padding: 3px 10px; text-align: left; }
+  table.params th { background: var(--soft); }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; }
+  .legend span.sw { display: inline-block; width: 28px; height: 16px; vertical-align: -3px; margin-right: 6px; border-radius: 3px; }
+
+  /* test list */
+  ul.tests { list-style: none; margin: 6px 0 0; padding: 0; }
+  ul.tests li { font-family: Consolas, Menlo, monospace; font-size: 14px; padding: 3px 8px; margin: 4px 0; border-radius: 6px;
+                border: 1.5px solid var(--border); background: var(--soft); overflow-wrap: anywhere; }
+  ul.tests li.pass { border-color: var(--ok-stroke); background: var(--ok-fill); }
+  ul.tests li.fail { border-color: var(--err-stroke); background: var(--err-fill); }
+  ul.tests li .st { display: inline-block; width: 64px; font-weight: 700; font-family: "Segoe UI", Helvetica, Arial, sans-serif; }
+  ul.tests li.pass .st { color: var(--ok-text); }
+  ul.tests li.fail .st { color: var(--err-text); }
+  .detail { display: block; margin-left: 64px; color: var(--err-text); font-size: 13px; }
+
+  /* timeline of slide 2 */
+  ol.timeline { list-style: none; margin: 0; padding: 0; }
+  ol.timeline li { display: grid; grid-template-columns: 32px 1fr; gap: 8px; align-items: start; padding: 6px 0; opacity: .35; }
+  ol.timeline li.done, ol.timeline li.current { opacity: 1; }
+  ol.timeline li .num { width: 28px; height: 28px; border-radius: 14px; border: 2px solid var(--border); text-align: center; font-weight: 700; line-height: 24px; }
+  ol.timeline li.current .num { border-color: var(--n-stroke); background: var(--n-fill); color: var(--n-text); }
+  ol.timeline li.done .num { border-color: var(--ok-stroke); background: var(--ok-fill); color: var(--ok-text); }
+  ol.timeline li.failed .num { border-color: var(--err-stroke); background: var(--err-fill); color: var(--err-text); }
+  .grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+  .grid2 > * { min-width: 0; }
+  @media (max-width: 860px) { .grid2 { grid-template-columns: 1fr; } }
+
+  /* exercise */
+  .rounds button { min-width: 40px; }
+  .rounds button.solved { background: var(--ok-fill); border-color: var(--ok-stroke); }
+  .rounds button.current { outline: 2px solid var(--btn); outline-offset: 1px; font-weight: 700; }
+  .ex-block { margin: 8px 0; }
+  .ex-block .lbl { font-size: 14px; color: var(--muted); }
+  .ex-code { font-family: Consolas, Menlo, monospace; font-size: 15px; line-height: 2.1; background: var(--card); border: 1px solid var(--border);
+             border-radius: 8px; padding: 6px 10px; white-space: pre-wrap; word-break: break-word; }
+  .tok { cursor: pointer; border-radius: 3px; padding: 1px 2px; border: 1px solid transparent; }
+  .tok:hover { border-color: var(--n-stroke); }
+  .tok:focus { outline: 2px solid var(--btn); outline-offset: 1px; }
+  .tok.marked { background: var(--a-fill); border: 2px dashed var(--a-stroke); }
+  .tok.marked::after { content: " ≠"; font-weight: 700; color: var(--a-text); font-family: "Segoe UI", Helvetica, Arial, sans-serif; }
+  .tok.right { background: var(--ok-fill); border: 2px solid var(--ok-stroke); }
+  .tok.right::after { content: " ✓"; color: var(--ok-text); font-weight: 700; }
+  .tok.wrong { background: var(--err-fill); border: 2px solid var(--err-stroke); }
+  .tok.wrong::after { content: " ✗"; color: var(--err-text); font-weight: 700; }
+  .choice button { margin: 4px 8px 4px 0; }
+  .choice button.picked-right { background: var(--ok-fill); border-color: var(--ok-stroke); }
+  .choice button.picked-wrong { background: var(--err-fill); border-color: var(--err-stroke); }
+  .feedback { padding: 8px 12px; border-radius: 6px; margin-top: 8px; display: none; }
+  .feedback.ok { display: block; background: var(--ok-fill); border: 1px solid var(--ok-stroke); }
+  .feedback.bad { display: block; background: var(--err-fill); border: 1px solid var(--err-stroke); }
+  .feedback.info { display: block; background: var(--soft); border: 1px solid var(--border); }
+  .feedback ul { margin: 6px 0 0; padding-left: 20px; }
+  .feedback pre { margin: 6px 0 0; font-family: Consolas, Menlo, monospace; font-size: 13.5px; white-space: pre-wrap; }
+  kbd { font-family: Consolas, Menlo, monospace; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 4px; padding: 0 4px; background: var(--soft); }
+</style>
+</head>
+<body>
+<header>
+  <h1>DRY: Duplikation erkennen und auflösen</h1>
+  <span id="progressText">1 / 3</span>
+  <div id="progressBar"></div>
+</header>
+
+<main>
+  <!-- Slide 1 -->
+  <section class="slide" data-slide="0">
+    <h2>Dreimal fast derselbe Code</h2>
+    <p>Ein Webshop berechnet den Gesamtpreis einer Bestellung für drei Gruppen von Kunden (Code vereinfacht). Gehe mit
+      <b>Schritt</b> durch das Refactoring oder lass es mit <b>Play</b> ablaufen.</p>
+    <div class="row">
+      <button id="a-reset">⏮ Anfang</button>
+      <button id="a-back">◀ Zurück</button>
+      <button id="a-step" class="primary">Schritt ▶</button>
+      <button id="a-play">▶ Play</button>
+      <span class="stepinfo" id="a-info"></span>
+    </div>
+    <div class="card caption" id="a-caption"></div>
+    <div id="a-stage"></div>
+    <div class="legend hint" style="margin-top:10px">
+      <span><span class="sw same"></span>= gleich in allen Blöcken</span>
+      <span><span class="sw" style="background:var(--a-fill);outline:2px dashed var(--a-stroke)"></span>≠ verschieden: wird Parameter</span>
+      <span><span class="sw" style="background:var(--c2-fill);outline:2px solid var(--c2-stroke)"></span>Regel für alle: eine Konstante</span>
+      <span><span class="sw" style="background:var(--err-fill);outline:2px solid var(--err-stroke)"></span>✗ Fehler</span>
+    </div>
+  </section>
+
+  <!-- Slide 2 -->
+  <section class="slide" data-slide="1">
+    <h2>Kleine Schritte, nach jedem Schritt testen</h2>
+    <p>Ein <b>Regressionstest</b> war vor der Änderung grün und muss danach grün bleiben. Hier siehst du, wie die Tests
+      einen Fehler beim Umbau sofort zeigen. Der Fehler aus der vorigen Folie (50 € statt 60 €) ist schon in einem eigenen
+      Commit behoben.</p>
+    <div class="row">
+      <button id="b-reset">⏮ Anfang</button>
+      <button id="b-back">◀ Zurück</button>
+      <button id="b-step" class="primary">Schritt ▶</button>
+      <button id="b-play">▶ Play</button>
+      <span class="stepinfo" id="b-info"></span>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <ol class="timeline" id="b-timeline"></ol>
+      </div>
+      <div>
+        <div class="card">
+          <b>Code nach diesem Schritt</b>
+          <pre class="code" id="b-code"></pre>
+        </div>
+        <div class="card">
+          <b>dotnet test</b>
+          <ul class="tests" id="b-tests"></ul>
+          <p class="hint" id="b-summary"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 3 -->
+  <section class="slide" data-slide="2">
+    <h2>Übung: Was wird Parameter?</h2>
+    <div class="row rounds" id="roundButtons"></div>
+    <div class="card" id="roundCard"></div>
+    <div id="exArea"></div>
+    <div class="row" id="exButtons">
+      <button class="primary" id="checkBtn">Prüfen</button>
+      <button id="resetBtn">Markierungen löschen</button>
+      <button id="solutionBtn">Lösung zeigen</button>
+    </div>
+    <div class="feedback" id="feedback"></div>
+    <p class="hint">Gelöste Runden merkt sich dein Browser. Ohne Maus wählst du eine Stelle mit <kbd>Tab</kbd> und markierst sie mit
+      <kbd>Enter</kbd> oder <kbd>Leertaste</kbd>.</p>
+  </section>
+</main>
+
+<div class="nav">
+  <button id="prevBtn">← Zurück</button>
+  <button id="nextBtn" class="primary">Weiter →</button>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  const PLAY_DELAY = 2600;
+
+  // ---------- storage (works without localStorage) ----------
+  const store = {
+    get(key, fallback) {
+      try {
+        const raw = window.localStorage.getItem('solid-02-' + key);
+        return raw === null ? fallback : JSON.parse(raw);
+      } catch (e) { return fallback; }
+    },
+    set(key, value) {
+      try { window.localStorage.setItem('solid-02-' + key, JSON.stringify(value)); } catch (e) { /* ignore */ }
+    }
+  };
+
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // ---------- generic step animation ----------
+  /** Connects reset/back/step/play buttons to a render function for steps 0..count-1. */
+  function stepper(prefix, count, render) {
+    let step = 0;
+    let timer = null;
+    const playBtn = document.getElementById(prefix + '-play');
+    const self = {
+      get step() { return step; },
+      show(i) {
+        step = Math.min(Math.max(i, 0), count - 1);
+        document.getElementById(prefix + '-info').textContent = `Schritt ${step + 1} von ${count}`;
+        document.getElementById(prefix + '-back').disabled = step === 0;
+        document.getElementById(prefix + '-step').disabled = step === count - 1;
+        render(step);
+      },
+      stop() {
+        if (timer) { clearTimeout(timer); timer = null; }
+        playBtn.textContent = '▶ Play';
+      },
+      play() {
+        if (timer) { self.stop(); return; }
+        if (step === count - 1) { self.show(0); }
+        playBtn.textContent = '⏸ Pause';
+        const tick = () => {
+          if (step >= count - 1) { self.stop(); return; }
+          self.show(step + 1);
+          timer = setTimeout(tick, PLAY_DELAY);
+        };
+        timer = setTimeout(tick, 900);
+      }
+    };
+    playBtn.addEventListener('click', self.play);
+    document.getElementById(prefix + '-step').addEventListener('click', () => { self.stop(); self.show(step + 1); });
+    document.getElementById(prefix + '-back').addEventListener('click', () => { self.stop(); self.show(step - 1); });
+    document.getElementById(prefix + '-reset').addEventListener('click', () => { self.stop(); self.show(0); });
+    return self;
+  }
+
+  // ---------- slide 1: three blocks become one method ----------
+  // Each block: lines of tokens. A token is a string or { t, k } where k marks a difference (ship, tax, limit).
+  const BLOCKS = [
+    { name: 'CalculateTotalAustria', ship: '4.90m', tax: '0.20m', lines: [
+      ['decimal net = 0m;'],
+      ['foreach (OrderLine line in lines)'],
+      ['    net += line.UnitPrice * line.Quantity;'],
+      ['decimal shipping = net >= ', { t: '60m', k: 'limit' }, ' ? 0m : ', { t: '4.90m', k: 'ship' }, ';'],
+      ['return Math.Round((net + shipping) * ', { t: '1.20m', k: 'tax' }, ', 2);']
+    ] },
+    { name: 'CalculateTotalGermany', ship: '6.90m', tax: '0.19m', lines: [
+      ['decimal sum = 0m;'],
+      ['foreach (OrderLine line in lines)'],
+      ['    sum += line.Quantity * line.UnitPrice;'],
+      ['decimal shippingCost = sum >= ', { t: '60m', k: 'limit' }, ' ? 0m : ', { t: '6.90m', k: 'ship' }, ';'],
+      ['return Math.Round((sum + shippingCost) * ', { t: '1.19m', k: 'tax' }, ', 2);']
+    ] },
+    { name: 'CalculateTotalBusiness', ship: '4.90m', tax: '0m', lines: [
+      ['decimal net = 0m;'],
+      ['foreach (OrderLine line in lines)'],
+      ['    net += line.UnitPrice * line.Quantity;'],
+      ['decimal shipping = net >= ', { t: '50m', k: 'limit', bug: true }, ' ? 0m : ', { t: '4.90m', k: 'ship' }, ';'],
+      ['return Math.Round(', { t: 'net + shipping', k: 'tax' }, ', 2);']
+    ] }
+  ];
+
+  const A_STEPS = [
+    '<b class="step">Ausgangslage.</b> Drei Methoden addieren die Rechnungszeilen, rechnen die Versandkosten dazu und schlagen die Steuer auf. Sie sehen fast gleich aus. Lies sie Zeile für Zeile.',
+    '<b class="step">1. Gleiches markieren.</b> Die ersten drei Zeilen addieren in allen Blöcken die Zeilen. In Deutschland heißen die Variablen anders (<code>sum</code>, <code>Quantity * UnitPrice</code>). Das Wissen ist trotzdem dasselbe. Eine Textsuche würde es nicht finden.',
+    '<b class="step">2. Unterschiede markieren.</b> Verschieden sind die Versandkosten, der Steuersatz und die Grenze für Gratisversand. Die Firmenkunden zahlen keine Steuer, das entspricht einem Steuersatz von 0.',
+    '<b class="step">3. Ein Fehler versteckt sich.</b> Die Grenze für Gratisversand wurde von 50 € auf 60 € erhöht, aber nur in zwei Methoden. Die Regel steht dreimal im Code, also musste man drei Stellen finden. Genau das verhindert DRY.',
+    '<b class="step">4. Unterschiede werden Parameter.</b> Versandkosten und Steuersatz sind <b>Werte</b>, die sich pro Kundengruppe unterscheiden: Sie werden zu den Parametern <code>shippingCost</code> und <code>taxRate</code>. Die Grenze ist für alle gleich. Sie ist <b>eine</b> Regel und kommt an genau eine Stelle: <code>FreeShippingLimit</code>.',
+    '<b class="step">5. Extract Method.</b> Die IDE erzeugt aus einem Block eine private Methode (Visual Studio: <kbd>Ctrl+R</kbd>, <kbd>Ctrl+M</kbd>, Rider: <kbd>Ctrl+Alt+M</kbd>). Du gibst ihr einen sprechenden Namen und die Parameter.',
+    '<b class="step">6. Aufrufe ersetzen die Blöcke.</b> Jede öffentliche Methode ruft jetzt nur noch <code>CalculateTotal</code> mit ihren Werten auf. Die Regel für Gratisversand steht an genau einer Stelle.',
+    '<b class="step">7. Regressionstest.</b> <code>dotnet test</code> zeigt: Alle Tests sind grün. Das Verhalten ist gleich geblieben, nur die Struktur ist besser. Eine vierte Kundengruppe kostet jetzt eine Zeile.'
+  ];
+
+  function tokenHtml(tok, step) {
+    if (typeof tok === 'string') { return esc(tok); }
+    if (step >= 3 && tok.bug) { return `<span class="tk bug">${esc(tok.t)}</span>`; }
+    if (step >= 4 && tok.k === 'limit') { return `<span class="tk rule">${esc(tok.t)}</span>`; }
+    if (step >= 2) { return `<span class="tk diff">${esc(tok.t)}</span>`; }
+    return esc(tok.t);
+  }
+  function blockHtml(b, step) {
+    if (step >= 6) {
+      return `<div class="panel appear"><h3>${b.name}</h3><pre class="code"><span class="ln">return CalculateTotal(lines, <span class="tk param">${b.ship}</span>, <span class="tk param">${b.tax}</span>);</span></pre></div>`;
+    }
+    const lines = b.lines.map((ln, i) => {
+      const same = step >= 1 && i < 3;
+      const badge = same && i === 0 ? '<span class="badge same">=</span>' : '';
+      return `<span class="ln${same ? ' same' : ''}">${ln.map(t => tokenHtml(t, step)).join('')}${badge}</span>`;
+    }).join('');
+    const hasBug = step >= 3 && b.lines.some(ln => ln.some(t => t.bug));
+    const note = hasBug ? '<div class="appear" style="margin-top:4px"><span class="badge bug" style="margin-left:0">✗ Grenze nicht auf 60m geändert</span></div>' : '';
+    return `<div class="panel"><h3>${b.name}</h3><pre class="code">${lines}</pre>${note}</div>`;
+  }
+  const NEW_METHOD = [
+    'private const decimal FreeShippingLimit = 60m;',
+    '',
+    'private static decimal CalculateTotal(IReadOnlyList&lt;OrderLine&gt; lines,',
+    '    decimal <span class="tk param">shippingCost</span>, decimal <span class="tk param">taxRate</span>)',
+    '{',
+    '    decimal net = 0m;',
+    '    foreach (OrderLine line in lines)',
+    '        net += line.UnitPrice * line.Quantity;',
+    '    decimal shipping = net >= FreeShippingLimit ? 0m : <span class="tk param">shippingCost</span>;',
+    '    return Math.Round((net + shipping) * (1 + <span class="tk param">taxRate</span>), 2);',
+    '}'
+  ];
+  const A_TESTS = [
+    'CalculateTotalAustria_SmallOrder_AddsShippingAndTax',
+    'CalculateTotalGermany_SmallOrder_AddsShippingAndTax',
+    'CalculateTotalBusiness_OrderOf55Euro_AddsShipping'
+  ];
+  let testTimer = null;
+  function renderA(step) {
+    if (testTimer) { clearTimeout(testTimer); testTimer = null; }
+    document.getElementById('a-caption').innerHTML = A_STEPS[step];
+    let html = `<div class="panels">${BLOCKS.map(b => blockHtml(b, step)).join('')}</div>`;
+    if (step === 4) {
+      html += `<div class="card appear"><b>Was verschieden ist, wird Parameter</b><table class="params"><tr><th>Methode</th><th>shippingCost</th><th>taxRate</th></tr>` +
+        BLOCKS.map(b => `<tr><td class="mono">${b.name}</td><td class="mono">${b.ship}</td><td class="mono">${b.tax}</td></tr>`).join('') +
+        `</table><p class="hint">Die Grenze 60m ist kein Parameter: Sie ist eine Regel für alle und wird die Konstante <code>FreeShippingLimit</code>.</p></div>`;
+    }
+    if (step >= 5) {
+      html += `<div class="panel new appear" style="margin-top:12px"><h3>Neue private Methode${step === 5 ? ' (Extract Method)' : ''}</h3><pre class="code">${NEW_METHOD.map(l => `<span class="ln">${l || ' '}</span>`).join('')}</pre></div>`;
+    }
+    if (step === 7) {
+      html += `<div class="card appear"><b>dotnet test</b><ul class="tests" id="a-tests">${A_TESTS.map(t => `<li><span class="st">…</span>${t}</li>`).join('')}</ul><p class="hint" id="a-summary"></p></div>`;
+    }
+    document.getElementById('a-stage').innerHTML = html;
+    if (step === 7) {
+      // the tests turn green one after another
+      const items = Array.from(document.querySelectorAll('#a-tests li'));
+      let i = 0;
+      const next = () => {
+        if (i >= items.length) {
+          document.getElementById('a-summary').textContent = 'total: 3, failed: 0, succeeded: 3';
+          testTimer = null;
+          return;
+        }
+        items[i].classList.add('pass');
+        items[i].querySelector('.st').textContent = '✓ passed';
+        i++;
+        testTimer = setTimeout(next, 350);
+      };
+      testTimer = setTimeout(next, 400);
+    }
+  }
+  const aAnim = stepper('a', A_STEPS.length, renderA);
+
+  // ---------- slide 2: small steps with regression tests ----------
+  const B_TESTS = A_TESTS;
+  const B_STEPS = [
+    { title: 'Ausgangslage', text: 'Der Bugfix (60 € auch für Firmenkunden) ist in einem eigenen Commit. Alle Tests sind grün.',
+      code: ['public decimal CalculateTotalAustria(...)', '{', '    decimal net = 0m;', '    foreach (...) net += ...;', '    decimal shipping = net >= 60m ? 0m : 4.90m;', '    return Math.Round((net + shipping) * 1.20m, 2);', '}'],
+      result: [true, true, true] },
+    { title: 'SumLines extrahieren', text: 'Die Schleife wird zur privaten Methode SumLines. Alle drei Methoden rufen sie auf. dotnet test: grün.',
+      code: ['public decimal CalculateTotalAustria(...)', '{', '    decimal net = SumLines(lines);', '    decimal shipping = net >= 60m ? 0m : 4.90m;', '    return Math.Round((net + shipping) * 1.20m, 2);', '}'],
+      result: [true, true, true] },
+    { title: 'CalculateShipping extrahieren', text: 'Die Versandregel wird zur privaten Methode CalculateShipping mit dem Parameter shippingCost. dotnet test: grün.',
+      code: ['public decimal CalculateTotalAustria(...)', '{', '    decimal net = SumLines(lines);', '    decimal shipping = CalculateShipping(net, 4.90m);', '    return Math.Round((net + shipping) * 1.20m, 2);', '}'],
+      result: [true, true, true] },
+    { title: 'CalculateTotal extrahieren', text: 'Beim Ersetzen in CalculateTotalAustria sind die beiden Werte vertauscht: 0.20m landet in shippingCost, 4.90m in taxRate. Der Code kompiliert, denn beide sind decimal. Erst der Test zeigt den Fehler.',
+      code: ['public decimal CalculateTotalAustria(...)', '{', '    return CalculateTotal(lines, 0.20m, 4.90m);', '}'],
+      result: [false, true, true], failDetail: 'Expected: 59.88  Actual: 266.68' },
+    { title: 'Fehler korrigieren', text: 'Der letzte Schritt war nur eine Zeile, also ist der Fehler schnell gefunden. Benannte Argumente machen die Verwechslung sichtbar. dotnet test: grün.',
+      code: ['public decimal CalculateTotalAustria(...)', '{', '    return CalculateTotal(lines, shippingCost: 4.90m, taxRate: 0.20m);', '}'],
+      result: [true, true, true] },
+    { title: 'Commit', text: 'Alle Tests sind grün, das Verhalten ist gleich geblieben. Jetzt ist ein guter Zeitpunkt für einen Commit.',
+      code: ['git commit -m "Extract CalculateTotal in PriceCalculator"'],
+      result: [true, true, true] }
+  ];
+  function renderB(step) {
+    const s = B_STEPS[step];
+    document.getElementById('b-timeline').innerHTML = B_STEPS.map((x, i) => {
+      const failed = i <= step && x.result.includes(false);
+      const cls = i < step ? 'done' + (failed ? ' failed' : '') : (i === step ? 'current' + (failed ? ' failed' : '') : '');
+      const mark = failed ? '✗' : (i < step ? '✓' : String(i + 1));
+      return `<li class="${cls}"><span class="num">${mark}</span><span><b>${esc(x.title)}</b><br><span class="hint">${esc(x.text)}</span></span></li>`;
+    }).join('');
+    document.getElementById('b-code').innerHTML = s.code.map(l => `<span class="ln appear">${esc(l)}</span>`).join('');
+    document.getElementById('b-tests').innerHTML = B_TESTS.map((t, i) => {
+      const ok = s.result[i];
+      return `<li class="${ok ? 'pass' : 'fail'} appear"><span class="st">${ok ? '✓ passed' : '✗ failed'}</span>${t}` +
+        (!ok && s.failDetail ? `<span class="detail">${esc(s.failDetail)}</span>` : '') + '</li>';
+    }).join('');
+    const failed = s.result.filter(r => !r).length;
+    document.getElementById('b-summary').textContent = `total: 3, failed: ${failed}, succeeded: ${3 - failed}`;
+  }
+  const bAnim = stepper('b', B_STEPS.length, renderB);
+
+  // ---------- slide 3: exercise ----------
+  /**
+   * Splits code into tokens. Every block of a round must give the same number of tokens,
+   * so that position i means "the same place" in all blocks.
+   */
+  function tokenize(code) {
+    const re = /"[^"]*"|\d+(?:\.\d+)?m?|[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*|\+=|>=|<=|==|\|\||&&|\s+|./g;
+    return code.match(re) || [];
+  }
+  const isSpace = t => /^\s+$/.test(t);
+
+  // kind 'mark': the learner marks positions that become parameters. answer = positions (token index of the first block).
+  // kind 'choice': the learner picks one option.
+  const ROUNDS = [
+    { id: 'shipping', kind: 'mark', title: 'Versandkosten',
+      intro: 'Zwei Zeilen aus dem Webshop. Markiere die Stellen, die in einer gemeinsamen Methode zu Parametern werden.',
+      blocks: [
+        { label: 'CalculateTotalAustria', code: 'decimal shipping = net >= 60m ? 0m : 4.90m;' },
+        { label: 'CalculateTotalGermany', code: 'decimal shipping = net >= 60m ? 0m : 6.90m;' }],
+      answer: ['4.90m'],
+      explain: { '4.90m': 'Die Versandkosten sind pro Land verschieden. Sie werden zum Parameter shippingCost.',
+        '60m': 'Die Grenze für Gratisversand ist in beiden Blöcken gleich. Sie ist eine Regel für alle und gehört an eine Stelle, nicht in jeden Aufruf.',
+        '0m': '0m bedeutet „gratis“ und ist in beiden Blöcken gleich.',
+        'net': 'net ist in beiden Blöcken dieselbe Größe. Sie ist ein Wert, den die Methode selbst berechnet oder bekommt, aber kein Unterschied zwischen den Blöcken.' },
+      result: 'decimal CalculateShipping(decimal net, decimal shippingCost)\n    => net >= 60m ? 0m : shippingCost;\n\nCalculateShipping(net, 4.90m);   // Austria\nCalculateShipping(net, 6.90m);   // Germany' },
+    { id: 'loyalty', kind: 'mark', title: 'Treuerabatt',
+      intro: 'Zwei Kundenstufen bekommen einen Rabatt ab einem Mindestumsatz. Markiere alle Stellen, die zu Parametern werden.',
+      blocks: [
+        { label: 'Silver', code: 'decimal discount = order.Total >= 100m ? order.Total * 0.05m : 0m;' },
+        { label: 'Gold', code: 'decimal discount = order.Total >= 200m ? order.Total * 0.10m : 0m;' }],
+      answer: ['100m', '0.05m'],
+      explain: { '100m': 'Der Mindestumsatz ist pro Stufe verschieden: Parameter minimumTotal.',
+        '0.05m': 'Der Rabattsatz ist pro Stufe verschieden: Parameter rate.',
+        'order.Total': 'order.Total ist in beiden Blöcken gleich. Die Methode bekommt die Bestellung oder den Betrag, aber das ist kein Unterschied zwischen Silver und Gold.',
+        '0m': 'Kein Rabatt ist in beiden Fällen 0m. Das bleibt im Methodenrumpf.' },
+      result: 'decimal CalculateDiscount(decimal total, decimal minimumTotal, decimal rate)\n    => total >= minimumTotal ? total * rate : 0m;\n\nCalculateDiscount(order.Total, 100m, 0.05m);   // Silver\nCalculateDiscount(order.Total, 200m, 0.10m);   // Gold' },
+    { id: 'form', kind: 'mark', title: 'Anders geschrieben',
+      intro: 'Diese beiden Zeilen stehen in zwei Methoden. Was wird hier zum Parameter? Ist es gar nichts, drücke einfach auf Prüfen.',
+      blocks: [
+        { label: 'CalculateTotalAustria', code: 'net += line.UnitPrice * line.Quantity;' },
+        { label: 'CalculateTotalGermany', code: 'sum += line.Quantity * line.UnitPrice;' }],
+      answer: [],
+      explain: { 'net': 'net und sum sind nur lokale Namen für dieselbe Zwischensumme. Ein anderer Name ist kein anderes Wissen.',
+        'line.UnitPrice': 'Die Reihenfolge der Faktoren ist egal: UnitPrice * Quantity ist dasselbe wie Quantity * UnitPrice.',
+        'line.Quantity': 'Die Reihenfolge der Faktoren ist egal: UnitPrice * Quantity ist dasselbe wie Quantity * UnitPrice.' },
+      result: 'Kein Parameter nötig: Beide Zeilen sind dasselbe Wissen in anderer Form.\nEine Methode SumLines(lines) ersetzt beide.' },
+    { id: 'validate', kind: 'mark', title: 'Eingaben prüfen',
+      intro: 'Zwei Prüfungen für Name und Ort eines Kunden. Markiere alle Stellen, die zu Parametern werden. Tipp: Eine Variable kann selbst ein Unterschied sein.',
+      blocks: [
+        { label: 'Name', code: 'if (name.Length > 50) throw new ArgumentException("Name is too long.", nameof(name));' },
+        { label: 'City', code: 'if (city.Length > 40) throw new ArgumentException("City is too long.", nameof(city));' }],
+      answer: ['name.Length', '50', '"Name is too long."', 'name'],
+      explain: { 'name.Length': 'Hier ist der Unterschied nicht nur ein Name: Geprüft wird ein anderer Wert. Der Text selbst wird Parameter value.',
+        '50': 'Die Höchstlänge ist verschieden: Parameter maxLength.',
+        '"Name is too long."': 'Der Text ist verschieden. Er kann Parameter werden oder aus dem Feldnamen gebaut werden.',
+        'name': 'nameof(name) liefert den Parameternamen für die Exception. Er ist pro Feld verschieden: Parameter paramName.',
+        'throw': 'throw new ArgumentException ist in beiden Blöcken gleich. Das bleibt im Methodenrumpf.',
+        'ArgumentException': 'Die Art der Exception ist in beiden Blöcken gleich. Das bleibt im Methodenrumpf.' },
+      result: 'void CheckMaxLength(string value, int maxLength, string paramName)\n{\n    if (value.Length > maxLength)\n        throw new ArgumentException($"{paramName} is too long.", paramName);\n}' },
+    { id: 'subject', kind: 'mark', title: 'Drei Blöcke',
+      intro: 'Der Shop verschickt E-Mails mit diesen Betreffzeilen. Markiere, was zum Parameter wird.',
+      blocks: [
+        { label: 'Versand', code: 'string subject = "Order " + order.Id + " has been shipped";' },
+        { label: 'Storno', code: 'string subject = "Order " + order.Id + " has been cancelled";' },
+        { label: 'Zahlung', code: 'string subject = "Order " + order.Id + " has been paid";' }],
+      answer: ['" has been shipped"'],
+      explain: { '" has been shipped"': 'Nur der Status unterscheidet sich. Er wird zum Parameter status.',
+        '"Order "': 'Der Anfang des Betreffs ist in allen drei Blöcken gleich.',
+        'order.Id': 'Die Bestellnummer kommt in allen drei Blöcken gleich vor. Die Methode braucht die Bestellung, aber das ist kein Unterschied.' },
+      result: 'string CreateSubject(Order order, string status)\n    => "Order " + order.Id + " has been " + status;' },
+    { id: 'days', kind: 'choice', title: 'Gleich oder zufällig gleich? (1)',
+      intro: 'Im Shop stehen diese beiden Konstanten. Ein Agent schlägt vor, sie zu einer Konstante DefaultDays = 14 zusammenzufassen. Was sagst du?',
+      code: 'private const int ReturnPeriodDays = 14;   // customers can return goods\nprivate const int PaymentTermDays = 14;    // invoices must be paid',
+      options: ['Zusammenfassen: echte Duplikation', 'Getrennt lassen: zufällig gleich'], correct: 1,
+      explanation: 'Rückgabefrist und Zahlungsziel sind zwei verschiedene Regeln. Sie ändern sich aus verschiedenen Gründen. Verlängert der Shop das Zahlungsziel auf 30 Tage, darf sich die Rückgabefrist nicht mitändern. Prüffrage: Ändern sich beide Stellen immer gemeinsam? Hier nicht.' },
+    { id: 'freeshipping', kind: 'choice', title: 'Gleich oder zufällig gleich? (2)',
+      intro: 'Diese Bedingung steht im Warenkorb (zeigt „Gratisversand“ an) und in der Rechnung (berechnet die Versandkosten).',
+      code: '// CartView\nif (cart.NetTotal >= 60m) { ShowFreeShippingBadge(); }\n\n// InvoiceService\ndecimal shipping = invoice.NetTotal >= 60m ? 0m : 4.90m;',
+      options: ['Zusammenfassen: echte Duplikation', 'Getrennt lassen: zufällig gleich'], correct: 0,
+      explanation: 'Beide Stellen setzen dieselbe Regel um: Gratisversand ab 60 €. Ändert sich die Grenze, müssen sich beide ändern. Sonst zeigt der Warenkorb „Gratisversand“ und die Rechnung verlangt Versandkosten. Die Regel gehört an genau eine Stelle.' },
+    { id: 'percent', kind: 'choice', title: 'Gleich oder zufällig gleich? (3)',
+      intro: 'Zwei Werte im Shop sind beide 0.20m.',
+      code: 'decimal tax = net * 0.20m;                      // tax rate Austria\nif (discount > total * 0.20m) { throw ... }    // maximum discount',
+      options: ['Zusammenfassen: echte Duplikation', 'Getrennt lassen: zufällig gleich'], correct: 1,
+      explanation: 'Steuersatz und maximaler Rabatt haben nichts miteinander zu tun. Eine gemeinsame Konstante wäre eine falsche Abstraktion: Eine Änderung des Steuersatzes würde plötzlich auch den Rabatt ändern.' }
+  ];
+
+  const solved = new Set((store.get('solved', []) || []).filter(id => ROUNDS.some(r => r.id === id)));
+  let roundIndex = Math.min(Math.max(store.get('round', 0) | 0, 0), ROUNDS.length - 1);
+  let marked = new Set();
+  let checked = false;
+  const exArea = document.getElementById('exArea');
+  const feedback = document.getElementById('feedback');
+
+  /** Positions (token indices) of the answer, taken from the first block. */
+  function answerPositions(r) {
+    const toks = tokenize(r.blocks[0].code);
+    const pos = new Set();
+    r.answer.forEach(a => toks.forEach((t, i) => { if (t === a) { pos.add(i); } }));
+    return pos;
+  }
+  function explainAt(r, i) {
+    const t = tokenize(r.blocks[0].code)[i];
+    return r.explain[t] || `<code>${esc(t)}</code> ist in allen Blöcken gleich. Gleiches bleibt im Methodenrumpf.`;
+  }
+  function differs(r, i) {
+    const all = r.blocks.map(b => tokenize(b.code)[i]);
+    return all.some(t => t !== all[0]);
+  }
+
+  function renderMark(r) {
+    exArea.innerHTML = r.blocks.map((b, bi) => {
+      const toks = tokenize(b.code);
+      return `<div class="ex-block"><div class="lbl">${esc(b.label)}</div><div class="ex-code">` +
+        toks.map((t, i) => isSpace(t) ? t : `<span class="tok" tabindex="${bi === 0 ? 0 : -1}" role="button" data-i="${i}">${esc(t)}</span>`).join('') +
+        '</div></div>';
+    }).join('');
+    paintMarks();
+  }
+  function paintMarks(result) {
+    exArea.querySelectorAll('.tok').forEach(el => {
+      const i = +el.dataset.i;
+      el.classList.remove('marked', 'right', 'wrong', 'missed');
+      if (result) {
+        if (result.right.has(i)) { el.classList.add('right'); }
+        else if (result.wrong.has(i)) { el.classList.add('wrong'); }
+      } else if (marked.has(i)) { el.classList.add('marked'); }
+      el.setAttribute('aria-pressed', marked.has(i) ? 'true' : 'false');
+    });
+  }
+  function toggle(i) {
+    if (checked) { checked = false; clearFeedback(); }
+    if (marked.has(i)) { marked.delete(i); } else { marked.add(i); }
+    paintMarks();
+  }
+  exArea.addEventListener('click', e => {
+    const el = e.target.closest('.tok');
+    if (el) { toggle(+el.dataset.i); }
+    const btn = e.target.closest('button[data-opt]');
+    if (btn) { checkChoice(+btn.dataset.opt); }
+  });
+  exArea.addEventListener('keydown', e => {
+    const el = e.target.closest('.tok');
+    if (el && (e.key === 'Enter' || e.key === ' ')) { toggle(+el.dataset.i); e.preventDefault(); }
+  });
+
+  function renderChoice(r) {
+    exArea.innerHTML = `<div class="ex-code">${esc(r.code)}</div><div class="choice row">` +
+      r.options.map((o, i) => `<button data-opt="${i}">${esc(o)}</button>`).join('') + '</div>';
+  }
+
+  function clearFeedback() {
+    feedback.className = 'feedback';
+    feedback.innerHTML = '';
+  }
+  function markSolved(r) {
+    solved.add(r.id);
+    store.set('solved', Array.from(solved));
+    drawRounds();
+  }
+  function nextRoundButton() {
+    const next = ROUNDS.findIndex((x, i) => i > roundIndex && !solved.has(x.id));
+    if (next >= 0) { return `<p><button id="nextRound">Weiter zu Runde ${next + 1}</button></p>`; }
+    return solved.size === ROUNDS.length ? '<p><b>Du hast alle Runden gelöst!</b></p>' : '';
+  }
+  function wireNext() {
+    const nb = document.getElementById('nextRound');
+    if (nb) {
+      const next = ROUNDS.findIndex((x, i) => i > roundIndex && !solved.has(x.id));
+      nb.addEventListener('click', () => selectRound(next));
+    }
+  }
+
+  function checkMark() {
+    const r = ROUNDS[roundIndex];
+    const answer = answerPositions(r);
+    const result = { right: new Set(), wrong: new Set(), missed: new Set() };
+    marked.forEach(i => (answer.has(i) ? result.right : result.wrong).add(i));
+    answer.forEach(i => { if (!marked.has(i)) { result.missed.add(i); } });
+    checked = true;
+    paintMarks(result);
+    if (result.wrong.size === 0 && result.missed.size === 0) {
+      markSolved(r);
+      const notes = Array.from(answer).map(i => `<li>${esc(explainAt(r, i))}</li>`).join('');
+      feedback.className = 'feedback ok';
+      feedback.innerHTML = `✓ Richtig!${notes ? `<ul>${notes}</ul>` : ''}<p>So sieht das Ergebnis aus:</p><pre>${esc(r.result)}</pre>` + nextRoundButton();
+      wireNext();
+      return;
+    }
+    const items = [];
+    result.wrong.forEach(i => items.push(`<li>✗ ${explainAt(r, i)}</li>`));
+    if (result.missed.size) { items.push(`<li>? ${result.missed.size === 1 ? 'Es fehlt noch eine Stelle' : 'Es fehlen noch ' + result.missed.size + ' Stellen'}. Vergleiche die Blöcke Zeichen für Zeichen.</li>`); }
+    feedback.className = 'feedback bad';
+    feedback.innerHTML = `Noch nicht ganz. ${result.right.size} richtig markiert.<ul>${items.join('')}</ul><p class="hint">Ändere deine Markierungen und prüfe noch einmal.</p>`;
+  }
+  function checkChoice(opt) {
+    const r = ROUNDS[roundIndex];
+    exArea.querySelectorAll('button[data-opt]').forEach(b => b.classList.remove('picked-right', 'picked-wrong'));
+    const btn = exArea.querySelector(`button[data-opt="${opt}"]`);
+    if (opt === r.correct) {
+      btn.classList.add('picked-right');
+      markSolved(r);
+      feedback.className = 'feedback ok';
+      feedback.innerHTML = `✓ Richtig! ${esc(r.explanation)}` + nextRoundButton();
+      wireNext();
+    } else {
+      btn.classList.add('picked-wrong');
+      feedback.className = 'feedback bad';
+      feedback.innerHTML = '✗ Nicht ganz. Stell dir die Prüffrage: Wenn sich die eine Stelle ändert, muss sich die andere dann <b>immer</b> mitändern? Versuche es noch einmal.';
+    }
+  }
+  function showSolution() {
+    const r = ROUNDS[roundIndex];
+    if (r.kind === 'mark') {
+      marked = answerPositions(r);
+      checked = false;
+      paintMarks();
+      feedback.className = 'feedback info';
+      feedback.innerHTML = `So sieht die Lösung aus. Lösche die Markierungen und versuche es selbst, damit die Runde als gelöst zählt.<pre>${esc(r.result)}</pre>`;
+    } else {
+      feedback.className = 'feedback info';
+      feedback.innerHTML = `Richtig ist: <b>${esc(r.options[r.correct])}</b>. ${esc(r.explanation)}`;
+    }
+  }
+
+  function drawRounds() {
+    const box = document.getElementById('roundButtons');
+    box.innerHTML = '';
+    ROUNDS.forEach((r, i) => {
+      const b = document.createElement('button');
+      b.textContent = String(i + 1);
+      b.title = r.title;
+      b.className = (solved.has(r.id) ? 'solved ' : '') + (i === roundIndex ? 'current' : '');
+      b.setAttribute('aria-label', `Runde ${i + 1}: ${r.title}${solved.has(r.id) ? ' (gelöst)' : ''}`);
+      b.addEventListener('click', () => selectRound(i));
+      box.appendChild(b);
+    });
+    const r = ROUNDS[roundIndex];
+    document.getElementById('roundCard').innerHTML =
+      `<b>Runde ${roundIndex + 1} von ${ROUNDS.length}: ${esc(r.title)}</b>${solved.has(r.id) ? ' <span class="muted">✓ gelöst</span>' : ''}` +
+      `<br>${esc(r.intro)}` +
+      (r.kind === 'mark' ? '<br><span class="hint">Klicke auf eine Stelle, um sie als Parameter (≠) zu markieren. Die Markierung gilt für dieselbe Stelle in allen Blöcken.</span>' : '') +
+      `<br><span class="hint">Gelöst: ${solved.size} von ${ROUNDS.length} Runden</span>`;
+  }
+  function selectRound(i) {
+    roundIndex = i;
+    store.set('round', i);
+    marked = new Set();
+    checked = false;
+    clearFeedback();
+    drawRounds();
+    const r = ROUNDS[i];
+    if (r.kind === 'mark') { renderMark(r); } else { renderChoice(r); }
+    document.getElementById('checkBtn').style.display = r.kind === 'mark' ? '' : 'none';
+    document.getElementById('resetBtn').style.display = r.kind === 'mark' ? '' : 'none';
+  }
+  document.getElementById('checkBtn').addEventListener('click', checkMark);
+  document.getElementById('resetBtn').addEventListener('click', () => { marked = new Set(); checked = false; clearFeedback(); paintMarks(); });
+  document.getElementById('solutionBtn').addEventListener('click', showSolution);
+
+  // ---------- slides ----------
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  let current = Math.min(Math.max(store.get('slide', 0) | 0, 0), slides.length - 1);
+  function showSlide(i) {
+    current = Math.min(Math.max(i, 0), slides.length - 1);
+    slides.forEach((s, k) => s.classList.toggle('active', k === current));
+    document.getElementById('progressText').textContent = `${current + 1} / ${slides.length}`;
+    document.getElementById('progressBar').style.width = `${(current + 1) / slides.length * 100}%`;
+    document.getElementById('prevBtn').disabled = current === 0;
+    document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    aAnim.stop(); bAnim.stop();
+    store.set('slide', current);
+    window.scrollTo(0, 0);
+  }
+  document.getElementById('prevBtn').addEventListener('click', () => showSlide(current - 1));
+  document.getElementById('nextBtn').addEventListener('click', () => showSlide(current + 1));
+  document.addEventListener('keydown', evt => {
+    const tag = evt.target && evt.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (evt.target && evt.target.isContentEditable)) { return; }
+    if (evt.ctrlKey || evt.altKey || evt.metaKey) { return; }
+    if (evt.key === 'ArrowRight' || evt.key === 'PageDown') { showSlide(current + 1); evt.preventDefault(); }
+    if (evt.key === 'ArrowLeft' || evt.key === 'PageUp') { showSlide(current - 1); evt.preventDefault(); }
+  });
+
+  // ---------- start ----------
+  aAnim.show(0);
+  bAnim.show(0);
+  selectRound(roundIndex);
+  showSlide(current);
+
+  /** Read-only hooks for automated tests. */
+  window.dryDebug = {
+    answer: () => (ROUNDS[roundIndex].kind === 'mark' ? Array.from(answerPositions(ROUNDS[roundIndex])) : []),
+    /** Every block of a marking round must have the same token count, and every answer must exist and differ. */
+    selfTest: () => {
+      const problems = [];
+      for (const r of ROUNDS.filter(x => x.kind === 'mark')) {
+        const counts = r.blocks.map(b => tokenize(b.code).length);
+        if (counts.some(c => c !== counts[0])) { problems.push(`${r.id}: token counts ${counts.join('/')}`); }
+        for (const a of r.answer) {
+          const pos = tokenize(r.blocks[0].code).indexOf(a);
+          if (pos < 0) { problems.push(`${r.id}: answer ${a} not found`); } else if (!differs(r, pos)) { problems.push(`${r.id}: answer ${a} does not differ`); }
+        }
+        const toks = tokenize(r.blocks[0].code);
+        toks.forEach((t, i) => {
+          if (differs(r, i) && !r.answer.includes(t) && !r.explain[t]) { problems.push(`${r.id}: difference ${t} without explanation`); }
+        });
+      }
+      return problems;
+    }
+  };
+})();
+</script>
+</body>
+</html>

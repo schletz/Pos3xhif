@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Komplexitäts-Quiz</title>
+<style>
+  :root {
+    --bg: #f8fafc; --card: #ffffff; --fg: #1f2937; --muted: #6b7280; --border: #d1d5db; --soft: #f3f4f6;
+    --n-stroke: #2563eb; --n-fill: #dbeafe;
+    --a-stroke: #ea580c; --a-fill: #ffedd5;
+    --ok-stroke: #16a34a; --ok-fill: #dcfce7;
+    --err-stroke: #dc2626; --err-fill: #fee2e2;
+    --gray-stroke: #6b7280; --gray-fill: #e5e7eb;
+    --btn: #2563eb; --btn-fg: #ffffff;
+    --code-bg: #f8fafc; --hl-line: #fff7ed;
+    --tk-kw: #0000ff; --tk-type: #267f99; --tk-str: #a31515; --tk-com: #008000; --tk-num: #098658; --tk-fn: #795e26;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f172a; --card: #1e293b; --fg: #e5e7eb; --muted: #9ca3af; --border: #475569; --soft: #334155;
+      --n-stroke: #60a5fa; --n-fill: #1e3a8a;
+      --a-stroke: #fb923c; --a-fill: #7c2d12;
+      --ok-stroke: #4ade80; --ok-fill: #14532d;
+      --err-stroke: #f87171; --err-fill: #7f1d1d;
+      --gray-stroke: #9ca3af; --gray-fill: #374151;
+      --btn: #3b82f6; --btn-fg: #ffffff;
+      --code-bg: #0b1220; --hl-line: #3b2a1a;
+      --tk-kw: #569cd6; --tk-type: #4ec9b0; --tk-str: #ce9178; --tk-com: #6a9955; --tk-num: #b5cea8; --tk-fn: #dcdcaa;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", Helvetica, Arial, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.5; }
+  code, .mono { font-family: Consolas, Menlo, monospace; }
+  code { background: var(--soft); padding: 0 4px; border-radius: 4px; }
+  header { position: sticky; top: 0; z-index: 5; background: var(--card); border-bottom: 1px solid var(--border);
+           padding: 8px 16px; display: flex; align-items: center; gap: 16px; }
+  header h1 { font-size: 18px; margin: 0; flex: 1; }
+  #progressText { font-variant-numeric: tabular-nums; color: var(--muted); }
+  #progressBar { position: absolute; left: 0; bottom: -1px; height: 3px; background: var(--btn); transition: width .3s; }
+  main { max-width: 1120px; margin: 0 auto; padding: 16px; }
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide h2 { margin: 4px 0 8px; font-size: 24px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin: 12px 0; }
+  .nav { display: flex; justify-content: space-between; max-width: 1120px; margin: 0 auto; padding: 0 16px 24px; }
+  button, select { font: inherit; border: 1px solid var(--border); background: var(--card); color: var(--fg); border-radius: 6px;
+           padding: 5px 12px; cursor: pointer; }
+  button:hover:not(:disabled) { border-color: var(--btn); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  button.primary { background: var(--btn); color: var(--btn-fg); border-color: var(--btn); }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0; }
+  .muted { color: var(--muted); }
+  .grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+  @media (max-width: 860px) { .grid2 { grid-template-columns: 1fr; } }
+  kbd { font-family: Consolas, Menlo, monospace; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 4px;
+        padding: 0 4px; background: var(--soft); }
+
+  /* code view */
+  pre.code { margin: 0; background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 0;
+             font-family: Consolas, Menlo, monospace; font-size: 15px; line-height: 1.55; overflow-x: auto; }
+  pre.code .ln { display: block; padding: 0 14px; white-space: pre; border-left: 4px solid transparent; }
+  pre.code .ln.cur { background: var(--hl-line); border-left-color: var(--a-stroke); }
+  .tk-kw { color: var(--tk-kw); } .tk-type { color: var(--tk-type); } .tk-str { color: var(--tk-str); }
+  .tk-com { color: var(--tk-com); font-style: italic; } .tk-num { color: var(--tk-num); } .tk-fn { color: var(--tk-fn); }
+
+  /* animation */
+  .controls label { display: inline-flex; align-items: center; gap: 6px; }
+  .counter { display: flex; gap: 24px; flex-wrap: wrap; margin: 10px 0; }
+  .counter > div { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 6px 14px; min-width: 110px; }
+  .counter .lbl { font-size: 13px; color: var(--muted); }
+  .counter .val { font-family: Consolas, Menlo, monospace; font-size: 26px; font-weight: 700; }
+  .counter .val.count { color: var(--a-stroke); }
+  .formula { font-family: Consolas, Menlo, monospace; font-size: 17px; min-height: 2.6em; padding: 8px 12px; background: var(--soft);
+             border-radius: 8px; word-break: break-word; }
+  .formula .res { color: var(--ok-stroke); font-weight: 700; white-space: nowrap; }
+  .vis { margin-top: 12px; }
+  .cells { display: grid; gap: 4px; }
+  .cell { width: 36px; height: 36px; border-radius: 5px; border: 2px solid var(--border); background: var(--card); display: flex;
+          align-items: center; justify-content: center; font-family: Consolas, Menlo, monospace; font-size: 13px; color: var(--muted); }
+  .cell.done { background: var(--n-fill); border-color: var(--n-stroke); color: var(--fg); }
+  .cell.cur { background: var(--a-fill); border-color: var(--a-stroke); color: var(--fg); font-weight: 700; }
+  .cell.skip { background: var(--soft); border-style: dashed; }
+  .gridwrap { display: grid; gap: 4px; align-items: center; }
+  .gridwrap .hd { font-family: Consolas, Menlo, monospace; font-size: 12px; color: var(--muted); text-align: center; }
+  .gridwrap .rowcount { font-family: Consolas, Menlo, monospace; font-weight: 700; color: var(--n-stroke); padding-left: 6px; }
+  .bars { display: flex; flex-direction: column; gap: 6px; }
+  .bar { height: 28px; border-radius: 5px; background: var(--n-fill); border: 2px solid var(--n-stroke); display: flex; align-items: center;
+         padding-left: 8px; font-family: Consolas, Menlo, monospace; font-size: 14px; white-space: nowrap; min-width: 34px; }
+  .bar.cur { background: var(--a-fill); border-color: var(--a-stroke); font-weight: 700; }
+
+  /* static table */
+  table.costs { border-collapse: collapse; width: 100%; }
+  table.costs th, table.costs td { border: 1px solid var(--border); padding: 5px 10px; text-align: left; vertical-align: top; }
+  table.costs th { background: var(--soft); }
+  td.bad { color: var(--err-stroke); font-weight: 600; white-space: nowrap; }
+  td.good { color: var(--ok-stroke); font-weight: 600; white-space: nowrap; }
+
+  /* quiz */
+  .tasks { display: flex; flex-wrap: wrap; gap: 4px; }
+  .tasks button { min-width: 38px; padding: 3px 6px; }
+  .tasks button.ok { background: var(--ok-fill); border-color: var(--ok-stroke); }
+  .tasks button.bad { background: var(--err-fill); border-color: var(--err-stroke); }
+  .tasks button.current { outline: 2px solid var(--btn); outline-offset: 1px; font-weight: 700; }
+  .qhead { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; }
+  .qhead h3 { margin: 0; font-size: 18px; }
+  .options { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+  .options button { font-family: Consolas, Menlo, monospace; min-width: 104px; font-size: 16px; }
+  .options button:disabled { opacity: 1; cursor: default; }
+  .options button.right { background: var(--ok-fill); border-color: var(--ok-stroke); font-weight: 700; }
+  .options button.wrong { background: var(--err-fill); border-color: var(--err-stroke); text-decoration: line-through; }
+  .feedback { padding: 10px 14px; border-radius: 6px; margin-top: 8px; display: none; }
+  .feedback.ok { display: block; background: var(--ok-fill); border: 1px solid var(--ok-stroke); }
+  .feedback.bad { display: block; background: var(--err-fill); border: 1px solid var(--err-stroke); }
+  .feedback b.head { display: block; margin-bottom: 4px; }
+  .score { font-weight: 600; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Komplexitäts-Quiz</h1>
+  <span id="progressText">1 / 6</span>
+  <div id="progressBar"></div>
+</header>
+
+<main>
+  <!-- Slide 1: simple loop -->
+  <section class="slide" data-slide="0">
+    <h2>Schritte zählen: eine Schleife</h2>
+    <p>Um die Laufzeit von Code zu bestimmen, zählst du, <b>wie oft der Rumpf einer Schleife ausgeführt wird</b>, und zwar
+      abhängig von der Eingabegröße n. Konstanten und kleinere Terme fallen am Ende weg.
+      Mit <b>Schritt</b> läuft der Code eine Anweisung weiter, mit <b>Play</b> von selbst.</p>
+    <div class="anim" id="animLoop"></div>
+    <p class="muted">Blättern: Pfeiltasten <kbd>←</kbd> <kbd>→</kbd> oder die Buttons unten.</p>
+  </section>
+
+  <!-- Slide 2: nested loops -->
+  <section class="slide" data-slide="1">
+    <h2>Verschachtelte Schleifen: multiplizieren</h2>
+    <p>Steht eine Schleife <b>in</b> einer anderen, läuft die innere für jeden Durchlauf der äußeren komplett durch.
+      Jedes Feld im Raster ist ein Durchlauf des inneren Rumpfs, also ein Paar (i, j).</p>
+    <div class="anim" id="animNested"></div>
+  </section>
+
+  <!-- Slide 3: dependent loops -->
+  <section class="slide" data-slide="2">
+    <h2>Abhängige Schleifen: die Gaußsche Summe</h2>
+    <p>Hier beginnt die innere Schleife bei <code>i + 1</code>. Sie wird mit jeder Zeile kürzer. Die Summe
+      (n − 1) + (n − 2) + … + 1 + 0 ergibt nach Gauß n(n − 1)/2. Das ist knapp die Hälfte von n², also trotzdem O(n²).</p>
+    <div class="anim" id="animDependent"></div>
+  </section>
+
+  <!-- Slide 4: halving loops -->
+  <section class="slide" data-slide="3">
+    <h2>Halbierende Schleifen: der Logarithmus</h2>
+    <p>Halbiert eine Schleife in jedem Durchlauf die verbleibende Menge, ist sie nach ⌊log₂ n⌋ Durchläufen fertig.
+      Probiere verschiedene n aus: Auch bei n = 1000 sind es nur 9 Schritte.</p>
+    <div class="anim" id="animHalving"></div>
+  </section>
+
+  <!-- Slide 5: hidden costs -->
+  <section class="slide" data-slide="4">
+    <h2>Versteckte Kosten</h2>
+    <p>Ein Methodenaufruf ist <b>kein</b> einzelner Schritt. Steht er in einer Schleife, multiplizierst du die Durchläufe
+      mit seinen Kosten. Diese Aufrufe kommen im Quiz vor (n = Anzahl der Elemente):</p>
+    <div class="card">
+      <table class="costs">
+        <tr><th>Aufruf</th><th>Kosten</th><th>Warum</th></tr>
+        <tr><td><code>list.Contains(x)</code>, <code>list.IndexOf(x)</code></td><td class="bad">O(n)</td><td>durchsucht die Liste von vorne</td></tr>
+        <tr><td><code>list.Insert(0, x)</code>, <code>list.RemoveAt(0)</code></td><td class="bad">O(n)</td><td>alle folgenden Elemente werden verschoben</td></tr>
+        <tr><td><code>list.Add(x)</code>, <code>list[i]</code>, <code>list.Count</code></td><td class="good">O(1)</td><td><code>Add</code> amortisiert: das Array wächst selten, dann aber auf das Doppelte</td></tr>
+        <tr><td><code>set.Contains(x)</code>, <code>set.Add(x)</code> bei <code>HashSet</code></td><td class="good">O(1)</td><td>Hashcode zeigt direkt auf das Fach (im Mittel)</td></tr>
+        <tr><td><code>dict[key]</code>, <code>dict.ContainsKey(key)</code></td><td class="good">O(1)</td><td>wie beim <code>HashSet</code></td></tr>
+        <tr><td><code>dict.ContainsValue(v)</code></td><td class="bad">O(n)</td><td>Werte sind nicht gehasht, alle Einträge werden durchsucht</td></tr>
+        <tr><td><code>s += t</code> bei <code>string</code></td><td class="bad">O(Länge von s)</td><td>Strings sind unveränderlich, der ganze Text wird kopiert</td></tr>
+        <tr><td><code>sb.Append(t)</code> bei <code>StringBuilder</code></td><td class="good">O(Länge von t)</td><td>hängt an, ohne den bisherigen Text zu kopieren</td></tr>
+        <tr><td><code>OrderBy(...).ToList()</code>, <code>Array.Sort(a)</code></td><td class="bad">O(n log n)</td><td>sortiert jedes Mal alles</td></tr>
+        <tr><td><code>ToList()</code>, <code>ToArray()</code>, <code>a[..mid]</code></td><td class="bad">O(n)</td><td>kopiert die Elemente</td></tr>
+        <tr><td><code>Where(...).Count()</code>, <code>ElementAt(i)</code></td><td class="bad">O(n)</td><td>die Abfrage läuft bei jedem Aufruf neu durch die Quelle</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <b>Rekursion:</b> Zeichne den Rekursionsbaum. Die Kosten sind <i>Anzahl der Aufrufe × Arbeit pro Aufruf</i>.
+      Ein Aufruf mit <code>n / 2</code> ergibt log n Ebenen, ein Aufruf mit <code>n - 1</code> ergibt n Ebenen.
+      Ruft sich eine Methode zweimal selbst auf, verdoppelt sich die Anzahl der Knoten mit jeder Ebene.
+    </div>
+    <p>Auf der nächsten Folie bestimmst du selbst die Laufzeit von C#-Snippets. Gefragt ist immer der <b>Worst Case</b>.
+      Was n ist, steht im Kommentar über dem Code. Dein Fortschritt wird im Browser gespeichert.</p>
+  </section>
+
+  <!-- Slide 6: quiz -->
+  <section class="slide" data-slide="5">
+    <h2>Quiz: Welche Laufzeit hat der Code?</h2>
+    <div class="row">
+      <div class="tasks" id="taskButtons"></div>
+    </div>
+    <div class="row"><span class="score" id="score"></span><button id="resetAll">Fortschritt löschen</button></div>
+    <div class="card">
+      <div class="qhead"><h3 id="qTitle"></h3><span class="muted" id="qNumber"></span></div>
+      <p class="muted" id="qHint">Gefragt ist der Worst Case. Operationen auf <code>HashSet</code> und <code>Dictionary</code> zählen als O(1).</p>
+      <pre class="code" id="qCode"></pre>
+      <div class="options" id="qOptions"></div>
+      <div class="feedback" id="qFeedback"></div>
+      <div class="row">
+        <button id="qRetry">Nochmal versuchen</button>
+        <button id="qNext" class="primary">Nächste Aufgabe →</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="nav">
+  <button id="prevBtn">← Zurück</button>
+  <button id="nextBtn" class="primary">Weiter →</button>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---------- storage (works without localStorage) ----------
+  const store = {
+    get(key, fallback) {
+      try {
+        const raw = window.localStorage.getItem('ti-32-' + key);
+        return raw === null ? fallback : JSON.parse(raw);
+      } catch (e) { return fallback; }
+    },
+    set(key, value) {
+      try { window.localStorage.setItem('ti-32-' + key, JSON.stringify(value)); } catch (e) { /* ignore */ }
+    },
+    remove(key) {
+      try { window.localStorage.removeItem('ti-32-' + key); } catch (e) { /* ignore */ }
+    }
+  };
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+  function el(tag, cls, html) {
+    const e = document.createElement(tag);
+    if (cls) { e.className = cls; }
+    if (html !== undefined) { e.innerHTML = html; }
+    return e;
+  }
+
+  // ---------- tiny C# syntax highlighter ----------
+  const KEYWORDS = new Set(('int long double bool string char void var for foreach while do if else return new in out true false ' +
+    'null static public private const break continue class record').split(' '));
+  const TYPES = new Set(('List HashSet Dictionary IEnumerable StringBuilder Array Console Math Player Enumerable').split(' '));
+  const TOKEN = /(\/\/.*$)|(\$?"(?:[^"\\]|\\.)*")|('(?:[^'\\]|\\.)')|(\b\d[\d_]*\b)|([A-Za-z_]\w*)|(\s+)|([\s\S])/g;
+
+  /** Returns the highlighted HTML for one line of C# code. */
+  function highlightLine(line) {
+    let out = '';
+    let m;
+    TOKEN.lastIndex = 0;
+    while ((m = TOKEN.exec(line)) !== null) {
+      const t = m[0];
+      if (m[1]) { out += `<span class="tk-com">${escapeHtml(t)}</span>`; }
+      else if (m[2] || m[3]) { out += `<span class="tk-str">${escapeHtml(t)}</span>`; }
+      else if (m[4]) { out += `<span class="tk-num">${t}</span>`; }
+      else if (m[5]) {
+        const rest = line.slice(TOKEN.lastIndex);
+        if (KEYWORDS.has(t)) { out += `<span class="tk-kw">${t}</span>`; }
+        else if (TYPES.has(t)) { out += `<span class="tk-type">${t}</span>`; }
+        else if (/^\s*(<[^>]*>)?\s*\(/.test(rest)) { out += `<span class="tk-fn">${t}</span>`; }
+        else { out += t; }
+      } else { out += escapeHtml(t); }
+    }
+    return out;
+  }
+  /** Renders code into a pre element, one span per line so a line can be highlighted. */
+  function renderCode(pre, code) {
+    pre.innerHTML = code.split('\n').map(l => `<span class="ln">${highlightLine(l) || ' '}</span>`).join('');
+  }
+
+  // ---------- generic step animation ----------
+  const SPEEDS = [1100, 750, 450, 250, 110];
+
+  /**
+   * Builds an animation with code view, counters, formula and a visualisation.
+   * spec: { code, nOptions, nDefault, frames(n) -> frame[], visual(frame, n, box), counters: [[key, label]] }
+   * A frame has: line (index into the code), vars (object), formula (html).
+   */
+  function makeAnimation(root, spec) {
+    root.innerHTML = '';
+    const controls = el('div', 'row controls');
+    const nSel = el('select');
+    spec.nOptions.forEach(v => { const o = el('option', null, String(v)); o.value = v; nSel.appendChild(o); });
+    nSel.value = spec.nDefault;
+    nSel.setAttribute('aria-label', 'n');
+    const nLabel = el('label', null, 'n = '); nLabel.appendChild(nSel);
+    const resetBtn = el('button', null, '⏮ Zurück');
+    const stepBtn = el('button', 'primary', 'Schritt');
+    const playBtn = el('button', null, '▶ Play');
+    const speed = el('input'); speed.type = 'range'; speed.min = 1; speed.max = 5; speed.value = 3;
+    speed.setAttribute('aria-label', 'Geschwindigkeit');
+    const speedLabel = el('label', null, 'Geschwindigkeit '); speedLabel.appendChild(speed);
+    [nLabel, resetBtn, stepBtn, playBtn, speedLabel].forEach(c => controls.appendChild(c));
+    root.appendChild(controls);
+
+    const grid = el('div', 'grid2');
+    const left = el('div'); const right = el('div');
+    const pre = el('pre', 'code');
+    renderCode(pre, spec.code);
+    left.appendChild(pre);
+    const counter = el('div', 'counter');
+    const valueEls = {};
+    spec.counters.forEach(([key, label]) => {
+      const box = el('div', null, `<div class="lbl">${label}</div>`);
+      const v = el('div', 'val' + (key === 'count' ? ' count' : ''), '–');
+      box.appendChild(v); counter.appendChild(box); valueEls[key] = v;
+    });
+    left.appendChild(counter);
+    const formula = el('div', 'formula');
+    left.appendChild(formula);
+    const vis = el('div', 'vis');
+    right.appendChild(vis);
+    grid.appendChild(left); grid.appendChild(right);
+    root.appendChild(grid);
+
+    let frames = [];
+    let pos = 0;
+    let timer = null;
+
+    function n() { return Number(nSel.value); }
+    function draw() {
+      const f = frames[pos];
+      pre.querySelectorAll('.ln').forEach((ln, k) => ln.classList.toggle('cur', k === f.line));
+      spec.counters.forEach(([key]) => {
+        const v = f.vars[key];
+        valueEls[key].textContent = v === undefined ? '–' : String(v);
+      });
+      formula.innerHTML = f.formula || '&nbsp;';
+      spec.visual(f, n(), vis);
+      stepBtn.disabled = pos >= frames.length - 1;
+    }
+    function reset() { stop(); frames = spec.frames(n()); pos = 0; draw(); }
+    function step() {
+      if (pos < frames.length - 1) { pos++; draw(); }
+      if (pos >= frames.length - 1) { stop(); }
+    }
+    function stop() {
+      if (timer !== null) { clearInterval(timer); timer = null; }
+      playBtn.textContent = '▶ Play';
+    }
+    function play() {
+      if (timer !== null) { stop(); return; }
+      if (pos >= frames.length - 1) { pos = 0; draw(); }
+      playBtn.textContent = '⏸ Pause';
+      timer = setInterval(step, SPEEDS[Number(speed.value) - 1]);
+    }
+    resetBtn.addEventListener('click', reset);
+    stepBtn.addEventListener('click', () => { stop(); step(); });
+    playBtn.addEventListener('click', play);
+    nSel.addEventListener('change', reset);
+    speed.addEventListener('input', () => { if (timer !== null) { stop(); play(); } });
+    reset();
+    return { stop };
+  }
+
+  /** Builds an n x n grid; state(i, j) returns '', 'done', 'cur' or 'skip'. rowInfo(i) returns text after each row. */
+  function drawGrid(box, n, state, rowInfo) {
+    box.innerHTML = '';
+    const g = el('div', 'gridwrap');
+    g.style.gridTemplateColumns = `48px repeat(${n}, 36px) 40px`;
+    g.appendChild(el('div', 'hd', 'i \\ j'));
+    for (let j = 0; j < n; j++) { g.appendChild(el('div', 'hd', String(j))); }
+    g.appendChild(el('div', 'hd', ''));
+    for (let i = 0; i < n; i++) {
+      g.appendChild(el('div', 'hd', 'i = ' + i));
+      for (let j = 0; j < n; j++) { g.appendChild(el('div', 'cell ' + state(i, j))); }
+      g.appendChild(el('div', 'rowcount', rowInfo(i)));
+    }
+    box.appendChild(g);
+  }
+
+  // ---------- animation 1: simple loop ----------
+  const anims = [];
+  anims.push(makeAnimation(document.getElementById('animLoop'), {
+    code: 'int count = 0;\nfor (int i = 0; i < n; i++)\n{\n    count++;\n}\n// count == n',
+    nOptions: [4, 6, 8, 10, 12], nDefault: 8,
+    counters: [['i', 'i'], ['count', 'count']],
+    frames(n) {
+      const fr = [{ line: 0, vars: { count: 0 }, formula: 'count = 0', cur: -1, done: 0 }];
+      let terms = [];
+      for (let i = 0; i < n; i++) {
+        fr.push({ line: 1, vars: { i, count: i }, formula: `i = ${i} &lt; ${n}: Rumpf ausführen` + (terms.length ? `<br>${terms.join(' + ')}` : ''), cur: i, done: i });
+        terms.push('1');
+        fr.push({ line: 3, vars: { i, count: i + 1 }, formula: `${terms.join(' + ')} = ${i + 1}`, cur: i, done: i + 1 });
+      }
+      fr.push({ line: 1, vars: { i: n, count: n }, formula: `i = ${n} ist nicht &lt; ${n}: Schleife endet<br>${terms.join(' + ')} = ${n}`, cur: -1, done: n });
+      fr.push({ line: 5, vars: { i: n, count: n }, formula: `${n}-mal 1 Schritt = n = ${n} <span class="res">→ O(n)</span>`, cur: -1, done: n });
+      return fr;
+    },
+    visual(f, n, box) {
+      box.innerHTML = '<div class="muted">Ein Kästchen pro Durchlauf (Wert von i):</div>';
+      const c = el('div', 'cells');
+      c.style.gridTemplateColumns = `repeat(${Math.min(n, 6)}, 36px)`;
+      for (let i = 0; i < n; i++) {
+        const st = i === f.cur ? 'cur' : (i < f.done ? 'done' : '');
+        c.appendChild(el('div', 'cell ' + st, String(i)));
+      }
+      box.appendChild(c);
+    }
+  }));
+
+  // ---------- animation 2: nested loops ----------
+  anims.push(makeAnimation(document.getElementById('animNested'), {
+    code: 'int count = 0;\nfor (int i = 0; i < n; i++)\n{\n    for (int j = 0; j < n; j++)\n    {\n        count++;\n    }\n}\n// count == n * n',
+    nOptions: [3, 4, 5, 6, 8], nDefault: 5,
+    counters: [['i', 'i'], ['j', 'j'], ['count', 'count']],
+    frames(n) {
+      const fr = [{ line: 0, vars: { count: 0 }, formula: 'count = 0', ci: -1, cj: -1, count: 0 }];
+      let rows = [];
+      let count = 0;
+      for (let i = 0; i < n; i++) {
+        fr.push({ line: 1, vars: { i, count }, formula: `Zeile i = ${i} beginnt` + (rows.length ? `<br>${rows.join(' + ')} = ${count}` : ''), ci: i, cj: -1, count });
+        for (let j = 0; j < n; j++) {
+          count++;
+          const partial = rows.concat([String(j + 1)]).join(' + ');
+          fr.push({ line: 5, vars: { i, j, count }, formula: `${partial} = ${count}`, ci: i, cj: j, count });
+        }
+        rows.push(String(n));
+      }
+      fr.push({ line: 8, vars: { i: n, count }, formula: `${rows.join(' + ')} = ${n} · ${n} = ${count} = n² <span class="res">→ O(n²)</span>`, ci: -1, cj: -1, count });
+      return fr;
+    },
+    visual(f, n, box) {
+      drawGrid(box, n, (i, j) => {
+        const k = i * n + j;
+        if (i === f.ci && j === f.cj) { return 'cur'; }
+        return k < f.count ? 'done' : '';
+      }, i => (i < f.ci || f.ci === -1 && f.count > 0) ? String(n) : (i === f.ci ? String(f.cj + 1) : ''));
+    }
+  }));
+
+  // ---------- animation 3: dependent loops ----------
+  anims.push(makeAnimation(document.getElementById('animDependent'), {
+    code: 'int count = 0;\nfor (int i = 0; i < n; i++)\n{\n    for (int j = i + 1; j < n; j++)\n    {\n        count++;\n    }\n}\n// count == n * (n - 1) / 2',
+    nOptions: [4, 5, 6, 7, 8], nDefault: 6,
+    counters: [['i', 'i'], ['j', 'j'], ['count', 'count']],
+    frames(n) {
+      const fr = [{ line: 0, vars: { count: 0 }, formula: 'count = 0', ci: -1, cj: -1, rowsDone: 0 }];
+      const rows = [];
+      let count = 0;
+      for (let i = 0; i < n; i++) {
+        const sumText = rows.length ? `<br>${rows.join(' + ')} = ${count}` : '';
+        const rowText = i < n - 1
+          ? `Zeile i = ${i}: j läuft von ${i + 1} bis ${n - 1}, das sind ${n - 1 - i} Durchläufe`
+          : `Zeile i = ${i}: j beginnt bei ${n}, die innere Schleife läuft gar nicht`;
+        fr.push({ line: 1, vars: { i, count }, formula: rowText + sumText, ci: i, cj: -1, rowsDone: i });
+        for (let j = i + 1; j < n; j++) {
+          count++;
+          const partial = rows.concat([String(j - i)]).join(' + ');
+          fr.push({ line: 5, vars: { i, j, count }, formula: `${partial} = ${count}`, ci: i, cj: j, rowsDone: i });
+        }
+        rows.push(String(n - 1 - i));
+      }
+      fr.push({ line: 8, vars: { i: n, count },
+        formula: `${rows.join(' + ')} = ${count} = ${n} · ${n - 1} / 2 = n(n − 1)/2 <span class="res">→ O(n²)</span>`, ci: -1, cj: -1, rowsDone: n });
+      return fr;
+    },
+    visual(f, n, box) {
+      drawGrid(box, n, (i, j) => {
+        if (j <= i) { return 'skip'; }
+        if (i === f.ci && j === f.cj) { return 'cur'; }
+        if (i < f.rowsDone || (i === f.ci && j < f.cj)) { return 'done'; }
+        return '';
+      }, i => i < f.rowsDone ? String(n - 1 - i) : (i === f.ci ? String(Math.max(f.cj - i, 0)) : ''));
+    }
+  }));
+
+  // ---------- animation 4: halving loop ----------
+  anims.push(makeAnimation(document.getElementById('animHalving'), {
+    code: 'int size = n;\nint steps = 0;\nwhile (size > 1)\n{\n    size = size / 2;\n    steps++;\n}\n// steps == floor(log2(n))',
+    nOptions: [8, 16, 64, 100, 1000], nDefault: 64,
+    counters: [['size', 'size'], ['steps', 'steps']],
+    frames(n) {
+      const sizes = [n];
+      const fr = [{ line: 0, vars: { size: n }, formula: `size = ${n}`, sizes: [n] }];
+      fr.push({ line: 1, vars: { size: n, steps: 0 }, formula: `size = ${n}`, sizes: [n] });
+      let size = n, steps = 0;
+      while (size > 1) {
+        fr.push({ line: 2, vars: { size, steps }, formula: `${sizes.join(' → ')}<br>${size} &gt; 1: weiter halbieren`, sizes: sizes.slice() });
+        size = Math.floor(size / 2);
+        sizes.push(size);
+        fr.push({ line: 4, vars: { size, steps }, formula: sizes.join(' → '), sizes: sizes.slice() });
+        steps++;
+        fr.push({ line: 5, vars: { size, steps }, formula: `${sizes.join(' → ')}<br>${steps} Halbierung${steps === 1 ? '' : 'en'}`, sizes: sizes.slice() });
+      }
+      const log = Math.log2(n);
+      const logText = Number.isInteger(log) ? `log₂ ${n} = ${log}` : `log₂ ${n} ≈ ${log.toFixed(2).replace('.', ',')}, abgerundet ${Math.floor(log)}`;
+      fr.push({ line: 2, vars: { size, steps }, formula: `${sizes.join(' → ')}<br>size = 1: Schleife endet`, sizes: sizes.slice() });
+      fr.push({ line: 7, vars: { size, steps }, formula: `${steps} Halbierungen, ${logText} <span class="res">→ O(log n)</span>`, sizes: sizes.slice() });
+      return fr;
+    },
+    visual(f, n, box) {
+      box.innerHTML = '<div class="muted">Verbleibende Menge nach jeder Halbierung:</div>';
+      const bars = el('div', 'bars');
+      f.sizes.forEach((s, k) => {
+        const b = el('div', 'bar' + (k === f.sizes.length - 1 ? ' cur' : ''), String(s));
+        b.style.width = `calc(${Math.max(s / n * 100, 0)}% )`;
+        bars.appendChild(b);
+      });
+      box.appendChild(bars);
+    }
+  }));
+
+  // ---------- quiz data ----------
+  const OPTIONS = ['O(1)', 'O(log n)', 'O(n)', 'O(n log n)', 'O(n²)', 'O(n² log n)', 'O(n³)', 'O(2ⁿ)'];
+  const TASKS = [
+    {
+      title: 'Die ersten zehn',
+      code: `// n = a.Length, a has at least 10 elements
+int SumOfFirstTen(int[] a)
+{
+    int sum = 0;
+    for (int i = 0; i < 10; i++)
+    {
+        sum += a[i];
+    }
+    return sum;
+}`,
+      answer: 'O(1)',
+      explain: 'Die Schleife läuft immer genau 10-mal, egal wie groß das Array ist. Konstant viele Schritte ergeben O(1). ' +
+        'Eine Schleife allein macht noch kein O(n). Entscheidend ist, ob die Anzahl der Durchläufe mit n wächst.'
+    },
+    {
+      title: 'Summe',
+      code: `// n = a.Length
+int Sum(int[] a)
+{
+    int sum = 0;
+    foreach (int x in a)
+    {
+        sum += x;
+    }
+    return sum;
+}`,
+      answer: 'O(n)',
+      explain: 'Die Schleife läuft einmal pro Element, also n-mal. Der Rumpf ist ein einzelner Schritt. n · 1 = n, also O(n).'
+    },
+    {
+      title: 'Minimum und Maximum',
+      code: `// n = a.Length
+(int Min, int Max) MinMax(int[] a)
+{
+    int min = int.MaxValue;
+    foreach (int x in a) { if (x < min) { min = x; } }
+    int max = int.MinValue;
+    foreach (int x in a) { if (x > max) { max = x; } }
+    return (min, max);
+}`,
+      answer: 'O(n)',
+      explain: 'Zwei Schleifen <b>hintereinander</b>: n + n = 2n Durchläufe. Die Konstante 2 fällt weg, also O(n). ' +
+        'Multipliziert wird nur, wenn eine Schleife in der anderen steht.'
+    },
+    {
+      title: 'Duplikate mit Paaren',
+      code: `// n = a.Length
+bool HasDuplicate(int[] a)
+{
+    for (int i = 0; i < a.Length; i++)
+    {
+        for (int j = i + 1; j < a.Length; j++)
+        {
+            if (a[i] == a[j]) { return true; }
+        }
+    }
+    return false;
+}`,
+      answer: 'O(n²)',
+      explain: 'Im Worst Case gibt es kein Duplikat, und alle Paare werden geprüft: (n − 1) + (n − 2) + … + 1 + 0 = n(n − 1)/2. ' +
+        'Das ist die Hälfte von n², bleibt aber O(n²). Das frühe <code>return</code> hilft nur im Best Case.'
+    },
+    {
+      title: 'Dreiergruppen',
+      code: `// n = a.Length
+int CountZeroTriples(int[] a)
+{
+    int count = 0;
+    for (int i = 0; i < a.Length; i++)
+        for (int j = i + 1; j < a.Length; j++)
+            for (int k = j + 1; k < a.Length; k++)
+                if (a[i] + a[j] + a[k] == 0) { count++; }
+    return count;
+}`,
+      answer: 'O(n³)',
+      explain: 'Drei abhängige Schleifen prüfen jede Dreiergruppe genau einmal. Das sind n(n − 1)(n − 2)/6 Durchläufe. ' +
+        'Der dominante Term ist n³/6, also O(n³).'
+    },
+    {
+      title: 'Halbieren',
+      code: `// n is the parameter
+int CountHalvings(int n)
+{
+    int steps = 0;
+    while (n > 1)
+    {
+        n = n / 2;
+        steps++;
+    }
+    return steps;
+}`,
+      answer: 'O(log n)',
+      explain: 'n wird in jedem Durchlauf halbiert. Nach k Durchläufen ist n auf n / 2ᵏ geschrumpft. Die Schleife endet, wenn ' +
+        'das 1 ist, also nach ⌊log₂ n⌋ Durchläufen: O(log n).'
+    },
+    {
+      title: 'Binäre Suche',
+      code: `// n = sorted.Length, sorted is sorted ascending
+int IndexOf(int[] sorted, int value)
+{
+    int lo = 0, hi = sorted.Length - 1;
+    while (lo <= hi)
+    {
+        int mid = lo + (hi - lo) / 2;
+        if (sorted[mid] == value) { return mid; }
+        if (sorted[mid] < value) { lo = mid + 1; } else { hi = mid - 1; }
+    }
+    return -1;
+}`,
+      answer: 'O(log n)',
+      explain: 'Jeder Durchlauf halbiert den Suchbereich von <code>lo</code> bis <code>hi</code>. Im Worst Case (Wert nicht enthalten) ' +
+        'sind das ⌊log₂ n⌋ + 1 Durchläufe, bei einer Million Elementen also 20: O(log n).'
+    },
+    {
+      title: 'Verdoppeln in der Schleife',
+      code: `// n is the parameter
+int Count(int n)
+{
+    int count = 0;
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 1; j < n; j *= 2)
+        {
+            count++;
+        }
+    }
+    return count;
+}`,
+      answer: 'O(n log n)',
+      explain: 'Die innere Schleife verdoppelt j: 1, 2, 4, 8, … bis n. Das sind etwa log₂ n Durchläufe. Sie hängt nicht von i ab ' +
+        'und läuft für jedes der n i komplett durch: n · log n, also O(n log n).'
+    },
+    {
+      title: 'Median',
+      code: `// n = a.Length
+int Median(int[] a)
+{
+    int[] sorted = [.. a];
+    Array.Sort(sorted);
+    return sorted[sorted.Length / 2];
+}`,
+      answer: 'O(n log n)',
+      explain: 'Das Kopieren kostet O(n), <code>Array.Sort</code> kostet O(n log n), auch im Worst Case (Introsort). Der Zugriff ' +
+        'auf die Mitte ist O(1). Insgesamt dominiert das Sortieren: O(n log n).'
+    },
+    {
+      title: 'Duplikate mit HashSet',
+      code: `// n = a.Length
+bool HasDuplicate(int[] a)
+{
+    var seen = new HashSet<int>();
+    foreach (int x in a)
+    {
+        if (!seen.Add(x)) { return true; }
+    }
+    return false;
+}`,
+      answer: 'O(n)',
+      explain: '<code>HashSet.Add</code> kostet im Mittel O(1) und meldet mit <code>false</code>, dass der Wert schon da war. ' +
+        'n Durchläufe mit je O(1) ergeben O(n). Dieselbe Aufgabe wie „Duplikate mit Paaren“, aber viel schneller.'
+    },
+    {
+      title: 'Distinct mit List',
+      code: `// n = a.Length
+List<int> Distinct(int[] a)
+{
+    var result = new List<int>();
+    foreach (int x in a)
+    {
+        if (!result.Contains(x)) { result.Add(x); }
+    }
+    return result;
+}`,
+      answer: 'O(n²)',
+      explain: '<b>Falle:</b> <code>List.Contains</code> durchsucht die Liste linear. Sind alle Zahlen verschieden, wächst ' +
+        '<code>result</code> auf n Elemente, und es werden 0 + 1 + … + (n − 1) = n(n − 1)/2 Vergleiche: O(n²). ' +
+        'Mit einem <code>HashSet&lt;int&gt;</code> für die Prüfung wäre es O(n).'
+    },
+    {
+      title: 'Wörter zählen',
+      code: `// n = words.Length, words are short
+Dictionary<string, int> CountWords(string[] words)
+{
+    var counts = new Dictionary<string, int>();
+    foreach (string w in words)
+    {
+        counts[w] = counts.GetValueOrDefault(w) + 1;
+    }
+    return counts;
+}`,
+      answer: 'O(n)',
+      explain: 'Lesen und Schreiben über den Key kosten bei einem <code>Dictionary</code> im Mittel O(1). Die Wörter sind kurz, ' +
+        'der Hashcode eines Wortes ist also schnell berechnet. n Durchläufe mit O(1) ergeben O(n).'
+    },
+    {
+      title: 'Vergebene Namen',
+      code: `// n = wanted.Length = users.Count
+int CountTaken(string[] wanted, Dictionary<int, string> users)
+{
+    int taken = 0;
+    foreach (string name in wanted)
+    {
+        if (users.ContainsValue(name)) { taken++; }
+    }
+    return taken;
+}`,
+      answer: 'O(n²)',
+      explain: '<b>Falle:</b> Ein <code>Dictionary</code> ist nur über den <b>Key</b> schnell. <code>ContainsValue</code> geht alle ' +
+        'Einträge durch und kostet O(n). n-mal O(n) ergibt O(n²). Besser: einmal ein <code>HashSet</code> mit allen Namen bauen.'
+    },
+    {
+      title: 'Liste umdrehen',
+      code: `// n = items.Count
+List<int> Reversed(List<int> items)
+{
+    var result = new List<int>();
+    foreach (int x in items)
+    {
+        result.Insert(0, x);
+    }
+    return result;
+}`,
+      answer: 'O(n²)',
+      explain: '<b>Falle:</b> <code>Insert(0, x)</code> muss alle Elemente, die schon in der Liste sind, um einen Platz nach hinten ' +
+        'schieben. Das sind 0 + 1 + … + (n − 1) Verschiebungen: O(n²). <code>Add</code> am Ende und danach ' +
+        '<code>Reverse()</code> wäre O(n).'
+    },
+    {
+      title: 'Text mit +=',
+      code: `// n = words.Length, each word has at most 10 characters
+string Join(string[] words)
+{
+    string result = "";
+    foreach (string w in words)
+    {
+        result += w + ";";
+    }
+    return result;
+}`,
+      answer: 'O(n²)',
+      explain: '<b>Falle:</b> Strings sind unveränderlich. Jedes <code>+=</code> legt einen neuen String an und kopiert den ' +
+        'ganzen bisherigen Text. Nach k Wörtern ist er bis zu 11k Zeichen lang. Insgesamt werden bis zu ' +
+        '11 · (1 + 2 + … + n) ≈ 5,5 · n² Zeichen kopiert: O(n²).'
+    },
+    {
+      title: 'Text mit StringBuilder',
+      code: `// n = words.Length, each word has at most 10 characters
+string Join(string[] words)
+{
+    var sb = new StringBuilder();
+    foreach (string w in words)
+    {
+        sb.Append(w).Append(';');
+    }
+    return sb.ToString();
+}`,
+      answer: 'O(n)',
+      explain: 'Der <code>StringBuilder</code> hängt die Zeichen an, ohne den bisherigen Text zu kopieren. Jedes <code>Append</code> ' +
+        'kostet amortisiert so viel, wie es Zeichen anhängt. <code>ToString()</code> kopiert am Ende einmal höchstens 11n Zeichen. ' +
+        'Zusammen O(n).'
+    },
+    {
+      title: 'Rangliste',
+      code: `// n = scores.Count
+int[] Ranks(List<int> scores)
+{
+    var ranks = new int[scores.Count];
+    for (int i = 0; i < scores.Count; i++)
+    {
+        List<int> sorted = scores.OrderByDescending(s => s).ToList();
+        ranks[i] = sorted.IndexOf(scores[i]) + 1;
+    }
+    return ranks;
+}`,
+      answer: 'O(n² log n)',
+      explain: '<b>Falle:</b> Die Liste wird in <b>jedem</b> Durchlauf neu sortiert: O(n log n). Dazu kommt <code>IndexOf</code> ' +
+        'mit O(n). n Durchläufe · (n log n + n) ergibt O(n² log n). Einmal vor der Schleife sortieren und den Rang in einem ' +
+        '<code>Dictionary</code> merken bringt O(n log n).'
+    },
+    {
+      title: 'Aktive Spieler',
+      code: `// n = players.Count
+void PrintActive(List<Player> players)
+{
+    IEnumerable<Player> active = players.Where(p => p.IsActive);
+    for (int i = 0; i < active.Count(); i++)
+    {
+        Console.WriteLine($"{i + 1}. {active.ElementAt(i).Name}");
+    }
+}`,
+      answer: 'O(n²)',
+      explain: '<b>Falle:</b> <code>active</code> ist keine Liste, sondern eine Abfrage. <code>Count()</code> läuft bei <b>jeder</b> ' +
+        'Prüfung der Bedingung durch alle n Spieler, <code>ElementAt(i)</code> sucht wieder von vorne. n Durchläufe · O(n) ergibt ' +
+        'O(n²). Mit <code>.ToList()</code> in der ersten Zeile wäre es O(n).'
+    },
+    {
+      title: 'Rekursive Summe',
+      code: `// n = a.Length, first call: Sum(a, 0)
+int Sum(int[] a, int i)
+{
+    if (i == a.Length) { return 0; }
+    return a[i] + Sum(a, i + 1);
+}`,
+      answer: 'O(n)',
+      explain: 'Jeder Aufruf macht O(1) Arbeit und ruft sich <b>einmal</b> mit <code>i + 1</code> auf. Der Rekursionsbaum ist eine ' +
+        'Kette mit n + 1 Aufrufen: O(n). Die Rekursionstiefe ist ebenfalls n.'
+    },
+    {
+      title: 'Fibonacci naiv',
+      code: `// n is the parameter
+long Fib(int n)
+{
+    if (n < 2) { return n; }
+    return Fib(n - 1) + Fib(n - 2);
+}`,
+      answer: 'O(2ⁿ)',
+      explain: 'Jeder Aufruf erzeugt <b>zwei</b> neue, die Größe sinkt dabei nur um 1 bzw. 2. Der Rekursionsbaum hat bis zu n Ebenen, ' +
+        'und jede Ebene hat höchstens doppelt so viele Knoten wie die vorige: weniger als 2ⁿ Aufrufe. Genauer wächst die Zahl ' +
+        'mit etwa 1,618ⁿ, das ist trotzdem exponentiell. Mit Memoization wäre es O(n).'
+    },
+    {
+      title: 'Schnelles Potenzieren',
+      code: `// n is the exponent
+long Power(long x, int n)
+{
+    if (n == 0) { return 1; }
+    long half = Power(x, n / 2);
+    return n % 2 == 0 ? half * half : half * half * x;
+}`,
+      answer: 'O(log n)',
+      explain: 'Es gibt nur <b>einen</b> rekursiven Aufruf, und zwar mit <code>n / 2</code>. Das Ergebnis wird in <code>half</code> ' +
+        'gespeichert und zweimal verwendet. Der Baum ist eine Kette mit etwa log₂ n Knoten: O(log n).'
+    },
+    {
+      title: 'Potenzieren, zweiter Versuch',
+      code: `// n is the exponent
+long Power(long x, int n)
+{
+    if (n == 0) { return 1; }
+    if (n % 2 == 0) { return Power(x, n / 2) * Power(x, n / 2); }
+    return Power(x, n / 2) * Power(x, n / 2) * x;
+}`,
+      answer: 'O(n)',
+      explain: '<b>Falle:</b> Jetzt gibt es <b>zwei</b> Aufrufe mit <code>n / 2</code>. Der Baum hat log₂ n Ebenen, aber Ebene k hat ' +
+        '2ᵏ Knoten. Die unterste Ebene hat also etwa 2^(log₂ n) = n Knoten, insgesamt sind es etwa 4n Aufrufe (für n = 8 genau 31): ' +
+        'O(n). Das Zwischenspeichern in einer Variablen macht daraus O(log n).'
+    },
+    {
+      title: 'Summe mit Teilarrays',
+      code: `// n = a.Length
+int Sum(int[] a)
+{
+    if (a.Length == 0) { return 0; }
+    if (a.Length == 1) { return a[0]; }
+    int mid = a.Length / 2;
+    return Sum(a[..mid]) + Sum(a[mid..]);
+}`,
+      answer: 'O(n log n)',
+      explain: '<b>Falle:</b> <code>a[..mid]</code> erzeugt bei einem Array eine <b>Kopie</b>. Jeder Aufruf kopiert also so viele ' +
+        'Elemente, wie er bekommt. Wie bei Mergesort sind das pro Ebene zusammen n Elemente, bei log₂ n Ebenen: O(n log n). ' +
+        'Mit Indizes <code>lo</code> und <code>hi</code> statt Kopien wäre es O(n).'
+    }
+  ];
+
+  // ---------- quiz logic ----------
+  /** results[k] = { chosen, ok } for answered tasks; the first answer counts. */
+  let quiz = store.get('quiz', { current: 0, results: {} });
+  if (!quiz || typeof quiz !== 'object' || typeof quiz.results !== 'object' || quiz.results === null) {
+    quiz = { current: 0, results: {} };
+  }
+  quiz.current = Math.min(Math.max(quiz.current | 0, 0), TASKS.length - 1);
+
+  const qTitle = document.getElementById('qTitle');
+  const qNumber = document.getElementById('qNumber');
+  const qCode = document.getElementById('qCode');
+  const qOptions = document.getElementById('qOptions');
+  const qFeedback = document.getElementById('qFeedback');
+  const qRetry = document.getElementById('qRetry');
+  const qNext = document.getElementById('qNext');
+
+  function saveQuiz() { store.set('quiz', quiz); }
+
+  function drawTaskButtons() {
+    const box = document.getElementById('taskButtons');
+    box.innerHTML = '';
+    TASKS.forEach((t, k) => {
+      const b = el('button', null, String(k + 1));
+      const r = quiz.results[k];
+      if (r) { b.classList.add(r.ok ? 'ok' : 'bad'); }
+      if (k === quiz.current) { b.classList.add('current'); }
+      b.title = t.title;
+      b.addEventListener('click', () => { quiz.current = k; saveQuiz(); drawQuiz(); });
+      box.appendChild(b);
+    });
+    const answered = Object.keys(quiz.results).length;
+    const correct = Object.values(quiz.results).filter(r => r.ok).length;
+    document.getElementById('score').textContent = `Beantwortet: ${answered} von ${TASKS.length}, davon richtig: ${correct}`;
+  }
+
+  function drawQuiz() {
+    const k = quiz.current;
+    const t = TASKS[k];
+    qTitle.textContent = t.title;
+    qNumber.textContent = `Aufgabe ${k + 1} von ${TASKS.length}`;
+    renderCode(qCode, t.code);
+    qOptions.innerHTML = '';
+    const r = quiz.results[k];
+    OPTIONS.forEach(opt => {
+      const b = el('button', null, opt);
+      b.dataset.option = opt;
+      if (r) {
+        b.disabled = true;
+        if (opt === t.answer) { b.classList.add('right'); }
+        else if (opt === r.chosen) { b.classList.add('wrong'); }
+      }
+      b.addEventListener('click', () => answer(opt));
+      qOptions.appendChild(b);
+    });
+    if (r) {
+      qFeedback.className = 'feedback ' + (r.ok ? 'ok' : 'bad');
+      qFeedback.innerHTML = (r.ok
+        ? `<b class="head">Richtig: ${t.answer}</b>`
+        : `<b class="head">Leider nicht. Du hast ${escapeHtml(r.chosen)} gewählt, richtig ist ${t.answer}.</b>`) + t.explain;
+    } else {
+      qFeedback.className = 'feedback';
+      qFeedback.innerHTML = '';
+    }
+    qRetry.disabled = !r;
+    qNext.disabled = k === TASKS.length - 1;
+    drawTaskButtons();
+  }
+
+  function answer(opt) {
+    const k = quiz.current;
+    if (quiz.results[k]) { return; }
+    quiz.results[k] = { chosen: opt, ok: opt === TASKS[k].answer };
+    saveQuiz();
+    drawQuiz();
+  }
+
+  qRetry.addEventListener('click', () => { delete quiz.results[quiz.current]; saveQuiz(); drawQuiz(); });
+  qNext.addEventListener('click', () => {
+    if (quiz.current < TASKS.length - 1) { quiz.current++; saveQuiz(); drawQuiz(); }
+  });
+  document.getElementById('resetAll').addEventListener('click', () => {
+    quiz = { current: 0, results: {} };
+    store.remove('quiz');
+    drawQuiz();
+  });
+
+  // ---------- slides ----------
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  let current = Math.min(Math.max(store.get('slide', 0) | 0, 0), slides.length - 1);
+  function showSlide(i) {
+    current = Math.min(Math.max(i, 0), slides.length - 1);
+    slides.forEach((s, k) => s.classList.toggle('active', k === current));
+    document.getElementById('progressText').textContent = `${current + 1} / ${slides.length}`;
+    document.getElementById('progressBar').style.width = `${(current + 1) / slides.length * 100}%`;
+    document.getElementById('prevBtn').disabled = current === 0;
+    document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    anims.forEach(a => a.stop());
+    store.set('slide', current);
+    window.scrollTo(0, 0);
+  }
+  document.getElementById('prevBtn').addEventListener('click', () => showSlide(current - 1));
+  document.getElementById('nextBtn').addEventListener('click', () => showSlide(current + 1));
+  document.addEventListener('keydown', evt => {
+    const tag = evt.target && evt.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') { return; }
+    if (evt.ctrlKey || evt.altKey || evt.metaKey) { return; }
+    if (evt.key === 'ArrowRight' || evt.key === 'PageDown') { showSlide(current + 1); evt.preventDefault(); }
+    else if (evt.key === 'ArrowLeft' || evt.key === 'PageUp') { showSlide(current - 1); evt.preventDefault(); }
+  });
+
+  drawQuiz();
+  showSlide(current);
+
+  /** Read-only hooks for automated tests. */
+  window.quizDebug = { tasks: () => TASKS.map(t => ({ title: t.title, answer: t.answer })), options: OPTIONS.slice() };
+})();
+</script>
+</body>
+</html>

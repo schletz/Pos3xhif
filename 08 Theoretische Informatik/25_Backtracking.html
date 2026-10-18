@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Backtracking: N-Damen</title>
+<style>
+  :root {
+    --bg: #f8fafc; --card: #ffffff; --fg: #1f2937; --muted: #6b7280; --border: #d1d5db; --soft: #f3f4f6;
+    --line: #1f2937;
+    --n-stroke: #2563eb; --n-fill: #dbeafe;
+    --a-stroke: #ea580c; --a-fill: #ffedd5;
+    --ok-stroke: #16a34a; --ok-fill: #dcfce7;
+    --err-stroke: #dc2626; --err-fill: #fee2e2;
+    --gray-stroke: #6b7280; --gray-fill: #e5e7eb;
+    --sq-dark: #e9edf2;
+    --btn: #2563eb; --btn-fg: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f172a; --card: #1e293b; --fg: #e5e7eb; --muted: #9ca3af; --border: #475569; --soft: #334155;
+      --line: #e5e7eb;
+      --n-stroke: #60a5fa; --n-fill: #1e3a8a;
+      --a-stroke: #fb923c; --a-fill: #7c2d12;
+      --ok-stroke: #4ade80; --ok-fill: #14532d;
+      --err-stroke: #f87171; --err-fill: #7f1d1d;
+      --gray-stroke: #9ca3af; --gray-fill: #374151;
+      --sq-dark: #273449;
+      --btn: #3b82f6; --btn-fg: #ffffff;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", Helvetica, Arial, sans-serif; background: var(--bg); color: var(--fg);
+         line-height: 1.5; }
+  code, .mono, pre { font-family: Consolas, Menlo, monospace; }
+  code { background: var(--soft); padding: 0 4px; border-radius: 4px; }
+  pre { background: var(--soft); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; margin: 8px 0;
+        font-size: 14px; overflow-x: auto; }
+  header { position: sticky; top: 0; z-index: 5; background: var(--card); border-bottom: 1px solid var(--border);
+           padding: 8px 16px; display: flex; align-items: center; gap: 16px; }
+  header h1 { font-size: 18px; margin: 0; flex: 1; }
+  #progressText { font-variant-numeric: tabular-nums; color: var(--muted); }
+  #progressBar { position: absolute; left: 0; bottom: -1px; height: 3px; background: var(--btn); transition: width .3s; }
+  main { max-width: 1180px; margin: 0 auto; padding: 16px; }
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide h2 { margin: 4px 0 8px; font-size: 24px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin: 12px 0; }
+  .card h3 { margin: 0 0 6px; font-size: 16px; }
+  .nav { display: flex; justify-content: space-between; max-width: 1180px; margin: 0 auto; padding: 0 16px 24px; }
+  button, select { font: inherit; border: 1px solid var(--border); background: var(--card); color: var(--fg); border-radius: 6px;
+           padding: 5px 12px; cursor: pointer; }
+  button:hover:not(:disabled) { border-color: var(--btn); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  button.primary { background: var(--btn); color: var(--btn-fg); border-color: var(--btn); }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0; }
+  .row label { display: inline-flex; align-items: center; gap: 6px; }
+  .muted { color: var(--muted); }
+  .grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 1fr); gap: 16px; align-items: start; }
+  @media (max-width: 860px) { .grid2 { grid-template-columns: 1fr; } }
+  .steps4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 860px) { .steps4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .steps4 .card { margin: 0; }
+  .steps4 b { display: block; font-size: 17px; }
+  kbd { font-family: Consolas, Menlo, monospace; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 4px;
+        padding: 0 4px; background: var(--soft); }
+
+  /* board */
+  svg.board { width: 100%; max-width: 460px; height: auto; display: block; user-select: none; -webkit-user-select: none; }
+  svg.board .sq-l { fill: var(--card); }
+  svg.board .sq-d { fill: var(--sq-dark); }
+  svg.board .frame { fill: none; stroke: var(--gray-stroke); stroke-width: 1.5; }
+  svg.board .lbl { font-family: Consolas, Menlo, monospace; font-size: 13px; fill: var(--muted); }
+  svg.board .row-active { fill: var(--a-fill); opacity: .45; }
+  svg.board .attacked { fill: var(--err-stroke); opacity: .45; }
+  svg.board .cell-normal { fill: var(--n-fill); stroke: var(--n-stroke); stroke-width: 2.5; }
+  svg.board .cell-active { fill: var(--a-fill); stroke: var(--a-stroke); stroke-width: 3; }
+  svg.board .cell-ok { fill: var(--ok-fill); stroke: var(--ok-stroke); stroke-width: 3; }
+  svg.board .cell-err { fill: var(--err-fill); stroke: var(--err-stroke); stroke-width: 3; }
+  svg.board .cell-ghost { fill: none; stroke: var(--gray-stroke); stroke-width: 2; stroke-dasharray: 5 4; }
+  svg.board .cell-target { fill: none; stroke: var(--a-stroke); stroke-width: 3; stroke-dasharray: 6 4; }
+  svg.board .queen { font-family: "Segoe UI Symbol", "Segoe UI", "DejaVu Sans", sans-serif; fill: var(--fg);
+                     text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+  svg.board .queen.ghost { fill: var(--gray-stroke); opacity: .55; }
+  svg.board .cross { font-family: "Segoe UI", Helvetica, Arial, sans-serif; fill: var(--err-stroke); font-weight: 700;
+                     text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+  svg.board .threat { stroke: var(--err-stroke); stroke-width: 3; stroke-linecap: round; }
+  svg.board .hit { fill: transparent; cursor: pointer; }
+  svg.board .hit:hover { fill: var(--n-stroke); opacity: .15; }
+
+  /* tree */
+  .treebox { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--card); }
+  svg.tree { display: block; }
+  svg.tree text { font-family: Consolas, Menlo, monospace; font-size: 12px; fill: var(--fg); text-anchor: middle;
+                  dominant-baseline: central; }
+  svg.tree text.lvl { font-family: "Segoe UI", Helvetica, Arial, sans-serif; fill: var(--muted); text-anchor: start; font-size: 12px; }
+  svg.tree .e { stroke: var(--gray-stroke); stroke-width: 1.2; }
+  svg.tree .e.path { stroke: var(--a-stroke); stroke-width: 2.5; }
+  svg.tree .e.cut { stroke: var(--err-stroke); stroke-dasharray: 3 3; }
+  svg.tree .n-root { fill: var(--n-fill); stroke: var(--n-stroke); stroke-width: 2; }
+  svg.tree .n-path { fill: var(--a-fill); stroke: var(--a-stroke); stroke-width: 2.5; }
+  svg.tree .n-cur { fill: var(--a-fill); stroke: var(--a-stroke); stroke-width: 4; }
+  svg.tree .n-done { fill: var(--gray-fill); stroke: var(--gray-stroke); stroke-width: 1.5; }
+  svg.tree .n-sol { fill: var(--ok-fill); stroke: var(--ok-stroke); stroke-width: 3; }
+  svg.tree .n-cut { fill: var(--err-fill); stroke: var(--err-stroke); stroke-width: 1.5; }
+  svg.tree .n-cut-cur { fill: var(--err-fill); stroke: var(--err-stroke); stroke-width: 3.5; }
+
+  .status { min-height: 3em; font-weight: 600; }
+  .status.ok { color: var(--ok-stroke); } .status.bad { color: var(--err-stroke); } .status.back { color: var(--gray-stroke); }
+  .counters { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; text-align: center; }
+  .counters div { background: var(--soft); border-radius: 6px; padding: 4px; }
+  .counters b { display: block; font-size: 20px; font-variant-numeric: tabular-nums; }
+  .counters span { font-size: 12px; color: var(--muted); }
+  .legend { display: grid; grid-template-columns: 26px 1fr; gap: 4px 8px; align-items: center; font-size: 14px; }
+  .sw { width: 20px; height: 20px; border-radius: 4px; border: 2px solid; display: inline-block; }
+  .sw.n { background: var(--n-fill); border-color: var(--n-stroke); }
+  .sw.a { background: var(--a-fill); border-color: var(--a-stroke); }
+  .sw.ok { background: var(--ok-fill); border-color: var(--ok-stroke); }
+  .sw.err { background: var(--err-fill); border-color: var(--err-stroke); }
+  .sw.g { background: var(--gray-fill); border-color: var(--gray-stroke); }
+  .sw.round { border-radius: 50%; }
+  .feedback { padding: 8px 12px; border-radius: 6px; margin-top: 8px; min-height: 2.4em; background: var(--soft);
+              border: 1px solid var(--border); }
+  .feedback.ok { background: var(--ok-fill); border-color: var(--ok-stroke); }
+  .feedback.bad { background: var(--err-fill); border-color: var(--err-stroke); }
+  .hintbox { padding: 8px 12px; border-radius: 6px; margin-top: 8px; background: var(--a-fill); border: 1px solid var(--a-stroke);
+             display: none; }
+  .hintbox.show { display: block; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { font-family: Consolas, Menlo, monospace; padding: 1px 8px; border-radius: 12px; border: 1px solid var(--ok-stroke);
+          background: var(--ok-fill); cursor: pointer; }
+  .meter { height: 8px; background: var(--soft); border-radius: 4px; overflow: hidden; margin: 4px 0 8px; }
+  .meter div { height: 100%; background: var(--ok-stroke); width: 0; transition: width .3s; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Backtracking: N-Damen</h1>
+  <span id="progressText">1 / 4</span>
+  <div id="progressBar"></div>
+</header>
+
+<main>
+  <!-- Slide 1 -->
+  <section class="slide" data-slide="0">
+    <h2>Ausprobieren und Zurücknehmen</h2>
+    <p><b>Backtracking</b> baut eine Lösung Schritt für Schritt auf. Was schon feststeht, heißt <b>Teillösung</b>.
+      In jedem Schritt probiert der Algorithmus die Möglichkeiten der Reihe nach aus:</p>
+    <div class="steps4">
+      <div class="card"><b>1 · Setzen</b>Eine Möglichkeit wird zur Teillösung hinzugefügt.</div>
+      <div class="card"><b>2 · Prüfen</b>Ist die Teillösung noch gültig? Wenn nicht: Sackgasse.</div>
+      <div class="card"><b>3 · Weitersuchen</b>Gültig? Dann geht es mit dem nächsten Schritt weiter.</div>
+      <div class="card"><b>4 · Zurücknehmen</b>Danach wird die Möglichkeit entfernt und die nächste probiert.</div>
+    </div>
+    <div class="grid2">
+      <div>
+        <h3>Das N-Damen-Problem</h3>
+        <p>Auf einem N × N-Brett sollen N Damen stehen, ohne dass eine Dame eine andere bedroht. Eine Dame bedroht
+          ihre Zeile, ihre Spalte und beide Diagonalen.</p>
+        <p>Weil in jeder Zeile genau eine Dame stehen muss, setzt der Algorithmus die Damen <b>Zeile für Zeile</b> von
+          oben nach unten. Die Teillösung ist die Liste der Spalten, z. B. <code>[1, 3]</code>: Zeile 0 → Spalte 1,
+          Zeile 1 → Spalte 3. Zeilen und Spalten sind ab 0 nummeriert.</p>
+        <p>Zwei Damen stehen auf einer Diagonale, wenn der Abstand ihrer Spalten gleich dem Abstand ihrer Zeilen ist.</p>
+        <p class="muted">Blättern: Pfeiltasten <kbd>←</kbd> <kbd>→</kbd> oder die Buttons unten.</p>
+      </div>
+      <div>
+        <h3>Das Schema</h3>
+<pre>Suche(teillösung):
+    wenn teillösung vollständig ist:
+        Lösung melden
+        zurück
+    für jede Möglichkeit m:
+        wenn teillösung mit m gültig ist:
+            m hinzufügen          (setzen)
+            Suche(teillösung)     (weitersuchen)
+            m wieder entfernen    (zurücknehmen)</pre>
+        <p>Alle Teillösungen zusammen bilden einen <b>Suchbaum</b>. Backtracking durchläuft ihn mit einer Tiefensuche.
+          Auf der nächsten Folie siehst du Brett und Suchbaum gleichzeitig.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 2 -->
+  <section class="slide" data-slide="1">
+    <h2>N-Damen Schritt für Schritt</h2>
+    <div class="row" id="animControls">
+      <label>N = <select id="animN" aria-label="Brettgröße">
+        <option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="8">8</option>
+      </select></label>
+      <button id="animReset">⏮ Anfang</button>
+      <button id="animBack">◀ Schritt zurück</button>
+      <button id="animStep" class="primary">Schritt ▶</button>
+      <button id="animPlay">▶ Play</button>
+      <label>Geschwindigkeit <input type="range" id="animSpeed" min="1" max="5" value="3" aria-label="Geschwindigkeit"></label>
+    </div>
+    <div class="grid2">
+      <div><svg class="board" id="animBoard" aria-label="Schachbrett"></svg></div>
+      <div>
+        <div class="status" id="animStatus"></div>
+        <div class="counters">
+          <div><b id="cTry">0</b><span>Felder probiert</span></div>
+          <div><b id="cPlace">0</b><span>Damen gesetzt</span></div>
+          <div><b id="cBack">0</b><span>zurückgenommen</span></div>
+          <div><b id="cSol">0</b><span>Lösungen</span></div>
+        </div>
+        <div class="card legend">
+          <span class="sw n"></span><span>gesetzte Dame</span>
+          <span class="sw a"></span><span>gerade gesetzt bzw. aktuelle Zeile</span>
+          <span class="sw err"></span><span>bedrohtes Feld, rote Linie zur bedrohenden Dame</span>
+          <span class="sw g"></span><span>zurückgenommene Dame (gestrichelt)</span>
+          <span class="sw ok"></span><span>Lösung</span>
+        </div>
+        <p class="muted" id="animNote"></p>
+      </div>
+    </div>
+    <h3>Suchbaum</h3>
+    <div class="treebox" id="treeBox"><svg class="tree" id="treeSvg" aria-label="Suchbaum"></svg></div>
+    <div class="row muted">
+      <span class="sw round a"></span> aktueller Weg
+      <span class="sw round g"></span> abgeschlossen
+      <span class="sw round ok"></span> Lösung
+      <span class="sw err" id="cutLegend"></span><span id="cutLegendText">bedroht, abgeschnitten</span>
+    </div>
+  </section>
+
+  <!-- Slide 3 -->
+  <section class="slide" data-slide="2">
+    <h2>Pruning und die Übung</h2>
+    <div class="grid2">
+      <div class="card">
+        <h3>Pruning: Äste abschneiden</h3>
+        <p>Im Suchbaum endet jedes rote Kästchen sofort. Die Dame wird dort gar nicht erst gesetzt, und alles, was darunter
+          läge, wird nie besucht. Dieses Abschneiden heißt <b>Pruning</b>.</p>
+        <p>Für N = 4 kannst du nachzählen: Ohne Prüfung während des Aufbaus gibt es 4 · 4 · 4 · 4 = 256 vollständige
+          Stellungen mit einer Dame pro Zeile, die alle am Ende geprüft werden müssten. Mit der Prüfung nach jeder Dame
+          probiert die Suche nach allen Lösungen nur 60 Felder aus und setzt 16-mal eine Dame.</p>
+        <p>Eine Pruning-Regel darf nur Teilbäume abschneiden, in denen <b>sicher</b> keine Lösung liegt. Sonst gehen
+          Lösungen verloren.</p>
+      </div>
+      <div class="card">
+        <h3>So funktioniert die Übung</h3>
+        <ul>
+          <li>Wähle N und setze Damen per Klick auf ein Feld. Ein Klick auf eine Dame entfernt sie wieder.</li>
+          <li>Bedrohen sich zwei Damen, siehst du das sofort: Beide werden rot und eine Linie verbindet sie.</li>
+          <li>Mit <b>Bedrohte Felder zeigen</b> markiert die Seite alle Felder, die eine Dame angreift.</li>
+          <li><b>Tipp</b> zeigt, was Backtracking als Nächstes tun würde: die nächste Dame setzen oder zurückgehen.
+            Mit <b>Tipp ausführen</b> übernimmst du den Schritt. Wenn du nur Tipps ausführst, durchläufst du die Suche
+            genau wie in der Animation.</li>
+          <li>Jede neue Lösung wird gesammelt. Findest du alle Lösungen für ein N? Dein Fortschritt bleibt im Browser
+            gespeichert.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 4 -->
+  <section class="slide" data-slide="3">
+    <h2>Übung: Setze die Damen selbst</h2>
+    <div class="row">
+      <label>N = <select id="exN" aria-label="Brettgröße in der Übung">
+        <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+        <option value="7">7</option><option value="8">8</option>
+      </select></label>
+      <label><input type="checkbox" id="exAttacked"> Bedrohte Felder zeigen</label>
+      <button id="exClear">Brett leeren</button>
+      <button id="exHint">💡 Tipp: nächster Schritt</button>
+      <button id="exApply" class="primary" disabled>Tipp ausführen</button>
+    </div>
+    <div class="grid2">
+      <div><svg class="board" id="exBoard" aria-label="Übungsbrett"></svg></div>
+      <div>
+        <div class="feedback" id="exFeedback"></div>
+        <div class="hintbox" id="exHintBox"></div>
+        <div class="card">
+          <h3>Gefundene Lösungen</h3>
+          <div id="exFoundText"></div>
+          <div class="meter"><div id="exMeter"></div></div>
+          <div class="chips" id="exFound"></div>
+          <p class="muted" style="margin-bottom:0">Ein Klick auf eine Lösung stellt sie auf das Brett.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="nav">
+  <button id="prevBtn">← Zurück</button>
+  <button id="nextBtn" class="primary">Weiter →</button>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  const SVGNS = 'http://www.w3.org/2000/svg';
+
+  // ---------- storage (works without localStorage) ----------
+  const store = {
+    get(key, fallback) {
+      try {
+        const raw = window.localStorage.getItem('ti-25-' + key);
+        return raw === null ? fallback : JSON.parse(raw);
+      } catch (e) { return fallback; }
+    },
+    set(key, value) {
+      try { window.localStorage.setItem('ti-25-' + key, JSON.stringify(value)); } catch (e) { /* ignore */ }
+    }
+  };
+
+  // ---------- helpers ----------
+  function svgEl(tag, attrs, parent) {
+    const e = document.createElementNS(SVGNS, tag);
+    for (const k in attrs) { e.setAttribute(k, attrs[k]); }
+    if (parent) { parent.appendChild(e); }
+    return e;
+  }
+  function clear(el) { while (el.firstChild) { el.removeChild(el.firstChild); } }
+  function listText(cols) { return '[' + cols.join(', ') + ']'; }
+  function joinGerman(items) {
+    if (items.length <= 1) { return items.join(''); }
+    return items.slice(0, -1).join(', ') + ' und ' + items[items.length - 1];
+  }
+
+  // ---------- n-queens logic ----------
+  /** Returns the kind of threat between two queens or null: 'Zeile', 'Spalte' or 'Diagonale'. */
+  function threat(r1, c1, r2, c2) {
+    if (r1 === r2) { return 'Zeile'; }
+    if (c1 === c2) { return 'Spalte'; }
+    if (Math.abs(r1 - r2) === Math.abs(c1 - c2)) { return 'Diagonale'; }
+    return null;
+  }
+  /** Rows of the prefix (cols[0..row-1]) that attack the cell (row, col). */
+  function attackers(cols, row, col) {
+    const result = [];
+    for (let r = 0; r < row; r++) {
+      const kind = threat(r, cols[r], row, col);
+      if (kind) { result.push({ r, c: cols[r], kind }); }
+    }
+    return result;
+  }
+  const SOLUTION_COUNT = { 4: 2, 5: 10, 6: 4, 7: 40, 8: 92 };
+
+  // ---------- trace of the backtracking search ----------
+  /**
+   * Runs the search and records every step.
+   * Nodes form the search tree (id = creation order = DFS order). Conflict nodes are only recorded when withCuts is set.
+   */
+  function buildTrace(n, withCuts, stopAtFirst) {
+    const nodes = [{ id: 0, parent: -1, depth: 0, col: -1, kind: 'root', solStep: Infinity }];
+    const steps = [];
+    const cols = [], stack = [0];
+    const cnt = { tries: 0, placed: 0, back: 0, sols: 0 };
+    let stopped = false;
+    const snap = (extra) => Object.assign({ cols: cols.slice(), stack: stack.slice(), nodeCount: nodes.length,
+      tries: cnt.tries, placed: cnt.placed, back: cnt.back, sols: cnt.sols }, extra);
+
+    function rec() {
+      const row = cols.length;
+      if (row === n) {
+        cnt.sols++;
+        nodes[stack[stack.length - 1]].solStep = steps.length;
+        steps.push(snap({ type: 'solution' }));
+        if (stopAtFirst) { stopped = true; }
+        return;
+      }
+      for (let col = 0; col < n; col++) {
+        cnt.tries++;
+        const att = attackers(cols, row, col);
+        if (att.length) {
+          let node = -1;
+          if (withCuts) {
+            node = nodes.length;
+            nodes.push({ id: node, parent: stack[stack.length - 1], depth: row + 1, col, kind: 'cut', solStep: Infinity });
+          }
+          steps.push(snap({ type: 'conflict', row, col, att, node, lastInRow: col === n - 1 }));
+          continue;
+        }
+        const node = nodes.length;
+        nodes.push({ id: node, parent: stack[stack.length - 1], depth: row + 1, col, kind: 'ok', solStep: Infinity });
+        cols.push(col); stack.push(node); cnt.placed++;
+        steps.push(snap({ type: 'place', row, col, node }));
+        rec();
+        if (stopped) { return; }
+        cols.pop(); stack.pop(); cnt.back++;
+        steps.push(snap({ type: 'back', row, col, node, lastInRow: col === n - 1 }));
+      }
+    }
+    steps.push(snap({ type: 'start' }));
+    rec();
+    steps.push(snap({ type: 'done', stoppedEarly: stopped }));
+    return { n, nodes, steps, withCuts };
+  }
+
+  /** Tidy layout: leaves get consecutive slots in DFS order, parents sit centred above their children. */
+  function layoutTree(trace) {
+    const { nodes, withCuts } = trace;
+    const kids = nodes.map(() => []);
+    for (const nd of nodes) { if (nd.parent >= 0) { kids[nd.parent].push(nd.id); } }
+    const slot = withCuts ? 22 : 26, levelH = 48, left = 64, top = 20;
+    let leaf = 0;
+    const pos = new Array(nodes.length);
+    (function place(id) {
+      if (kids[id].length === 0) {
+        pos[id] = left + slot / 2 + leaf * slot;
+        leaf++;
+        return;
+      }
+      for (const k of kids[id]) { place(k); }
+      pos[id] = (pos[kids[id][0]] + pos[kids[id][kids[id].length - 1]]) / 2;
+    })(0);
+    const depth = trace.n + 1;
+    return {
+      x: pos, y: nodes.map(nd => top + nd.depth * levelH),
+      width: left + leaf * slot + 16, height: top + depth * levelH - levelH + 26, levelH, top, left
+    };
+  }
+
+  // ---------- board renderer ----------
+  const CELL = 50, OFF = 24;
+  /**
+   * Draws an n x n board.
+   * opts: { queens: [{r, c, role}], crosses: [{r, c}], lines: [{r1, c1, r2, c2}], ghosts: [{r, c}], targets: [{r, c}],
+   *         activeRow, attackedBy: [{r, c}], onClick(r, c) }
+   */
+  function renderBoard(svg, n, opts) {
+    clear(svg);
+    const size = OFF + n * CELL + 4;
+    svg.setAttribute('viewBox', `0 0 ${size} ${size}`);
+    const cx = c => OFF + c * CELL + CELL / 2, cy = r => OFF + r * CELL + CELL / 2;
+    for (let i = 0; i < n; i++) {
+      svgEl('text', { x: OFF - 8, y: cy(i) + 4, class: 'lbl', 'text-anchor': 'end' }, svg).textContent = i;
+      svgEl('text', { x: cx(i), y: OFF - 8, class: 'lbl', 'text-anchor': 'middle' }, svg).textContent = i;
+    }
+    for (let r = 0; r < n; r++) {
+      for (let c = 0; c < n; c++) {
+        svgEl('rect', { x: OFF + c * CELL, y: OFF + r * CELL, width: CELL, height: CELL, class: (r + c) % 2 ? 'sq-d' : 'sq-l' }, svg);
+      }
+    }
+    if (opts.activeRow !== undefined && opts.activeRow >= 0 && opts.activeRow < n) {
+      svgEl('rect', { x: OFF, y: OFF + opts.activeRow * CELL, width: n * CELL, height: CELL, class: 'row-active' }, svg);
+    }
+    if (opts.attackedBy && opts.attackedBy.length) {
+      const occupied = new Set(opts.attackedBy.map(q => q.r + ',' + q.c));
+      for (let r = 0; r < n; r++) {
+        for (let c = 0; c < n; c++) {
+          if (occupied.has(r + ',' + c)) { continue; }
+          if (opts.attackedBy.some(q => threat(q.r, q.c, r, c))) {
+            svgEl('circle', { cx: cx(c), cy: cy(r), r: 5, class: 'attacked' }, svg);
+          }
+        }
+      }
+    }
+    for (const g of opts.ghosts || []) {
+      svgEl('rect', { x: OFF + g.c * CELL + 3, y: OFF + g.r * CELL + 3, width: CELL - 6, height: CELL - 6, rx: 4, class: 'cell-ghost' }, svg);
+      const t = svgEl('text', { x: cx(g.c), y: cy(g.r) + 1, class: 'queen ghost', 'font-size': 32 }, svg);
+      t.textContent = '♛';
+    }
+    for (const x of opts.crosses || []) {
+      svgEl('rect', { x: OFF + x.c * CELL + 3, y: OFF + x.r * CELL + 3, width: CELL - 6, height: CELL - 6, rx: 4, class: 'cell-err' }, svg);
+      svgEl('text', { x: cx(x.c), y: cy(x.r) + 1, class: 'cross', 'font-size': 28 }, svg).textContent = '×';
+    }
+    for (const q of opts.queens || []) {
+      svgEl('rect', { x: OFF + q.c * CELL + 3, y: OFF + q.r * CELL + 3, width: CELL - 6, height: CELL - 6, rx: 4,
+        class: 'cell-' + (q.role || 'normal') }, svg);
+      svgEl('text', { x: cx(q.c), y: cy(q.r) + 1, class: 'queen', 'font-size': 32 }, svg).textContent = '♛';
+    }
+    for (const l of opts.lines || []) {
+      svgEl('line', { x1: cx(l.c1), y1: cy(l.r1), x2: cx(l.c2), y2: cy(l.r2), class: 'threat' }, svg);
+    }
+    for (const t of opts.targets || []) {
+      svgEl('rect', { x: OFF + t.c * CELL + 2, y: OFF + t.r * CELL + 2, width: CELL - 4, height: CELL - 4, rx: 5, class: 'cell-target' }, svg);
+    }
+    svgEl('rect', { x: OFF, y: OFF, width: n * CELL, height: n * CELL, class: 'frame' }, svg);
+    if (opts.onClick) {
+      for (let r = 0; r < n; r++) {
+        for (let c = 0; c < n; c++) {
+          const h = svgEl('rect', { x: OFF + c * CELL, y: OFF + r * CELL, width: CELL, height: CELL, class: 'hit',
+            'data-r': r, 'data-c': c }, svg);
+          h.addEventListener('click', () => opts.onClick(r, c));
+        }
+      }
+    }
+  }
+
+  // ---------- animation ----------
+  const SPEEDS = [1300, 850, 500, 250, 90];
+  const anim = { trace: null, layout: null, k: 0, timer: null };
+  const $ = id => document.getElementById(id);
+
+  function loadAnimation() {
+    stopAnim();
+    const n = +$('animN').value;
+    anim.trace = buildTrace(n, n === 4, n === 8);
+    anim.layout = layoutTree(anim.trace);
+    anim.k = 0;
+    $('animNote').textContent = n === 4
+      ? 'Für N = 4 zeigt der Suchbaum auch jedes bedrohte Feld als kleines rotes Kästchen.'
+      : n === 8
+        ? 'Für N = 8 endet die Animation bei der ersten Lösung. Der Suchbaum zeigt nur gesetzte Damen, er ist seitlich scrollbar.'
+        : 'Der Suchbaum zeigt nur gesetzte Damen, bedrohte Felder siehst du auf dem Brett. Er ist seitlich scrollbar.';
+    $('cutLegend').style.display = $('cutLegendText').style.display = n === 4 ? '' : 'none';
+    drawAnim();
+  }
+
+  function describe(st, n) {
+    switch (st.type) {
+      case 'start': return { text: 'Das Brett ist leer. Die Suche beginnt in Zeile 0, Spalte 0. Klicke auf Schritt oder Play.', cls: '' };
+      case 'place': return { text: `Zeile ${st.row}, Spalte ${st.col} ist frei: Dame setzen. Teillösung ${listText(st.cols)}.`, cls: '' };
+      case 'conflict': {
+        const by = st.att.map(a => `Zeile ${a.r} (${a.kind})`).join(', ');
+        const tail = st.lastInRow ? ` Zeile ${st.row} hat keine weitere Spalte.` : '';
+        return { text: `Zeile ${st.row}, Spalte ${st.col} wird bedroht von ${by}.${tail}`, cls: 'bad' };
+      }
+      case 'back': {
+        const why = anim.trace.steps[anim.k - 1].type === 'solution'
+          ? 'Weiter nach der Lösung'
+          : `Unter ${listText(st.cols.concat([st.col]))} ist alles probiert`;
+        let tail = '';
+        if (st.lastInRow) {
+          tail = st.row === 0 ? ' Das war die letzte Spalte in Zeile 0.'
+            : ` Spalte ${st.col} war die letzte in Zeile ${st.row}, also geht es noch eine Zeile zurück.`;
+        }
+        return { text: `${why}: Dame aus Zeile ${st.row}, Spalte ${st.col} zurücknehmen.${tail}`, cls: 'back' };
+      }
+      case 'solution': return { text: `Lösung ${st.sols} gefunden: ${listText(st.cols)} ✓` +
+        (n === 8 ? '' : ' Play hält hier an, weiter geht es mit Schritt oder Play.'), cls: 'ok' };
+      case 'done': return st.stoppedEarly
+        ? { text: 'Erste Lösung gefunden. Für N = 8 hört die Animation hier auf.', cls: 'ok' }
+        : { text: `Suche beendet: Der ganze Suchbaum ist durchlaufen, ${st.sols} Lösungen.`, cls: 'ok' };
+    }
+    return { text: '', cls: '' };
+  }
+
+  function drawAnim() {
+    const tr = anim.trace, n = tr.n, st = tr.steps[anim.k];
+    const solved = st.type === 'solution' || (st.type === 'done' && st.stoppedEarly);
+    const queens = st.cols.map((c, r) => ({ r, c, role: solved ? 'ok' : (st.type === 'place' && r === st.row ? 'active' : 'normal') }));
+    const opts = { queens };
+    if (st.type === 'conflict') {
+      opts.crosses = [{ r: st.row, c: st.col }];
+      opts.lines = st.att.map(a => ({ r1: st.row, c1: st.col, r2: a.r, c2: a.c }));
+      for (const a of st.att) { queens[a.r].role = 'err'; }
+    }
+    if (st.type === 'back') { opts.ghosts = [{ r: st.row, c: st.col }]; }
+    opts.activeRow = solved || st.type === 'done' ? -1 : (st.type === 'place' ? st.row : st.type === 'back' ? st.row : st.cols.length);
+    renderBoard($('animBoard'), n, opts);
+
+    const d = describe(st, n);
+    const status = $('animStatus');
+    status.textContent = `Schritt ${anim.k} von ${tr.steps.length - 1}: ${d.text}`;
+    status.className = 'status ' + d.cls;
+    $('cTry').textContent = st.tries; $('cPlace').textContent = st.placed; $('cBack').textContent = st.back; $('cSol').textContent = st.sols;
+    $('animBack').disabled = anim.k === 0;
+    $('animStep').disabled = anim.k === tr.steps.length - 1;
+    drawTree(st);
+  }
+
+  function drawTree(st) {
+    const tr = anim.trace, L = anim.layout, svg = $('treeSvg');
+    clear(svg);
+    svg.setAttribute('width', L.width); svg.setAttribute('height', L.height);
+    svg.setAttribute('viewBox', `0 0 ${L.width} ${L.height}`);
+    for (let d = 0; d <= tr.n; d++) {
+      svgEl('text', { x: 6, y: L.top + d * L.levelH, class: 'lvl' }, svg).textContent = d === 0 ? 'Start' : 'Zeile ' + (d - 1);
+    }
+    const onPath = new Set(st.stack);
+    const k = anim.k;
+    const visible = st.nodeCount;
+    const curCut = st.type === 'conflict' ? st.node : -1;
+    const gE = svgEl('g', {}, svg), gN = svgEl('g', {}, svg);
+    for (let i = 1; i < visible; i++) {
+      const nd = tr.nodes[i];
+      const cls = nd.kind === 'cut' ? 'e cut' : (onPath.has(i) ? 'e path' : 'e');
+      svgEl('line', { x1: L.x[nd.parent], y1: L.y[nd.parent], x2: L.x[i], y2: L.y[i], class: cls }, gE);
+    }
+    for (let i = 0; i < visible; i++) {
+      const nd = tr.nodes[i];
+      if (nd.kind === 'cut') {
+        svgEl('rect', { x: L.x[i] - 6, y: L.y[i] - 6, width: 12, height: 12, rx: 2, class: i === curCut ? 'n-cut-cur' : 'n-cut' }, gN);
+        continue;
+      }
+      let cls;
+      if (nd.kind === 'root') { cls = onPath.size === 1 && st.type !== 'done' ? 'n-cur' : 'n-root'; }
+      else if (nd.solStep <= k) { cls = 'n-sol'; }
+      else if (onPath.has(i)) { cls = i === st.stack[st.stack.length - 1] ? 'n-cur' : 'n-path'; }
+      else { cls = 'n-done'; }
+      const c = svgEl('circle', { cx: L.x[i], cy: L.y[i], r: 10, class: cls }, gN);
+      svgEl('title', {}, c).textContent = nd.kind === 'root' ? 'leere Teillösung' : `Zeile ${nd.depth - 1}, Spalte ${nd.col}`;
+      if (nd.kind !== 'root') { svgEl('text', { x: L.x[i], y: L.y[i] + 1 }, gN).textContent = nd.col; }
+    }
+    // Keep the current node in view.
+    const focus = curCut >= 0 ? curCut : st.stack[st.stack.length - 1];
+    const box = $('treeBox');
+    const fx = L.x[focus];
+    if (fx < box.scrollLeft + 40 || fx > box.scrollLeft + box.clientWidth - 40) {
+      box.scrollLeft = Math.max(0, fx - box.clientWidth / 2);
+    }
+  }
+
+  function stepAnim() {
+    if (anim.k < anim.trace.steps.length - 1) { anim.k++; drawAnim(); }
+  }
+  function stopAnim() {
+    if (anim.timer) { clearTimeout(anim.timer); anim.timer = null; }
+    $('animPlay').textContent = '▶ Play';
+  }
+  function playAnim() {
+    if (anim.timer) { stopAnim(); return; }
+    if (anim.k >= anim.trace.steps.length - 1) { anim.k = 0; drawAnim(); }
+    $('animPlay').textContent = '⏸ Pause';
+    const tick = () => {
+      stepAnim();
+      const st = anim.trace.steps[anim.k];
+      // Pause on every solution and at the end so that the result can be looked at.
+      if (st.type === 'solution' || st.type === 'done') { stopAnim(); return; }
+      anim.timer = setTimeout(tick, SPEEDS[$('animSpeed').value - 1]);
+    };
+    anim.timer = setTimeout(tick, 120);
+  }
+
+  $('animN').addEventListener('change', () => { store.set('animN', $('animN').value); loadAnimation(); });
+  $('animReset').addEventListener('click', () => { stopAnim(); anim.k = 0; drawAnim(); });
+  $('animBack').addEventListener('click', () => { stopAnim(); if (anim.k > 0) { anim.k--; drawAnim(); } });
+  $('animStep').addEventListener('click', () => { stopAnim(); stepAnim(); });
+  $('animPlay').addEventListener('click', playAnim);
+  $('animSpeed').addEventListener('input', () => store.set('speed', $('animSpeed').value));
+
+  // ---------- exercise ----------
+  const ex = { n: 4, queens: [], hint: null };
+
+  function exConflicts() {
+    const pairs = [];
+    for (let i = 0; i < ex.queens.length; i++) {
+      for (let j = i + 1; j < ex.queens.length; j++) {
+        const a = ex.queens[i], b = ex.queens[j];
+        const kind = threat(a.r, a.c, b.r, b.c);
+        if (kind) { pairs.push({ a, b, kind }); }
+      }
+    }
+    return pairs;
+  }
+  function sortedQueens() { return ex.queens.slice().sort((p, q) => p.r - q.r || p.c - q.c); }
+  function solutionKey() { return listText(sortedQueens().map(q => q.c)); }
+  function foundList() {
+    const list = store.get('found-' + ex.n, []);
+    return Array.isArray(list) ? list.filter(s => typeof s === 'string') : [];
+  }
+
+  /**
+   * Computes the next step the backtracking search would take from the current board.
+   * The board is read as a partial solution: rows 0..k-1 with exactly one queen each.
+   * Returns { text, queens (new board) or null }.
+   */
+  function nextBacktrackingStep() {
+    const n = ex.n;
+    const byRow = Array.from({ length: n }, () => []);
+    for (const q of ex.queens) { byRow[q.r].push(q.c); }
+    const prefix = [];
+    while (prefix.length < n && byRow[prefix.length].length === 1) { prefix.push(byRow[prefix.length][0]); }
+    const extras = ex.queens.filter(q => q.r >= prefix.length);
+    const board = cols => cols.map((c, r) => ({ r, c }));
+    if (extras.length) {
+      const rows = [...new Set(extras.map(q => q.r))].sort((a, b) => a - b);
+      return {
+        text: `Backtracking füllt die Zeilen von oben nach unten mit genau einer Dame pro Zeile. Zeile ${prefix.length} ist ` +
+          (byRow[prefix.length] && byRow[prefix.length].length > 1 ? 'mehrfach besetzt' : 'noch leer') +
+          `, deshalb ${extras.length > 1 ? 'passen die Damen' : 'passt die Dame'} in ${rows.length > 1 ? 'den Zeilen' : 'Zeile'} ` +
+          `${joinGerman(rows.map(String))} nicht dazu. ${extras.length > 1 ? 'Sie werden' : 'Sie wird'} entfernt.`,
+        queens: board(prefix), removed: extras
+      };
+    }
+    // A queen in the prefix that conflicts with an earlier row: the search would move it on.
+    for (let r = 1; r < prefix.length; r++) {
+      const att = attackers(prefix, r, prefix[r]);
+      if (att.length) {
+        const intro = `Die Dame in Zeile ${r}, Spalte ${prefix[r]} wird von Zeile ${att[0].r} bedroht (${att[0].kind}). ` +
+          'Backtracking hätte sie dort nicht gesetzt und probiert die nächste Spalte.';
+        return advance(prefix.slice(0, r + 1), r, intro);
+      }
+    }
+    if (prefix.length === n) {
+      return advance(prefix, n - 1, `${listText(prefix)} ist eine Lösung. Für die nächste Lösung sucht Backtracking weiter.`);
+    }
+    const row = prefix.length;
+    const blocked = [];
+    for (let c = 0; c < n; c++) {
+      if (attackers(prefix, row, c).length === 0) {
+        const skip = blocked.length
+          ? ` ${blocked.length > 1 ? 'Spalten' : 'Spalte'} ${joinGerman(blocked.map(String))} ${blocked.length > 1 ? 'sind' : 'ist'} bedroht.` : '';
+        return { text: `Setze in Zeile ${row} eine Dame in Spalte ${c}.${skip}`, queens: board(prefix.concat([c])), target: { r: row, c } };
+      }
+      blocked.push(c);
+    }
+    return advance(prefix, row - 1, `In Zeile ${row} ist jedes Feld bedroht: Sackgasse.`);
+  }
+
+  /** Moves the queen in row r to its next free column; if there is none, goes further back. */
+  function advance(prefix, r, intro) {
+    const n = ex.n;
+    for (let rr = r; rr >= 0; rr--) {
+      const from = prefix[rr];
+      for (let c = from + 1; c < n; c++) {
+        if (attackers(prefix, rr, c).length === 0) {
+          const cols = prefix.slice(0, rr).concat([c]);
+          const below = ex.queens.filter(q => q.r > rr).length;
+          let text = intro + ' ';
+          if (rr < r) {
+            text += `${rr + 1 === r ? 'Zeile ' + r + ' hat' : 'Die Zeilen ' + (rr + 1) + ' bis ' + r + ' haben'} keine weitere freie Spalte, ` +
+              `deshalb geht es zurück bis Zeile ${rr}. `;
+          }
+          text += `Nimm die Dame in Zeile ${rr} zurück und setze sie in Spalte ${c}` +
+            (below ? `, ${below > 1 ? 'die Damen' : 'die Dame'} darunter ${below > 1 ? 'werden' : 'wird'} entfernt.` : '.');
+          return { text, queens: cols.map((cc, row) => ({ r: row, c: cc })), target: { r: rr, c },
+            removed: ex.queens.filter(q => q.r > rr || (q.r === rr && q.c !== c)) };
+        }
+      }
+    }
+    return { text: intro + ' Es gibt nirgends mehr eine freie Spalte: Backtracking hat den ganzen Suchbaum durchlaufen und ist fertig.',
+      queens: null };
+  }
+
+  function drawExercise() {
+    const conflicts = exConflicts();
+    const bad = new Set();
+    for (const p of conflicts) { bad.add(p.a); bad.add(p.b); }
+    const complete = ex.queens.length === ex.n && conflicts.length === 0;
+    const queens = ex.queens.map(q => ({ r: q.r, c: q.c, role: complete ? 'ok' : (bad.has(q) ? 'err' : 'normal') }));
+    const opts = {
+      queens, lines: conflicts.map(p => ({ r1: p.a.r, c1: p.a.c, r2: p.b.r, c2: p.b.c })), onClick: toggleQueen,
+      attackedBy: $('exAttacked').checked ? ex.queens : []
+    };
+    if (ex.hint) {
+      opts.targets = ex.hint.target ? [ex.hint.target] : [];
+      opts.ghosts = (ex.hint.removed || []).map(q => ({ r: q.r, c: q.c }));
+      opts.queens = queens.filter(q => !(ex.hint.removed || []).some(x => x.r === q.r && x.c === q.c));
+    }
+    renderBoard($('exBoard'), ex.n, opts);
+
+    const fb = $('exFeedback');
+    const found = foundList();
+    if (complete) {
+      fb.className = 'feedback ok';
+      fb.innerHTML = `<b>Lösung ${listText(sortedQueens().map(q => q.c))} ✓</b> Keine Dame bedroht eine andere.` +
+        (ex.lastNew ? ' Das ist eine neue Lösung!' : ' Diese Lösung hattest du schon.');
+    } else if (conflicts.length) {
+      fb.className = 'feedback bad';
+      fb.innerHTML = conflicts.slice(0, 3).map(p =>
+        `Konflikt: Dame (${p.a.r}, ${p.a.c}) und Dame (${p.b.r}, ${p.b.c}) in derselben ${p.kind}.`).join('<br>') +
+        (conflicts.length > 3 ? `<br>… und ${conflicts.length - 3} weitere Konflikte.` : '');
+    } else if (ex.queens.length === 0) {
+      fb.className = 'feedback';
+      fb.textContent = `Klicke auf ein Feld, um eine Dame zu setzen. Gesucht: ${ex.n} Damen, die sich nicht bedrohen.`;
+    } else {
+      fb.className = 'feedback';
+      const missing = ex.n - ex.queens.length;
+      fb.textContent = `Keine Konflikte. ${ex.queens.length} von ${ex.n} Damen stehen, ${missing === 1 ? 'eine fehlt' : missing + ' fehlen'} noch.`;
+    }
+    const total = SOLUTION_COUNT[ex.n];
+    $('exFoundText').textContent = `${found.length} von ${total} Lösungen für N = ${ex.n} gefunden` +
+      (found.length === total ? ' – alle! 🎉' : '.');
+    $('exMeter').style.width = `${found.length / total * 100}%`;
+    const chips = $('exFound');
+    clear(chips);
+    for (const key of found.slice().sort()) {
+      const b = document.createElement('button');
+      b.className = 'chip'; b.textContent = key;
+      b.addEventListener('click', () => {
+        const cols = JSON.parse(key);
+        ex.queens = cols.map((c, r) => ({ r, c }));
+        ex.hint = null; ex.lastNew = false;
+        changedBoard(false);
+      });
+      chips.appendChild(b);
+    }
+    const hb = $('exHintBox');
+    hb.className = 'hintbox' + (ex.hint ? ' show' : '');
+    hb.textContent = ex.hint ? '💡 ' + ex.hint.text : '';
+    $('exApply').disabled = !(ex.hint && ex.hint.queens);
+  }
+
+  /** Called after every change of the board; records new solutions. */
+  function changedBoard(record) {
+    ex.hint = null;
+    if (record !== false) { ex.lastNew = false; }
+    if (ex.queens.length === ex.n && exConflicts().length === 0 && record !== false) {
+      const key = solutionKey();
+      const found = foundList();
+      if (!found.includes(key)) { found.push(key); store.set('found-' + ex.n, found); ex.lastNew = true; }
+    }
+    store.set('board-' + ex.n, ex.queens.map(q => [q.r, q.c]));
+    drawExercise();
+  }
+
+  function toggleQueen(r, c) {
+    const i = ex.queens.findIndex(q => q.r === r && q.c === c);
+    if (i >= 0) { ex.queens.splice(i, 1); } else { ex.queens.push({ r, c }); }
+    changedBoard();
+  }
+
+  function loadExercise() {
+    ex.n = +$('exN').value;
+    const raw = store.get('board-' + ex.n, []);
+    ex.queens = [];
+    if (Array.isArray(raw)) {
+      for (const p of raw) {
+        if (Array.isArray(p) && Number.isInteger(p[0]) && Number.isInteger(p[1]) && p[0] >= 0 && p[0] < ex.n && p[1] >= 0 && p[1] < ex.n &&
+            !ex.queens.some(q => q.r === p[0] && q.c === p[1])) {
+          ex.queens.push({ r: p[0], c: p[1] });
+        }
+      }
+    }
+    ex.hint = null; ex.lastNew = false;
+    drawExercise();
+  }
+
+  $('exN').addEventListener('change', () => { store.set('exN', $('exN').value); loadExercise(); });
+  $('exAttacked').addEventListener('change', () => { store.set('attacked', $('exAttacked').checked); drawExercise(); });
+  $('exClear').addEventListener('click', () => { ex.queens = []; changedBoard(); });
+  $('exHint').addEventListener('click', () => { ex.hint = nextBacktrackingStep(); drawExercise(); });
+  $('exApply').addEventListener('click', () => {
+    if (!ex.hint || !ex.hint.queens) { return; }
+    ex.queens = ex.hint.queens.map(q => ({ r: q.r, c: q.c }));
+    changedBoard();
+  });
+
+  // ---------- slides ----------
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  let current = Math.min(Math.max(store.get('slide', 0) | 0, 0), slides.length - 1);
+  function showSlide(i) {
+    current = Math.min(Math.max(i, 0), slides.length - 1);
+    slides.forEach((s, k) => s.classList.toggle('active', k === current));
+    $('progressText').textContent = `${current + 1} / ${slides.length}`;
+    $('progressBar').style.width = `${(current + 1) / slides.length * 100}%`;
+    $('prevBtn').disabled = current === 0;
+    $('nextBtn').disabled = current === slides.length - 1;
+    stopAnim();
+    store.set('slide', current);
+    if (current === 1) { drawAnim(); }
+    window.scrollTo(0, 0);
+  }
+  $('prevBtn').addEventListener('click', () => showSlide(current - 1));
+  $('nextBtn').addEventListener('click', () => showSlide(current + 1));
+  document.addEventListener('keydown', evt => {
+    const tag = evt.target && evt.target.tagName;
+    if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') { return; }
+    if (evt.ctrlKey || evt.altKey || evt.metaKey) { return; }
+    if (evt.key === 'ArrowRight' || evt.key === 'PageDown') { showSlide(current + 1); evt.preventDefault(); }
+    if (evt.key === 'ArrowLeft' || evt.key === 'PageUp') { showSlide(current - 1); evt.preventDefault(); }
+  });
+
+  // ---------- start ----------
+  function restoreSelect(id, key) {
+    const v = String(store.get(key, ''));
+    if ([...$(id).options].some(o => o.value === v)) { $(id).value = v; }
+  }
+  restoreSelect('animN', 'animN');
+  restoreSelect('exN', 'exN');
+  const sp = +store.get('speed', 3);
+  if (sp >= 1 && sp <= 5) { $('animSpeed').value = sp; }
+  $('exAttacked').checked = store.get('attacked', false) === true;
+  loadAnimation();
+  loadExercise();
+  showSlide(current);
+
+  /** Read-only hooks for automated tests. */
+  window.btDebug = {
+    trace: (n, withCuts, stopAtFirst) => {
+      const t = buildTrace(n, withCuts, stopAtFirst);
+      const last = t.steps[t.steps.length - 1];
+      return { steps: t.steps.length, nodes: t.nodes.length, tries: last.tries, placed: last.placed, sols: last.sols,
+        solutions: t.steps.filter(s => s.type === 'solution').map(s => listText(s.cols)) };
+    },
+    /** Follows the hints from an empty board and returns the solutions in the order they appear. */
+    followHints: (n, maxSteps) => {
+      const saved = { n: ex.n, queens: ex.queens };
+      ex.n = n; ex.queens = [];
+      const sols = [];
+      let steps = 0;
+      for (; steps < maxSteps; steps++) {
+        const h = nextBacktrackingStep();
+        if (!h.queens) { break; }
+        ex.queens = h.queens.map(q => ({ r: q.r, c: q.c }));
+        if (ex.queens.length === n && exConflicts().length === 0) { sols.push(solutionKey()); }
+      }
+      ex.n = saved.n; ex.queens = saved.queens;
+      return { steps, sols };
+    },
+    hint: () => { const h = nextBacktrackingStep(); return { text: h.text, queens: h.queens }; },
+    exState: () => ({ n: ex.n, queens: ex.queens.map(q => [q.r, q.c]) })
+  };
+})();
+</script>
+</body>
+</html>

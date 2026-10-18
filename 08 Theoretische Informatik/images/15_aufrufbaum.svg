@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="500" viewBox="0 0 760 500">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1f2937"/>
+    </marker>
+  </defs>
+  <rect x="0.5" y="0.5" width="759" height="499" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+
+  <!-- Calls (parent bottom center to child top center) -->
+  <g stroke="#1f2937" stroke-width="1.5" marker-end="url(#arrow)">
+    <line x1="380" y1="76" x2="380" y2="108"/>
+    <line x1="360" y1="156" x2="250" y2="188"/>
+    <line x1="400" y1="156" x2="510" y2="188"/>
+    <line x1="530" y1="236" x2="530" y2="268"/>
+    <line x1="510" y1="316" x2="440" y2="348"/>
+    <line x1="550" y1="316" x2="620" y2="348"/>
+    <line x1="420" y1="396" x2="420" y2="428"/>
+    <line x1="640" y1="396" x2="640" y2="428"/>
+  </g>
+
+  <!-- Method nodes -->
+  <g fill="#dbeafe" stroke="#2563eb" stroke-width="1.5">
+    <rect x="305" y="30" width="150" height="46" rx="6"/>
+    <rect x="305" y="110" width="150" height="46" rx="6"/>
+    <rect x="155" y="190" width="150" height="46" rx="6"/>
+    <rect x="455" y="190" width="150" height="46" rx="6"/>
+    <rect x="455" y="270" width="150" height="46" rx="6"/>
+    <rect x="345" y="350" width="150" height="46" rx="6"/>
+    <rect x="565" y="350" width="150" height="46" rx="6"/>
+    <rect x="345" y="430" width="150" height="46" rx="6"/>
+    <rect x="565" y="430" width="150" height="46" rx="6"/>
+  </g>
+
+  <!-- Method names; nodes that consume tokens get a second line -->
+  <g font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">
+    <text x="380" y="58">ParseExpr</text>
+    <text x="380" y="130">ParseTerm</text>
+    <text x="230" y="210">ParseFactor</text>
+    <text x="530" y="210">ParseFactor</text>
+    <text x="530" y="290">ParseExpr</text>
+    <text x="420" y="378">ParseTerm</text>
+    <text x="640" y="378">ParseTerm</text>
+    <text x="420" y="450">ParseFactor</text>
+    <text x="640" y="450">ParseFactor</text>
+  </g>
+  <g font-size="12" fill="#ea580c" text-anchor="middle">
+    <text x="380" y="148"><tspan font-family="Segoe UI, Helvetica, Arial, sans-serif">liest </tspan><tspan font-family="Consolas, Menlo, monospace" font-weight="bold">*</tspan></text>
+    <text x="230" y="228"><tspan font-family="Segoe UI, Helvetica, Arial, sans-serif">liest </tspan><tspan font-family="Consolas, Menlo, monospace" font-weight="bold">2</tspan></text>
+    <text x="530" y="228"><tspan font-family="Segoe UI, Helvetica, Arial, sans-serif">liest </tspan><tspan font-family="Consolas, Menlo, monospace" font-weight="bold">(</tspan><tspan font-family="Segoe UI, Helvetica, Arial, sans-serif"> und </tspan><tspan font-family="Consolas, Menlo, monospace" font-weight="bold">)</tspan></text>
+    <text x="530" y="308"><tspan font-family="Segoe UI, Helvetica, Arial, sans-serif">liest </tspan><tspan font-family="Consolas, Menlo, monospace" font-weight="bold">+</tspan></text>
+    <text x="420" y="468"><tspan font-family="Segoe UI, Helvetica, Arial, sans-serif">liest </tspan><tspan font-family="Consolas, Menlo, monospace" font-weight="bold">3</tspan></text>
+    <text x="640" y="468"><tspan font-family="Segoe UI, Helvetica, Arial, sans-serif">liest </tspan><tspan font-family="Consolas, Menlo, monospace" font-weight="bold">4</tspan></text>
+  </g>
+
+  <!-- Call order badges -->
+  <g fill="#e5e7eb" stroke="#6b7280">
+    <circle cx="305" cy="30" r="10"/>
+    <circle cx="305" cy="110" r="10"/>
+    <circle cx="155" cy="190" r="10"/>
+    <circle cx="455" cy="190" r="10"/>
+    <circle cx="455" cy="270" r="10"/>
+    <circle cx="345" cy="350" r="10"/>
+    <circle cx="565" cy="350" r="10"/>
+    <circle cx="345" cy="430" r="10"/>
+    <circle cx="565" cy="430" r="10"/>
+  </g>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" font-weight="bold" fill="#1f2937" text-anchor="middle">
+    <text x="305" y="34">1</text>
+    <text x="305" y="114">2</text>
+    <text x="155" y="194">3</text>
+    <text x="455" y="194">4</text>
+    <text x="455" y="274">5</text>
+    <text x="345" y="354">6</text>
+    <text x="565" y="354">8</text>
+    <text x="345" y="434">7</text>
+    <text x="565" y="434">9</text>
+  </g>
+
+  <!-- Legend -->
+  <rect x="24" y="300" width="270" height="176" rx="6" fill="#f3f4f6" stroke="#d1d5db"/>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#1f2937">
+    <text x="40" y="324" font-weight="bold">Eingabe</text>
+    <text x="40" y="346" font-family="Consolas, Menlo, monospace" font-size="14">2 * ( 3 + 4 ) End</text>
+    <circle cx="48" cy="372" r="9" fill="#e5e7eb" stroke="#6b7280"/>
+    <text x="48" y="376" font-size="10" font-weight="bold" text-anchor="middle">1</text>
+    <text x="64" y="376">Reihenfolge der Aufrufe</text>
+    <text x="40" y="402" fill="#ea580c">liest</text>
+    <text x="72" y="402">Tokens, die diese Methode</text>
+    <text x="72" y="418">selbst verbraucht</text>
+    <text x="40" y="444">Kehrt Aufruf 1 zurück, prüft ParseAll,</text>
+    <text x="40" y="460">dass nur noch End übrig ist.</text>
+  </g>
+</svg>

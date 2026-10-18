@@ -1,0 +1,1 @@
+{"station":"Hohe Warte","hoehe":198,"messungen":[{"zeit":"2026-01-12T06:00","temperatur":-7.4,"wind":12.0,"niederschlag":0},{"zeit":"2026-01-12T12:00","temperatur":-0.5,"wind":18.25,"niederschlag":0.2},{"zeit":"2026-01-12T18:00","temperatur":-3,"wind":null,"niederschlag":1.75}],"sensorDefekt":[false,false,true]}

@@ -1,0 +1,61 @@
+@startuml
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 15
+skinparam ArrowThickness 1.5
+skinparam class {
+  BackgroundColor #ffffff
+  HeaderBackgroundColor #ededed
+  BorderColor #1d1d1b
+  BorderThickness 1.5
+  FontStyle bold
+}
+skinparam stereotypeCBackgroundColor #d1ebf7
+skinparam stereotypeABackgroundColor #fdebd1
+skinparam stereotypeIBackgroundColor #e5f4f1
+skinparam stereotypeEBackgroundColor #e5f1d9
+hide empty fields
+hide empty methods
+
+class User
+{
+    +Username : string
+    +CalendarItems : IReadOnlyList<CalendarItem>
+    ---
+    +User(string username)
+    +bool TryAddItem(CalendarItem item)
+    +void RemoveItem(PrivateItem item)
+    +void CancelMeeting(Meeting meeting)
+}
+User "1" o-down-> "*" CalendarItem : CalendarItems
+
+abstract class CalendarItem
+{
+    +Owner : User
+    +Title : string
+    +Begin : DateTime
+    +End : DateTime
+    +Description : string?
+    ---
+    #CalendarItem(User owner, string title, DateTime begin, DateTime end)
+    +bool IsCollision(CalendarItem other)
+}
+CalendarItem "*" -up-> "1" User : Owner
+
+class PrivateItem
+{
+    +PrivateItem(User owner, string title, DateTime begin, DateTime end)
+}
+PrivateItem -up-|> CalendarItem
+
+class Meeting
+{
+    +Participants : IReadOnlyList<User>
+    ---
+    +Meeting(User owner, string title, DateTime begin, DateTime end)
+    +bool TryInvite(User other)
+    +void RemoveParticipant(User user)
+}
+Meeting -up-|> CalendarItem
+Meeting "*" o-up-> "*" User : Participants
+@enduml

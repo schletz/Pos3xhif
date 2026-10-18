@@ -1,0 +1,368 @@
+= LINQ: Where, Select und Any
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+In SQL schreibst du `+SELECT FirstName FROM Persons WHERE City = 'Wien'+`.
+Du *filterst* Zeilen und *projizierst* Spalten.
+Dasselbe brauchst du in C# ständig: bei einer Liste im Speicher und bei einer Datenbank, auf die du mit EF Core zugreifst.
+Dafür gibt es *LINQ* (Language Integrated Query).
+LINQ ist eine Sammlung von Methoden, die Lambdas als Parameter bekommen.
+Heute schreibt oft ein KI-Agent die Abfragen.
+Du musst sie trotzdem lesen und beurteilen können: Filtert die Abfrage das Richtige?
+Läuft sie in der Datenbank oder lädt sie die ganze Tabelle?
+Genau das lernst du hier.
+
+[TIP]
+====
+*Zum Selbst-Erarbeiten: LINQ und SQL verbinden*
+
+In der https://die-spengergasse.github.io/course-pos-csharp_basics/17%20Serviceklassen/02_Linq_Where_Select_Any.html[interaktiven Präsentation zu Where&#44; Select und Any] siehst du als Animation, wie Elemente durch `Where` und `Select` laufen.
+Danach ordnest du LINQ-Ausdrücke den passenden SQL-Abfragen zu und bekommst sofort Feedback.
+So verbindest du dein SQL-Wissen mit LINQ.
+====
+
+== Projekt anlegen
+
+Für dieses Kapitel gibt es ein fertiges Demoprojekt.
+Lade link:{github_url}/17%20Serviceklassen/Uebungen/Eventmanager.7z[Eventmanager.7z] herunter und entpacke es.
+Die Beschreibung steht im Archiv in der Datei _README.md_.
+Öffne _Eventmanager.sln_.
+Die Beispiele aus diesem Kapitel stehen in _Eventmanager.Tests/PersonQueryTests.cs_ und _LinqPlaygroundTests.cs_.
+Führst du einen Test aus, siehst du in seiner Ausgabe das SQL, das EF Core erzeugt hat.
+
+Das Modell ist ein Ticketsystem: Ein Event findet in mehreren Shows statt, jede Show hat Kontingente, Gäste kaufen oder reservieren Tickets.
+
+image::{root_dir}/images/event_model.svg[Klassenmodell des Eventmanagers]
+
+== Die Idee: Where filtert, Select projiziert
+
+Wir beginnen mit einer Liste im Speicher:
+
+[source,csharp]
+----
+public record Person(string FirstName, string LastName, string City, int Age);
+
+List<Person> persons = new()
+{
+    new Person("Anna", "Huber", "Wien", 17),
+    new Person("Ben", "Gruber", "Graz", 24),
+    new Person("Clara", "Bauer", "Wien", 31),
+    new Person("David", "Wagner", "Linz", 16),
+    new Person("Emma", "Pichler", "Wien", 45),
+};
+
+List<string> names = persons
+    .Where(p => p.City == "Wien")
+    .Select(p => p.FirstName)
+    .ToList();                     // ["Anna", "Clara", "Emma"]
+----
+
+image::{root_dir}/images/02_where_select.svg[Where filtert mit einem Predicate, Select projiziert auf einen anderen Typ]
+
+[%header]
+|===
+|Methode |Parameter |Ergebnis |SQL
+|`Where` |*Predicate* `+Func<Person, bool>+`: Soll das Element bleiben? |weniger (oder gleich viele) Elemente, *gleicher Typ* |`WHERE`
+|`Select` |*Projection* `+Func<Person, string>+`: Was soll aus dem Element werden? |*gleich viele* Elemente, *anderer Typ* |Spalten nach `SELECT`
+|===
+
+`Where` und `Select` sind genau die Methoden `Filter` und `Map` aus dem Kapitel link:{github_url}/17%20Serviceklassen/01_Lambdas.adoc[Lambda Expressions].
+Sie funktionieren aber für jeden Typ, weil sie generisch sind.
+Für LINQ brauchst du `using System.Linq;`.
+
+LINQ schreibt die Schritte in der Reihenfolge auf, in der sie passieren.
+In SQL steht `SELECT` vorne, obwohl die Datenbank zuerst `FROM` und `WHERE` verarbeitet:
+
+image::{root_dir}/images/02_sql_vs_linq.svg[SQL und LINQ im Vergleich]
+
+== Where: Filtern
+
+Die Bedingung in `Where` ist ein normaler C#-Ausdruck vom Typ `bool`.
+Mit EF Core übersetzt der Provider ihn in SQL:
+
+[source,csharp]
+----
+var start = new DateTime(2024, 2, 1);
+List<Show> shows = _db.Shows
+    .Where(s => s.Date >= start && s.Date < start.AddMonths(2))
+    .ToList();
+----
+
+[source,sql]
+----
+SELECT "s"."Id", "s"."Date", "s"."EventId"
+FROM "Shows" AS "s"
+WHERE "s"."Date" >= @start AND "s"."Date" < @AddMonths
+----
+
+`start` ist eine Variable außerhalb der Lambda (eine Closure, siehe voriges Kapitel).
+EF Core schickt ihren Wert als *Parameter* `@start` an die Datenbank.
+Damit ist auch SQL Injection ausgeschlossen.
+So übersetzt du typische SQL-Bedingungen:
+
+[%header]
+|===
+|SQL |C# in der Lambda
+|`+City = 'Wien'+`, `+City <> 'Wien'+` |`p.City == "Wien"`, `p.City != "Wien"`
+|`AND`, `OR`, `NOT` |`&&`, `+\|\|+`, `!`
+|`Age BETWEEN 18 AND 30` |`+p.Age >= 18 && p.Age <= 30+`
+|`+LastName LIKE 'B%'+`, `+LIKE '%er%'+` |`p.LastName.StartsWith("B")`, `p.LastName.Contains("er")`
+|`+City IN ('Wien', 'Graz')+` |`cities.Contains(p.City)` mit `+var cities = new[] { "Wien", "Graz" };+`
+|`Email IS NULL` |`p.Email == null`
+|`+e.Name = 'Funk'+` über einen Fremdschlüssel |`s.Event.Name == "Funk"` (Navigation, EF Core erzeugt den JOIN)
+|===
+
+Mehrere `Where` hintereinander sind wie `AND`.
+Das ist praktisch, wenn du Bedingungen nur unter bestimmten Umständen hinzufügen willst (`+if (onlyAdults) query = query.Where(...)+`).
+
+== Select: Projizieren
+
+`Select` wandelt jedes Element in etwas anderes um.
+Das Ergebnis kann ein einfacher Wert, ein Record oder ein anonymer Typ sein:
+
+[source,csharp]
+----
+// A simple value.
+List<string> names = _db.Guests
+    .Where(g => g.BirthDate.Year >= 2003)
+    .Select(g => g.Firstname + " " + g.Lastname)
+    .ToList();
+
+// A record with values from several tables (navigation properties).
+public record ShowInfo(int ShowId, DateTime Date, string EventName);
+List<ShowInfo> infos = _db.Shows
+    .Select(s => new ShowInfo(s.Id, s.Date, s.Event.Name))
+    .ToList();
+
+// An anonymous type: only inside a method, the type has no name, so you need var.
+var eventInfos = _db.Events.Select(e => new { e.Name, ShowCount = e.Shows.Count }).ToList();
+----
+
+[source,sql]
+----
+SELECT "g"."Firstname" || ' ' || "g"."Lastname"
+FROM "Guests" AS "g"
+WHERE CAST(strftime('%Y', "g"."BirthDate") AS INTEGER) >= 2003
+----
+
+EF Core fragt nur die Spalten ab, die in der Projektion vorkommen.
+Greifst du auf eine Navigation wie `s.Event.Name` zu, erzeugt es den JOIN selbst.
+Wozu Records als Rückgabetyp dienen und warum man sie *DTOs* nennt, lernst du im Kapitel link:{github_url}/17%20Serviceklassen/03_Serviceklassen.adoc[Serviceklassen mit EF Core].
+
+== Any und All: Gibt es so ein Element?
+
+`Any` liefert `true`, wenn *mindestens ein* Element die Bedingung erfüllt.
+`All` liefert `true`, wenn *alle* Elemente sie erfüllen.
+Ohne Parameter fragt `Any()`: Ist die Liste nicht leer?
+
+[source,csharp]
+----
+bool hasMinors = persons.Any(p => p.Age < 18);     // true
+bool allAdults = persons.All(p => p.Age >= 18);    // false
+bool notEmpty = persons.Any();                      // true
+----
+
+Richtig stark wird `Any` auf einer *Navigation*.
+Die Frage „Welche Events haben eine Show im Jahr 2024?“ löst du in SQL mit einer Unterabfrage und `EXISTS`.
+In LINQ schreibst du `Any` auf die Liste `e.Shows`:
+
+image::{root_dir}/images/02_any_exists.svg[Any auf einer Navigation entspricht EXISTS in SQL]
+
+[source,csharp]
+----
+List<Event> events = _db.Events
+    .Where(e => e.Shows.Any(s => s.Date.Year == 2024))
+    .ToList();
+
+List<Guest> guestsWithoutPurchase = _db.Guests
+    .Where(g => !g.Tickets.Any(t => t.TicketState == TicketState.Sold))
+    .ToList();
+----
+
+[source,sql]
+----
+SELECT "g"."Id", "g"."BirthDate", "g"."Firstname", "g"."Lastname"
+FROM "Guests" AS "g"
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM "Tickets" AS "t"
+    WHERE "g"."Id" = "t"."GuestId" AND "t"."TicketState" = 'Sold')
+----
+
+[WARNING]
+====
+`All` auf einer *leeren* Liste liefert `true`.
+Es gibt ja kein Element, das die Bedingung verletzt.
+Ein Event ohne Shows erfüllt also `+e.Shows.All(s => s.Date.Year == 2024)+`.
+Willst du das nicht, kombiniere: `+e.Shows.Any() && e.Shows.All(...)+`.
+====
+
+== Was du sonst noch brauchst
+
+Diese Methoden kommen in fast jeder Abfrage vor.
+Die meisten kennst du aus SQL:
+
+[%header]
+|===
+|LINQ |Ergebnis |SQL
+|`ToList()` |führt die Abfrage aus und liefert eine `+List<T>+` |
+|`First(pred)`, `FirstOrDefault(pred)` |erstes passendes Element. `First` wirft eine Exception, wenn es keins gibt, `FirstOrDefault` liefert `null` |`LIMIT 1`
+|`Single(pred)`, `SingleOrDefault(pred)` |wie `First`, aber eine Exception bei *mehr* als einem Treffer |`LIMIT 2` {plus} Prüfung
+|`Count()`, `Count(pred)` |Anzahl als `int` |`+COUNT(*)+`
+|`+OrderBy(x => …)+`, `OrderByDescending`, `ThenBy` |sortierte Folge |`+ORDER BY …, …+`
+|`Sum`, `Min`, `Max`, `Average` |ein Wert |`SUM`, `MIN`, `MAX`, `AVG`
+|`Distinct()` |ohne Duplikate |`DISTINCT`
+|`Skip(n)`, `Take(n)` |Teil der Folge, z. B. zum Blättern |`OFFSET`, `LIMIT`
+|===
+
+`FirstOrDefault` liefert bei Entities `null`, wenn nichts gefunden wurde.
+Der Rückgabetyp ist daher nullable (`Show?`).
+Prüfe das Ergebnis, bevor du es verwendest.
+
+== IEnumerable und IQueryable: Wer führt die Lambda aus?
+
+Die Abfrage auf die Liste `persons` und die Abfrage auf `+_db.Shows+` sehen gleich aus.
+Intern passiert aber etwas ganz anderes:
+
+image::{root_dir}/images/02_enumerable_queryable.svg[IEnumerable führt die Lambda in C# aus, IQueryable übersetzt sie nach SQL]
+
+[%header]
+|===
+| |`+IEnumerable<T>+` (LINQ to Objects) |`+IQueryable<T>+` (EF Core)
+|Quelle |Liste, Array im Speicher |`DbSet` wie `+_db.Shows+`
+|Die Lambda ist |eine Funktion (`+Func<T, bool>+`) |eine Beschreibung des Ausdrucks (`+Expression<Func<T, bool>>+`)
+|Ausgeführt von |C#, für jedes Element |der Datenbank, als SQL
+|===
+
+Eine Abfrage auf einem `IQueryable` ist zuerst *nur eine Beschreibung*.
+Erst `ToList()`, `First()`, `Count()`, `Any()` oder ein `foreach` schicken das SQL an die Datenbank.
+Mit `ToQueryString()` siehst du das SQL, ohne die Abfrage auszuführen:
+
+[source,csharp]
+----
+IQueryable<DateTime> query = _db.Shows
+    .Where(s => s.Event.Name == "Funk")
+    .Select(s => s.Date);
+Console.WriteLine(query.ToQueryString());
+----
+
+== Wenn EF Core die Abfrage nicht übersetzen kann
+
+Nicht jeder C#-Ausdruck hat ein Gegenstück in SQL.
+Wir suchen Reservierungen, die mehr als 20 Tage vor der Show gemacht wurden:
+
+[source,csharp]
+----
+// Throws InvalidOperationException: The LINQ expression ... could not be translated.
+var tickets = _db.Tickets
+    .Where(t => (t.Contingent.Show.Date - t.ReservationDateTime).TotalDays > 20)
+    .ToList();
+----
+
+Die Differenz zweier `DateTime` ist ein `TimeSpan`.
+Dafür hat SQLite keinen Datentyp.
+EF Core wirft daher eine `InvalidOperationException` mit dem Text _could not be translated_.
+Du hast zwei Möglichkeiten:
+
+*1.
+Die Bedingung umformulieren.*
+Das ist die beste Lösung, denn die Datenbank filtert weiterhin.
+`AddDays` kann SQLite berechnen:
+
+[source,csharp]
+----
+var tickets = _db.Tickets
+    .Where(t => t.ReservationDateTime < t.Contingent.Show.Date.AddDays(-20))
+    .ToList();
+----
+
+*2.
+Erst in der Datenbank filtern und projizieren, dann mit `ToList()` laden und im Speicher weiterarbeiten.*
+Nach `ToList()` hast du eine `+List<T>+`, ab dann läuft LINQ in C#:
+
+[source,csharp]
+----
+var tickets = _db.Tickets
+    .Where(t => t.TicketState == TicketState.Reserved)        // SQL
+    .Select(t => new { t.Id, t.ReservationDateTime, ShowDate = t.Contingent.Show.Date })
+    .ToList()                                                  // query runs here
+    .Where(t => (t.ShowDate - t.ReservationDateTime).TotalDays > 20)   // C#
+    .ToList();
+----
+
+[CAUTION]
+====
+`+_db.Tickets.ToList().Where(...)+` lädt *die ganze Tabelle* in den Speicher und filtert erst dann.
+Bei einer Million Tickets ist das ein ernstes Problem.
+Filtere so viel wie möglich vor dem `ToList()`.
+Achte darauf auch, wenn ein KI-Agent die Abfrage geschrieben hat.
+====
+
+Typische Ausdrücke, die der SQLite-Provider von EF Core 10 nicht übersetzt:
+
+[%header]
+|===
+|Ausdruck |Beispiel
+|Rechnen mit `TimeSpan` in `Where` oder `OrderBy` |`+(a - b).TotalMinutes > 5+`
+|`TimeOnly` aus einem `DateTime` |`+TimeOnly.FromDateTime(t.Planned) < new TimeOnly(8, 0)+`
+|eigene C#-Methoden |`+.Where(p => IsAdult(p))+`
+|===
+
+Eine Ausnahme gibt es: Im *letzten* `Select` darf etwas stehen, das nicht übersetzbar ist.
+EF Core lädt dann die nötigen Spalten und rechnet den Rest in C#.
+
+// tag::pdf_exclude[]
+== Übungen
+
+. *BusQueries:* Schreibe für die Leitstelle eines automatisierten Linienbusses eine Serviceklasse mit lesenden Methoden: Fahrten ohne Eingriff, Fahrzeuge mit Sensorproblemen, Fahrgäste pro Linie.
+Vorgegebene Unit Tests prüfen deine Lösung.
+Lade dazu link:{github_url}/17%20Serviceklassen/Uebungen/BusQueries.7z[BusQueries.7z] herunter.
+Die Angabe steht im Archiv in der Datei _README.md_.
+. *Von SQL zu LINQ:* Schreibe die Abfragen für den Eventmanager in LINQ.
+Probiere sie in _LinqPlaygroundTests.cs_ aus und vergleiche das erzeugte SQL mit deiner Vorlage.
+* `SELECT Name FROM Events ORDER BY Name`
+* `+SELECT * FROM Guests WHERE Lastname LIKE 'M%' AND BirthDate >= '2003-01-01'+`
+* `+SELECT COUNT(*) FROM Tickets WHERE TicketState = 'Sold' AND Pax > 0+`
+* Alle Shows, die mindestens ein ausverkauftes Kontingent haben.
+Ein Kontingent ist ausverkauft, wenn die Summe von `+Pax + 1+` seiner Tickets gleich `AvailableTickets` ist.
+* Alle Gäste, die nur reserviert und noch nie gekauft haben.
+. *Typen bestimmen:* Gib für jeden Ausdruck den Typ des Ergebnisses an und sage, ob die Abfrage schon ausgeführt wurde.
+* `+_db.Shows.Where(s => s.Date.Year == 2024)+`
+* `+_db.Shows.Where(s => s.Date.Year == 2024).Select(s => s.Event.Name).ToList()+`
+* `+_db.Events.Any(e => e.Name == "Funk")+`
+* `+_db.Guests.FirstOrDefault(g => g.Lastname == "Huber")+`
+. *Fehler finden:* Ein Agent hat diese Methode geschrieben.
+Sie liefert das richtige Ergebnis.
+Was ist trotzdem schlecht daran, und wie schreibst du sie besser?
++
+[source,csharp]
+----
+public int CountSoldTickets(int showId)
+{
+    return _db.Tickets
+        .Include(t => t.Contingent).ThenInclude(c => c.Show)
+        .ToList()
+        .Where(t => t.Contingent.Show.Id == showId && t.TicketState == TicketState.Sold)
+        .Count();
+}
+----
+
+// end::pdf_exclude[]
+
+== Zusatzmaterial
+
+In der https://die-spengergasse.github.io/course-pos-csharp_basics/17%20Serviceklassen/02_Linq_Where_Select_Any.html[interaktiven Präsentation zu Where&#44; Select und Any] siehst du die Pipeline aus `Where` und `Select` als Animation.
+Danach übst du in mehreren Runden, SQL-Abfragen und LINQ-Ausdrücke einander zuzuordnen.

@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wachstum</title>
+<style>
+  :root {
+    --bg: #f8fafc; --card: #ffffff; --fg: #1f2937; --muted: #6b7280; --border: #d1d5db; --soft: #f3f4f6;
+    --grid: #e5e7eb; --axis: #1f2937;
+    --n-stroke: #2563eb; --n-fill: #dbeafe;
+    --a-stroke: #ea580c; --a-fill: #ffedd5;
+    --ok-stroke: #16a34a; --ok-fill: #dcfce7;
+    --err-stroke: #dc2626; --err-fill: #fee2e2;
+    --btn: #2563eb; --btn-fg: #ffffff;
+    --c0: #6b7280; --c1: #16a34a; --c2: #0891b2; --c3: #2563eb; --c4: #1f2937; --c5: #ea580c; --c6: #9333ea;
+    --c7: #dc2626; --c8: #be185d;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f172a; --card: #1e293b; --fg: #e5e7eb; --muted: #9ca3af; --border: #475569; --soft: #334155;
+      --grid: #334155; --axis: #e5e7eb;
+      --n-stroke: #60a5fa; --n-fill: #1e3a8a;
+      --a-stroke: #fb923c; --a-fill: #7c2d12;
+      --ok-stroke: #4ade80; --ok-fill: #14532d;
+      --err-stroke: #f87171; --err-fill: #7f1d1d;
+      --btn: #3b82f6; --btn-fg: #ffffff;
+      --c0: #9ca3af; --c1: #4ade80; --c2: #22d3ee; --c3: #60a5fa; --c4: #e5e7eb; --c5: #fb923c; --c6: #c084fc;
+      --c7: #f87171; --c8: #f472b6;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", Helvetica, Arial, sans-serif; background: var(--bg); color: var(--fg);
+         line-height: 1.5; }
+  code, .mono { font-family: Consolas, Menlo, monospace; }
+  code { background: var(--soft); padding: 0 4px; border-radius: 4px; }
+  header { position: sticky; top: 0; z-index: 5; background: var(--card); border-bottom: 1px solid var(--border);
+           padding: 8px 16px; display: flex; align-items: center; gap: 16px; }
+  header h1 { font-size: 18px; margin: 0; flex: 1; }
+  #progressText { font-variant-numeric: tabular-nums; color: var(--muted); }
+  #progressBar { position: absolute; left: 0; bottom: -1px; height: 3px; background: var(--btn); transition: width .3s; }
+  main { max-width: 1120px; margin: 0 auto; padding: 16px; }
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide h2 { margin: 4px 0 8px; font-size: 24px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin: 12px 0; }
+  .nav { display: flex; justify-content: space-between; max-width: 1120px; margin: 0 auto; padding: 0 16px 24px; }
+  button, select { font: inherit; border: 1px solid var(--border); background: var(--card); color: var(--fg); border-radius: 6px;
+           padding: 5px 12px; cursor: pointer; }
+  button:hover:not(:disabled) { border-color: var(--btn); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  button.primary { background: var(--btn); color: var(--btn-fg); border-color: var(--btn); }
+  button[aria-pressed="true"] { background: var(--n-fill); border-color: var(--n-stroke); font-weight: 600; }
+  input[type=text] { font: inherit; font-family: Consolas, Menlo, monospace; padding: 4px 8px; border: 1px solid var(--border);
+                     border-radius: 6px; background: var(--card); color: var(--fg); }
+  .row { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin: 8px 0; }
+  .row label { display: inline-flex; align-items: center; gap: 6px; }
+  .muted { color: var(--muted); }
+  .hint { font-size: 14px; color: var(--muted); }
+  .grid2 { display: grid; grid-template-columns: minmax(0, 3fr) minmax(240px, 1fr); gap: 16px; align-items: start; }
+  @media (max-width: 860px) { .grid2 { grid-template-columns: 1fr; } }
+  svg.chart { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--border);
+              border-radius: 8px; }
+  svg.chart text { font-family: "Segoe UI", Helvetica, Arial, sans-serif; fill: var(--fg); font-size: 13px; }
+  svg.chart .gridline { stroke: var(--grid); stroke-width: 1; }
+  svg.chart .axis { stroke: var(--axis); stroke-width: 1.5; }
+  svg.chart .tick { fill: var(--muted); font-size: 12px; }
+  svg.chart .curve { fill: none; stroke-width: 2.5; stroke-linejoin: round; }
+  svg.chart .clabel { font-family: Consolas, Menlo, monospace; font-size: 13px; font-weight: 600; }
+  svg.chart .marker { stroke: var(--a-stroke); stroke-width: 1.5; stroke-dasharray: 5 4; }
+  svg.chart .cross { stroke: var(--ok-stroke); stroke-width: 1.5; stroke-dasharray: 6 4; }
+  svg.chart .crosslbl { fill: var(--ok-stroke); font-weight: 600; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border-radius: 14px; border: 1px solid var(--border);
+          background: var(--soft); cursor: pointer; font-family: Consolas, Menlo, monospace; user-select: none; }
+  .chip .sw { width: 14px; height: 4px; border-radius: 2px; display: inline-block; }
+  table.vals { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+  table.vals th, table.vals td { border-bottom: 1px solid var(--border); padding: 4px 8px; text-align: left; vertical-align: middle; }
+  table.vals td.num { text-align: right; font-family: Consolas, Menlo, monospace; white-space: nowrap; }
+  table.vals th { color: var(--muted); font-weight: 600; font-size: 14px; }
+  .fn { font-family: Consolas, Menlo, monospace; white-space: nowrap; }
+  .bar { height: 12px; border-radius: 6px; min-width: 2px; }
+  .bar.fast { background: var(--ok-stroke); } .bar.mid { background: var(--a-stroke); } .bar.slow { background: var(--err-stroke); }
+  .bartrack { background: var(--soft); border-radius: 6px; width: 100%; min-width: 120px; }
+  .dur.fast { color: var(--ok-stroke); } .dur.mid { color: var(--a-stroke); } .dur.slow { color: var(--err-stroke); }
+  .presets button { font-family: Consolas, Menlo, monospace; }
+  .feedback { padding: 8px 12px; border-radius: 6px; margin-top: 8px; display: none; }
+  .feedback.ok { display: block; background: var(--ok-fill); border: 1px solid var(--ok-stroke); }
+  .feedback.bad { display: block; background: var(--err-fill); border: 1px solid var(--err-stroke); }
+  .feedback.info { display: block; background: var(--soft); border: 1px solid var(--border); }
+  .feedback ul { margin: 6px 0 0; padding-left: 20px; }
+  .rounds button { min-width: 40px; }
+  .rounds button.solved { background: var(--ok-fill); border-color: var(--ok-stroke); }
+  .rounds button.current { outline: 2px solid var(--btn); outline-offset: 1px; font-weight: 700; }
+  ol.sortlist { list-style: none; margin: 0; padding: 0; max-width: 560px; }
+  .sortlist li { display: flex; align-items: center; gap: 10px; padding: 6px 8px; margin: 6px 0; background: var(--card);
+                 border: 2px solid var(--border); border-radius: 8px; cursor: grab; user-select: none; -webkit-user-select: none; }
+  .sortlist li:focus { outline: 2px solid var(--btn); outline-offset: 1px; }
+  .sortlist li.dragging { border-color: var(--a-stroke); background: var(--a-fill); cursor: grabbing; box-shadow: 0 4px 12px rgba(0,0,0,.25); }
+  .sortlist li.right { border-color: var(--ok-stroke); background: var(--ok-fill); }
+  .sortlist li.wrong { border-color: var(--err-stroke); background: var(--err-fill); }
+  .sortlist .handle { touch-action: none; cursor: grab; color: var(--muted); font-size: 20px; padding: 0 6px; line-height: 1; }
+  .sortlist .pos { width: 22px; color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; }
+  .sortlist .label { flex: 1; font-family: Consolas, Menlo, monospace; font-size: 18px; }
+  .sortlist .mv { padding: 2px 8px; }
+  .edge-label { color: var(--muted); font-size: 14px; margin: 2px 0; }
+  kbd { font-family: Consolas, Menlo, monospace; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 4px;
+        padding: 0 4px; background: var(--soft); }
+  .chain { font-family: Consolas, Menlo, monospace; font-size: 16px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Wachstum</h1>
+  <span id="progressText">1 / 4</span>
+  <div id="progressBar"></div>
+</header>
+
+<main>
+  <!-- Slide 1 -->
+  <section class="slide" data-slide="0">
+    <h2>Wie schnell wachsen Funktionen?</h2>
+    <p>Ein Algorithmus braucht abhängig von der Eingabegröße n eine bestimmte Anzahl von Schritten. Das Diagramm
+      zeigt die wichtigsten Wachstumsfunktionen von n = 1 bis zum eingestellten n. Mit <b>Schritt</b> wächst n um eins,
+      mit <b>Play</b> wächst es von selbst. Laufen Kurven oben aus dem Bild, schalte auf die logarithmische y-Achse um.</p>
+    <div class="row">
+      <button id="g-reset">⏮ Zurück</button>
+      <button id="g-step" class="primary">Schritt</button>
+      <button id="g-play">▶ Play</button>
+      <label>Geschwindigkeit <input type="range" id="g-speed" min="1" max="5" value="3" aria-label="Geschwindigkeit"></label>
+      <label>n = <input type="range" id="g-n" min="2" max="200" value="10" aria-label="n"> <b id="g-nval" class="mono">10</b></label>
+      <label><input type="checkbox" id="g-log"> logarithmische y-Achse</label>
+    </div>
+    <div class="chips" id="g-chips"></div>
+    <div class="grid2">
+      <div>
+        <svg class="chart" id="g-chart" viewBox="0 0 820 430" aria-label="Diagramm der Wachstumsfunktionen"></svg>
+        <p class="hint" id="g-hint"></p>
+      </div>
+      <div class="card">
+        <div class="muted">Werte bei n = <b id="g-nval2" class="mono">10</b></div>
+        <table class="vals" id="g-table"></table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 2 -->
+  <section class="slide" data-slide="1">
+    <h2>Bei 1 ns pro Schritt dauert das …</h2>
+    <p>Wie lange braucht ein Algorithmus wirklich? Nimm an, ein Schritt dauert 1 Nanosekunde. Das ist ungefähr ein
+      einfacher Rechenschritt eines heutigen Prozessors. Gib n ein (z. B. <code>1000</code>, <code>10^6</code> oder
+      <code>1e9</code>) oder lass n mit <b>Play</b> wachsen.</p>
+    <div class="row">
+      <button id="c-reset">⏮ Zurück</button>
+      <button id="c-step" class="primary">Schritt</button>
+      <button id="c-play">▶ Play</button>
+      <label>Geschwindigkeit <input type="range" id="c-speed" min="1" max="5" value="3" aria-label="Geschwindigkeit"></label>
+    </div>
+    <div class="row">
+      <label>n = <input type="text" id="c-n" value="10" size="14" aria-label="n"></label>
+      <label>Zeit pro Schritt
+        <select id="c-unit" aria-label="Zeit pro Schritt">
+          <option value="0">1 ns</option>
+          <option value="3">1 µs</option>
+          <option value="6">1 ms</option>
+        </select>
+      </label>
+      <span id="c-error" class="hint"></span>
+    </div>
+    <div class="card">
+      <table class="vals" id="c-table"></table>
+      <p class="hint">Der Balken ist logarithmisch: von 1 ns (links) bis zum Alter des Universums, etwa 13,8 Milliarden Jahre
+        (rechts). Grün: unter einer Sekunde. Orange: unter einem Tag. Rot: länger.</p>
+    </div>
+    <p class="hint">Ein 1 000-mal schnellerer Rechner verschiebt die Balken nur um drei Zehnerpotenzen. Bei 2ⁿ schafft er
+      in derselben Zeit gerade einmal n + 10 statt n.</p>
+  </section>
+
+  <!-- Slide 3 -->
+  <section class="slide" data-slide="2">
+    <h2>Duelle: Wer überholt wen?</h2>
+    <p>Für kleine n kann die langsamer wachsende Funktion vorne liegen. Irgendwann überholt die schneller wachsende Funktion
+      aber für immer. Wähle ein Duell und lass n wachsen.</p>
+    <div class="row presets" id="d-presets"></div>
+    <div class="row">
+      <button id="d-reset">⏮ Zurück</button>
+      <button id="d-step" class="primary">Schritt</button>
+      <button id="d-play">▶ Play</button>
+      <label>Geschwindigkeit <input type="range" id="d-speed" min="1" max="5" value="3" aria-label="Geschwindigkeit"></label>
+      <label>n bis <input type="range" id="d-n" min="0" max="1000" value="500" aria-label="n bis"> <b id="d-nval" class="mono"></b></label>
+      <label><input type="checkbox" id="d-log"> logarithmische y-Achse</label>
+    </div>
+    <svg class="chart" id="d-chart" viewBox="0 0 820 430" aria-label="Diagramm mit zwei Funktionen"></svg>
+    <div class="card" id="d-text"></div>
+  </section>
+
+  <!-- Slide 4 -->
+  <section class="slide" data-slide="3">
+    <h2>Übung: Nach Wachstum ordnen</h2>
+    <div class="row rounds" id="roundButtons"></div>
+    <div class="card" id="roundCard"></div>
+    <div class="grid2">
+      <div>
+        <div class="edge-label">↑ wächst am langsamsten</div>
+        <ol class="sortlist" id="sortList" aria-label="Funktionen zum Ordnen"></ol>
+        <div class="edge-label">↓ wächst am schnellsten</div>
+        <div class="row">
+          <button class="primary" id="checkBtn">Prüfen</button>
+          <button id="shuffleBtn">Neu mischen</button>
+          <button id="solutionBtn">Lösung zeigen</button>
+        </div>
+        <div class="feedback" id="feedback"></div>
+      </div>
+      <div class="card hint">
+        <b>So geht's:</b> Ziehe die Karten mit der Maus oder am Griff ⋮⋮ mit dem Finger. Ohne Maus wählst du eine Karte mit
+        <kbd>Tab</kbd> aus und verschiebst sie mit <kbd>↑</kbd> und <kbd>↓</kbd> oder mit den Pfeil-Buttons.
+        <br><br>Funktionen, die sich nur um einen konstanten Faktor unterscheiden, wachsen gleich schnell. Ihre Reihenfolge
+        ist egal. Gelöste Runden merkt sich dein Browser.
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="nav">
+  <button id="prevBtn">← Zurück</button>
+  <button id="nextBtn" class="primary">Weiter →</button>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  const SVGNS = 'http://www.w3.org/2000/svg';
+  const SPEEDS = [500, 280, 150, 80, 40];
+
+  // ---------- storage (works without localStorage) ----------
+  const store = {
+    get(key, fallback) {
+      try {
+        const raw = window.localStorage.getItem('ti-31-' + key);
+        return raw === null ? fallback : JSON.parse(raw);
+      } catch (e) { return fallback; }
+    },
+    set(key, value) {
+      try { window.localStorage.setItem('ti-31-' + key, JSON.stringify(value)); } catch (e) { /* ignore */ }
+    }
+  };
+
+  // ---------- math ----------
+  /** Natural logarithm of the gamma function (Lanczos approximation), used for n! with real n. */
+  function lnGamma(x) {
+    const g = 7;
+    const c = [0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059,
+      12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+    if (x < 0.5) { return Math.log(Math.PI / Math.sin(Math.PI * x)) - lnGamma(1 - x); }
+    x -= 1;
+    let a = c[0];
+    const t = x + g + 0.5;
+    for (let i = 1; i < g + 2; i++) { a += c[i] / (x + i); }
+    return 0.5 * Math.log(2 * Math.PI) + (x + 0.5) * Math.log(t) - t + Math.log(a);
+  }
+  function lgLog2(n) { return n > 1 ? Math.log10(Math.log2(n)) : -Infinity; }
+
+  // Every function is stored by its decimal logarithm lg(n) = log10 f(n), so that 2^1000 or 1000! stay representable.
+  // key orders the growth classes: [0, a, b] = n^a (log n)^b, [1, ln base, a] = base^n n^a, [2] = n!, [3] = n^n.
+  function poly(c, a, b) {
+    return { key: [0, a, b], lg: n => Math.log10(c) + (a ? a * Math.log10(n) : 0) + (b ? b * lgLog2(n) : 0) };
+  }
+  function expo(c, base, a) {
+    return { key: [1, Math.log(base), a], lg: n => Math.log10(c) + n * Math.log10(base) + (a ? a * Math.log10(n) : 0) };
+  }
+  const F = {};
+  function def(id, html, text, spec, note) { F[id] = Object.assign({ id, html, text, note: note || '' }, spec); }
+  def('one', '1', '1', poly(1, 0, 0));
+  def('c1e6', '1&#8239;000&#8239;000', '1 000 000', poly(1e6, 0, 0));
+  def('log', 'log₂ n', 'log₂ n', poly(1, 0, 1));
+  def('log10', 'log₁₀ n', 'log₁₀ n', poly(1 / Math.log2(10), 0, 1), 'log₁₀ n = log₂ n / log₂ 10 ≈ 0,30 · log₂ n');
+  def('logn2', 'log₂(n²)', 'log₂(n²)', poly(2, 0, 1), 'log₂(n²) = 2 · log₂ n');
+  def('logsq', '(log₂ n)²', '(log₂ n)²', poly(1, 0, 2));
+  def('klog', '1000 · log₂ n', '1000·log₂ n', poly(1000, 0, 1));
+  def('sqrt', '√n', '√n', poly(1, 0.5, 0), '√n = n<sup>0,5</sup>');
+  def('n', 'n', 'n', poly(1, 1, 0));
+  def('ndk', 'n / 1000', 'n/1000', poly(1e-3, 1, 0));
+  def('kn', '1000 · n', '1000·n', poly(1000, 1, 0));
+  def('c100n', '100 · n', '100·n', poly(100, 1, 0));
+  def('nlog', 'n · log₂ n', 'n·log₂ n', poly(1, 1, 1));
+  def('nlogsq', 'n · (log₂ n)²', 'n·(log₂ n)²', poly(1, 1, 2));
+  def('n15', 'n<sup>1,5</sup>', 'n^1,5', poly(1, 1.5, 0), 'n<sup>1,5</sup> = n · √n');
+  def('n2', 'n²', 'n²', poly(1, 2, 0));
+  def('n2dk', 'n² / 1000', 'n²/1000', poly(1e-3, 2, 0));
+  def('n3', 'n³', 'n³', poly(1, 3, 0));
+  def('n10', 'n¹⁰', 'n¹⁰', poly(1, 10, 0));
+  def('n100', 'n¹⁰⁰', 'n¹⁰⁰', poly(1, 100, 0));
+  def('e11', '1,1ⁿ', '1,1ⁿ', expo(1, 1.1, 0));
+  def('e2half', '2<sup>n/2</sup>', '2^(n/2)', expo(1, Math.SQRT2, 0), '2<sup>n/2</sup> = (√2)ⁿ ≈ 1,41ⁿ');
+  def('e2', '2ⁿ', '2ⁿ', expo(1, 2, 0));
+  def('e2p1', '2ⁿ⁺¹', '2ⁿ⁺¹', expo(2, 2, 0), '2ⁿ⁺¹ = 2 · 2ⁿ');
+  def('e2dm', '2ⁿ / 1&#8239;000&#8239;000', '2ⁿ/10⁶', expo(1e-6, 2, 0));
+  def('e3', '3ⁿ', '3ⁿ', expo(1, 3, 0));
+  def('e4', '4ⁿ', '4ⁿ', expo(1, 4, 0), '4ⁿ = 2ⁿ · 2ⁿ');
+  def('fact', 'n!', 'n!', { key: [2], lg: n => lnGamma(n + 1) / Math.LN10 });
+  def('nn', 'nⁿ', 'nⁿ', { key: [3], lg: n => n * Math.log10(n) });
+
+  /** Compares two growth classes: negative if f grows slower, 0 if they only differ by a constant factor. */
+  function cmpGrowth(f, g) {
+    for (let i = 0; i < Math.max(f.key.length, g.key.length); i++) {
+      const d = (f.key[i] || 0) - (g.key[i] || 0);
+      if (Math.abs(d) > 1e-9) { return d; }
+    }
+    return 0;
+  }
+
+  /** Grid of n values: integers up to 1000, then geometric up to 1e306 (1000 * log n passes 10^6 only at n = 2^1000). */
+  const GRID = (() => {
+    const g = [];
+    for (let n = 2; n <= 1000; n++) { g.push(n); }
+    for (let n = 1000 * 1.02; n <= 1e12; n *= 1.02) { g.push(n); }
+    for (let n = 1e12 * 1.05; n <= 1e306; n *= 1.05) { g.push(n); }
+    return g;
+  })();
+
+  /**
+   * Finds the point after which g stays above f (f grows slower). Returns null if g is above f from n = 2 on,
+   * otherwise { n, exact } with the last n where g(n) <= f(n).
+   */
+  function crossover(f, g) {
+    let last = -1;
+    for (let i = 0; i < GRID.length; i++) {
+      const gv = g.lg(GRID[i]), fv = f.lg(GRID[i]);
+      // n! and n^n overflow for huge n; such points say nothing about the order
+      if (!isFinite(gv) || !isFinite(fv)) { continue; }
+      if (gv <= fv + 1e-12) { last = i; }
+    }
+    if (last < 0) { return null; }
+    if (last === GRID.length - 1) { return { n: Infinity, at: Infinity, exact: false, beyond: true }; }
+    // bisection between the last grid point below and the next one gives the real crossing point
+    let lo = GRID[last], hi = GRID[Math.min(last + 1, GRID.length - 1)];
+    for (let k = 0; k < 60; k++) {
+      const mid = (lo + hi) / 2;
+      if (g.lg(mid) <= f.lg(mid)) { lo = mid; } else { hi = mid; }
+    }
+    const exact = GRID[last] <= 1000;
+    return { n: exact ? GRID[last] : lo, at: lo, exact };
+  }
+
+  // ---------- formatting ----------
+  const NNBSP = ' ';
+  function group(intStr) { return intStr.replace(/\B(?=(\d{3})+(?!\d))/g, NNBSP); }
+  /** German number with up to `digits` significant digits, e.g. 13,3 or 1 024. */
+  function deNum(x, digits) {
+    if (x === 0) { return '0'; }
+    if (Math.abs(x) >= 1e15) { return sci(Math.log10(x)); }
+    const mag = Math.floor(Math.log10(Math.abs(x)));
+    const decimals = Math.max(0, (digits || 3) - 1 - mag);
+    const s = x.toFixed(Math.min(decimals, 6));
+    const parts = s.split('.');
+    let res = group(parts[0]);
+    if (parts[1]) {
+      const frac = parts[1].replace(/0+$/, '');
+      if (frac) { res += ',' + frac; }
+    }
+    return res;
+  }
+  function sup(k) { return '10<sup>' + group(String(k)) + '</sup>'; }
+  /** Scientific notation from a decimal logarithm, e.g. 3 · 10^141. */
+  function sci(lg) {
+    let k = Math.floor(lg);
+    let m = Math.pow(10, lg - k);
+    if (m >= 9.95) { m = 1; k += 1; }
+    const ms = m < 1.05 ? '' : deNum(m, 2) + ' · ';
+    return ms + sup(k);
+  }
+  /** Formats a value given by its decimal logarithm. */
+  function fmtLg(lg) {
+    if (lg === -Infinity) { return '0'; }
+    if (lg < 9) { return deNum(Math.pow(10, lg), 3); }
+    return sci(lg);
+  }
+  function fmtN(n) { return n < 1e7 ? deNum(n, 7) : sci(Math.log10(n)); }
+
+  const LG_YEAR_S = Math.log10(365.25 * 24 * 3600);
+  const UNIVERSE_YEARS = 1.38e10;
+  /** Human-readable duration from log10 of nanoseconds; returns { text, cls, lgNs }. */
+  function duration(lgNs) {
+    if (lgNs === -Infinity) { return { text: '0 ns', cls: 'fast' }; }
+    const lgS = lgNs - 9;
+    const cls = lgS < 0 ? 'fast' : (lgS < Math.log10(86400) ? 'mid' : 'slow');
+    if (lgNs < 3) { return { text: deNum(Math.pow(10, lgNs), 3) + ' ns', cls }; }
+    if (lgNs < 6) { return { text: deNum(Math.pow(10, lgNs - 3), 3) + ' µs', cls }; }
+    if (lgNs < 9) { return { text: deNum(Math.pow(10, lgNs - 6), 3) + ' ms', cls }; }
+    const s = Math.pow(10, lgS);
+    if (s < 60) { return { text: deNum(s, 3) + ' s', cls }; }
+    if (s < 3600) { return { text: deNum(s / 60, 3) + ' min', cls }; }
+    if (s < 86400) { return { text: deNum(s / 3600, 3) + ' Stunden', cls }; }
+    if (s < 365.25 * 86400) { return { text: deNum(s / 86400, 3) + ' Tage', cls }; }
+    const lgY = lgS - LG_YEAR_S;
+    let text;
+    if (lgY < 6) { text = deNum(Math.pow(10, lgY), 3) + ' Jahre'; }
+    else if (lgY < 9) { text = deNum(Math.pow(10, lgY - 6), 3) + ' Mio. Jahre'; }
+    else if (lgY < 12) { text = deNum(Math.pow(10, lgY - 9), 3) + ' Mrd. Jahre'; }
+    else { text = sci(lgY) + ' Jahre'; }
+    const lgU = lgY - Math.log10(UNIVERSE_YEARS);
+    if (lgU >= 0) {
+      text += ' <span class="hint">(≈ ' + (lgU < 6 ? deNum(Math.pow(10, lgU), 2) : sci(lgU)) + '-mal das Alter des Universums)</span>';
+    }
+    return { text, cls };
+  }
+
+  /** Parses inputs like 1000, 1 000, 10^6, 1e9, 2,5e3. Returns a positive number or NaN. */
+  function parseN(s) {
+    const t = s.replace(/[\s  .']/g, '').replace(',', '.');
+    let m = /^(\d+(?:\.\d+)?)\^(\d+(?:\.\d+)?)$/.exec(t);
+    if (m) { return Math.pow(+m[1], +m[2]); }
+    m = /^(\d+(?:\.\d+)?)(?:e(\d+))?$/i.exec(t);
+    if (m) { return +m[1] * Math.pow(10, m[2] ? +m[2] : 0); }
+    return NaN;
+  }
+
+  // ---------- chart ----------
+  function svgEl(tag, attrs, parent, text) {
+    const e = document.createElementNS(SVGNS, tag);
+    for (const k in attrs) { e.setAttribute(k, attrs[k]); }
+    if (text !== undefined) { e.textContent = text; }
+    if (parent) { parent.appendChild(e); }
+    return e;
+  }
+  /** Writes a number like 3·10^5 into an SVG text element using a raised tspan for the exponent. */
+  function svgNumber(textEl, value) {
+    if (value < 1e5) { textEl.textContent = deNum(value, 4); return; }
+    const k = Math.floor(Math.log10(value) + 1e-9);
+    const m = value / Math.pow(10, k);
+    textEl.textContent = (Math.abs(m - 1) < 1e-6 ? '' : deNum(m, 2) + '·') + '10';
+    svgEl('tspan', { dy: '-6', 'font-size': '10' }, textEl, String(k));
+  }
+  function niceStep(range, maxTicks) {
+    const raw = range / maxTicks;
+    const p = Math.pow(10, Math.floor(Math.log10(raw)));
+    for (const m of [1, 2, 5, 10]) { if (m * p >= raw) { return m * p; } }
+    return 10 * p;
+  }
+
+  const W = 820, H = 430, PL = 78, PR = 700, PT = 18, PB = 380;
+
+  /**
+   * Draws functions from n = nMin to nMax.
+   * opts: { fns: [{ f, color }], nMin, nMax, log, linearCap, crossAt }
+   */
+  function drawChart(svg, opts) {
+    while (svg.firstChild) { svg.removeChild(svg.firstChild); }
+    const { fns, nMin, nMax, log } = opts;
+    const defs = svgEl('defs', {}, svg);
+    const clipId = svg.id + '-clip';
+    const cp = svgEl('clipPath', { id: clipId }, defs);
+    svgEl('rect', { x: PL, y: PT - 2, width: PR - PL, height: PB - PT + 4 }, cp);
+    const sx = n => PL + (PR - PL) * (n - nMin) / (nMax - nMin);
+
+    // y range
+    let yLo, yHi;
+    if (log) {
+      yLo = 0;
+      yHi = Math.max(1, ...fns.map(o => o.f.lg(nMax)));
+      yHi = Math.ceil(yHi * 1.02 + 1e-9);
+    } else {
+      const capped = opts.linearCap ? fns.filter(o => o.f.key[0] === 0) : fns;
+      const base = capped.length ? capped : fns;
+      yLo = 0;
+      yHi = Math.max(1, ...base.map(o => Math.pow(10, o.f.lg(nMax))));
+      if (!isFinite(yHi)) { yHi = 1e300; }
+      yHi *= 1.08;
+    }
+    const sy = v => PB - (PB - PT) * (v - yLo) / (yHi - yLo);
+    const yOf = f => n => {
+      const lg = f.lg(n);
+      if (log) { return sy(lg === -Infinity ? -1e9 : Math.max(lg, yLo - (yHi - yLo))); }
+      const v = lg > 300 ? Infinity : Math.pow(10, lg);
+      return sy(Math.min(v, yHi * 3));
+    };
+
+    // grid and ticks
+    const yStep = log ? Math.max(1, niceStep(yHi - yLo, 8)) : niceStep(yHi - yLo, 6);
+    for (let v = yLo; v <= yHi + 1e-9 * yHi; v += yStep) {
+      const y = sy(v);
+      svgEl('line', { x1: PL, y1: y, x2: PR, y2: y, class: 'gridline' }, svg);
+      const t = svgEl('text', { x: PL - 6, y: y + 4, 'text-anchor': 'end', class: 'tick' }, svg);
+      if (log) {
+        t.textContent = '10';
+        svgEl('tspan', { dy: '-6', 'font-size': '10' }, t, group(String(Math.round(v))));
+      } else { svgNumber(t, v); }
+    }
+    const xStep = niceStep(nMax - nMin, 8);
+    for (let v = Math.ceil(nMin / xStep) * xStep; v <= nMax + 1e-9; v += xStep) {
+      const x = sx(v);
+      svgEl('line', { x1: x, y1: PT, x2: x, y2: PB, class: 'gridline' }, svg);
+      const t = svgEl('text', { x, y: PB + 18, 'text-anchor': 'middle', class: 'tick' }, svg);
+      svgNumber(t, v);
+    }
+    svgEl('line', { x1: PL, y1: PB, x2: PR, y2: PB, class: 'axis' }, svg);
+    svgEl('line', { x1: PL, y1: PB, x2: PL, y2: PT, class: 'axis' }, svg);
+    svgEl('text', { x: (PL + PR) / 2, y: PB + 40, 'text-anchor': 'middle', 'font-style': 'italic' }, svg, 'n');
+    svgEl('text', { x: 18, y: (PT + PB) / 2, 'text-anchor': 'middle', transform: `rotate(-90 18 ${(PT + PB) / 2})` }, svg,
+      log ? 'Schritte (logarithmisch)' : 'Schritte');
+
+    if (opts.crossAt && opts.crossAt > nMin && opts.crossAt < nMax) {
+      const x = sx(opts.crossAt);
+      svgEl('line', { x1: x, y1: PT, x2: x, y2: PB, class: 'cross' }, svg);
+      svgEl('text', { x: x + 6, y: PT + 16, class: 'crosslbl' }, svg, 'Schnittpunkt');
+    }
+
+    // curves
+    const g = svgEl('g', { 'clip-path': `url(#${clipId})` }, svg);
+    const labels = [];
+    for (const o of fns) {
+      const y = yOf(o.f);
+      const pts = [];
+      const samples = 320;
+      for (let i = 0; i <= samples; i++) {
+        const n = nMin + (nMax - nMin) * i / samples;
+        let yy = y(n);
+        if (!isFinite(yy)) { yy = yy > 0 ? PB + 50 : PT - 50; }
+        pts.push(`${(sx(n)).toFixed(1)},${Math.max(PT - 50, Math.min(PB + 50, yy)).toFixed(1)}`);
+      }
+      svgEl('polyline', { points: pts.join(' '), class: 'curve', style: `stroke:${o.color}` }, g);
+      const endY = y(nMax);
+      labels.push({ o, y: Math.max(PT + 6, Math.min(PB - 2, isFinite(endY) ? endY : PT)), out: !(endY >= PT - 1) });
+      svgEl('circle', { cx: sx(nMax), cy: Math.max(PT - 20, Math.min(PB + 20, endY)), r: 4, style: `fill:${o.color}` }, g);
+    }
+    // labels on the right, pushed apart so they do not overlap
+    labels.sort((a, b) => a.y - b.y);
+    for (let i = 1; i < labels.length; i++) { labels[i].y = Math.max(labels[i].y, labels[i - 1].y + 16); }
+    for (let i = labels.length - 1; i >= 0; i--) {
+      const maxY = i === labels.length - 1 ? PB + 4 : labels[i + 1].y - 16;
+      labels[i].y = Math.min(labels[i].y, maxY);
+    }
+    for (const l of labels) {
+      svgEl('text', { x: PR + 8, y: l.y + 4, class: 'clabel', style: `fill:${l.o.color}` }, svg,
+        (l.out ? '↑ ' : '') + l.o.f.text);
+    }
+  }
+
+  // ---------- generic animation controls ----------
+  /** Connects step/play/reset buttons and a speed slider to a step function that returns false when finished. */
+  function animator(prefix, stepFn, resetFn) {
+    let timer = null;
+    const playBtn = document.getElementById(prefix + '-play');
+    const self = {
+      stop() {
+        if (timer) { clearTimeout(timer); timer = null; }
+        playBtn.textContent = '▶ Play';
+      },
+      play() {
+        if (timer) { self.stop(); return; }
+        playBtn.textContent = '⏸ Pause';
+        const tick = () => {
+          if (!stepFn()) { self.stop(); return; }
+          timer = setTimeout(tick, SPEEDS[document.getElementById(prefix + '-speed').value - 1]);
+        };
+        tick();
+      }
+    };
+    playBtn.addEventListener('click', self.play);
+    document.getElementById(prefix + '-step').addEventListener('click', () => { self.stop(); stepFn(); });
+    document.getElementById(prefix + '-reset').addEventListener('click', () => { self.stop(); resetFn(); });
+    return self;
+  }
+
+  // ---------- slide 1: growth chart ----------
+  const G_FNS = [
+    { f: F.one, color: 'var(--c0)', on: true }, { f: F.log, color: 'var(--c1)', on: true },
+    { f: F.sqrt, color: 'var(--c2)', on: false }, { f: F.n, color: 'var(--c3)', on: true },
+    { f: F.nlog, color: 'var(--c4)', on: true }, { f: F.n2, color: 'var(--c5)', on: true },
+    { f: F.n3, color: 'var(--c6)', on: false }, { f: F.e2, color: 'var(--c7)', on: true },
+    { f: F.fact, color: 'var(--c8)', on: true }
+  ];
+  const gN = document.getElementById('g-n'), gLog = document.getElementById('g-log');
+  const chips = document.getElementById('g-chips');
+  for (const o of G_FNS) {
+    const label = document.createElement('label');
+    label.className = 'chip';
+    label.innerHTML = `<input type="checkbox" ${o.on ? 'checked' : ''}><span class="sw" style="background:${o.color}"></span>${o.f.html}`;
+    label.querySelector('input').addEventListener('change', e => { o.on = e.target.checked; drawGrowth(); });
+    chips.appendChild(label);
+  }
+  function drawGrowth() {
+    const n = +gN.value;
+    document.getElementById('g-nval').textContent = n;
+    document.getElementById('g-nval2').textContent = n;
+    const visible = G_FNS.filter(o => o.on);
+    drawChart(document.getElementById('g-chart'), { fns: visible, nMin: 1, nMax: n, log: gLog.checked, linearCap: true });
+    document.getElementById('g-table').innerHTML = '<tr><th>Funktion</th><th style="text-align:right">Schritte</th></tr>' +
+      G_FNS.slice().reverse().map(o => `<tr${o.on ? '' : ' class="muted"'}><td class="fn" style="color:${o.color}">${o.f.html}</td>` +
+        `<td class="num">${fmtLg(o.f.lg(n))}</td></tr>`).join('');
+    const out = visible.filter(o => o.f.key[0] > 0 && !gLog.checked);
+    document.getElementById('g-hint').innerHTML = gLog.checked
+      ? 'Logarithmische Achse: Jede Gitterlinie steht für einen festen Faktor. 2ⁿ wird zur Geraden, Polynome werden immer flacher. So passen alle Kurven ins Bild.'
+      : 'Lineare Achse: Die y-Achse reicht bis zur größten sichtbaren Funktion, die nicht exponentiell wächst.' +
+        (out.length ? ' ' + out.map(o => o.f.html).join(' und ') + ' laufen oben aus dem Bild (↑), ihre Werte stehen in der Tabelle.' : '');
+  }
+  gN.addEventListener('input', () => { gAnim.stop(); drawGrowth(); });
+  gLog.addEventListener('change', drawGrowth);
+  const gAnim = animator('g', () => {
+    const n = +gN.value;
+    if (n >= +gN.max) { return false; }
+    gN.value = n + 1;
+    drawGrowth();
+    return n + 1 < +gN.max;
+  }, () => { gN.value = 2; drawGrowth(); });
+
+  // ---------- slide 2: calculator ----------
+  const C_FNS = [F.log, F.sqrt, F.n, F.nlog, F.n2, F.n3, F.e2, F.fact];
+  const C_SEQ = [];
+  for (let k = 1; k <= 9; k++) { for (const m of [1, 2, 5]) { C_SEQ.push(m * Math.pow(10, k)); } }
+  C_SEQ.push(1e10);
+  const cN = document.getElementById('c-n'), cUnit = document.getElementById('c-unit');
+  const LG_UNIVERSE_NS = Math.log10(UNIVERSE_YEARS) + LG_YEAR_S + 9;
+  function drawCalc() {
+    const n = parseN(cN.value);
+    const err = document.getElementById('c-error');
+    if (!(n >= 1) || !isFinite(n)) { err.textContent = 'Bitte eine Zahl ab 1 eingeben, z. B. 1000, 10^6 oder 1e9.'; return; }
+    err.textContent = n > 1e15 ? 'Hinweis: Sehr große n werden gerundet.' : '';
+    const unit = +cUnit.value;
+    document.getElementById('c-table').innerHTML =
+      `<tr><th>Funktion</th><th style="text-align:right">Schritte bei n = ${fmtN(n)}</th><th>Dauer</th><th style="width:30%"></th></tr>` +
+      C_FNS.map(f => {
+        const lg = f.lg(n);
+        const d = duration(lg + unit);
+        const width = lg === -Infinity ? 0 : Math.max(0, Math.min(100, (lg + unit) / LG_UNIVERSE_NS * 100));
+        return `<tr><td class="fn">${f.html}</td><td class="num">${fmtLg(lg)}</td><td class="dur ${d.cls}">${d.text}</td>` +
+          `<td><div class="bartrack"><div class="bar ${d.cls}" style="width:${width.toFixed(1)}%"></div></div></td></tr>`;
+      }).join('');
+  }
+  cN.addEventListener('input', () => { cAnim.stop(); drawCalc(); });
+  cUnit.addEventListener('change', drawCalc);
+  const cAnim = animator('c', () => {
+    const n = parseN(cN.value);
+    const next = C_SEQ.find(v => v > n + 1e-9);
+    if (next === undefined) { return false; }
+    cN.value = String(next);
+    drawCalc();
+    return next < C_SEQ[C_SEQ.length - 1];
+  }, () => { cN.value = '10'; drawCalc(); });
+
+  // ---------- slide 3: duels ----------
+  const DUELS = [
+    { f: F.c100n, g: F.n2, n: 300, log: false,
+      text: 'Der große Faktor 100 bringt <b>100 · n</b> einen Vorsprung. Bis n = {X} ist n² nicht größer, danach liegt n² für immer vorne. Konstante Faktoren verschieben den Schnittpunkt, sie ändern aber nicht, wer am Ende gewinnt.' },
+    { f: F.log, g: F.sqrt, n: 60, log: false,
+      text: '<b>log₂ n</b> und <b>√n</b> sind bei n = 4 und bei n = 16 gleich groß. Nach n = {X} liegt √n für immer vorne: Jede Potenz n<sup>ε</sup> mit ε &gt; 0 wächst schneller als ein Logarithmus.' },
+    { f: F.nlog, g: F.n15, n: 60, log: false,
+      text: '<b>n · log₂ n</b> gegen <b>n<sup>1,5</sup> = n · √n</b>: Kürzt man den gemeinsamen Faktor n, bleibt log₂ n gegen √n. Deshalb liegt der Schnittpunkt wieder bei n = {X}.' },
+    { f: F.n10, g: F.e2, n: 80, log: true,
+      text: '<b>n¹⁰</b> liegt lange vorne. Bei n = 40 ist n¹⁰ ≈ 10<sup>16</sup>, aber 2ⁿ erst ≈ 10<sup>12</sup>. Bis n = {X} hält das Polynom mit, danach gewinnt 2ⁿ für immer. Schalte die logarithmische Achse aus, dann siehst du, wie steil 2ⁿ danach steigt.' },
+    { f: F.klog, g: F.n, n: 40000, log: false,
+      text: '<b>1000 · log₂ n</b> gegen <b>n</b>: Der Logarithmus hat einen riesigen Vorsprung, trotzdem überholt n bei n ≈ {X}. Danach wächst der Abstand immer schneller.' },
+    { f: F.n100, g: F.e11, n: 30000, log: true,
+      text: '<b>n¹⁰⁰</b> gegen <b>1,1ⁿ</b>: Selbst eine Exponentialfunktion mit der kleinen Basis 1,1 überholt n¹⁰⁰, allerdings erst bei n ≈ {X}. Beide Funktionen liegen dort schon bei etwa 10<sup>398</sup>.' }
+  ];
+  const D_MIN = 4, D_MAX = 1e6;
+  const dN = document.getElementById('d-n'), dLog = document.getElementById('d-log');
+  const posToN = p => Math.round(D_MIN * Math.pow(D_MAX / D_MIN, p / 1000));
+  const nToPos = n => Math.round(Math.log(n / D_MIN) / Math.log(D_MAX / D_MIN) * 1000);
+  let duel = 0;
+  const presets = document.getElementById('d-presets');
+  DUELS.forEach((d, i) => {
+    const b = document.createElement('button');
+    b.innerHTML = `${d.f.html} gegen ${d.g.html}`;
+    b.addEventListener('click', () => selectDuel(i));
+    presets.appendChild(b);
+  });
+  for (const d of DUELS) { d.cross = crossover(d.f, d.g); }
+  function crossText(c) { return c.exact ? deNum(c.n, 7) : deNum(c.n, 3); }
+  function selectDuel(i) {
+    dAnim.stop();
+    duel = i;
+    Array.from(presets.children).forEach((b, k) => b.setAttribute('aria-pressed', k === i ? 'true' : 'false'));
+    dN.value = nToPos(DUELS[i].n);
+    dLog.checked = DUELS[i].log;
+    drawDuel();
+  }
+  function drawDuel() {
+    const d = DUELS[duel];
+    const nMax = posToN(+dN.value);
+    document.getElementById('d-nval').innerHTML = deNum(nMax, 7);
+    drawChart(document.getElementById('d-chart'), {
+      fns: [{ f: d.f, color: 'var(--c3)' }, { f: d.g, color: 'var(--c5)' }],
+      nMin: 1, nMax, log: dLog.checked, linearCap: false, crossAt: d.cross ? d.cross.at : null
+    });
+    const fv = d.f.lg(nMax), gv = d.g.lg(nMax);
+    const lead = gv > fv ? d.g : d.f;
+    document.getElementById('d-text').innerHTML = d.text.replace('{X}', d.cross ? crossText(d.cross) : '1') +
+      `<p class="hint">Bei n = ${deNum(nMax, 7)}: ${d.f.html} ≈ ${fmtLg(fv)}, ${d.g.html} ≈ ${fmtLg(gv)}. ` +
+      `Vorne liegt gerade <b>${lead.html}</b>.</p>`;
+  }
+  dN.addEventListener('input', () => { dAnim.stop(); drawDuel(); });
+  dLog.addEventListener('change', drawDuel);
+  const dAnim = animator('d', () => {
+    const p = +dN.value;
+    const target = Math.max(nToPos(DUELS[duel].n), p);
+    if (p >= 1000) { return false; }
+    dN.value = Math.min(1000, p + 8);
+    drawDuel();
+    return +dN.value < (p < target ? target : 1000);
+  }, () => { dN.value = 0; drawDuel(); });
+
+  // ---------- slide 4: exercise ----------
+  const ROUNDS = [
+    { id: 'basics', title: 'Die Grundklassen', items: ['n2', 'one', 'n', 'e2', 'log', 'nlog'],
+      intro: 'Die wichtigsten Wachstumsklassen aus der Hierarchie.' },
+    { id: 'hierarchy', title: 'Die ganze Hierarchie', items: ['fact', 'n3', 'sqrt', 'e2', 'nlog', 'log', 'one'],
+      intro: 'Dazu kommen √n, n³ und n!.' },
+    { id: 'factors', title: 'Konstante Faktoren', items: ['n2dk', 'c1e6', 'ndk', 'e2dm', 'klog', 'kn'],
+      intro: 'Lass dich von großen und kleinen Faktoren nicht täuschen.' },
+    { id: 'logs', title: 'Logarithmen und Wurzeln', items: ['n15', 'logsq', 'nlog', 'sqrt', 'nlogsq', 'log', 'n'],
+      intro: 'Knifflig: Logarithmus-Faktoren gegen Wurzeln und gebrochene Exponenten.' },
+    { id: 'expo', title: 'Polynom gegen Exponentialfunktion', items: ['e2', 'n100', 'e3', 'n10', 'e2half', 'e11'],
+      intro: 'Knifflig: große Exponenten gegen kleine Basen.' },
+    { id: 'same', title: 'Gleich oder nicht?', items: ['e4', 'logn2', 'fact', 'e2p1', 'logsq', 'nn', 'log10', 'e2'],
+      intro: 'Knifflig: Manche Funktionen sehen verschieden aus, wachsen aber gleich schnell. Andere sehen ähnlich aus und sind es nicht.' }
+  ];
+  const solved = new Set((store.get('solved', []) || []).filter(id => ROUNDS.some(r => r.id === id)));
+  let roundIndex = Math.min(Math.max(store.get('round', 0) | 0, 0), ROUNDS.length - 1);
+  const list = document.getElementById('sortList');
+  const feedback = document.getElementById('feedback');
+
+  /** Explains why f grows slower than g (cmpGrowth(f, g) < 0). */
+  function reason(f, g) {
+    const [tf, af, bf] = f.key, [tg, ag, bg] = g.key;
+    if (tf === 0 && tg === 0) {
+      if (af === 0 && bf === 0) { return `${f.html} ist eine Konstante. Sie wächst gar nicht, egal wie groß sie ist.`; }
+      if (Math.abs(af - ag) > 1e-9) {
+        if (bf > bg) {
+          return `Ein Logarithmus-Faktor gleicht einen kleineren Exponenten nie aus: (log n)<sup>k</sup> wächst langsamer als jede Potenz n<sup>ε</sup>. Deshalb verliert ${f.html} gegen ${g.html}.`;
+        }
+        return af === 0
+          ? `Logarithmen wachsen langsamer als jede Potenz von n, auch als √n = n<sup>0,5</sup>.`
+          : `Bei Potenzen von n entscheidet der Exponent: ${deNum(af, 3)} &lt; ${deNum(ag, 3)}.`;
+      }
+      return (af === 0 ? 'Beide sind Potenzen von log n.' : 'Der Exponent von n ist gleich, also entscheidet der Logarithmus-Faktor.') +
+        ' Mehr Faktoren log n wachsen schneller, weil log n selbst über alle Grenzen wächst.';
+    }
+    if (tf === 0 && tg === 1) {
+      return af === 0
+        ? `Jede Exponentialfunktion cⁿ mit c &gt; 1 wächst schneller als jedes Polynom und erst recht schneller als jede Potenz von log n.`
+        : `Jede Exponentialfunktion cⁿ mit c &gt; 1 wächst schneller als jedes Polynom, auch als n¹⁰ oder n¹⁰⁰. Am Anfang kann das Polynom aber vorne liegen.`;
+    }
+    if (tf === 1 && tg === 1) {
+      return Math.abs(af - ag) > 1e-9
+        ? `Bei Exponentialfunktionen entscheidet die Basis. Der Quotient der beiden ist selbst eine Exponentialfunktion mit Basis größer 1, er wächst also über alle Grenzen.`
+        : `Gleiche Basis, aber ein zusätzlicher Faktor n<sup>k</sup>.`;
+    }
+    if (tg === 3 && tf < 2) { return `nⁿ wächst sogar schneller als n! und damit schneller als jede Exponentialfunktion und jedes Polynom.`; }
+    if (tg === 2) { return `n! = 1 · 2 · … · n. Ab n &gt; c ist jeder weitere Faktor größer als c. Deshalb überholt n! jede Exponentialfunktion cⁿ und erst recht jedes Polynom.`; }
+    return `nⁿ = n · n · … · n hat n Faktoren der Größe n. n! = 1 · 2 · … · n hat n Faktoren, die fast alle kleiner sind. Der Quotient n! / nⁿ geht gegen 0.`;
+  }
+  /** Reason plus a numeric example where g has overtaken f. */
+  function explain(f, g) {
+    let text = reason(f, g);
+    const c = crossover(f, g);
+    if (c && c.beyond) { return text + ` ${g.html} überholt erst bei unvorstellbar großem n, jenseits von 10<sup>306</sup>.`; }
+    if (c) { text += ` Bis n ${c.exact ? '=' : '≈'} ${crossText(c)} ist ${g.html} nicht größer, danach liegt es für immer vorne.`; }
+    const ex = [10, 100, 1000, 1e4, 1e6, 1e9, 1e12].find(v => v > (c ? c.n * 2 : 5)) ||
+      Math.pow(10, Math.ceil(Math.log10(c.n)) + 1);
+    text += ` <span class="hint">Beispiel n = ${fmtN(ex)}: ${f.html} ≈ ${fmtLg(f.lg(ex))}, ${g.html} ≈ ${fmtLg(g.lg(ex))}.</span>`;
+    return text;
+  }
+  function sameText(f, g) {
+    const notes = [f.note, g.note].filter(Boolean).join(', ');
+    return `${f.html} und ${g.html} wachsen gleich schnell. Sie unterscheiden sich nur um einen konstanten Faktor` +
+      (notes ? ` (${notes})` : '') + '. Ihre Reihenfolge ist egal.';
+  }
+  function sortedIds(round) { return round.items.slice().sort((a, b) => cmpGrowth(F[a], F[b])); }
+  /** The correct order as a chain with explanations for each step. */
+  function chainHtml(round) {
+    const ids = sortedIds(round);
+    let chain = F[ids[0]].html;
+    const steps = [];
+    for (let i = 1; i < ids.length; i++) {
+      const a = F[ids[i - 1]], b = F[ids[i]];
+      const same = cmpGrowth(a, b) === 0;
+      chain += (same ? ' ≡ ' : ' &lt; ') + b.html;
+      steps.push(`<li><span class="fn">${a.html} ${same ? '≡' : '&lt;'} ${b.html}</span>: ${same ? sameText(a, b) : explain(a, b)}</li>`);
+    }
+    return `<div class="chain">${chain}</div><ul>${steps.join('')}</ul>`;
+  }
+
+  function currentOrder() { return Array.from(list.children).map(li => li.dataset.id); }
+  function shuffled(items) {
+    const ids = items.slice();
+    const sorted = sortedIds({ items });
+    do {
+      for (let i = ids.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [ids[i], ids[j]] = [ids[j], ids[i]];
+      }
+    } while (ids.every((id, i) => cmpGrowth(F[id], F[sorted[i]]) === 0));
+    return ids;
+  }
+  function renderList(ids) {
+    list.innerHTML = '';
+    ids.forEach(id => {
+      const li = document.createElement('li');
+      li.dataset.id = id;
+      li.tabIndex = 0;
+      li.setAttribute('aria-label', F[id].text);
+      li.innerHTML = `<span class="handle" aria-hidden="true">⋮⋮</span><span class="pos"></span><span class="label">${F[id].html}</span>` +
+        `<button class="mv" data-dir="-1" aria-label="nach oben" tabindex="-1">▲</button><button class="mv" data-dir="1" aria-label="nach unten" tabindex="-1">▼</button>`;
+      list.appendChild(li);
+    });
+    updatePositions();
+  }
+  function updatePositions() {
+    Array.from(list.children).forEach((li, i) => {
+      li.querySelector('.pos').textContent = (i + 1) + '.';
+      li.querySelector('[data-dir="-1"]').disabled = i === 0;
+      li.querySelector('[data-dir="1"]').disabled = i === list.children.length - 1;
+    });
+  }
+  function clearMarks() {
+    for (const li of list.children) { li.classList.remove('right', 'wrong'); }
+    feedback.className = 'feedback';
+    feedback.innerHTML = '';
+  }
+  function moveItem(li, dir) {
+    const target = dir < 0 ? li.previousElementSibling : li.nextElementSibling;
+    if (!target) { return; }
+    if (dir < 0) { list.insertBefore(li, target); } else { list.insertBefore(target, li); }
+    clearMarks();
+    updatePositions();
+    li.focus();
+  }
+  list.addEventListener('click', e => {
+    const b = e.target.closest('button.mv');
+    if (b) { moveItem(b.closest('li'), +b.dataset.dir); }
+  });
+  list.addEventListener('keydown', e => {
+    const li = e.target.closest('li');
+    if (!li) { return; }
+    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+      moveItem(li, e.key === 'ArrowUp' ? -1 : 1);
+      e.preventDefault();
+    }
+  });
+
+  // Drag and drop with pointer events: works with mouse, pen and touch (touch only on the handle, so the page can still scroll).
+  let drag = null;
+  list.addEventListener('pointerdown', e => {
+    const li = e.target.closest('li');
+    if (!li || e.target.closest('button')) { return; }
+    if (e.pointerType === 'touch' && !e.target.closest('.handle')) { return; }
+    if (e.button !== undefined && e.button !== 0) { return; }
+    drag = { li, id: e.pointerId };
+    li.setPointerCapture(e.pointerId);
+    li.classList.add('dragging');
+    clearMarks();
+    e.preventDefault();
+  });
+  list.addEventListener('pointermove', e => {
+    if (!drag || e.pointerId !== drag.id) { return; }
+    const others = Array.from(list.children).filter(x => x !== drag.li);
+    // insert before the first item whose middle lies below the pointer
+    let before = null;
+    for (const o of others) {
+      const r = o.getBoundingClientRect();
+      if (e.clientY < r.top + r.height / 2) { before = o; break; }
+    }
+    if (before !== drag.li.nextElementSibling || (before === null && list.lastElementChild !== drag.li)) {
+      list.insertBefore(drag.li, before);
+      updatePositions();
+    }
+  });
+  function endDrag(e) {
+    if (!drag || e.pointerId !== drag.id) { return; }
+    drag.li.classList.remove('dragging');
+    try { drag.li.releasePointerCapture(drag.id); } catch (err) { /* already released */ }
+    drag.li.focus();
+    drag = null;
+  }
+  list.addEventListener('pointerup', endDrag);
+  list.addEventListener('pointercancel', endDrag);
+
+  function drawRounds() {
+    const box = document.getElementById('roundButtons');
+    box.innerHTML = '';
+    ROUNDS.forEach((r, i) => {
+      const b = document.createElement('button');
+      b.textContent = String(i + 1);
+      b.title = r.title;
+      b.className = (solved.has(r.id) ? 'solved ' : '') + (i === roundIndex ? 'current' : '');
+      b.addEventListener('click', () => selectRound(i));
+      box.appendChild(b);
+    });
+    const r = ROUNDS[roundIndex];
+    document.getElementById('roundCard').innerHTML =
+      `<b>Runde ${roundIndex + 1} von ${ROUNDS.length}: ${r.title}</b>${solved.has(r.id) ? ' <span class="muted">✓ gelöst</span>' : ''}` +
+      `<br>${r.intro} Ordne die Funktionen von oben (wächst am langsamsten) nach unten (wächst am schnellsten).` +
+      `<br><span class="hint">Gelöst: ${solved.size} von ${ROUNDS.length} Runden</span>`;
+  }
+  function selectRound(i) {
+    roundIndex = i;
+    store.set('round', i);
+    drawRounds();
+    renderList(shuffled(ROUNDS[i].items));
+    clearMarks();
+  }
+
+  function check() {
+    const r = ROUNDS[roundIndex];
+    const order = currentOrder();
+    const sorted = sortedIds(r);
+    let correct = 0;
+    Array.from(list.children).forEach((li, i) => {
+      const ok = cmpGrowth(F[order[i]], F[sorted[i]]) === 0;
+      li.classList.toggle('right', ok);
+      li.classList.toggle('wrong', !ok);
+      if (ok) { correct++; }
+    });
+    if (correct === order.length) {
+      solved.add(r.id);
+      store.set('solved', Array.from(solved));
+      drawRounds();
+      const next = ROUNDS.findIndex((x, i) => i > roundIndex && !solved.has(x.id));
+      feedback.className = 'feedback ok';
+      feedback.innerHTML = `✓ Richtig! So lautet die Begründung:${chainHtml(r)}` +
+        (next >= 0 ? `<button id="nextRound">Weiter zu Runde ${next + 1}</button>`
+          : (solved.size === ROUNDS.length ? '<b>Du hast alle Runden gelöst!</b>' : ''));
+      const nb = document.getElementById('nextRound');
+      if (nb) { nb.addEventListener('click', () => selectRound(next)); }
+      return;
+    }
+    // explain the wrongly ordered neighbours (the user put a faster growing function above a slower one)
+    const issues = [];
+    for (let i = 0; i + 1 < order.length; i++) {
+      const a = F[order[i]], b = F[order[i + 1]];
+      if (cmpGrowth(a, b) > 0) { issues.push(`<li>Du hast <span class="fn">${a.html}</span> über <span class="fn">${b.html}</span> gestellt, aber ${b.html} wächst langsamer. ${explain(b, a)}</li>`); }
+    }
+    feedback.className = 'feedback bad';
+    feedback.innerHTML = `✗ ${correct} von ${order.length} Positionen stimmen. Rot markierte Karten stehen an der falschen Stelle.` +
+      (issues.length ? `<ul>${issues.slice(0, 3).join('')}</ul>` : '') +
+      (issues.length > 3 ? `<p class="hint">… und ${issues.length - 3} weitere vertauschte Nachbarn.</p>` : '') +
+      '<p class="hint">Verschiebe die Karten und prüfe noch einmal.</p>';
+  }
+  function showSolution() {
+    const r = ROUNDS[roundIndex];
+    renderList(sortedIds(r));
+    clearMarks();
+    feedback.className = 'feedback info';
+    feedback.innerHTML = `So sieht die richtige Reihenfolge aus. Mische neu und versuche es selbst, damit die Runde als gelöst zählt.${chainHtml(r)}`;
+  }
+  document.getElementById('checkBtn').addEventListener('click', check);
+  document.getElementById('shuffleBtn').addEventListener('click', () => { renderList(shuffled(ROUNDS[roundIndex].items)); clearMarks(); });
+  document.getElementById('solutionBtn').addEventListener('click', showSolution);
+
+  // ---------- slides ----------
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  let current = Math.min(Math.max(store.get('slide', 0) | 0, 0), slides.length - 1);
+  function showSlide(i) {
+    current = Math.min(Math.max(i, 0), slides.length - 1);
+    slides.forEach((s, k) => s.classList.toggle('active', k === current));
+    document.getElementById('progressText').textContent = `${current + 1} / ${slides.length}`;
+    document.getElementById('progressBar').style.width = `${(current + 1) / slides.length * 100}%`;
+    document.getElementById('prevBtn').disabled = current === 0;
+    document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    gAnim.stop(); cAnim.stop(); dAnim.stop();
+    store.set('slide', current);
+    window.scrollTo(0, 0);
+  }
+  document.getElementById('prevBtn').addEventListener('click', () => showSlide(current - 1));
+  document.getElementById('nextBtn').addEventListener('click', () => showSlide(current + 1));
+  document.addEventListener('keydown', evt => {
+    const tag = evt.target && evt.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (evt.target && evt.target.isContentEditable)) { return; }
+    if (evt.ctrlKey || evt.altKey || evt.metaKey) { return; }
+    if (evt.key === 'ArrowRight' || evt.key === 'PageDown') { showSlide(current + 1); evt.preventDefault(); }
+    if (evt.key === 'ArrowLeft' || evt.key === 'PageUp') { showSlide(current - 1); evt.preventDefault(); }
+  });
+
+  // ---------- start ----------
+  drawGrowth();
+  drawCalc();
+  selectDuel(0);
+  selectRound(roundIndex);
+  showSlide(current);
+
+  /** Read-only hooks for automated tests. */
+  window.growthDebug = {
+    order: currentOrder,
+    solution: () => sortedIds(ROUNDS[roundIndex]),
+    arrange: ids => { renderList(ids); clearMarks(); },
+    crossovers: () => DUELS.map(d => d.cross && [d.cross.n, d.cross.at]),
+    duration: lgNs => duration(lgNs).text,
+    /** Checks every pair of functions: the faster class must be ahead at the end of the grid, texts must be complete. */
+    selfTest: () => {
+      const problems = [];
+      const all = Object.values(F);
+      for (const f of all) {
+        for (const g of all) {
+          const c = cmpGrowth(f, g);
+          if (c >= 0) { continue; }
+          const big = 1e306;
+          if (isFinite(g.lg(big)) && !(g.lg(big) > f.lg(big)) && !crossover(f, g).beyond) { problems.push(`${f.id} < ${g.id} not visible at n = 1e306`); }
+          const t = explain(f, g);
+          if (/NaN|undefined|Infinity/.test(t)) { problems.push(`${f.id} < ${g.id}: ${t}`); }
+        }
+      }
+      for (const r of ROUNDS) { if (r.items.some(id => !F[id])) { problems.push('unknown item in ' + r.id); } }
+      return problems;
+    }
+  };
+})();
+</script>
+</body>
+</html>

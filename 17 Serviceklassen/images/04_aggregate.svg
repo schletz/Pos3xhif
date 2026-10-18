@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="300" viewBox="0 0 1000 300" role="img" aria-label="Aggregate fasst eine Liste schrittweise zu einem Wert zusammen">
+<title>Aggregate fasst eine Liste schrittweise zu einem Wert zusammen</title>
+<defs><marker id="arrow-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9d9d9c"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0090d4"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f39000"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#71af2e"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#cc0935"/></marker><marker id="arrow-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6cc1b0"/></marker></defs>
+<rect x="1" y="1" width="998" height="298" rx="14" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="30.0" y="42.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Aggregate: eine Liste zu einem Wert zusammenfassen</text>
+<text x="30.0" y="80.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">names.Aggregate(0, (sum, name) =&gt; sum + name.Length)</text>
+<rect x="30.0" y="110.0" width="24.8" height="34.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="38.0" y="132.6" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="8.8" lengthAdjust="spacingAndGlyphs">0</text>
+<text x="42.4" y="165.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">Startwert</text>
+<line x1="58.8" y1="127.0" x2="174.8" y2="127.0" stroke="#9d9d9c" stroke-width="2" marker-end="url(#arrow-grey)"/>
+<text x="116.8" y="118.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="13" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">+ &quot;Funk&quot;.Length</text>
+<rect x="178.8" y="110.0" width="24.8" height="34.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="186.8" y="132.6" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="8.8" lengthAdjust="spacingAndGlyphs">4</text>
+<line x1="207.6" y1="127.0" x2="323.6" y2="127.0" stroke="#9d9d9c" stroke-width="2" marker-end="url(#arrow-grey)"/>
+<text x="265.6" y="118.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="13" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">+ &quot;Rap&quot;.Length</text>
+<rect x="327.6" y="110.0" width="24.8" height="34.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="335.6" y="132.6" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="8.8" lengthAdjust="spacingAndGlyphs">7</text>
+<line x1="356.4" y1="127.0" x2="472.4" y2="127.0" stroke="#9d9d9c" stroke-width="2" marker-end="url(#arrow-grey)"/>
+<text x="414.4" y="118.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="13" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">+ &quot;World&quot;.Length</text>
+<rect x="476.4" y="110.0" width="33.6" height="34.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="484.4" y="132.6" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="17.6" lengthAdjust="spacingAndGlyphs">12</text>
+<text x="525.0" y="133.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">← Ergebnis</text>
+<text x="30.0" y="215.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">JavaScript:</text>
+<text x="140.0" y="215.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">names.reduce((sum, name) =&gt; sum + name.length, 0)</text>
+<text x="30.0" y="250.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Der Wert sum wird von Schritt zu Schritt weitergereicht (Akkumulator).</text>
+<text x="30.0" y="274.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Aggregate wird nicht nach SQL übersetzt: zuerst ToList(), dann Aggregate.</text>
+</svg>

@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="460" viewBox="0 0 940 460">
+  <defs>
+    <marker id="open" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="12" markerHeight="12" orient="auto"><path d="M1,1 L11,6 L1,11" fill="none" stroke="#1d1d1b" stroke-width="1.5"/></marker>
+    <marker id="realize" viewBox="0 0 14 14" refX="13" refY="7" markerWidth="14" markerHeight="14" orient="auto"><path d="M1,1 L13,7 L1,13 Z" fill="#ffffff" stroke="#1d1d1b" stroke-width="1.5"/></marker>
+  </defs>
+  <rect x="0.5" y="0.5" width="939" height="459" rx="8" fill="#ffffff" stroke="#9d9d9c"/>
+  <text x="470" y="40" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="21" font-weight="bold" fill="#1d1d1b" text-anchor="middle">Neue Zahlungsart DirectDebit: ändern oder anstecken?</text>
+  <rect x="20" y="62" width="440" height="380" rx="10" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+  <text x="40" y="92" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#1d1d1b">Vorher: switch an drei Stellen</text>
+  <rect x="40" y="108" width="400" height="262" rx="4" fill="#ffffff" stroke="#1d1d1b" stroke-width="1.5"/>
+  <path d="M40.75,141 L40.75,112 Q40.75,108.75 44,108.75 L436,108.75 Q439.25,108.75 439.25,112 L439.25,141 Z" fill="#ededed"/>
+  <line x1="40" y1="142" x2="440" y2="142" stroke="#1d1d1b" stroke-width="1.5"/>
+  <text x="240" y="131" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1d1d1b" text-anchor="middle">PaymentService</text>
+  <text x="55" y="170" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1d1d1b">CalculateFee(method, amount)</text>
+  <text x="429" y="170" font-family="Consolas, Menlo, monospace" font-size="13" fill="#5f5f5e" text-anchor="end">switch</text>
+  <rect x="55" y="180" width="85" height="26" rx="4" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.2"/>
+  <text x="97.5" y="198" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1d1d1b" text-anchor="middle">CreditCard</text>
+  <rect x="145" y="180" width="62" height="26" rx="4" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.2"/>
+  <text x="176.0" y="198" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1d1d1b" text-anchor="middle">PayPal</text>
+  <rect x="212" y="180" width="62" height="26" rx="4" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.2"/>
+  <text x="243.0" y="198" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1d1d1b" text-anchor="middle">Invoice</text>
+  <rect x="279" y="180" width="150" height="26" rx="4" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+  <text x="354" y="198" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#a35f00" text-anchor="middle">✎ + DirectDebit</text>
+  <line x1="50" y1="218" x2="430" y2="218" stroke="#9d9d9c" stroke-dasharray="4 3"/>
+  <text x="55" y="242" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1d1d1b">Pay(method, amount)</text>
+  <text x="429" y="242" font-family="Consolas, Menlo, monospace" font-size="13" fill="#5f5f5e" text-anchor="end">switch</text>
+  <rect x="55" y="252" width="85" height="26" rx="4" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.2"/>
+  <text x="97.5" y="270" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1d1d1b" text-anchor="middle">CreditCard</text>
+  <rect x="145" y="252" width="62" height="26" rx="4" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.2"/>
+  <text x="176.0" y="270" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1d1d1b" text-anchor="middle">PayPal</text>
+  <rect x="212" y="252" width="62" height="26" rx="4" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.2"/>
+  <text x="243.0" y="270" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1d1d1b" text-anchor="middle">Invoice</text>
+  <rect x="279" y="252" width="150" height="26" rx="4" fill="#f6d3db" stroke="#cc0935" stroke-width="1.5" stroke-dasharray="5 3"/>
+  <text x="354" y="270" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#a8072c" text-anchor="middle">✗ DirectDebit fehlt</text>
+  <line x1="50" y1="290" x2="430" y2="290" stroke="#9d9d9c" stroke-dasharray="4 3"/>
+  <text x="55" y="314" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1d1d1b">GetDisplayName(method)</text>
+  <text x="429" y="314" font-family="Consolas, Menlo, monospace" font-size="13" fill="#5f5f5e" text-anchor="end">switch</text>
+  <rect x="55" y="324" width="85" height="26" rx="4" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.2"/>
+  <text x="97.5" y="342" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1d1d1b" text-anchor="middle">CreditCard</text>
+  <rect x="145" y="324" width="62" height="26" rx="4" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.2"/>
+  <text x="176.0" y="342" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1d1d1b" text-anchor="middle">PayPal</text>
+  <rect x="212" y="324" width="62" height="26" rx="4" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.2"/>
+  <text x="243.0" y="342" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1d1d1b" text-anchor="middle">Invoice</text>
+  <rect x="279" y="324" width="150" height="26" rx="4" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+  <text x="354" y="342" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#a35f00" text-anchor="middle">✎ + DirectDebit</text>
+  <text x="40" y="398" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#a8072c">✗ Drei bestehende Methoden ändern</text>
+  <text x="40" y="422" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" fill="#1d1d1b">Eine vergessen → Exception zur Laufzeit</text>
+  <rect x="480" y="62" width="440" height="380" rx="10" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+  <text x="500" y="92" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#1d1d1b">Nachher: eine Klasse pro Zahlungsart</text>
+  <rect x="600" y="110" width="200" height="40" rx="4" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+  <text x="700" y="136" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1d1d1b" text-anchor="middle">CheckoutService</text>
+  <text x="810" y="136" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#4a7a1c">✓ unverändert</text>
+  <line x1="700" y1="150" x2="700" y2="197" stroke="#1d1d1b" stroke-width="1.5" marker-end="url(#open)"/>
+  <text x="710" y="178" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#5f5f5e">kennt nur das Interface</text>
+  <rect x="590" y="198" width="220" height="52" rx="4" fill="#e5f4f1" stroke="#6cc1b0" stroke-width="1.5"/>
+  <text x="700" y="217" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#2f7d6e" text-anchor="middle">«interface»</text>
+  <text x="700" y="239" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1d1d1b" text-anchor="middle">IPaymentProvider</text>
+  <line x1="547.5" y1="310" x2="625" y2="251" stroke="#1d1d1b" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#realize)"/>
+  <line x1="652.5" y1="310" x2="675" y2="251" stroke="#1d1d1b" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#realize)"/>
+  <line x1="757.5" y1="310" x2="725" y2="251" stroke="#1d1d1b" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#realize)"/>
+  <line x1="862.5" y1="310" x2="775" y2="251" stroke="#1d1d1b" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#realize)"/>
+  <rect x="500" y="310" width="95" height="40" rx="4" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+  <text x="547.5" y="335" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1d1d1b" text-anchor="middle">CreditCard</text>
+  <rect x="605" y="310" width="95" height="40" rx="4" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+  <text x="652.5" y="335" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1d1d1b" text-anchor="middle">PayPal</text>
+  <rect x="710" y="310" width="95" height="40" rx="4" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+  <text x="757.5" y="335" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1d1d1b" text-anchor="middle">Invoice</text>
+  <rect x="815" y="310" width="95" height="40" rx="4" fill="#e5f1d9" stroke="#71af2e" stroke-width="2" stroke-dasharray="6 3"/>
+  <text x="862.5" y="335" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1d1d1b" text-anchor="middle">DirectDebit</text>
+  <path d="M505,356 L505,360 L800,360 L800,356" fill="none" stroke="#9d9d9c" stroke-width="1.2"/>
+  <text x="652" y="378" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#4a7a1c" text-anchor="middle">✓ unverändert</text>
+  <text x="862" y="378" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#4a7a1c" text-anchor="middle">+ neue Klasse</text>
+  <text x="500" y="404" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#4a7a1c">✓ Eine neue Klasse anstecken</text>
+  <text x="500" y="426" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" fill="#1d1d1b">Methode vergessen → Fehler beim Kompilieren</text>
+</svg>

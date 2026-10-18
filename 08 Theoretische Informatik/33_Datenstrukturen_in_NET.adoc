@@ -1,0 +1,389 @@
+= Datenstrukturen in .NET
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Die meisten Laufzeitprobleme in echten Programmen entstehen nicht durch einen schlechten Sortieralgorithmus, sondern durch die falsche Collection oder durch eine harmlos aussehende Methode, die in einer Schleife steht.
+Ein `List.Contains` kostet O(n), ein `HashSet.Contains` O(1).
+In einer Schleife über n Elemente ist das der Unterschied zwischen O(n²) und O(n).
+In dieser Einheit lernst du, was die Collections von .NET intern machen, was ihre Operationen kosten und wo in LINQ- und String-Code versteckte Kosten lauern.
+
+Wie man die Collections verwendet, steht in link:{github_url}/01%20Types/04_Collections.adoc[Collections in .NET].
+Hier geht es nur um ihre Kosten.
+
+== Operationen und ihre Kosten
+
+Die Tabelle zeigt die wichtigsten Operationen. n ist die Anzahl der Elemente in der Collection.
+
+[%header]
+|===
+|Collection |Intern |Lesen |Suchen |Einfügen |Entfernen
+|`+List<T>+` |Array |`+[i]+` O(1) |`Contains` O(n) |`Add` O(1)++*++, `Insert(0, x)` O(n) |`RemoveAt(Count - 1)` O(1), `RemoveAt(0)` und `Remove(x)` O(n)
+|`+LinkedList<T>+` |doppelt verkettete Knoten |`First`, `Last` O(1), kein Index |`Find` O(n) |`AddFirst`, `AddLast`, `AddAfter(node, x)` O(1) |`RemoveFirst`, `Remove(node)` O(1), `Remove(x)` O(n)
+|`+HashSet<T>+` |Hashtabelle |kein Index |`Contains` O(1)++**++ |`Add` O(1)++**++ |`Remove` O(1)++**++
+|`+Dictionary<TKey, TValue>+` |Hashtabelle |`+[key]+` O(1)++**++ |`ContainsKey` O(1)++**++, `ContainsValue` O(n) |`Add` O(1)++**++ |`Remove` O(1)++**++
+|`+SortedSet<T>+` |Rot-Schwarz-Baum |`Min`, `Max` O(log n) |`Contains` O(log n) |`Add` O(log n) |`Remove` O(log n)
+|`+SortedDictionary<TKey, TValue>+` |Rot-Schwarz-Baum |`+[key]+` O(log n) |`ContainsKey` O(log n) |`Add` O(log n) |`Remove` O(log n)
+|`+Queue<T>+` |Ringpuffer (Array) |`Peek` O(1) |`Contains` O(n) |`Enqueue` O(1)++*++ |`Dequeue` O(1)
+|`+Stack<T>+` |Array |`Peek` O(1) |`Contains` O(n) |`Push` O(1)++*++ |`Pop` O(1)
+|`+PriorityQueue<TElement, TPriority>+` |Heap (Array) |`Peek` O(1) |– |`Enqueue` O(log n) |`Dequeue` O(log n)
+|===
+
+++*++ amortisiert: meistens O(1), nur wenn das interne Array voll ist O(n), siehe unten. ++**++ im Mittel und amortisiert. Bei schlechten Hashcodes bis O(n), siehe Abschnitt Hashing.
+
+Ein paar Punkte, die in der Tabelle leicht untergehen:
+
+* Alle Operationen am *Ende* einer `+List<T>+` sind billig.
+Am *Anfang* oder in der Mitte muss die Liste alle folgenden Elemente um einen Platz verschieben.
+Wer Elemente vorne entnimmt, nimmt eine `+Queue<T>+`.
+Sie merkt sich Anfang und Ende in einem Ringpuffer und muss nichts verschieben.
+* `+LinkedList<T>+` fügt nur dann in O(1) ein, wenn du den Knoten schon hast.
+Den Knoten zu einem Wert zu finden kostet O(n), einen Index gibt es nicht.
+In der Praxis ist `+List<T>+` trotzdem meist schneller, weil ihre Elemente im Speicher hintereinander liegen und der Prozessor sie gut vorausladen kann.
+* `+SortedSet<T>+` und `+SortedDictionary<TKey, TValue>+` halten die Elemente immer sortiert.
+Sie sind langsamer als ihre Hash-Varianten, liefern aber `foreach` in sortierter Reihenfolge, `Min` und `Max` sowie Bereichsabfragen wie `GetViewBetween`.
+* `+PriorityQueue<TElement, TPriority>+` liefert immer das Element mit der kleinsten Priorität.
+Sie ist ein Heap: Das kleinste Element steht vorne, der Rest ist nur teilweise geordnet.
+Deshalb gibt es kein `Contains` und auch keine sortierte Aufzählung.
+* `Dictionary.ContainsValue` durchsucht alle Einträge.
+Nur die Suche nach dem *Key* ist O(1).
+
+== Wachstum von Arrays und amortisierte Kosten
+
+`+List<T>+`, `+Queue<T>+`, `+Stack<T>+`, `+HashSet<T>+` und `+Dictionary<TKey, TValue>+` speichern ihre Daten in einem Array.
+Ein Array hat eine feste Länge.
+Ist es voll, legt die Collection ein neues, doppelt so großes Array an und kopiert alle Elemente hinüber.
+Das zeigt das Property `Capacity`:
+
+[source,csharp]
+----
+var list = new List<int>();
+int lastCapacity = -1;
+for (int i = 1; i <= 33; i++)
+{
+    list.Add(i);
+    if (list.Capacity != lastCapacity)                 // (1)
+    {
+        Console.WriteLine($"Add Nr. {i,2}: Capacity {list.Capacity}");
+        lastCapacity = list.Capacity;
+    }
+}
+----
+
+[source,text]
+----
+Add Nr.  1: Capacity 4
+Add Nr.  5: Capacity 8
+Add Nr.  9: Capacity 16
+Add Nr. 17: Capacity 32
+Add Nr. 33: Capacity 64
+----
+
+* *(1)* Die Kapazität ändert sich nur, wenn das Array voll war.
+Dann wird kopiert.
+
+Ein einzelnes `Add` kostet also manchmal einen Schritt und manchmal n Schritte.
+Interessant ist, was *alle* Aufrufe zusammen kosten:
+
+image::{root_dir}/images/33_amortisiert.svg[]
+
+Für n Aufrufe von `Add` werden n Elemente geschrieben.
+Dazu kommen die Kopien: 4 {plus} 8 {plus} 16 {plus} … bis höchstens n. Jede Kopie ist so groß wie alle vorigen zusammen plus 4, deshalb ist die Summe kleiner als 2n.
+Insgesamt sind das weniger als 3n Schritte, im Schnitt also weniger als 3 Schritte pro `Add`.
+Diese Betrachtung heißt *amortisierte Analyse*: Die seltenen teuren Aufrufe werden auf die vielen billigen verteilt.
+`Add` ist *amortisiert O(1)*.
+
+Das funktioniert nur, weil das Array um einen *Faktor* wächst.
+Würde es jedes Mal um 10 Plätze wachsen, wären die Kopien 10 {plus} 20 {plus} 30 {plus} … {plus} n ≈ n²/20 Schritte.
+Dann wäre `Add` im Schnitt O(n), und das Befüllen einer Liste O(n²).
+
+Weißt du vorher, wie viele Elemente kommen, kannst du dir das Kopieren ganz sparen: `+new List<int>(1_000_000)+` legt das Array sofort in der richtigen Größe an.
+Dasselbe geht bei `Dictionary`, `HashSet` und `StringBuilder`.
+
+== Hashing
+
+`+HashSet<T>+` und `+Dictionary<TKey, TValue>+` finden ein Element, ohne die Collection zu durchsuchen.
+Dafür berechnen sie aus dem Element mit `GetHashCode()` eine Zahl, den *Hashcode*.
+Der Rest dieser Zahl bei Division durch die Anzahl der Fächer (_Buckets_) gibt an, in welchem Fach das Element liegt:
+
+image::{root_dir}/images/33_hashset.svg[]
+
+`Contains("Linz")` berechnet den Hashcode, geht direkt in Fach 3 und vergleicht dort mit `Equals()`.
+Landen zwei Elemente im selben Fach, ist das eine *Kollision*.
+Die Elemente eines Fachs bilden eine Kette, die beim Suchen durchlaufen wird.
+Solange die Hashcodes gut verteilt sind, sind die Ketten kurz, und die Suche kostet im Mittel O(1).
+Wird die Tabelle zu voll, vergrößert sie sich wie eine Liste und verteilt alle Elemente neu.
+
+Damit das funktioniert, gelten zwei Regeln:
+
+. *Gleiche Objekte haben gleiche Hashcodes.*
+Wer `Equals` überschreibt, muss auch `GetHashCode` überschreiben.
+Der Compiler warnt sonst (CS0659).
+`record`-Typen erledigen beides automatisch über alle Properties.
+. *Der Hashcode ändert sich nicht, solange das Objekt in der Collection liegt.*
+Änderst du ein Property, das in den Hashcode eingeht, sucht `Contains` im falschen Fach und findet das Objekt nicht mehr.
+Verwende deshalb unveränderliche Typen als Keys.
+
+Ein Hashcode darf für verschiedene Objekte gleich sein.
+Er ist nur dann nutzlos, wenn er für viele Objekte gleich ist.
+Das zeigt das folgende Beispiel mit einem konstanten Hashcode:
+
+[source,csharp]
+----
+using System.Diagnostics;
+
+const int n = 20_000;
+Measure("record", Enumerable.Range(0, n).Select(i => new GoodKey(i)));
+Measure("konstanter Hashcode", Enumerable.Range(0, n).Select(i => new BadKey(i)));
+
+static void Measure<T>(string label, IEnumerable<T> keys)
+{
+    var stopwatch = Stopwatch.StartNew();
+    var set = new HashSet<T>(keys);
+    Console.WriteLine($"{label,-20} {set.Count} Elemente in {stopwatch.ElapsedMilliseconds,5} ms");
+}
+
+record GoodKey(int Value);
+
+/// <summary>Key with a legal but useless hash code: all instances land in the same bucket.</summary>
+class BadKey(int value)
+{
+    public int Value { get; } = value;
+    public override bool Equals(object? obj) => obj is BadKey other && other.Value == Value;
+    public override int GetHashCode() => 1;                            // (1)
+}
+----
+
+[source,text]
+----
+record               20000 Elemente in     2 ms
+konstanter Hashcode  20000 Elemente in   524 ms
+----
+
+* *(1)* Alle Objekte landen im selben Fach.
+Jedes `Add` muss die ganze Kette mit `Equals` vergleichen, um Duplikate auszuschließen.
+Aus O(1) wird O(n), und das Befüllen kostet O(n²).
+
+Die Zeiten hängen von deinem Rechner ab, das Verhältnis bleibt ähnlich.
+Für eigene Klassen erzeugst du einen guten Hashcode mit `HashCode.Combine(FirstName, LastName)`.
+Beachte noch: Der Hashcode eines `string` ist in .NET bei jedem Programmstart anders.
+Du darfst Hashcodes also nie speichern oder an andere Programme weitergeben.
+
+== LINQ-Fallen
+
+LINQ-Methoden sehen aus wie einzelne Anweisungen.
+Jede davon kann aber die ganze Quelle durchlaufen.
+Die folgenden Muster findest du in vielen Projekten.
+
+=== `Contains` in `Where` und `Count()` statt `Any()`
+
+[source,csharp]
+----
+List<Order> orders = [.. Enumerable.Range(1, 10_000).Select(i => new Order(i, i % 500, i % 1000))];
+List<int> blockedCustomers = [.. Enumerable.Range(0, 500).Where(c => c % 7 == 0)];
+
+var slow = orders.Where(o => blockedCustomers.Contains(o.CustomerId)).ToList();   // (1)
+
+HashSet<int> blockedSet = [.. blockedCustomers];
+var fast = orders.Where(o => blockedSet.Contains(o.CustomerId)).ToList();         // (2)
+Console.WriteLine($"{slow.Count} = {fast.Count} gesperrte Bestellungen");
+
+bool anyBigSlow = orders.Where(o => o.Total > 900).Count() > 0;                   // (3)
+bool anyBigFast = orders.Any(o => o.Total > 900);                                 // (4)
+Console.WriteLine($"{anyBigSlow} = {anyBigFast}");
+
+record Order(int Id, int CustomerId, decimal Total);
+----
+
+[source,text]
+----
+1440 = 1440 gesperrte Bestellungen
+True = True
+----
+
+* *(1)* Für jede der n Bestellungen durchsucht `List.Contains` die m gesperrten Kunden.
+Das sind O(n · m) Schritte.
+* *(2)* Einmal ein `HashSet` bauen (O(m)) und danach n-mal in O(1) nachschlagen ergibt O(n {plus} m).
+* *(3)* `Count()` zählt *alle* passenden Bestellungen, obwohl nur interessiert, ob es eine gibt.
+* *(4)* `Any()` hört beim ersten Treffer auf.
+Im Worst Case ist es auch O(n), meist aber viel früher fertig.
+
+Ohne Bedingung ist `list.Count()` übrigens O(1), denn LINQ erkennt, dass eine `+List<T>+` ihre Länge kennt.
+Nach einem `Where` geht das nicht mehr.
+
+=== Mehrfache Enumeration
+
+Eine LINQ-Abfrage wird erst ausgeführt, wenn jemand die Ergebnisse durchläuft (_deferred execution_).
+Durchläufst du sie zweimal, wird sie auch zweimal ausgeführt:
+
+[source,csharp]
+----
+int evaluations = 0;
+int[] numbers = [.. Enumerable.Range(1, 1000)];
+IEnumerable<int> multiplesOfThree = numbers.Where(x =>
+{
+    evaluations++;
+    return x % 3 == 0;
+});                                                                     // (1)
+
+Console.WriteLine($"Anzahl: {multiplesOfThree.Count()}");               // (2)
+Console.WriteLine($"Größte: {multiplesOfThree.Max()}");
+Console.WriteLine($"Summe: {multiplesOfThree.Sum()}");
+Console.WriteLine($"Bedingung {evaluations}-mal geprüft");
+
+List<int> materialized = [.. numbers.Where(x => x % 3 == 0)];           // (3)
+Console.WriteLine($"Anzahl: {materialized.Count}, Größte: {materialized.Max()}");
+----
+
+[source,text]
+----
+Anzahl: 333
+Größte: 999
+Summe: 166833
+Bedingung 3000-mal geprüft
+Anzahl: 333, Größte: 999
+----
+
+* *(1)* Hier wird noch nichts geprüft.
+`multiplesOfThree` ist nur eine Beschreibung der Abfrage.
+* *(2)* `Count()`, `Max()` und `Sum()` führen die Abfrage jeweils komplett aus.
+* *(3)* Brauchst du das Ergebnis mehrmals, materialisiere es einmal mit `ToList()` oder einer Collection Expression.
+
+Bei einem Array kostet das nur Zeit.
+Liest die Quelle aber eine Datei (`File.ReadLines`) oder eine Datenbank, wird die Datei mehrmals gelesen oder die Abfrage mehrmals an die Datenbank geschickt.
+
+=== `OrderBy` oder `ToList` in einer Schleife
+
+Das folgende Fragment (es verwendet `orders` aus dem Beispiel oben) bestimmt für jede Bestellung den Rang nach ihrem Betrag:
+
+[source,csharp]
+----
+foreach (Order order in orders)
+{
+    List<Order> sorted = orders.OrderByDescending(o => o.Total).ToList();   // (1)
+    int rank = sorted.IndexOf(order) + 1;                                   // (2)
+    Console.WriteLine($"{order.Id}: Rang {rank}");
+}
+----
+
+* *(1)* Die Liste wird bei *jedem* Durchlauf neu sortiert: n-mal O(n log n).
+* *(2)* `IndexOf` durchsucht die Liste noch einmal linear.
+
+Insgesamt ist das O(n² log n), bei 10 000 Bestellungen über eine Milliarde Schritte.
+Sortiere stattdessen *einmal* vor der Schleife und merke dir den Rang jeder Bestellung in einem `+Dictionary<int, int>+`.
+Dann kostet alles zusammen O(n log n).
+Dasselbe gilt für `ToList()`, `ToArray()` und `ToHashSet()` in einer Schleife: Jeder Aufruf kopiert die ganze Quelle.
+
+Suchst du nur das kleinste oder größte Element, brauchst du gar nicht zu sortieren.
+`Min()`, `Max()`, `MinBy()` und `MaxBy()` gehen einmal durch die Daten und kosten O(n).
+
+== `StringBuilder` statt `++=+`
+
+Ein `string` ist in .NET unveränderlich.
+`+s += x+` hängt deshalb nichts an, sondern legt einen neuen String an und kopiert den alten Inhalt und `x` hinein.
+Baust du einen Text mit n Zeichen Stück für Stück auf, werden 1 {plus} 2 {plus} 3 {plus} … {plus} n = n(n {plus} 1)/2 Zeichen kopiert.
+Das ist wieder die Gaußsche Summe, also O(n²).
+
+[source,csharp]
+----
+using System.Diagnostics;
+using System.Text;
+
+const int n = 50_000;
+var stopwatch = Stopwatch.StartNew();
+string text = "";
+for (int i = 0; i < n; i++)
+{
+    text += i % 10;                                                     // (1)
+}
+Console.WriteLine($"+=            {text.Length} Zeichen in {stopwatch.ElapsedMilliseconds,4} ms");
+
+stopwatch.Restart();
+var builder = new StringBuilder();
+for (int i = 0; i < n; i++)
+{
+    builder.Append(i % 10);                                             // (2)
+}
+string built = builder.ToString();
+Console.WriteLine($"StringBuilder {built.Length} Zeichen in {stopwatch.ElapsedMilliseconds,4} ms");
+----
+
+[source,text]
+----
++=            50000 Zeichen in  124 ms
+StringBuilder 50000 Zeichen in    0 ms
+----
+
+* *(1)* Jeder Durchlauf kopiert den bisherigen Text.
+Beim letzten sind das fast 50 000 Zeichen.
+* *(2)* Der `StringBuilder` sammelt die Zeichen in Puffern.
+Ist ein Puffer voll, hängt er einen neuen an, ohne den bisherigen Text zu kopieren.
+`Append` ist damit amortisiert O(1), `ToString()` kopiert am Ende einmal alles: zusammen O(n).
+
+Auch hier hängen die Zeiten von deinem Rechner ab, der Abstand bleibt aber deutlich.
+Für ein paar Verkettungen außerhalb von Schleifen ist `+++` oder ein interpolierter String völlig in Ordnung.
+Hast du die Teile schon in einer Collection, ist `string.Join(", ", names)` die einfachste Lösung.
+
+== Welche Collection passt?
+
+[%header]
+|===
+|Du brauchst … |Collection
+|Zugriff über einen Index, Anhängen am Ende |`+List<T>+` oder Array
+|Nachschlagen über einen Schlüssel |`+Dictionary<TKey, TValue>+`
+|Prüfen, ob etwas vorkommt, oder Duplikate entfernen |`+HashSet<T>+`
+|Daten immer sortiert, auch nach Einfügen und Löschen |`+SortedSet<T>+`, `+SortedDictionary<TKey, TValue>+`
+|Abarbeiten in Ankunftsreihenfolge (FIFO) |`+Queue<T>+`
+|Das zuletzt Hinzugefügte zuerst (LIFO), z. B. Undo |`+Stack<T>+`
+|Immer das dringendste Element zuerst |`+PriorityQueue<TElement, TPriority>+`
+|Häufig Einfügen und Löschen mitten in einer Folge, Knoten sind bekannt |`+LinkedList<T>+`
+|===
+
+Ob die Wahl in deinem Programm wirklich etwas bringt, zeigt eine Messung.
+Wie du mit BenchmarkDotNet zuverlässig misst, steht in link:{github_url}/Professional%20C%23/70_Benchmark/README.md[Benchmarks mit Benchmark.NET].
+
+// tag::pdf_exclude[]
+== Übungen
+
+. Das folgende Snippet entfernt Duplikate aus einer Liste von Wörtern, ohne die Reihenfolge zu ändern, und baut daraus eine Zeile.
+Schreibe es so um, dass es in O(n) läuft.
+Miss beide Varianten mit BenchmarkDotNet für 1 000, 10 000 und 100 000 Wörter.
++
+[source,csharp]
+----
+List<string> words = [.. Enumerable.Range(0, 1000).Select(i => $"w{i % 300}")];
+
+var unique = new List<string>();
+foreach (string w in words)
+{
+    if (!unique.Contains(w)) { unique.Add(w); }
+}
+string line = "";
+foreach (string w in unique) { line += w + ";"; }
+Console.WriteLine(line.Length);
+----
+. Wähle für jedes Szenario eine Collection und begründe deine Wahl mit den Kosten der Operationen, die du brauchst:
+* Ein Druckerserver arbeitet Aufträge in der Reihenfolge ihres Eintreffens ab.
+* Bei der Registrierung wird geprüft, ob ein Benutzername unter einer Million Namen schon vergeben ist.
+* Ein Texteditor soll die letzten 100 Änderungen rückgängig machen können.
+* In der Notaufnahme kommen Patientinnen und Patienten mit einer Dringlichkeitsstufe an.
+Es wird immer der dringendste Fall als Nächstes behandelt.
+* Eine Bestenliste bekommt laufend neue Ergebnisse und soll jederzeit sortiert ausgegeben werden.
+. Vergleiche `+List<int>.Contains+` mit `+HashSet<int>.Contains+` in einem Benchmark mit `+[Params(10, 100, 1000, 100_000)]+`.
+Suche jeweils einen Wert, der nicht enthalten ist.
+Ab welcher Größe lohnt sich das `HashSet`?
+Erkläre das Ergebnis.
+
+// end::pdf_exclude[]

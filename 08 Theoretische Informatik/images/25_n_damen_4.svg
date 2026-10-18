@@ -1,0 +1,285 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="460" viewBox="0 0 720 460">
+  <rect x="0.5" y="0.5" width="719" height="459" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="36" y="60" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">0</text>
+  <text x="59" y="34" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">0</text>
+  <text x="36" y="90" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">1</text>
+  <text x="89" y="34" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">1</text>
+  <text x="36" y="120" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">2</text>
+  <text x="119" y="34" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">2</text>
+  <text x="36" y="150" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">3</text>
+  <text x="149" y="34" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">3</text>
+  <rect x="44" y="40" width="30" height="30" fill="#ffffff"/>
+  <rect x="74" y="40" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="104" y="40" width="30" height="30" fill="#ffffff"/>
+  <rect x="134" y="40" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="44" y="70" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="74" y="70" width="30" height="30" fill="#ffffff"/>
+  <rect x="104" y="70" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="134" y="70" width="30" height="30" fill="#ffffff"/>
+  <rect x="44" y="100" width="30" height="30" fill="#ffffff"/>
+  <rect x="74" y="100" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="104" y="100" width="30" height="30" fill="#ffffff"/>
+  <rect x="134" y="100" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="44" y="130" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="74" y="130" width="30" height="30" fill="#ffffff"/>
+  <rect x="104" y="130" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="134" y="130" width="30" height="30" fill="#ffffff"/>
+  <rect x="45" y="41" width="28" height="28" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+  <text x="59" y="62" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" fill="#1f2937" text-anchor="middle">♛</text>
+  <rect x="44" y="40" width="120" height="120" rx="0" fill="none" stroke="#6b7280" stroke-width="1.2"/>
+  <text x="44" y="182" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start" font-weight="bold">1  Zeile 0: Spalte 0</text>
+  <text x="44" y="200" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#6b7280" text-anchor="start">Dame setzen</text>
+  <text x="208" y="60" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">0</text>
+  <text x="231" y="34" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">0</text>
+  <text x="208" y="90" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">1</text>
+  <text x="261" y="34" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">1</text>
+  <text x="208" y="120" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">2</text>
+  <text x="291" y="34" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">2</text>
+  <text x="208" y="150" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">3</text>
+  <text x="321" y="34" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">3</text>
+  <rect x="216" y="40" width="30" height="30" fill="#ffffff"/>
+  <rect x="246" y="40" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="276" y="40" width="30" height="30" fill="#ffffff"/>
+  <rect x="306" y="40" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="216" y="70" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="246" y="70" width="30" height="30" fill="#ffffff"/>
+  <rect x="276" y="70" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="306" y="70" width="30" height="30" fill="#ffffff"/>
+  <rect x="216" y="100" width="30" height="30" fill="#ffffff"/>
+  <rect x="246" y="100" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="276" y="100" width="30" height="30" fill="#ffffff"/>
+  <rect x="306" y="100" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="216" y="130" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="246" y="130" width="30" height="30" fill="#ffffff"/>
+  <rect x="276" y="130" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="306" y="130" width="30" height="30" fill="#ffffff"/>
+  <rect x="217" y="71" width="28" height="28" fill="#fee2e2" stroke="#dc2626" stroke-width="1"/>
+  <text x="231" y="91" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#dc2626" text-anchor="middle" font-weight="bold">×</text>
+  <rect x="247" y="71" width="28" height="28" fill="#fee2e2" stroke="#dc2626" stroke-width="1"/>
+  <text x="261" y="91" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#dc2626" text-anchor="middle" font-weight="bold">×</text>
+  <rect x="217" y="41" width="28" height="28" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="231" y="62" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" fill="#1f2937" text-anchor="middle">♛</text>
+  <rect x="277" y="71" width="28" height="28" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+  <text x="291" y="92" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" fill="#1f2937" text-anchor="middle">♛</text>
+  <rect x="216" y="40" width="120" height="120" rx="0" fill="none" stroke="#6b7280" stroke-width="1.2"/>
+  <text x="216" y="182" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start" font-weight="bold">2  Zeile 1: Spalte 2</text>
+  <text x="216" y="200" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#6b7280" text-anchor="start">Spalten 0 und 1 bedroht</text>
+  <text x="380" y="60" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">0</text>
+  <text x="403" y="34" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">0</text>
+  <text x="380" y="90" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">1</text>
+  <text x="433" y="34" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">1</text>
+  <text x="380" y="120" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">2</text>
+  <text x="463" y="34" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">2</text>
+  <text x="380" y="150" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">3</text>
+  <text x="493" y="34" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">3</text>
+  <rect x="388" y="40" width="30" height="30" fill="#ffffff"/>
+  <rect x="418" y="40" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="448" y="40" width="30" height="30" fill="#ffffff"/>
+  <rect x="478" y="40" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="388" y="70" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="418" y="70" width="30" height="30" fill="#ffffff"/>
+  <rect x="448" y="70" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="478" y="70" width="30" height="30" fill="#ffffff"/>
+  <rect x="388" y="100" width="30" height="30" fill="#ffffff"/>
+  <rect x="418" y="100" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="448" y="100" width="30" height="30" fill="#ffffff"/>
+  <rect x="478" y="100" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="388" y="130" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="418" y="130" width="30" height="30" fill="#ffffff"/>
+  <rect x="448" y="130" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="478" y="130" width="30" height="30" fill="#ffffff"/>
+  <rect x="389" y="101" width="28" height="28" fill="#fee2e2" stroke="#dc2626" stroke-width="1"/>
+  <text x="403" y="121" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#dc2626" text-anchor="middle" font-weight="bold">×</text>
+  <rect x="419" y="101" width="28" height="28" fill="#fee2e2" stroke="#dc2626" stroke-width="1"/>
+  <text x="433" y="121" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#dc2626" text-anchor="middle" font-weight="bold">×</text>
+  <rect x="449" y="101" width="28" height="28" fill="#fee2e2" stroke="#dc2626" stroke-width="1"/>
+  <text x="463" y="121" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#dc2626" text-anchor="middle" font-weight="bold">×</text>
+  <rect x="479" y="101" width="28" height="28" fill="#fee2e2" stroke="#dc2626" stroke-width="1"/>
+  <text x="493" y="121" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#dc2626" text-anchor="middle" font-weight="bold">×</text>
+  <rect x="389" y="41" width="28" height="28" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="403" y="62" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" fill="#1f2937" text-anchor="middle">♛</text>
+  <rect x="449" y="71" width="28" height="28" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="463" y="92" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" fill="#1f2937" text-anchor="middle">♛</text>
+  <rect x="388" y="40" width="120" height="120" rx="0" fill="none" stroke="#6b7280" stroke-width="1.2"/>
+  <text x="388" y="182" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start" font-weight="bold">3  Zeile 2: alles bedroht</text>
+  <text x="388" y="200" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#6b7280" text-anchor="start">zurück zu Zeile 1</text>
+  <text x="552" y="60" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">0</text>
+  <text x="575" y="34" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">0</text>
+  <text x="552" y="90" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">1</text>
+  <text x="605" y="34" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">1</text>
+  <text x="552" y="120" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">2</text>
+  <text x="635" y="34" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">2</text>
+  <text x="552" y="150" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">3</text>
+  <text x="665" y="34" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">3</text>
+  <rect x="560" y="40" width="30" height="30" fill="#ffffff"/>
+  <rect x="590" y="40" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="620" y="40" width="30" height="30" fill="#ffffff"/>
+  <rect x="650" y="40" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="560" y="70" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="590" y="70" width="30" height="30" fill="#ffffff"/>
+  <rect x="620" y="70" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="650" y="70" width="30" height="30" fill="#ffffff"/>
+  <rect x="560" y="100" width="30" height="30" fill="#ffffff"/>
+  <rect x="590" y="100" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="620" y="100" width="30" height="30" fill="#ffffff"/>
+  <rect x="650" y="100" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="560" y="130" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="590" y="130" width="30" height="30" fill="#ffffff"/>
+  <rect x="620" y="130" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="650" y="130" width="30" height="30" fill="#ffffff"/>
+  <rect x="561" y="41" width="28" height="28" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="575" y="62" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" fill="#1f2937" text-anchor="middle">♛</text>
+  <rect x="651" y="71" width="28" height="28" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+  <text x="665" y="92" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" fill="#1f2937" text-anchor="middle">♛</text>
+  <rect x="560" y="40" width="120" height="120" rx="0" fill="none" stroke="#6b7280" stroke-width="1.2"/>
+  <text x="560" y="182" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start" font-weight="bold">4  Zeile 1: Spalte 3</text>
+  <text x="560" y="200" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#6b7280" text-anchor="start">nächste freie Spalte</text>
+  <text x="36" y="256" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">0</text>
+  <text x="59" y="230" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">0</text>
+  <text x="36" y="286" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">1</text>
+  <text x="89" y="230" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">1</text>
+  <text x="36" y="316" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">2</text>
+  <text x="119" y="230" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">2</text>
+  <text x="36" y="346" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">3</text>
+  <text x="149" y="230" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">3</text>
+  <rect x="44" y="236" width="30" height="30" fill="#ffffff"/>
+  <rect x="74" y="236" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="104" y="236" width="30" height="30" fill="#ffffff"/>
+  <rect x="134" y="236" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="44" y="266" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="74" y="266" width="30" height="30" fill="#ffffff"/>
+  <rect x="104" y="266" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="134" y="266" width="30" height="30" fill="#ffffff"/>
+  <rect x="44" y="296" width="30" height="30" fill="#ffffff"/>
+  <rect x="74" y="296" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="104" y="296" width="30" height="30" fill="#ffffff"/>
+  <rect x="134" y="296" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="44" y="326" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="74" y="326" width="30" height="30" fill="#ffffff"/>
+  <rect x="104" y="326" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="134" y="326" width="30" height="30" fill="#ffffff"/>
+  <rect x="45" y="297" width="28" height="28" fill="#fee2e2" stroke="#dc2626" stroke-width="1"/>
+  <text x="59" y="317" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#dc2626" text-anchor="middle" font-weight="bold">×</text>
+  <rect x="45" y="237" width="28" height="28" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="59" y="258" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" fill="#1f2937" text-anchor="middle">♛</text>
+  <rect x="135" y="267" width="28" height="28" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="149" y="288" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" fill="#1f2937" text-anchor="middle">♛</text>
+  <rect x="75" y="297" width="28" height="28" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+  <text x="89" y="318" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" fill="#1f2937" text-anchor="middle">♛</text>
+  <rect x="44" y="236" width="120" height="120" rx="0" fill="none" stroke="#6b7280" stroke-width="1.2"/>
+  <text x="44" y="378" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start" font-weight="bold">5  Zeile 2: Spalte 1</text>
+  <text x="44" y="396" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#6b7280" text-anchor="start">Spalte 0 bedroht</text>
+  <text x="208" y="256" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">0</text>
+  <text x="231" y="230" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">0</text>
+  <text x="208" y="286" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">1</text>
+  <text x="261" y="230" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">1</text>
+  <text x="208" y="316" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">2</text>
+  <text x="291" y="230" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">2</text>
+  <text x="208" y="346" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">3</text>
+  <text x="321" y="230" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">3</text>
+  <rect x="216" y="236" width="30" height="30" fill="#ffffff"/>
+  <rect x="246" y="236" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="276" y="236" width="30" height="30" fill="#ffffff"/>
+  <rect x="306" y="236" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="216" y="266" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="246" y="266" width="30" height="30" fill="#ffffff"/>
+  <rect x="276" y="266" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="306" y="266" width="30" height="30" fill="#ffffff"/>
+  <rect x="216" y="296" width="30" height="30" fill="#ffffff"/>
+  <rect x="246" y="296" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="276" y="296" width="30" height="30" fill="#ffffff"/>
+  <rect x="306" y="296" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="216" y="326" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="246" y="326" width="30" height="30" fill="#ffffff"/>
+  <rect x="276" y="326" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="306" y="326" width="30" height="30" fill="#ffffff"/>
+  <rect x="217" y="327" width="28" height="28" fill="#fee2e2" stroke="#dc2626" stroke-width="1"/>
+  <text x="231" y="347" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#dc2626" text-anchor="middle" font-weight="bold">×</text>
+  <rect x="247" y="327" width="28" height="28" fill="#fee2e2" stroke="#dc2626" stroke-width="1"/>
+  <text x="261" y="347" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#dc2626" text-anchor="middle" font-weight="bold">×</text>
+  <rect x="277" y="327" width="28" height="28" fill="#fee2e2" stroke="#dc2626" stroke-width="1"/>
+  <text x="291" y="347" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#dc2626" text-anchor="middle" font-weight="bold">×</text>
+  <rect x="307" y="327" width="28" height="28" fill="#fee2e2" stroke="#dc2626" stroke-width="1"/>
+  <text x="321" y="347" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#dc2626" text-anchor="middle" font-weight="bold">×</text>
+  <rect x="217" y="237" width="28" height="28" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="231" y="258" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" fill="#1f2937" text-anchor="middle">♛</text>
+  <rect x="307" y="267" width="28" height="28" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="321" y="288" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" fill="#1f2937" text-anchor="middle">♛</text>
+  <rect x="247" y="297" width="28" height="28" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="261" y="318" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" fill="#1f2937" text-anchor="middle">♛</text>
+  <rect x="216" y="236" width="120" height="120" rx="0" fill="none" stroke="#6b7280" stroke-width="1.2"/>
+  <text x="216" y="378" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start" font-weight="bold">6  Zeile 3: alles bedroht</text>
+  <text x="216" y="396" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#6b7280" text-anchor="start">zurück bis Zeile 0</text>
+  <text x="380" y="256" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">0</text>
+  <text x="403" y="230" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">0</text>
+  <text x="380" y="286" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">1</text>
+  <text x="433" y="230" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">1</text>
+  <text x="380" y="316" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">2</text>
+  <text x="463" y="230" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">2</text>
+  <text x="380" y="346" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">3</text>
+  <text x="493" y="230" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">3</text>
+  <rect x="388" y="236" width="30" height="30" fill="#ffffff"/>
+  <rect x="418" y="236" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="448" y="236" width="30" height="30" fill="#ffffff"/>
+  <rect x="478" y="236" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="388" y="266" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="418" y="266" width="30" height="30" fill="#ffffff"/>
+  <rect x="448" y="266" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="478" y="266" width="30" height="30" fill="#ffffff"/>
+  <rect x="388" y="296" width="30" height="30" fill="#ffffff"/>
+  <rect x="418" y="296" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="448" y="296" width="30" height="30" fill="#ffffff"/>
+  <rect x="478" y="296" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="388" y="326" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="418" y="326" width="30" height="30" fill="#ffffff"/>
+  <rect x="448" y="326" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="478" y="326" width="30" height="30" fill="#ffffff"/>
+  <rect x="419" y="237" width="28" height="28" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+  <text x="433" y="258" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" fill="#1f2937" text-anchor="middle">♛</text>
+  <rect x="388" y="236" width="120" height="120" rx="0" fill="none" stroke="#6b7280" stroke-width="1.2"/>
+  <text x="388" y="378" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start" font-weight="bold">7  Zeile 0: Spalte 1</text>
+  <text x="388" y="396" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#6b7280" text-anchor="start">nächster Versuch</text>
+  <text x="552" y="256" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">0</text>
+  <text x="575" y="230" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">0</text>
+  <text x="552" y="286" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">1</text>
+  <text x="605" y="230" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">1</text>
+  <text x="552" y="316" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">2</text>
+  <text x="635" y="230" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">2</text>
+  <text x="552" y="346" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="end">3</text>
+  <text x="665" y="230" font-family="Consolas, Menlo, monospace" font-size="11" fill="#6b7280" text-anchor="middle">3</text>
+  <rect x="560" y="236" width="30" height="30" fill="#ffffff"/>
+  <rect x="590" y="236" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="620" y="236" width="30" height="30" fill="#ffffff"/>
+  <rect x="650" y="236" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="560" y="266" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="590" y="266" width="30" height="30" fill="#ffffff"/>
+  <rect x="620" y="266" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="650" y="266" width="30" height="30" fill="#ffffff"/>
+  <rect x="560" y="296" width="30" height="30" fill="#ffffff"/>
+  <rect x="590" y="296" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="620" y="296" width="30" height="30" fill="#ffffff"/>
+  <rect x="650" y="296" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="560" y="326" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="590" y="326" width="30" height="30" fill="#ffffff"/>
+  <rect x="620" y="326" width="30" height="30" fill="#f3f4f6"/>
+  <rect x="650" y="326" width="30" height="30" fill="#ffffff"/>
+  <rect x="591" y="237" width="28" height="28" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="605" y="258" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" fill="#1f2937" text-anchor="middle">♛</text>
+  <rect x="651" y="267" width="28" height="28" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="665" y="288" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" fill="#1f2937" text-anchor="middle">♛</text>
+  <rect x="561" y="297" width="28" height="28" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="575" y="318" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" fill="#1f2937" text-anchor="middle">♛</text>
+  <rect x="621" y="327" width="28" height="28" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="635" y="348" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" fill="#1f2937" text-anchor="middle">♛</text>
+  <rect x="560" y="236" width="120" height="120" rx="0" fill="none" stroke="#6b7280" stroke-width="1.2"/>
+  <text x="560" y="378" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start" font-weight="bold">8  Lösung [1, 3, 0, 2]</text>
+  <text x="560" y="396" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#6b7280" text-anchor="start">keine Dame bedroht</text>
+  <rect x="44" y="426" width="16" height="16" rx="3" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="68" y="439" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">gesetzte Dame</text>
+  <rect x="184" y="426" width="16" height="16" rx="3" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+  <text x="208" y="439" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">gerade gesetzt</text>
+  <rect x="324" y="426" width="16" height="16" rx="3" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="348" y="439" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">bedrohtes Feld</text>
+  <rect x="464" y="426" width="16" height="16" rx="3" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="488" y="439" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">Lösung</text>
+</svg>

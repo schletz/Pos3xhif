@@ -1,0 +1,359 @@
+= Grundbegriffe formaler Sprachen
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Der C#-Compiler muss für jede Datei entscheiden: Ist das ein gültiges Programm oder nicht?
+Dafür braucht er eine exakte Beschreibung, welche Zeichenketten erlaubt sind.
+Dasselbe gilt für ein JSON-Dokument, eine IBAN oder ein Datum in einem Formular.
+Die Theorie der formalen Sprachen liefert die Begriffe, mit denen man solche Regeln präzise aufschreibt.
+In diesem Kapitel lernst du das Vokabular kennen, das du in den folgenden Kapiteln zu Grammatiken, Automaten, regulären Ausdrücken und Parsern brauchst.
+
+== Alphabet
+
+Ein *Alphabet* Σ (Sigma) ist eine endliche, nicht leere Menge von Zeichen.
+Die Zeichen heißen auch *Symbole*.
+Was ein Zeichen ist, legst du selbst fest:
+
+[%header]
+|===
+|Alphabet |Verwendung
+|Σ = {0, 1} |Binärzahlen
+|Σ = {a, b} |Beispiele in der Theorie, weil sie kurz sind
+|Σ = {0, 1, …, 9, .} |Datumsangaben wie `24.12.2025`
+|Σ = alle Unicode-Zeichen |Quelltext einer C#-Datei
+|Σ = {`if`, `(`, `)`, `id`, `==`, …} |Tokens, die ein Parser verarbeitet (siehe link:{github_url}/08%20Theoretische%20Informatik/15_Parser.adoc[Parser])
+|===
+
+Das letzte Beispiel zeigt: Ein Symbol muss kein einzelner Buchstabe sein.
+Für einen Parser ist das Schlüsselwort `while` _ein_ Symbol, auch wenn es aus 5 Buchstaben besteht.
+
+== Wörter
+
+Ein *Wort* über Σ ist eine endliche Folge von Symbolen aus Σ. Über Σ = {a, b} sind z. B. `a`, `abba` und `bbb` Wörter.
+Man schreibt die Symbole einfach hintereinander, ohne Komma und ohne Klammern.
+
+* Die *Länge* |w| ist die Anzahl der Symbole: |`abba`| = 4, |`b`| = 1.
+* Das *leere Wort* ε (Epsilon) hat keine Symbole, also |ε| = 0. Es entspricht dem Leerstring `""` in C#. ε ist _kein_ Symbol des Alphabets, sondern ein Wort.
+* *Konkatenation* hängt zwei Wörter aneinander: u = `ab`, v = `ba` ergibt u·v = uv = `abba`.
+Den Punkt lässt man meistens weg.
+Es gilt εw = wε = w, so wie `+"" + s == s+` in C#.
+* *Potenz* eines Wortes: w⁰ = ε, w¹ = w, w² = ww, …
+So ist (`ab`)³ = `ababab`.
+Bei einem einzelnen Symbol schreibt man kurz aⁿ, z. B. a³ = `aaa` und a³b³ = `aaabbb`.
+
+Für w = `abc` gilt:
+
+* *Präfixe* (Anfangsstücke): ε, `a`, `ab`, `abc`
+* *Suffixe* (Endstücke): ε, `c`, `bc`, `abc`
+* *Teilwörter* (zusammenhängende Stücke): alle Präfixe und Suffixe, dazu `b`
+
+ε und das Wort selbst sind also immer Präfix und Suffix.
+In C# entsprechen dem die Methoden `StartsWith`, `EndsWith` und `Contains`.
+
+== Σⁿ, Σ++*++ und Σ⁺
+
+Aus einem Alphabet bildest du Mengen von Wörtern:
+
+* *Σⁿ* ist die Menge aller Wörter mit genau n Symbolen.
+* *Σ++*++* (Kleene-Stern) ist die Menge _aller_ Wörter, inklusive ε: Σ++*++ = Σ⁰ ∪ Σ¹ ∪ Σ² ∪ …
+* *Σ⁺* ist dasselbe ohne das leere Wort: Σ⁺ = Σ¹ ∪ Σ² ∪ … = Σ++*++ ++\++ {ε}
+
+Für Σ = {a, b}:
+
+[%header]
+|===
+|Menge |Wörter |Anzahl
+|Σ⁰ |ε |1
+|Σ¹ |`a`, `b` |2
+|Σ² |`aa`, `ab`, `ba`, `bb` |4
+|Σ³ |`aaa`, `aab`, `aba`, `abb`, `baa`, `bab`, `bba`, `bbb` |8
+|===
+
+Jedes Wort aus Σⁿ entsteht, indem du an ein Wort aus Σⁿ⁻¹ ein Symbol anhängst.
+Daraus ergibt sich der folgende Baum.
+Jede Ebene enthält Σⁿ, und die Anzahl verdoppelt sich mit jeder Ebene.
+Allgemein hat Σⁿ genau |Σ|ⁿ Wörter.
+
+image::{root_dir}/images/10_woerterbaum.svg[]
+
+Σ++*++ ist unendlich groß, aber jedes einzelne Wort darin ist endlich lang.
+Du kannst Σ++*++ auch der Länge nach aufzählen (ε, `a`, `b`, `aa`, `ab`, …) und erreichst so jedes Wort nach endlich vielen Schritten.
+
+=== Wörter über einem Alphabet in C#
+
+In C# stellst du ein Alphabet als `+HashSet<char>+` und ein Wort als `string` dar.
+Ob ein Wort über dem Alphabet liegt, prüfst du Zeichen für Zeichen:
+
+[source,csharp]
+----
+HashSet<char> binary = ['0', '1'];
+
+Console.WriteLine(IsWordOver("1011", binary));   // True
+Console.WriteLine(IsWordOver("", binary));       // True  (1)
+Console.WriteLine(IsWordOver("1021", binary));   // False
+
+static bool IsWordOver(string word, IReadOnlySet<char> alphabet) =>
+    word.All(alphabet.Contains);                  // (2)
+----
+
+* *(1)* Das leere Wort liegt über jedem Alphabet, denn es enthält kein Zeichen, das nicht in Σ vorkommt.
+* *(2)* `All` liefert `true`, wenn die Bedingung für jedes Zeichen gilt.
+Bei einem leeren String ist das automatisch erfüllt.
+
+Σⁿ erzeugst du am besten mit einem *Iterator*.
+Eine Methode mit `yield return` liefert die Wörter einzeln, wenn der Aufrufer sie braucht.
+Es wird keine Liste mit |Σ|ⁿ Elementen im Speicher aufgebaut.
+Die Methode folgt direkt dem Baum: Für n = 0 gibt es nur ε, sonst hängst du an jedes Wort aus Σⁿ⁻¹ jedes Symbol an.
+
+[source,csharp]
+----
+Console.OutputEncoding = System.Text.Encoding.UTF8;   // (1)
+char[] alphabet = ['a', 'b'];
+
+for (int n = 0; n <= 3; n++)
+{
+    var words = WordsOfLength(alphabet, n).Select(w => w == "" ? "ε" : w);
+    Console.WriteLine($"Σ^{n} = {{ {string.Join(", ", words)} }}");
+}
+
+static IEnumerable<string> WordsOfLength(IReadOnlyList<char> alphabet, int n)
+{
+    if (n == 0)
+    {
+        yield return "";                              // (2)
+        yield break;
+    }
+    foreach (string shorter in WordsOfLength(alphabet, n - 1))   // (3)
+    {
+        foreach (char symbol in alphabet)
+        {
+            yield return shorter + symbol;
+        }
+    }
+}
+----
+
+[source,text]
+----
+Σ^0 = { ε }
+Σ^1 = { a, b }
+Σ^2 = { aa, ab, ba, bb }
+Σ^3 = { aaa, aab, aba, abb, baa, bab, bba, bbb }
+----
+
+* *(1)* Damit die Windows-Konsole Σ und ε richtig anzeigt.
+* *(2)* Σ⁰ = {ε}.
+`yield break` beendet den Iterator.
+* *(3)* Der rekursive Aufruf liefert die Wörter der Länge n − 1, also die Ebene darüber im Baum.
+
+Rufst du `WordsOfLength` für n = 0, 1, 2, … nacheinander auf, zählst du Σ++*++ der Länge nach auf.
+
+== Sprachen
+
+Eine *(formale) Sprache* L über Σ ist eine beliebige Teilmenge von Σ++*++, also L ⊆ Σ++*++.
+Mehr steckt in der Definition nicht.
+Eine Sprache ist einfach eine Menge von Wörtern.
+Die Kunst liegt darin, diese Menge genau zu beschreiben.
+
+image::{root_dir}/images/10_alphabet_wort_sprache.svg[]
+
+Die Grafik zeigt Σ++*++ für Σ = {a, b} und darin die Sprache L = { w ∈ Σ++*++ | w beginnt mit `a` }.
+Die Schreibweise { w ∈ Σ++*++ | … } liest du als „alle Wörter w aus Σ++*++, für die gilt …“.
+
+Eine Sprache kann *endlich* oder *unendlich* sein:
+
+* L₁ = {`if`, `else`, `while`} ist endlich.
+Sie hat 3 Wörter.
+* L₂ = { aⁿbⁿ | n ≥ 0 } = {ε, `ab`, `aabb`, `aaabbb`, …} ist unendlich.
+* Die *leere Sprache* ∅ enthält kein einziges Wort.
+Sie ist nicht dasselbe wie {ε}, die Sprache, die genau ein Wort enthält, nämlich das leere.
+
+=== Beispiele
+
+*Binärzahlen.* Σ = {0, 1}.
+Die Sprache L_bin enthält `0` und alle Wörter, die mit `1` beginnen: `0`, `1`, `10`, `11`, `100`, …
+Das Wort `0101` liegt in Σ++*++, aber nicht in L_bin, weil es eine führende Null hat.
+
+*C#-Bezeichner* (vereinfacht). Σ enthält Buchstaben, Ziffern und `+_+`.
+Ein Bezeichner beginnt mit einem Buchstaben oder `+_+`, danach folgen beliebig viele Buchstaben, Ziffern oder `+_+`.
+Also gilt `count`, `+_tmp+`, `x1` ∈ L, aber `1x` ∉ L und ε ∉ L. Die genaue Regel aus der C#-Spezifikation findest du in link:{github_url}/08%20Theoretische%20Informatik/12_Darstellungsformen.adoc[Darstellungsformen].
+
+*Datumsangaben.* Σ = {0, …, 9, .}.
+Die Sprache aller Wörter der Form `TT.MM.JJJJ` enthält `24.12.2025`, aber auch `31.02.2025` und `00.00.0000`.
+Willst du nur echte Kalenderdaten, ist das eine andere, kleinere Sprache.
+Formal ist auch sie eine Teilmenge von Σ++*++, nur ist ihre Beschreibung aufwändiger, weil sie Monatslängen und Schaltjahre berücksichtigen muss.
+Bevor du eine Sprache beschreibst, musst du also genau festlegen, welche Wörter dazugehören sollen.
+
+== Operationen auf Sprachen
+
+Weil Sprachen Mengen sind, gibt es die üblichen Mengenoperationen wie Vereinigung (L₁ ∪ L₂), Schnitt (L₁ ∩ L₂) und Differenz (L₁ ++\++ L₂).
+Dazu kommen Operationen, die Wörter aneinanderhängen.
+Für die Beispiele verwenden wir L₁ = {`a`, `ab`} und L₂ = {`b`, `c`}.
+
+*Vereinigung:* Alle Wörter, die in L₁ oder in L₂ liegen.
+
+[source,text]
+----
+L₁ ∪ L₂ = { a, ab, b, c }
+----
+
+*Konkatenation:* Jedes Wort aus L₁ wird mit jedem Wort aus L₂ verbunden, L₁·L₂ = { uv | u ∈ L₁, v ∈ L₂ }.
+
+[source,text]
+----
+L₁·L₂ = { ab, ac, abb, abc }
+L₂·L₁ = { ba, bab, ca, cab }
+----
+
+Die Reihenfolge ist wichtig, L₁·L₂ und L₂·L₁ sind verschieden.
+Die Konkatenation hat {ε} als neutrales Element (L·{ε} = L), und es gilt L·∅ = ∅, weil es aus ∅ kein Wort zum Anhängen gibt.
+
+*Potenz:* L⁰ = {ε}, L¹ = L, L² = L·L, L³ = L·L·L, …
+
+[source,text]
+----
+L₁⁰ = { ε }
+L₁² = { aa, aab, aba, abab }
+----
+
+L₁² hat 4 Wörter, weil 2 · 2 Kombinationen möglich sind.
+Das gilt nicht immer.
+Für L = {`a`, `aa`} ergibt `a`·`aa` und `aa`·`a` dasselbe Wort, daher hat L² = {`aa`, `aaa`, `aaaa`} nur 3 Wörter.
+
+*Kleene-Stern:* L++*++ = L⁰ ∪ L¹ ∪ L² ∪ … enthält alle Wörter, die man aus beliebig vielen (auch null) Wörtern aus L zusammensetzen kann.
+L⁺ = L¹ ∪ L² ∪ … verlangt mindestens ein Wort.
+
+[source,text]
+----
+{ab}*   = { ε, ab, abab, ababab, … }
+{ab}⁺   = { ab, abab, ababab, … }
+{a, b}* = Σ*  für Σ = {a, b}
+----
+
+Die letzte Zeile zeigt, woher der Name Σ++*++ kommt: Du fasst das Alphabet als Sprache aus einbuchstabigen Wörtern auf und wendest den Stern an.
+Für jede Sprache L gilt ε ∈ L++*++, sogar für L = ∅, denn ∅++*++ = {ε}.
+
+Diese drei Operationen (Vereinigung, Konkatenation, Stern) begegnen dir in link:{github_url}/08%20Theoretische%20Informatik/14_Regulaere_Ausdruecke.adoc[Reguläre Ausdrücke] wieder: `+a|b+`, `ab` und `+a*+` sind genau Vereinigung, Konkatenation und Kleene-Stern.
+
+=== Operationen auf endlichen Sprachen in C#
+
+Für endliche Sprachen kannst du die Operationen mit LINQ direkt nachbauen.
+Eine Sprache ist dann ein `+HashSet<string>+`, damit doppelte Wörter automatisch verschwinden.
+
+[source,csharp]
+----
+HashSet<string> l1 = ["a", "ab"];
+HashSet<string> l2 = ["b", "c"];
+
+Console.WriteLine(Show(Union(l1, l2)));        // { a, ab, b, c }
+Console.WriteLine(Show(Concat(l1, l2)));       // { ab, ac, abb, abc }
+Console.WriteLine(Show(Power(l1, 2)));         // { aa, aab, aba, abab }
+Console.WriteLine(Show(Power(["a", "aa"], 2)));// { aa, aaa, aaaa }
+
+static HashSet<string> Union(IEnumerable<string> l1, IEnumerable<string> l2) =>
+    [.. l1.Union(l2)];
+
+static HashSet<string> Concat(IEnumerable<string> l1, IEnumerable<string> l2) =>
+    [.. l1.SelectMany(_ => l2, (u, v) => u + v)];   // (1)
+
+static HashSet<string> Power(IEnumerable<string> language, int n)
+{
+    HashSet<string> result = [""];                  // (2)
+    for (int i = 0; i < n; i++)
+    {
+        result = Concat(result, language);
+    }
+    return result;
+}
+
+static string Show(IEnumerable<string> language) =>
+    "{ " + string.Join(", ", language.Select(w => w == "" ? "ε" : w)) + " }";
+----
+
+* *(1)* `SelectMany` bildet alle Paare (u, v) mit u aus L₁ und v aus L₂, so wie zwei verschachtelte `foreach`-Schleifen.
+* *(2)* Der Startwert ist L⁰ = {ε}, also eine Menge mit dem Leerstring.
+Eine leere Menge wäre falsch, denn ∅·L = ∅.
+
+L++*++ kannst du so nicht berechnen, weil die Menge unendlich ist, sobald L ein nicht leeres Wort enthält.
+Du kannst aber alle Wörter von L++*++ bis zu einer Maximallänge erzeugen.
+
+== Syntax und Semantik
+
+Eine formale Sprache legt nur fest, _welche_ Zeichenketten erlaubt sind.
+Das ist die *Syntax*.
+Was eine Zeichenkette _bedeutet_, ist die *Semantik*.
+Der Satz „Der Kühlschrank singt grüne Primzahlen.“ ist syntaktisch korrektes Deutsch, hat aber keinen sinnvollen Inhalt.
+
+Bei C# meldet der Compiler einen Syntaxfehler, wenn der Quelltext nicht zur Sprache gehört:
+
+[source,text]
+----
+Console.WriteLine("Hallo")
+
+error CS1002: ; expected
+----
+
+Der Compiler prüft aber mehr als die reine Syntax.
+`int x = "Hallo";` ist syntaktisch korrekt, denn es hat dieselbe Form wie `int x = 42;`.
+Trotzdem lehnt der Compiler es ab, weil die Typen nicht passen.
+Solche Regeln heißen *statische Semantik*.
+Sie lassen sich nicht mehr mit den Grammatiken aus den nächsten Kapiteln ausdrücken und werden in einem eigenen Schritt geprüft.
+
+Ob ein Programm das tut, was du _gemeint_ hast, prüft kein Compiler.
+Der folgende Code ist syntaktisch korrekt, kompiliert ohne Warnung und liefert trotzdem das falsche Ergebnis:
+
+[source,csharp]
+----
+int[] grades = [1, 2, 2, 5];
+double average = grades.Sum() / grades.Length;    // (1)
+Console.WriteLine($"Average: {average}");
+----
+
+[source,text]
+----
+Average: 2
+----
+
+* *(1)* `Sum()` und `Length` sind `int`, daher ist `/` eine Ganzzahldivision: 10 / 4 = 2. Erst danach wird das Ergebnis in `double` umgewandelt.
+Gemeint war 2.5, richtig wäre `(double)grades.Sum() / grades.Length` oder einfach `grades.Average()`.
+
+Für diesen Abschnitt merkst du dir:
+
+[%header]
+|===
+|Ebene |Frage |Wer prüft?
+|Syntax |Ist die Zeichenkette ein Wort der Sprache? |Lexer und Parser
+|Statische Semantik |Passen Typen, sind Variablen deklariert? |Compiler nach dem Parsen
+|Semantik |Was bedeutet das Programm, tut es das Richtige? |Tests und Menschen
+|===
+
+Die Kapitel link:{github_url}/08%20Theoretische%20Informatik/11_Grammatiken.adoc[Grammatiken] bis link:{github_url}/08%20Theoretische%20Informatik/15_Parser.adoc[Parser] behandeln die erste Zeile: Wie beschreibt man eine Sprache, und wie prüft man, ob ein Wort dazugehört?
+
+// tag::pdf_exclude[]
+== Übungen
+
+. Zähle alle Wörter aus Σ³ für Σ = {0, 1} auf.
+Wie viele Wörter hat Σ⁵?
+Wie viele Wörter enthält Σ⁰ ∪ Σ¹ ∪ Σ² ∪ Σ³?
+. Gegeben sind L₁ = {`x`, `xy`} und L₂ = {ε, `y`}.
+Bilde L₁ ∪ L₂, L₁·L₂, L₂·L₁ und L₂².
+Gib alle Wörter von L₁++*++ mit höchstens 3 Symbolen an.
+. Gib für Σ = {a, b} an, ob die Aussage stimmt, und begründe: ε ∈ Σ⁺; ∅ = {ε}; {`a`}++*++ ⊆ Σ++*++; jedes Präfix eines Wortes aus L = {`ab`}++*++ liegt wieder in L.
+. Schreibe in C# einen Iterator `+Palindromes(IReadOnlyList<char> alphabet, int maxLength)+`, der alle Palindrome über dem Alphabet mit höchstens `maxLength` Zeichen liefert, sortiert nach der Länge.
+Ein Palindrom liest sich vorwärts und rückwärts gleich, z. B. `abba` oder `aba`.
+Gehört ε dazu?
+
+// end::pdf_exclude[]

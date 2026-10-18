@@ -1,0 +1,417 @@
+= Divide and Conquer
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Stell dir vor, du suchst in einem gedruckten Wörterbuch das Wort _Rekursion_.
+Du fängst nicht auf Seite 1 an.
+Du schlägst ungefähr in der Mitte auf, siehst _Lampe_ und weißt: Das Wort steht weiter hinten.
+Die vordere Hälfte ist damit erledigt.
+Mit der hinteren Hälfte machst du dasselbe noch einmal.
+Dieses Vorgehen heißt *Divide and Conquer* (deutsch _Teile und herrsche_).
+Es steckt in der binären Suche und in zwei der bekanntesten Sortierverfahren: Mergesort und Quicksort.
+
+== Das Prinzip
+
+Ein Divide-and-Conquer-Algorithmus arbeitet in drei Schritten:
+
+. *Teilen:* Das Problem wird in kleinere Teilprobleme derselben Art zerlegt.
+. *Lösen:* Die Teilprobleme werden mit demselben Verfahren gelöst, also rekursiv.
+Ist ein Teilproblem so klein, dass die Lösung sofort feststeht, hört die Rekursion auf.
+Das ist der *Basisfall*.
+. *Zusammenfügen:* Aus den Lösungen der Teilprobleme entsteht die Lösung des ganzen Problems.
+
+Die drei Algorithmen dieser Einheit setzen die Schritte unterschiedlich um:
+
+[%header]
+|===
+|Algorithmus |Teilen |Basisfall |Zusammenfügen
+|Binäre Suche |Mitte ansehen, eine Hälfte verwerfen |leerer Bereich oder Treffer |entfällt
+|Mergesort |Array in der Mitte halbieren |ein Element |zwei sortierte Hälften mischen
+|Quicksort |nach einem Pivot-Element aufteilen |höchstens ein Element |entfällt
+|===
+
+Bei der binären Suche wird nur *ein* Teilproblem weiterverfolgt, bei den Sortierverfahren *beide*.
+Beim Mergesort steckt die Arbeit im Zusammenfügen, beim Quicksort im Teilen.
+
+== Binäre Suche
+
+Die binäre Suche findet einen Wert in einem *sortierten* Array.
+Sie merkt sich den Bereich, in dem der Wert noch liegen kann, mit zwei Indizes `lo` und `hi`.
+In jedem Schritt vergleicht sie das mittlere Element `mid` mit dem gesuchten Wert:
+
+* Gleich: gefunden.
+* Das mittlere Element ist kleiner: Der Wert kann nur rechts davon liegen, also `+lo = mid + 1+`.
+* Das mittlere Element ist größer: Der Wert kann nur links davon liegen, also `hi = mid - 1`.
+
+Wird der Bereich leer (`+lo > hi+`), ist der Wert nicht im Array.
+Die Grafik zeigt die Suche nach 31 in einem Array mit 10 Zahlen.
+Nach vier Vergleichen ist der Wert gefunden.
+
+image::{root_dir}/images/24_binaere_suche.svg[]
+
+=== Iterativ
+
+[source,csharp]
+----
+int[] numbers = [3, 8, 12, 17, 21, 25, 31, 40, 46, 52];
+Console.WriteLine(BinarySearch(numbers, 31));
+Console.WriteLine(BinarySearch(numbers, 30));
+
+static int BinarySearch(int[] sorted, int target)
+{
+    int lo = 0, hi = sorted.Length - 1;              // (1)
+    while (lo <= hi)                                 // (2)
+    {
+        int mid = lo + (hi - lo) / 2;                // (3)
+        if (sorted[mid] == target) { return mid; }
+        if (sorted[mid] < target) { lo = mid + 1; }  // (4)
+        else { hi = mid - 1; }
+    }
+    return -1;                                       // (5)
+}
+----
+
+[source,text]
+----
+6
+-1
+----
+
+* *(1)* Der Suchbereich ist das geschlossene Intervall `+[lo, hi]+`.
+Am Anfang ist das das ganze Array, deshalb `hi = Length - 1`.
+* *(2)* Solange der Bereich mindestens ein Element enthält, wird weitergesucht.
+Bei `lo == hi` ist noch genau ein Element übrig, und das muss auch geprüft werden.
+* *(3)* Die Mitte des Bereichs.
+Die Schreibweise `+lo + (hi - lo) / 2+` liefert dasselbe wie `+(lo + hi) / 2+`, kann aber nicht überlaufen (siehe unten).
+* *(4)* `mid` selbst ist schon geprüft.
+Der neue Bereich beginnt deshalb erst bei `+mid + 1+` bzw. endet bei `mid - 1`.
+So wird der Bereich in jedem Durchlauf echt kleiner.
+* *(5)* Der Bereich ist leer, der Wert kommt nicht vor.
+
+=== Rekursiv
+
+Die rekursive Variante zeigt das Prinzip _Teile und herrsche_ noch deutlicher.
+Der Bereich wird als Parameter übergeben, jeder Aufruf bearbeitet eine Hälfte des vorigen Bereichs.
+
+[source,csharp]
+----
+int[] numbers = [3, 8, 12, 17, 21, 25, 31, 40, 46, 52];
+Console.WriteLine(BinarySearch(numbers, 31, 0, numbers.Length - 1));
+Console.WriteLine(BinarySearch(numbers, 30, 0, numbers.Length - 1));
+
+static int BinarySearch(int[] sorted, int target, int lo, int hi)
+{
+    if (lo > hi) { return -1; }                      // (1)
+    int mid = lo + (hi - lo) / 2;
+    return sorted[mid].CompareTo(target) switch      // (2)
+    {
+        0 => mid,
+        < 0 => BinarySearch(sorted, target, mid + 1, hi),
+        _ => BinarySearch(sorted, target, lo, mid - 1)
+    };
+}
+----
+
+[source,text]
+----
+6
+-1
+----
+
+* *(1)* Der Basisfall: Ein leerer Bereich enthält den Wert sicher nicht.
+* *(2)* `CompareTo` liefert 0 bei Gleichheit, eine negative Zahl, wenn `+sorted[mid]+` kleiner ist, und sonst eine positive Zahl.
+Der `switch`-Ausdruck mit dem relationalen Pattern `+< 0+` wählt die passende Hälfte.
+Diese Form funktioniert für jeden Typ, der `+IComparable<T>+` implementiert, also auch für Strings.
+
+=== Off-by-one-Fehler
+
+Die binäre Suche ist kurz, aber berüchtigt: Schon kleine Änderungen an den Grenzen machen sie falsch.
+Diese Fehler zeigen sich oft nur bei den Rändern, also beim ersten oder letzten Element oder bei Werten, die nicht vorkommen.
+Für das Array von oben:
+
+[%header]
+|===
+|Änderung |Folge
+|`+while (lo < hi)+` statt `+lo <= hi+` |Die Suche nach 3 oder 52 liefert -1. Das letzte verbleibende Element wird nie geprüft.
+|`hi = sorted.Length` statt `Length - 1` |Die Suche nach 60 berechnet irgendwann `mid = 10` und wirft eine `IndexOutOfRangeException`.
+|`lo = mid` statt `+lo = mid + 1+` |Die Suche nach 52 bleibt bei `lo = 8`, `hi = 9` hängen: `mid` ist immer wieder 8, eine Endlosschleife.
+|`+(lo + hi) / 2+` |Bei Arrays mit mehr als einer Milliarde Elementen kann `+lo + hi+` größer als `int.MaxValue` werden und negativ überlaufen.
+|===
+
+Der letzte Fehler steckte jahrelang in der Bibliothek von Java, bevor er 2006 auffiel.
+Die sicherste Methode gegen alle diese Fehler ist eine klare Regel, die du nie brichst: _Wenn der Wert vorkommt, liegt er im Bereich `+[lo, hi]+`._
+Jede Zeile, die `lo` oder `hi` ändert, muss diese Regel erhalten, und der Bereich muss in jedem Durchlauf kleiner werden.
+
+=== `Array.BinarySearch`
+
+In der Praxis schreibst du die binäre Suche selten selbst. .NET bietet `Array.BinarySearch` und `+List<T>.BinarySearch+`.
+Interessant ist der Rückgabewert, wenn der Wert fehlt:
+
+[source,csharp]
+----
+int[] numbers = [3, 8, 12, 17, 21, 25, 31, 40, 46, 52];
+
+int found = Array.BinarySearch(numbers, 31);
+Console.WriteLine(found);                            // (1)
+
+int missing = Array.BinarySearch(numbers, 30);
+Console.WriteLine(missing);                          // (2)
+int insertAt = ~missing;                             // (3)
+Console.WriteLine(insertAt);
+
+List<int> list = [.. numbers];
+list.Insert(insertAt, 30);                           // (4)
+Console.WriteLine(string.Join(", ", list));
+----
+
+[source,text]
+----
+6
+-7
+6
+3, 8, 12, 17, 21, 25, 30, 31, 40, 46, 52
+----
+
+* *(1)* Gefunden: Der Index des Elements.
+* *(2)* Nicht gefunden: eine *negative* Zahl.
+Sie ist nicht einfach -1, sondern enthält eine Information: die Stelle, an der der Wert stehen müsste.
+* *(3)* Der Operator `+~+` (bitweises Komplement) macht daraus wieder einen Index.
+Für jede Zahl x gilt `+~x == -x - 1+`, also `+~(-7) == 6+`. 30 gehört vor die 31 an Index 6. Ein negatives Ergebnis bedeutet immer „nicht gefunden“, denn auch die Einfügestelle 0 wird zu `+~0 == -1+`.
+* *(4)* Fügst du an dieser Stelle ein, bleibt die Liste sortiert.
+So hältst du eine Liste ohne erneutes Sortieren in Ordnung.
+
+Zwei Dinge musst du beachten: Ist das Array nicht sortiert, liefert `BinarySearch` ein beliebiges Ergebnis, ohne eine Exception zu werfen.
+Und kommt ein Wert mehrfach vor, ist nicht festgelegt, welcher der passenden Indizes zurückkommt.
+
+== Mergesort
+
+Mergesort setzt das Prinzip ganz direkt um:
+
+. *Teilen:* Das Array wird in der Mitte in zwei Hälften geteilt.
+. *Lösen:* Beide Hälften werden rekursiv sortiert.
+Ein Array mit einem Element ist bereits sortiert, das ist der Basisfall.
+. *Zusammenfügen:* Die zwei sortierten Hälften werden zu einem sortierten Array _gemischt_ (englisch _merge_).
+
+image::{root_dir}/images/24_mergesort_baum.svg[]
+
+In der oberen Hälfte der Grafik wird geteilt, ohne dass irgendein Vergleich stattfindet.
+Die eigentliche Arbeit passiert in der unteren Hälfte beim Mischen.
+
+=== Der Merge-Schritt
+
+Zwei sortierte Arrays zu mischen ist einfach.
+Du brauchst für jedes Array einen Zeiger auf das erste noch nicht verwendete Element.
+In jedem Schritt vergleichst du die beiden Elemente und übernimmst das kleinere.
+Ist ein Array aufgebraucht, hängst du den Rest des anderen an.
+Für den letzten Schritt aus der Grafik:
+
+[source,text]
+----
+links:  3 27 38 43    rechts:  9 10 15 82
+3 < 9    -> 3          Ergebnis: 3
+27 > 9   -> 9          Ergebnis: 3 9
+27 > 10  -> 10         Ergebnis: 3 9 10
+27 > 15  -> 15         Ergebnis: 3 9 10 15
+27 < 82  -> 27         Ergebnis: 3 9 10 15 27
+38 < 82  -> 38         Ergebnis: 3 9 10 15 27 38
+43 < 82  -> 43         Ergebnis: 3 9 10 15 27 38 43
+links leer, Rest 82    Ergebnis: 3 9 10 15 27 38 43 82
+----
+
+=== Mergesort in C#
+
+[source,csharp]
+----
+int[] numbers = [38, 27, 43, 3, 9, 82, 10, 15];
+int[] sorted = MergeSort(numbers);
+Console.WriteLine(string.Join(", ", sorted));
+
+static int[] MergeSort(int[] items)
+{
+    if (items.Length <= 1) { return items; }         // (1)
+    int mid = items.Length / 2;
+    int[] left = MergeSort(items[..mid]);            // (2)
+    int[] right = MergeSort(items[mid..]);
+    return Merge(left, right);                       // (3)
+}
+
+static int[] Merge(int[] left, int[] right)
+{
+    int[] result = new int[left.Length + right.Length];
+    int i = 0, j = 0, k = 0;
+    while (i < left.Length && j < right.Length)
+    {
+        // On ties the left element wins, so equal elements keep their order.
+        result[k++] = left[i] <= right[j] ? left[i++] : right[j++];     // (4)
+    }
+    while (i < left.Length) { result[k++] = left[i++]; }               // (5)
+    while (j < right.Length) { result[k++] = right[j++]; }
+    return result;
+}
+----
+
+[source,text]
+----
+3, 9, 10, 15, 27, 38, 43, 82
+----
+
+* *(1)* Basisfall: Ein Array mit höchstens einem Element ist sortiert.
+* *(2)* Die Range-Syntax `+items[..mid]+` liefert ein *neues* Array mit den Elementen 0 bis `mid - 1`, `+items[mid..]+` den Rest.
+Bei ungerader Länge bekommt die rechte Hälfte ein Element mehr.
+* *(3)* Die beiden sortierten Hälften werden zusammengefügt.
+* *(4)* `i`, `j` und `k` sind die Zeiger in `left`, `right` und `result`.
+`pass:c[left[i++\]]` liest das Element und schiebt den Zeiger danach weiter.
+Das `+<=+` ist wichtig, siehe _Stabilität_ unten.
+* *(5)* Nur eine der beiden Schleifen läuft tatsächlich, denn eines der Arrays ist schon aufgebraucht.
+
+== Quicksort
+
+Quicksort geht den umgekehrten Weg.
+Es wählt ein Element als *Pivot* und ordnet das Array so um, dass alle kleineren Elemente links vom Pivot stehen und alle anderen rechts davon.
+Dieser Schritt heißt *Partitionieren*.
+Danach steht das Pivot bereits an seiner endgültigen Stelle.
+Die beiden Teile links und rechts davon werden rekursiv sortiert.
+Ein Zusammenfügen ist nicht nötig, weil alles schon an der richtigen Stelle im selben Array steht.
+
+=== Lomuto-Partitionierung
+
+Es gibt mehrere Arten zu partitionieren.
+Die Variante nach Nico Lomuto ist am leichtesten zu verstehen.
+Das Pivot ist das letzte Element des Bereichs.
+Ein Index `i` markiert die Grenze des Bereichs mit den kleineren Elementen, ein Index `j` läuft einmal von links nach rechts durch:
+
+* Ist `+items[j]+` kleiner als das Pivot, wird es mit `+items[i]+` vertauscht und `i` rückt um eins weiter.
+Damit gehört es zum linken Teil.
+* Sonst bleibt es stehen und gehört zum rechten Teil.
+* Am Ende wird das Pivot mit `+items[i]+` vertauscht.
+Es steht jetzt genau zwischen den beiden Teilen.
+
+Während der Schleife gilt immer: Links von `i` steht nur Kleineres, von `i` bis vor `j` nur Größeres oder Gleiches, ab `j` das noch nicht Geprüfte.
+
+image::{root_dir}/images/24_quicksort_partition.svg[]
+
+=== Quicksort in C#
+
+[source,csharp]
+----
+int[] numbers = [7, 2, 9, 4, 3, 8, 5];
+QuickSort(numbers, 0, numbers.Length - 1);
+Console.WriteLine(string.Join(", ", numbers));
+
+static void QuickSort(int[] items, int lo, int hi)
+{
+    if (lo >= hi) { return; }                        // (1)
+    int p = Partition(items, lo, hi);                // (2)
+    QuickSort(items, lo, p - 1);                     // (3)
+    QuickSort(items, p + 1, hi);
+}
+
+static int Partition(int[] items, int lo, int hi)
+{
+    int pivot = items[hi];                           // (4)
+    int i = lo;
+    for (int j = lo; j < hi; j++)
+    {
+        if (items[j] < pivot)
+        {
+            (items[i], items[j]) = (items[j], items[i]);   // (5)
+            i++;
+        }
+    }
+    (items[i], items[hi]) = (items[hi], items[i]);   // (6)
+    return i;
+}
+----
+
+[source,text]
+----
+2, 3, 4, 5, 7, 8, 9
+----
+
+* *(1)* Basisfall: Ein Bereich mit höchstens einem Element ist sortiert.
+`+lo > hi+` tritt auf, wenn das Pivot ganz am Rand gelandet ist und ein Teil leer bleibt.
+* *(2)* Nach `Partition` steht das Pivot an Index `p` an seiner endgültigen Stelle.
+* *(3)* Das Pivot selbst gehört zu keinem Teil mehr.
+Deshalb geht es mit `p - 1` und `+p + 1+` weiter.
+* *(4)* Lomuto wählt das letzte Element des Bereichs als Pivot.
+* *(5)* Die Tupel-Schreibweise vertauscht zwei Elemente ohne Hilfsvariable.
+* *(6)* Das Pivot kommt an die Grenze zwischen den beiden Teilen.
+
+Wie gut die Teile werden, hängt vom Pivot ab.
+Ist das Array schon sortiert, ist das letzte Element immer das größte.
+Der rechte Teil bleibt dann leer, der linke ist nur um ein Element kürzer.
+Die Rekursion wird so tief, wie das Array lang ist.
+Deshalb wählen echte Implementierungen das Pivot geschickter, z. B. als mittleren Wert aus erstem, mittlerem und letztem Element.
+
+== Mergesort und Quicksort im Vergleich
+
+[%header]
+|===
+| |Mergesort |Quicksort (Lomuto)
+|Teilen |in der Mitte, ohne Vergleich |Partitionieren um das Pivot
+|Zusammenfügen |zwei sortierte Hälften mischen |entfällt
+|stabil |ja |nein
+|in-place |nein |ja
+|===
+
+=== Stabilität
+
+Ein Sortierverfahren ist *stabil*, wenn Elemente mit gleichem Schlüssel ihre ursprüngliche Reihenfolge behalten.
+Das ist wichtig, wenn du nach mehreren Kriterien sortierst.
+Hast du eine Klassenliste schon nach Namen sortiert und sortierst sie danach stabil nach der Note, stehen innerhalb jeder Note die Namen weiterhin alphabetisch.
+
+Mergesort ist stabil, weil der Merge-Schritt bei Gleichheit das Element aus der linken Hälfte nimmt (das `+<=+` bei (4)).
+Mit `+<+` statt `+<=+` wäre er es nicht mehr.
+
+Quicksort mit Lomuto ist nicht stabil.
+Die Vertauschungen springen über andere Elemente hinweg.
+Ein Beispiel mit drei Einträgen, sortiert nach der Note:
+
+[source,text]
+----
+vorher:          Anna 2   Ben 1   Clara 2      Pivot ist Clara (Note 2)
+j = 0:           Anna 2 ist nicht kleiner, bleibt stehen
+j = 1:           Ben 1 ist kleiner, tauscht mit Anna:   Ben 1   Anna 2   Clara 2
+Pivot setzen:    Clara tauscht mit Anna:                Ben 1   Clara 2  Anna 2
+----
+
+Anna stand vor Clara, jetzt steht sie dahinter.
+In .NET ist das genauso: `Array.Sort` und `+List<T>.Sort+` sind laut Dokumentation *nicht* stabil, LINQ `OrderBy` dagegen schon.
+
+=== In-place
+
+Ein Verfahren arbeitet *in-place*, wenn es die Elemente im ursprünglichen Array umordnet und dafür nur wenige zusätzliche Variablen braucht.
+Quicksort vertauscht nur Elemente innerhalb von `items`.
+Mergesort legt dagegen bei jedem Aufruf neue Arrays für die Hälften und das Ergebnis an.
+Es gibt in-place-Varianten von Mergesort, sie sind aber deutlich komplizierter.
+
+// tag::pdf_exclude[]
+== Übungen
+
+. *Erstes Vorkommen:* Schreibe eine Methode `+int FindFirst(int[] sorted, int target)+`, die mit binärer Suche den *kleinsten* Index liefert, an dem `target` steht, oder -1.
+Teste sie mit `+[1, 2, 2, 2, 3, 5, 5, 8]+` und den Werten 1, 2, 5, 8, 0, 4 und 9.
+. *Partitionieren per Hand:* Führe die Lomuto-Partitionierung für `+[4, 9, 1, 7, 3, 6]+` auf Papier durch.
+Notiere nach jedem Wert von `j` das Array und die Position von `i`.
+Zeichne danach den Baum von Mergesort für `+[5, 1, 4, 2, 8, 3]+` wie in der Grafik oben.
+. *Generischer Mergesort:* Schreibe `+static List<T> MergeSort<T>(IReadOnlyList<T> items, IComparer<T> comparer)+`.
+Sortiere damit eine Liste von `record Student(string Name, int Grade)` zuerst nach Namen und danach nach der Note.
+Zeige an der Ausgabe, dass das Verfahren stabil ist.
+. *Inversionen zählen:* Ein Paar von Indizes (i, j) mit i < j und `+a[i] > a[j]+` heißt _Inversion_.
+`+[3, 1, 2]+` hat zwei Inversionen: (3, 1) und (3, 2).
+Schreibe eine Methode, die die Anzahl der Inversionen eines Arrays mit Divide and Conquer bestimmt.
+Prüfe dein Ergebnis für zufällige Arrays gegen eine einfache Lösung mit zwei verschachtelten Schleifen.
+
+// end::pdf_exclude[]

@@ -1,0 +1,47 @@
+# Publishes all HTML files of the repository (e.g. the interactive trainers in
+# "08 Theoretische Informatik") on GitHub Pages. The folder structure is kept, so
+# "<folder>/<file>.html" is served at https://die-spengergasse.github.io/course-pos-csharp_basics/<folder>/<file>.html
+name: Deploy HTML to GitHub Pages
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "**.html"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never cancel a running deployment, but skip outdated queued ones.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v5
+
+      # Only tracked HTML files are published; --parents keeps their relative paths.
+      - name: Collect HTML files
+        run: |
+          mkdir -p _site
+          git ls-files -z '*.html' | xargs -0 -I{} cp --parents {} _site/
+          find _site -type f
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,333 @@
+= Die O-Notation
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Beim link:{github_url}/08%20Theoretische%20Informatik/30_Laufzeit_messen.adoc[Messen der Laufzeit] hast du gesehen: Die Zahlen hängen vom Rechner, vom Build, vom Cache und von anderen Programmen ab.
+Trotzdem war eines immer gleich: Verdoppelt sich n, braucht die Variante mit `List` etwa viermal so lange, die mit `HashSet` etwa doppelt so lange.
+Genau diese Aussage über das *Wachstum* ist unabhängig vom Rechner.
+Die O-Notation ist die Sprache, in der man sie aufschreibt.
+
+[TIP]
+====
+*Zum Selbst-Erarbeiten: der interaktive Trainer zur O-Notation*
+
+Im https://die-spengergasse.github.io/course-pos-csharp_basics/08%20Theoretische%20Informatik/31_O_Notation.html[Trainer zur O-Notation] vergleichst du die Wachstumsfunktionen in einem Diagramm und rechnest Schrittzahlen in echte Laufzeiten um.
+Danach ordnest du Funktionen nach ihrem Wachstum, auch knifflige Paare wie n log n und n^1,5.
+So bekommst du ein Gefühl dafür, was „schnell“ wirklich heißt.
+====
+
+== Schritte zählen
+
+Statt Millisekunden zählen wir *Schritte*: Vergleiche, Zuweisungen, Rechenoperationen.
+Wie lange ein Schritt dauert, hängt vom Rechner ab.
+Wie viele Schritte nötig sind, hängt nur vom Algorithmus und von der Eingabe ab.
+
+Das folgende Programm sucht wie die `List`-Variante aus der letzten Einheit nach Duplikaten.
+Es vergleicht jedes Element mit allen Elementen davor und zählt dabei die Vergleiche.
+
+[source,csharp]
+----
+int[] sizes = [10, 100, 1_000, 10_000];
+foreach (int n in sizes)
+{
+    int[] data = Enumerable.Range(0, n).ToArray();      // (1)
+    long comparisons = CountComparisons(data);
+    Console.WriteLine($"n = {n,6}: {comparisons,10} Vergleiche, n²/2 = {(long)n * n / 2,10}");
+}
+
+static long CountComparisons(int[] data)
+{
+    long comparisons = 0;
+    for (int i = 0; i < data.Length; i++)
+    {
+        for (int j = 0; j < i; j++)                     // (2)
+        {
+            comparisons++;
+            if (data[i] == data[j]) { return comparisons; }
+        }
+    }
+    return comparisons;
+}
+----
+
+[source,text]
+----
+n =     10:         45 Vergleiche, n²/2 =         50
+n =    100:       4950 Vergleiche, n²/2 =       5000
+n =   1000:     499500 Vergleiche, n²/2 =     500000
+n =  10000:   49995000 Vergleiche, n²/2 =   50000000
+----
+
+* *(1)* Die Zahlen 0 bis n − 1 enthalten kein Duplikat.
+Die Methode muss also alle Paare vergleichen.
+* *(2)* Element i wird mit i Elementen verglichen.
+Zusammen sind das 0 {plus} 1 {plus} 2 {plus} … {plus} (n − 1) Vergleiche.
+
+Die Summe 0 {plus} 1 {plus} … {plus} (n − 1) ergibt n(n − 1)/2.
+Die Methode braucht also
+
+T(n) = ½ n² − ½ n Vergleiche.
+
+=== Der dominante Term
+
+Schon bei n = 1 000 ist −½ n nur noch ein Tausendstel von ½ n².
+Je größer n wird, desto unwichtiger wird dieser Term.
+Deshalb behält man nur den *dominanten Term* ½ n².
+Auch den Faktor ½ lässt man weg.
+Er hängt davon ab, was man als einen Schritt zählt, und zwei Rechner unterscheiden sich ohnehin um einen konstanten Faktor.
+Übrig bleibt: Die Methode wächst *quadratisch*, man schreibt O(n²).
+
+== Die O-Notation informell
+
+f ∈ O(g) heißt: *f wächst höchstens so schnell wie g*, wenn man konstante Faktoren ignoriert und nur große n betrachtet.
+
+[%header]
+|===
+|Schritte T(n) |Wachstumsklasse |Warum
+|3n {plus} 7 |O(n) |Der dominante Term ist 3n, ohne Faktor bleibt n.
+|½ n² − ½ n |O(n²) |Der dominante Term ist ½ n².
+|5 n log₂ n {plus} 20n |O(n log n) |n log n wächst schneller als n.
+|1 000 000 |O(1) |Eine Konstante, egal wie groß, wächst gar nicht.
+|2ⁿ {plus} n¹⁰⁰ |O(2ⁿ) |Für große n ist 2ⁿ viel größer als jedes Polynom.
+|===
+
+Man liest O(n²) als „O von n Quadrat“ oder „Ordnung n Quadrat“.
+Oft schreibt man auch T(n) = O(n²).
+Das Gleichheitszeichen ist dabei nur eine Schreibweise: O(n²) ist eine Menge von Funktionen, und T gehört dazu.
+
+== Die formale Definition
+
+„Für große n“ und „bis auf einen Faktor“ lassen sich genau fassen:
+
+____
+f ∈ O(g) genau dann, wenn es eine Konstante c > 0 und eine Zahl n₀ gibt, sodass *f(n) ≤ c · g(n) für alle n ≥ n₀* gilt.
+____
+
+image::{root_dir}/images/31_o_definition.svg[]
+
+Der Faktor c erlaubt, g nach oben zu strecken.
+Die Zahl n₀ erlaubt, kleine n zu ignorieren.
+Vor n₀ darf f machen, was es will.
+Ab n₀ muss f für immer unter c · g bleiben.
+
+*Beispiel:* 4n {plus} 10 ∈ O(n).
+Wir suchen c und n₀ mit 4n {plus} 10 ≤ c · n.
+
+* Mit c = 5 wird daraus 4n {plus} 10 ≤ 5n, also 10 ≤ n. Das gilt für alle n ≥ 10, also n₀ = 10.
+* Mit c = 14 gilt 4n {plus} 10 ≤ 4n {plus} 10n = 14n schon für alle n ≥ 1.
+
+Du musst also nur *ein* passendes Paar (c, n₀) finden.
+Ein größeres c erlaubt meist ein kleineres n₀.
+
+*Gegenbeispiel:* n² ∉ O(n).
+Angenommen, es gäbe c und n₀ mit n² ≤ c · n für alle n ≥ n₀.
+Teilt man durch n, steht da n ≤ c. Das stimmt aber nicht für n = c {plus} 1 oder größer.
+Egal welches c du wählst: n² überholt c · n irgendwann.
+
+== Ω und Θ
+
+O ist eine *obere Schranke*.
+Für untere Schranken und für genaue Angaben gibt es zwei weitere Zeichen:
+
+[%header]
+|===
+|Schreibweise |Bedeutung |Definition (für alle n ≥ n₀) |Vergleich
+|f ∈ O(g) |f wächst höchstens so schnell wie g |f(n) ≤ c · g(n) |≤
+|f ∈ Ω(g) |f wächst mindestens so schnell wie g |f(n) ≥ c · g(n) |≥
+|f ∈ Θ(g) |f wächst genau so schnell wie g |f ∈ O(g) und f ∈ Ω(g) |=
+|===
+
+Für die Duplikatsuche gilt ½ n² − ½ n ∈ Θ(n²).
+Es stimmt aber auch ½ n² − ½ n ∈ O(n³), denn n³ ist ebenfalls eine obere Schranke, nur eine schlechte.
+In der Praxis sagt man „O“ und meint fast immer die *kleinste* obere Schranke, also eigentlich Θ.
+
+== Rechenregeln
+
+Mit wenigen Regeln vereinfachst du jeden Ausdruck:
+
+* *Konstante Faktoren weglassen:* O(5n) = O(n), O(n²/2) = O(n²).
+* *Summenregel:* Laufen zwei Teile nacheinander, zählt der größere.
+O(f) {plus} O(g) = O(max(f, g)).
+Erst sortieren (n log n), dann einmal durchlaufen (n), ergibt O(n log n {plus} n) = O(n log n).
+* *Produktregel:* Wird ein Teil mit O(g) Schritten f-mal wiederholt, ergibt das O(f · g).
+Eine Schleife über n Elemente, die jedes Mal `List.Contains` (n Schritte) aufruft, braucht O(n²).
+* *Nur der höchste Exponent zählt:* 3n³ {plus} 100n² {plus} n ∈ O(n³).
+* *Die Basis des Logarithmus ist egal:* log₂ n = log₁₀ n / log₁₀ 2 ≈ 3,32 · log₁₀ n. Die Basen unterscheiden sich nur um einen konstanten Faktor.
+Man schreibt deshalb einfach O(log n).
+* *Mehrere Eingaben bleiben getrennt:* Bekommt eine Methode zwei Listen der Länge n und m, lautet das Ergebnis z. B. O(n {plus} m) oder O(n · m), nicht O(n).
+
+== Die Hierarchie der Wachstumsklassen
+
+Die meisten Algorithmen fallen in eine von wenigen Klassen:
+
+[%header]
+|===
+|Klasse |Name |Beispiel
+|O(1) |konstant |Zugriff auf `+array[i]+`, `HashSet.Contains` (im Mittel)
+|O(log n) |logarithmisch |binäre Suche
+|O(n) |linear |lineare Suche, Summe eines Arrays
+|O(n log n) |linear-logarithmisch |Mergesort, `Array.Sort`
+|O(n²) |quadratisch |Duplikatsuche mit `List`, alle Paare vergleichen
+|O(2ⁿ) |exponentiell |alle Teilmengen einer Menge durchprobieren
+|O(n!) |faktoriell |alle Reihenfolgen durchprobieren (Rundreise mit Brute Force)
+|===
+
+Es gilt 1 < log n < n < n log n < n² < 2ⁿ < n!.
+Jede Klasse wächst irgendwann schneller als alle links davon.
+Die Grafik zeigt die Funktionen für kleine n:
+
+image::{root_dir}/images/31_wachstum.svg[]
+
+Wie groß der Unterschied wirklich ist, zeigt die Tabelle.
+Sie nimmt an, dass ein Schritt *1 Nanosekunde* dauert.
+Das ist ungefähr ein einfacher Rechenschritt eines heutigen Prozessors.
+
+[%header]
+|===
+|Schritte |n = 10 |n = 20 |n = 50 |n = 100 |n = 1 000 |n = 10⁶
+|log₂ n |3 ns |4 ns |6 ns |7 ns |10 ns |20 ns
+|n |10 ns |20 ns |50 ns |100 ns |1 µs |1 ms
+|n log₂ n |33 ns |86 ns |282 ns |664 ns |10 µs |20 ms
+|n² |100 ns |400 ns |2,5 µs |10 µs |1 ms |17 min
+|2ⁿ |1 µs |1 ms |13 Tage |4 · 10¹³ Jahre |3 · 10²⁸⁴ Jahre |3 · 10³⁰¹⁰¹³ Jahre
+|n! |3,6 ms |77 Jahre |10⁴⁸ Jahre |3 · 10¹⁴¹ Jahre |10²⁵⁵¹ Jahre |10⁵⁵⁶⁵⁶⁹² Jahre
+|===
+
+Das Universum ist etwa 1,4 · 10¹⁰ Jahre alt.
+Bis n = 1 000 sind alle Algorithmen bis n² in Millisekunden fertig. 2ⁿ und n! sind dagegen schon bei n = 100 hoffnungslos.
+
+Ein schnellerer Rechner hilft dabei kaum.
+Ist er 1 000-mal schneller, schaffst du in derselben Zeit bei O(n) eine 1 000-mal größere Eingabe, bei O(n²) eine etwa 32-mal größere.
+Bei O(2ⁿ) kommst du nur um 10 weiter, denn 2¹⁰ ≈ 1 000. Ein besserer Algorithmus bringt fast immer mehr als bessere Hardware.
+
+== Best, Average und Worst Case
+
+Die Anzahl der Schritte hängt nicht nur von n ab, sondern auch davon, *welche* Eingabe der Größe n kommt.
+Man unterscheidet drei Fälle:
+
+* *Best Case:* die günstigste Eingabe der Größe n.
+* *Worst Case:* die ungünstigste Eingabe der Größe n.
+* *Average Case:* der Durchschnitt über alle Eingaben der Größe n, bei einer angenommenen Verteilung (z. B. alle Reihenfolgen gleich wahrscheinlich).
+
+=== Lineare Suche
+
+[source,csharp]
+----
+int[] numbers = [7, 3, 9, 4, 1];
+Console.WriteLine(LinearSearch(numbers, 7));   // best case: first element
+Console.WriteLine(LinearSearch(numbers, 8));   // worst case: not found
+
+static int LinearSearch(int[] data, int value)
+{
+    for (int i = 0; i < data.Length; i++)
+    {
+        if (data[i] == value) { return i; }
+    }
+    return -1;
+}
+----
+
+[source,text]
+----
+0
+-1
+----
+
+[%header]
+|===
+|Fall |Eingabe |Vergleiche |Klasse
+|Best Case |Der Wert steht ganz vorne. |1 |Θ(1)
+|Average Case |Der Wert kommt vor, jede Position ist gleich wahrscheinlich. |(n {plus} 1)/2 |Θ(n)
+|Worst Case |Der Wert steht ganz hinten oder fehlt. |n |Θ(n)
+|===
+
+Der Average Case ist hier nur halb so groß wie der Worst Case.
+Das ist aber nur ein konstanter Faktor, die Klasse bleibt linear.
+
+=== Quicksort
+
+Bei Quicksort mit der Lomuto-Partitionierung aus link:{github_url}/08%20Theoretische%20Informatik/24_Divide_and_Conquer.adoc[Divide and Conquer] ist der Unterschied größer.
+Das letzte Element ist das Pivot.
+
+* *Best und Average Case:* Das Pivot teilt das Array ungefähr in der Mitte.
+Es gibt etwa log₂ n Ebenen, und auf jeder Ebene werden insgesamt etwa n Elemente mit dem Pivot verglichen.
+Das ergibt Θ(n log n).
+* *Worst Case:* Das Array ist *schon sortiert*.
+Das letzte Element ist dann immer das größte, ein Teil ist leer und der andere hat nur ein Element weniger.
+Es gibt n Ebenen mit n − 1, n − 2, …
+Vergleichen, zusammen n(n − 1)/2.
+Das ergibt Θ(n²).
+
+Gerade sortierte oder fast sortierte Daten kommen in der Praxis oft vor.
+`Array.Sort` in .NET verwendet deshalb _Introsort_: Es beginnt mit Quicksort und wechselt zu Heapsort, wenn die Rekursion zu tief wird.
+So bleibt auch der Worst Case bei O(n log n).
+
+Beachte: Best, Average und Worst Case sind etwas anderes als O, Ω und Θ. Die Fälle legen fest, *welche Eingabe* du betrachtest.
+O, Ω und Θ beschreiben, wie die Schrittzahl für diese Eingaben *wächst*.
+Für jeden Fall kannst du O, Ω und Θ angeben.
+
+== Typische Fehler
+
+* *Nicht vereinfachen:* O(2n), O(n² {plus} n) oder O(3 log n) sind nicht falsch, aber unüblich.
+Richtig vereinfacht heißen sie O(n), O(n²) und O(log n).
+* *O für kleine n verwenden:* O sagt nichts über kleine Eingaben. 100n Schritte sind für n < 100 mehr als n² Schritte.
+Deshalb sortiert Introsort kleine Teilarrays mit Insertion Sort, obwohl das ein O(n²)-Verfahren ist.
+* *Zwei Größen zu einer machen:* Eine Methode, die für jedes von n Wörtern eine Liste mit m Einträgen durchsucht, braucht O(n · m), nicht O(n²).
+* *Worst Case mit Average Case verwechseln:* `HashSet.Contains` braucht im Mittel O(1).
+Im Worst Case, wenn alle Elemente denselben Hashcode haben, sind es O(n).
+* *Versteckte Kosten übersehen:* Ein Methodenaufruf ist nicht automatisch ein Schritt.
+`list.Contains(x)`, `list.IndexOf(x)` oder `+s1 + s2+` bei langen Strings kosten selbst O(n).
+* *Gleiche Klasse heißt gleich schnell:* Zwei O(n log n)-Verfahren können sich in der Praxis um einen großen Faktor unterscheiden.
+O vergleicht das Wachstum, nicht die Stoppuhr.
+
+// tag::pdf_exclude[]
+== Übungen
+
+. Ordne die folgenden Funktionen nach ihrem Wachstum, von langsam nach schnell.
+Markiere Funktionen, die gleich schnell wachsen. n log₂ n, 1 000, n²/100, 2ⁿ, log₁₀ n, n^1,5, n!, 50n, √n, n¹⁰, log₂(n²), 3ⁿ
+. Zeige mit der Definition, dass 3n² {plus} 5n {plus} 2 ∈ O(n²) gilt.
+Gib ein konkretes c und n₀ an und begründe, warum die Ungleichung für alle n ≥ n₀ stimmt.
+Zeige außerdem, dass 3n² {plus} 5n {plus} 2 ∉ O(n) gilt.
+. Bestimme für die folgende Methode die Anzahl der Vergleiche `+data[j] > key+` im Best Case und im Worst Case.
+Wie sehen die Eingaben aus, die diese Fälle auslösen?
+Gib die Klassen mit Θ an.
++
+[source,csharp]
+----
+static void InsertionSort(int[] data)
+{
+    for (int i = 1; i < data.Length; i++)
+    {
+        int key = data[i];
+        int j = i - 1;
+        while (j >= 0 && data[j] > key)
+        {
+            data[j + 1] = data[j];
+            j--;
+        }
+        data[j + 1] = key;
+    }
+}
+----
+. Erweitere `LinearSearch` um einen Zähler für die Vergleiche.
+Suche in einem Array mit n = 1 000 Elementen 10 000-mal nach einem zufälligen Wert, der im Array vorkommt, und berechne den Durchschnitt.
+Vergleiche ihn mit dem Average Case aus der Tabelle oben.
+
+// end::pdf_exclude[]
+
+== Zusatzmaterial
+
+Im https://die-spengergasse.github.io/course-pos-csharp_basics/08%20Theoretische%20Informatik/31_O_Notation.html[31_O_Notation.html] vergleichst du die Wachstumsfunktionen in einem Diagramm, rechnest Schrittzahlen in Laufzeiten um und ordnest in mehreren Runden Funktionen nach ihrem Wachstum, auch knifflige Paare wie n log n und n^1,5.

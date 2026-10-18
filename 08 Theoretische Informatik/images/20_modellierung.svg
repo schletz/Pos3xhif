@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="380" viewBox="0 0 820 380">
+  <rect x="0.5" y="0.5" width="819" height="379" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker>
+    <marker id="arrowOrange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ea580c"/></marker>
+  </defs>
+  <text x="180.0" y="34.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#1f2937" text-anchor="middle" font-weight="600">Grundriss eines Stockwerks</text>
+  <rect x="20" y="50" width="105" height="100" fill="#f3f4f6" stroke="#1f2937" stroke-width="2"/>
+  <rect x="125" y="50" width="105" height="100" fill="#f3f4f6" stroke="#1f2937" stroke-width="2"/>
+  <rect x="230" y="50" width="110" height="100" fill="#f3f4f6" stroke="#1f2937" stroke-width="2"/>
+  <rect x="20" y="150" width="320" height="50" fill="#f3f4f6" stroke="#1f2937" stroke-width="2"/>
+  <rect x="20" y="200" width="160" height="120" fill="#f3f4f6" stroke="#1f2937" stroke-width="2"/>
+  <rect x="180" y="200" width="80" height="120" fill="#f3f4f6" stroke="#1f2937" stroke-width="2"/>
+  <rect x="260" y="200" width="80" height="120" fill="#f3f4f6" stroke="#1f2937" stroke-width="2"/>
+  <text x="72.5" y="105.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">EDV 1</text>
+  <text x="177.5" y="105.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">EDV 2</text>
+  <text x="285.0" y="105.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Bibliothek</text>
+  <text x="180.0" y="180.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Gang</text>
+  <text x="100.0" y="265.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Aula</text>
+  <text x="220.0" y="265.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Buffet</text>
+  <text x="300.0" y="265.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Stiege</text>
+  <rect x="62" y="147" width="20" height="6" fill="#ea580c"/>
+  <rect x="167" y="147" width="20" height="6" fill="#ea580c"/>
+  <rect x="275" y="147" width="20" height="6" fill="#ea580c"/>
+  <rect x="90" y="197" width="20" height="6" fill="#ea580c"/>
+  <rect x="290" y="197" width="20" height="6" fill="#ea580c"/>
+  <rect x="122" y="90" width="6" height="20" fill="#ea580c"/>
+  <rect x="177" y="250" width="6" height="20" fill="#ea580c"/>
+  <rect x="22" y="340" width="20" height="6" fill="#ea580c"/>
+  <text x="50.0" y="348.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">Tür</text>
+  <line x1="365" y1="185" x2="440" y2="185" stroke="#1f2937" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="402.0" y="172.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#6b7280" text-anchor="middle">modellieren</text>
+  <text x="635.0" y="34.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#1f2937" text-anchor="middle" font-weight="600">Graph</text>
+  <line x1="510" y1="90" x2="650" y2="185" stroke="#1f2937" stroke-width="1.6"/>
+  <line x1="625" y1="90" x2="650" y2="185" stroke="#1f2937" stroke-width="1.6"/>
+  <line x1="750" y1="90" x2="650" y2="185" stroke="#1f2937" stroke-width="1.6"/>
+  <line x1="510" y1="90" x2="625" y2="90" stroke="#1f2937" stroke-width="1.6"/>
+  <line x1="530" y1="280" x2="650" y2="185" stroke="#1f2937" stroke-width="1.6"/>
+  <line x1="530" y1="280" x2="640" y2="330" stroke="#1f2937" stroke-width="1.6"/>
+  <line x1="760" y1="280" x2="650" y2="185" stroke="#1f2937" stroke-width="1.6"/>
+  <rect x="473.0" y="74" width="74" height="32" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="510.0" y="95.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">EDV 1</text>
+  <rect x="588.0" y="74" width="74" height="32" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="625.0" y="95.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">EDV 2</text>
+  <rect x="702.0" y="74" width="96" height="32" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="750.0" y="95.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Bibliothek</text>
+  <rect x="613.0" y="169" width="74" height="32" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="650.0" y="190.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Gang</text>
+  <rect x="493.0" y="264" width="74" height="32" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="530.0" y="285.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Aula</text>
+  <rect x="603.0" y="314" width="74" height="32" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="640.0" y="335.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Buffet</text>
+  <rect x="723.0" y="264" width="74" height="32" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="760.0" y="285.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Stiege</text>
+  <text x="635.0" y="368.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#6b7280" text-anchor="middle">Knoten = Räume, Kanten = Türen</text>
+</svg>

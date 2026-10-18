@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="360" viewBox="0 0 1000 360" role="img" aria-label="Die Serviceklasse liegt zwischen Aufrufer und DbContext">
+<title>Die Serviceklasse liegt zwischen Aufrufer und DbContext</title>
+<defs><marker id="arrow-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9d9d9c"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0090d4"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f39000"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#71af2e"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#cc0935"/></marker><marker id="arrow-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6cc1b0"/></marker></defs>
+<rect x="1" y="1" width="998" height="358" rx="14" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="30.0" y="42.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Wo liegt die Serviceklasse?</text>
+<rect x="30.0" y="110.0" width="190.0" height="130.0" rx="8" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="125.0" y="140.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">Aufrufer</text>
+<text x="125.0" y="172.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">Web API, UI</text>
+<text x="125.0" y="194.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">oder Test</text>
+<rect x="300.0" y="110.0" width="190.0" height="130.0" rx="8" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="395.0" y="140.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">EventService</text>
+<text x="395.0" y="172.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">Regeln prüfen</text>
+<text x="395.0" y="194.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">Abfragen formulieren</text>
+<text x="395.0" y="216.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">DTOs erzeugen</text>
+<rect x="580.0" y="110.0" width="190.0" height="130.0" rx="8" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="675.0" y="140.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">EventContext</text>
+<text x="675.0" y="172.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">DbSets,</text>
+<text x="675.0" y="194.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">Change Tracker</text>
+<path d="M850,125 v100 a60.0,10 0 0 0 120,0 v-100" fill="#e5f4f1" stroke="#6cc1b0" stroke-width="1.5"/>
+<ellipse cx="910.0" cy="125" rx="60.0" ry="10" fill="#e5f4f1" stroke="#6cc1b0" stroke-width="1.5"/>
+<text x="910.0" y="187.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">Datenbank</text>
+<line x1="220.0" y1="150.0" x2="298.0" y2="150.0" stroke="#9d9d9c" stroke-width="2" marker-end="url(#arrow-grey)"/>
+<text x="259.0" y="140.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" text-anchor="middle" fill="#5f5f5e" xml:space="preserve">Methode</text>
+<line x1="490.0" y1="150.0" x2="578.0" y2="150.0" stroke="#9d9d9c" stroke-width="2" marker-end="url(#arrow-grey)"/>
+<text x="534.0" y="140.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" text-anchor="middle" fill="#5f5f5e" xml:space="preserve">LINQ</text>
+<line x1="770.0" y1="150.0" x2="848.0" y2="150.0" stroke="#9d9d9c" stroke-width="2" marker-end="url(#arrow-grey)"/>
+<text x="809.0" y="140.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" text-anchor="middle" fill="#5f5f5e" xml:space="preserve">SQL</text>
+<line x1="848.0" y1="205.0" x2="770.0" y2="205.0" stroke="#71af2e" stroke-width="2" marker-end="url(#arrow-green)"/>
+<text x="809.0" y="225.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" text-anchor="middle" fill="#4a7a1c" xml:space="preserve">Zeilen</text>
+<line x1="578.0" y1="205.0" x2="490.0" y2="205.0" stroke="#71af2e" stroke-width="2" marker-end="url(#arrow-green)"/>
+<text x="534.0" y="225.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" text-anchor="middle" fill="#4a7a1c" xml:space="preserve">Entities</text>
+<line x1="298.0" y1="205.0" x2="220.0" y2="205.0" stroke="#71af2e" stroke-width="2" marker-end="url(#arrow-green)"/>
+<text x="259.0" y="225.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" text-anchor="middle" fill="#4a7a1c" xml:space="preserve">DTO</text>
+<rect x="30.0" y="265.0" width="156.2" height="30.0" rx="6" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+<text x="38.0" y="285.2" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="140.2" lengthAdjust="spacingAndGlyphs">EventWithShowsDto</text>
+<text x="215.0" y="286.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">← nur die Daten, die der Aufrufer braucht</text>
+<text x="30.0" y="330.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Der Aufrufer kennt keine Entities und keinen DbContext. Er ruft eine Methode auf und bekommt ein DTO.</text>
+</svg>

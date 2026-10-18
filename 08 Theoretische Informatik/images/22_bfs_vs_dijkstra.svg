@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="470" viewBox="0 0 940 470">
+  <rect x="0.5" y="0.5" width="939" height="469" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="20" y="30" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#6b7280">Straßennetz stark vereinfacht, Entfernungen in km gerundet</text>
+  <line x1="85" y1="250" x2="255" y2="290" stroke="#1f2937" stroke-width="1.6"/>
+  <line x1="255" y1="290" x2="430" y2="190" stroke="#1f2937" stroke-width="1.6"/>
+  <line x1="430" y1="190" x2="570" y2="90" stroke="#1f2937" stroke-width="1.6"/>
+  <line x1="430" y1="190" x2="560" y2="400" stroke="#1f2937" stroke-width="1.6"/>
+  <line x1="570" y1="90" x2="720" y2="90" stroke="#16a34a" stroke-width="5"/>
+  <line x1="570" y1="90" x2="720" y2="330" stroke="#ea580c" stroke-width="5" stroke-dasharray="10 6"/>
+  <line x1="720" y1="90" x2="860" y2="110" stroke="#16a34a" stroke-width="5"/>
+  <line x1="860" y1="110" x2="860" y2="230" stroke="#16a34a" stroke-width="5"/>
+  <line x1="860" y1="110" x2="720" y2="330" stroke="#1f2937" stroke-width="1.6"/>
+  <line x1="860" y1="230" x2="720" y2="330" stroke="#ea580c" stroke-width="5" stroke-dasharray="10 6"/>
+  <line x1="720" y1="330" x2="560" y2="400" stroke="#1f2937" stroke-width="1.6"/>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937">
+    <text x="170" y="258" text-anchor="middle">195</text>
+    <text x="354" y="258" text-anchor="middle">185</text>
+    <text x="488" y="128" text-anchor="middle">130</text>
+    <text x="484" y="302" text-anchor="end">225</text>
+    <text x="645" y="82" text-anchor="middle">130</text>
+    <text x="632" y="222" text-anchor="end">220</text>
+    <text x="800" y="92" text-anchor="middle">65</text>
+    <text x="872" y="175" text-anchor="start">60</text>
+    <text x="776" y="210" text-anchor="end">200</text>
+    <text x="802" y="298" text-anchor="middle">165</text>
+    <text x="648" y="384" text-anchor="middle">140</text>
+  </g>
+  <rect x="35.0" y="234" width="100" height="32" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="85" y="255" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">Bregenz</text>
+  <rect x="205.0" y="274" width="100" height="32" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="255" y="295" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">Innsbruck</text>
+  <rect x="380.0" y="174" width="100" height="32" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="430" y="195" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">Salzburg</text>
+  <rect x="538.0" y="74" width="64" height="32" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="570" y="95" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">Linz</text>
+  <rect x="670.0" y="74" width="100" height="32" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="720" y="95" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">St. Pölten</text>
+  <rect x="828.0" y="94" width="64" height="32" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="860" y="115" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">Wien</text>
+  <rect x="810.0" y="214" width="100" height="32" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="860" y="235" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">Eisenstadt</text>
+  <rect x="688.0" y="314" width="64" height="32" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="720" y="335" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">Graz</text>
+  <rect x="510.0" y="384" width="100" height="32" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="560" y="405" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">Klagenfurt</text>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" fill="#1f2937" text-anchor="middle">
+    <text x="860" y="264">Start</text>
+    <text x="570" y="64">Ziel</text>
+  </g>
+  <line x1="30" y1="418" x2="80" y2="418" stroke="#16a34a" stroke-width="5"/>
+  <line x1="30" y1="446" x2="80" y2="446" stroke="#ea580c" stroke-width="5" stroke-dasharray="10 6"/>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937">
+    <text x="92" y="423">kürzester Weg (Dijkstra): 3 Kanten, 60 + 65 + 130 = 255 km</text>
+    <text x="92" y="451">wenigste Kanten (BFS): 2 Kanten, 165 + 220 = 385 km</text>
+  </g>
+</svg>

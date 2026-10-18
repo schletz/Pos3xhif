@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="412" viewBox="0 0 800 412">
+  <rect x="0.5" y="0.5" width="799" height="411" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <defs>
+    <marker id="arrowA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#ea580c"/>
+    </marker>
+  </defs>
+  <text x="20" y="30" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600" fill="#1f2937">Editierdistanz von TRAUM nach BAUM: d[i, j] für die ersten i bzw. j Buchstaben</text>
+  <text x="250" y="64" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#6b7280" text-anchor="middle">Zielwort</text>
+  <text x="30" y="254" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#6b7280" text-anchor="middle" transform="rotate(-90 30 254)">Ausgangswort</text>
+  <g stroke="#d1d5db" stroke-width="1">
+    <rect x="40" y="70" width="360" height="46" fill="#f3f4f6"/>
+    <rect x="40" y="116" width="60" height="276" fill="#f3f4f6"/>
+    <rect x="100" y="116" width="60" height="46" fill="#dcfce7"/>
+    <rect x="160" y="116" width="60" height="46" fill="#f3f4f6"/>
+    <rect x="220" y="116" width="60" height="46" fill="#f3f4f6"/>
+    <rect x="280" y="116" width="60" height="46" fill="#f3f4f6"/>
+    <rect x="340" y="116" width="60" height="46" fill="#f3f4f6"/>
+    <rect x="100" y="162" width="60" height="46" fill="#dcfce7"/>
+    <rect x="160" y="162" width="60" height="46" fill="#ffffff"/>
+    <rect x="220" y="162" width="60" height="46" fill="#ffffff"/>
+    <rect x="280" y="162" width="60" height="46" fill="#ffffff"/>
+    <rect x="340" y="162" width="60" height="46" fill="#ffffff"/>
+    <rect x="100" y="208" width="60" height="46" fill="#f3f4f6"/>
+    <rect x="160" y="208" width="60" height="46" fill="#dcfce7"/>
+    <rect x="220" y="208" width="60" height="46" fill="#ffffff"/>
+    <rect x="280" y="208" width="60" height="46" fill="#ffffff"/>
+    <rect x="340" y="208" width="60" height="46" fill="#ffffff"/>
+    <rect x="100" y="254" width="60" height="46" fill="#f3f4f6"/>
+    <rect x="160" y="254" width="60" height="46" fill="#ffffff"/>
+    <rect x="220" y="254" width="60" height="46" fill="#dcfce7"/>
+    <rect x="280" y="254" width="60" height="46" fill="#ffffff"/>
+    <rect x="340" y="254" width="60" height="46" fill="#ffffff"/>
+    <rect x="100" y="300" width="60" height="46" fill="#f3f4f6"/>
+    <rect x="160" y="300" width="60" height="46" fill="#ffffff"/>
+    <rect x="220" y="300" width="60" height="46" fill="#ffffff"/>
+    <rect x="280" y="300" width="60" height="46" fill="#dcfce7"/>
+    <rect x="340" y="300" width="60" height="46" fill="#ffffff"/>
+    <rect x="100" y="346" width="60" height="46" fill="#f3f4f6"/>
+    <rect x="160" y="346" width="60" height="46" fill="#ffffff"/>
+    <rect x="220" y="346" width="60" height="46" fill="#ffffff"/>
+    <rect x="280" y="346" width="60" height="46" fill="#ffffff"/>
+    <rect x="340" y="346" width="60" height="46" fill="#dcfce7"/>
+  </g>
+  <g fill="none" stroke-width="2.5">
+    <rect x="342" y="348" width="56" height="42" rx="3" stroke="#16a34a"/>
+    <rect x="282" y="302" width="56" height="42" rx="3" stroke="#16a34a"/>
+    <rect x="222" y="256" width="56" height="42" rx="3" stroke="#16a34a"/>
+    <rect x="162" y="210" width="56" height="42" rx="3" stroke="#16a34a"/>
+    <rect x="102" y="164" width="56" height="42" rx="3" stroke="#16a34a"/>
+    <rect x="102" y="118" width="56" height="42" rx="3" stroke="#16a34a"/>
+    <rect x="162" y="210" width="56" height="42" rx="3" stroke="#ea580c" stroke-dasharray="5 3"/>
+  </g>
+  <g stroke="#ea580c" stroke-width="2" fill="none" marker-end="url(#arrowA)">
+    <line x1="180" y1="221" x2="142" y2="197"/>
+    <line x1="204" y1="223" x2="204" y2="199"/>
+    <line x1="182" y1="244" x2="146" y2="244"/>
+  </g>
+  <g font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937" text-anchor="middle" stroke="#ffffff" stroke-width="4" paint-order="stroke">
+    <text x="130" y="96" font-weight="600" stroke="none">ε</text>
+    <text x="190" y="96" font-weight="600" stroke="none">B</text>
+    <text x="250" y="96" font-weight="600" stroke="none">A</text>
+    <text x="310" y="96" font-weight="600" stroke="none">U</text>
+    <text x="370" y="96" font-weight="600" stroke="none">M</text>
+    <text x="70" y="145" font-weight="600" stroke="none">ε</text>
+    <text x="70" y="191" font-weight="600" stroke="none">T</text>
+    <text x="70" y="237" font-weight="600" stroke="none">R</text>
+    <text x="70" y="283" font-weight="600" stroke="none">A</text>
+    <text x="70" y="329" font-weight="600" stroke="none">U</text>
+    <text x="70" y="375" font-weight="600" stroke="none">M</text>
+    <text x="130" y="145">0</text>
+    <text x="190" y="145">1</text>
+    <text x="250" y="145">2</text>
+    <text x="310" y="145">3</text>
+    <text x="370" y="145">4</text>
+    <text x="130" y="191">1</text>
+    <text x="190" y="191">1</text>
+    <text x="250" y="191">2</text>
+    <text x="310" y="191">3</text>
+    <text x="370" y="191">4</text>
+    <text x="130" y="237">2</text>
+    <text x="190" y="237">2</text>
+    <text x="250" y="237">2</text>
+    <text x="310" y="237">3</text>
+    <text x="370" y="237">4</text>
+    <text x="130" y="283">3</text>
+    <text x="190" y="283">3</text>
+    <text x="250" y="283">2</text>
+    <text x="310" y="283">3</text>
+    <text x="370" y="283">4</text>
+    <text x="130" y="329">4</text>
+    <text x="190" y="329">4</text>
+    <text x="250" y="329">3</text>
+    <text x="310" y="329">2</text>
+    <text x="370" y="329">3</text>
+    <text x="130" y="375">5</text>
+    <text x="190" y="375">5</text>
+    <text x="250" y="375">4</text>
+    <text x="310" y="375">3</text>
+    <text x="370" y="375">2</text>
+  </g>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937">
+    <text x="430" y="92" font-weight="600">Zelle d[2, 1] (TR nach B, gestrichelt):</text>
+    <text x="430" y="112">R ≠ B, also 1 + Minimum aus</text>
+    <text x="430" y="132" fill="#ea580c">↖ ersetzen:  d[1, 0] = 1</text>
+    <text x="430" y="152" fill="#ea580c">↑ löschen:  d[1, 1] = 1</text>
+    <text x="430" y="172" fill="#ea580c">← einfügen:  d[2, 0] = 2</text>
+    <text x="430" y="192">d[2, 1] = 1 + 1 = 2</text>
+    <text x="430" y="232" font-weight="600">Rückweg (grün) ab d[5, 4] = 2:</text>
+    <text x="430" y="252">• T löschen</text>
+    <text x="430" y="272">• R durch B ersetzen</text>
+    <text x="430" y="292">• A behalten</text>
+    <text x="430" y="312">• U behalten</text>
+    <text x="430" y="332">• M behalten</text>
+  </g>
+</svg>

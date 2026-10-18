@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="560" viewBox="0 0 960 560">
+<rect x="0.5" y="0.5" width="959.0" height="559.0" rx="8" fill="#ffffff" stroke="#9d9d9c" stroke-width="1"/>
+<text x="480.0" y="38.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="21" font-weight="bold" fill="#1d1d1b" text-anchor="middle">Extract Method: Was verschieden ist, wird Parameter</text>
+<rect x="30.0" y="62.0" width="440.0" height="132.0" rx="8" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="44.0" y="86.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1d1d1b" text-anchor="start">Vorher: CalculateTotalAustria</text>
+<rect x="48.0" y="96.0" width="142.8" height="22.0" rx="0" fill="#d1ebf7" stroke="#0090d4" stroke-width="1"/>
+<text x="48.0" y="112.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="142.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">net = Sum(lines);</text>
+<rect x="48.0" y="122.0" width="243.6" height="22.0" rx="0" fill="#d1ebf7" stroke="#0090d4" stroke-width="1"/>
+<rect x="289.6" y="121.0" width="46.0" height="24.0" rx="3" fill="#fdebd1" stroke="#f39000" stroke-width="2" stroke-dasharray="4 3"/>
+<rect x="333.6" y="122.0" width="8.4" height="22.0" rx="0" fill="#d1ebf7" stroke="#0090d4" stroke-width="1"/>
+<text x="48.0" y="138.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="243.6" lengthAdjust="spacingAndGlyphs" xml:space="preserve">shipping = net &gt;= 60m ? 0m : </text>
+<text x="291.6" y="138.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="42.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">4.90m</text>
+<text x="333.6" y="138.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">;</text>
+<rect x="48.0" y="148.0" width="218.4" height="22.0" rx="0" fill="#d1ebf7" stroke="#0090d4" stroke-width="1"/>
+<rect x="264.4" y="147.0" width="46.0" height="24.0" rx="3" fill="#fdebd1" stroke="#f39000" stroke-width="2" stroke-dasharray="4 3"/>
+<rect x="308.4" y="148.0" width="8.4" height="22.0" rx="0" fill="#d1ebf7" stroke="#0090d4" stroke-width="1"/>
+<text x="48.0" y="164.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="218.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">return (net + shipping) * </text>
+<text x="266.4" y="164.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="42.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">1.20m</text>
+<text x="308.4" y="164.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">;</text>
+<rect x="490.0" y="62.0" width="440.0" height="132.0" rx="8" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="504.0" y="86.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1d1d1b" text-anchor="start">Vorher: CalculateTotalGermany</text>
+<rect x="508.0" y="96.0" width="142.8" height="22.0" rx="0" fill="#d1ebf7" stroke="#0090d4" stroke-width="1"/>
+<text x="508.0" y="112.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="142.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">net = Sum(lines);</text>
+<rect x="508.0" y="122.0" width="243.6" height="22.0" rx="0" fill="#d1ebf7" stroke="#0090d4" stroke-width="1"/>
+<rect x="749.6" y="121.0" width="46.0" height="24.0" rx="3" fill="#fdebd1" stroke="#f39000" stroke-width="2" stroke-dasharray="4 3"/>
+<rect x="793.6" y="122.0" width="8.4" height="22.0" rx="0" fill="#d1ebf7" stroke="#0090d4" stroke-width="1"/>
+<text x="508.0" y="138.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="243.6" lengthAdjust="spacingAndGlyphs" xml:space="preserve">shipping = net &gt;= 60m ? 0m : </text>
+<text x="751.6" y="138.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="42.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">6.90m</text>
+<text x="793.6" y="138.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">;</text>
+<rect x="508.0" y="148.0" width="218.4" height="22.0" rx="0" fill="#d1ebf7" stroke="#0090d4" stroke-width="1"/>
+<rect x="724.4" y="147.0" width="46.0" height="24.0" rx="3" fill="#fdebd1" stroke="#f39000" stroke-width="2" stroke-dasharray="4 3"/>
+<rect x="768.4" y="148.0" width="8.4" height="22.0" rx="0" fill="#d1ebf7" stroke="#0090d4" stroke-width="1"/>
+<text x="508.0" y="164.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="218.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">return (net + shipping) * </text>
+<text x="726.4" y="164.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="42.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">1.19m</text>
+<text x="768.4" y="164.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">;</text>
+<line x1="480.0" y1="204" x2="480.0" y2="250" stroke="#1d1d1b" stroke-width="2"/>
+<polygon points="472.0,248 488.0,248 480.0,262" fill="#1d1d1b"/>
+<text x="496.0" y="232.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1d1d1b" text-anchor="start">Extract Method (Ctrl+R, Ctrl+M)</text>
+<text x="464.0" y="232.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#5f5f5e" text-anchor="end">1 Methode statt 2 Blöcke</text>
+<rect x="30.0" y="272.0" width="560.0" height="196.0" rx="8" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="44.0" y="296.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1d1d1b" text-anchor="start">Nachher: neue private Methode</text>
+<rect x="365.2" y="305.0" width="104.8" height="24.0" rx="3" fill="#fdebd1" stroke="#f39000" stroke-width="2" stroke-dasharray="4 3"/>
+<rect x="482.8" y="305.0" width="62.8" height="24.0" rx="3" fill="#fdebd1" stroke="#f39000" stroke-width="2" stroke-dasharray="4 3"/>
+<text x="48.0" y="322.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="319.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">private decimal CalculateTotal(lines, </text>
+<text x="367.2" y="322.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="100.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">shippingCost</text>
+<text x="468.0" y="322.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="16.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">, </text>
+<text x="484.8" y="322.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="58.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">taxRate</text>
+<text x="543.6" y="322.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">)</text>
+<text x="48.0" y="348.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">{</text>
+<text x="48.0" y="374.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="176.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">    net = Sum(lines);</text>
+<rect x="323.2" y="383.0" width="104.8" height="24.0" rx="3" fill="#fdebd1" stroke="#f39000" stroke-width="2" stroke-dasharray="4 3"/>
+<text x="48.0" y="400.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="277.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">    shipping = net &gt;= 60m ? 0m : </text>
+<text x="325.2" y="400.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="100.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">shippingCost</text>
+<text x="426.0" y="400.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">;</text>
+<rect x="340.0" y="409.0" width="62.8" height="24.0" rx="3" fill="#fdebd1" stroke="#f39000" stroke-width="2" stroke-dasharray="4 3"/>
+<text x="48.0" y="426.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="294.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">    return (net + shipping) * (1 + </text>
+<text x="342.0" y="426.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="58.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">taxRate</text>
+<text x="400.8" y="426.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="16.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">);</text>
+<text x="48.0" y="452.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">}</text>
+<rect x="610.0" y="272.0" width="320.0" height="196.0" rx="8" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="624.0" y="296.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1d1d1b" text-anchor="start">Nachher: Aufrufe</text>
+<text x="626.0" y="318.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#5f5f5e" text-anchor="start">CalculateTotalAustria:</text>
+<rect x="808.8" y="325.0" width="46.0" height="24.0" rx="3" fill="#fdebd1" stroke="#f39000" stroke-width="2" stroke-dasharray="4 3"/>
+<rect x="867.6" y="325.0" width="46.0" height="24.0" rx="3" fill="#fdebd1" stroke="#f39000" stroke-width="2" stroke-dasharray="4 3"/>
+<text x="626.0" y="342.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="184.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">CalculateTotal(lines, </text>
+<text x="810.8" y="342.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="42.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">4.90m</text>
+<text x="852.8" y="342.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="16.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">, </text>
+<text x="869.6" y="342.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="42.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">0.20m</text>
+<text x="911.6" y="342.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">)</text>
+<text x="626.0" y="388.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#5f5f5e" text-anchor="start">CalculateTotalGermany:</text>
+<rect x="808.8" y="395.0" width="46.0" height="24.0" rx="3" fill="#fdebd1" stroke="#f39000" stroke-width="2" stroke-dasharray="4 3"/>
+<rect x="867.6" y="395.0" width="46.0" height="24.0" rx="3" fill="#fdebd1" stroke="#f39000" stroke-width="2" stroke-dasharray="4 3"/>
+<text x="626.0" y="412.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="184.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">CalculateTotal(lines, </text>
+<text x="810.8" y="412.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="42.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">6.90m</text>
+<text x="852.8" y="412.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="16.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">, </text>
+<text x="869.6" y="412.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="42.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">0.19m</text>
+<text x="911.6" y="412.0" font-family="Consolas, Menlo, 'DejaVu Sans Mono', monospace" font-size="14" fill="#1d1d1b" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">)</text>
+<rect x="30.0" y="486.0" width="34.0" height="20.0" rx="0" fill="#d1ebf7" stroke="#0090d4" stroke-width="1"/>
+<text x="47.0" y="501.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1d1d1b" text-anchor="middle">=</text>
+<text x="74.0" y="502.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#1d1d1b" text-anchor="start">gleich in beiden Blöcken: wandert in den Methodenrumpf</text>
+<rect x="30.0" y="518.0" width="34.0" height="22.0" rx="3" fill="#fdebd1" stroke="#f39000" stroke-width="2" stroke-dasharray="4 3"/>
+<text x="47.0" y="534.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1d1d1b" text-anchor="middle">≠</text>
+<text x="74.0" y="535.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#1d1d1b" text-anchor="start">verschieden: wird zum Parameter, der Aufruf übergibt den Wert</text>
+</svg>

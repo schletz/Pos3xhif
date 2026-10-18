@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="240" viewBox="0 0 560 240">
+  <rect x="0.5" y="0.5" width="559" height="239" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/>
+    </marker>
+  </defs>
+  <g fill="none" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)">
+    <line x1="50" y1="120" x2="98" y2="120"/>
+    <path d="M111,100 C95,58 145,58 129,100"/>
+    <line x1="142" y1="120" x2="258" y2="120"/>
+    <path d="M271,100 C255,58 305,58 289,100"/>
+    <path d="M299,109 Q360,85 421,109"/>
+    <path d="M421,131 Q360,155 299,131"/>
+    <path d="M440,142 C440,215 120,215 120,142"/>
+  </g>
+  <g font-family="Consolas, Menlo, monospace" font-size="17" fill="#1f2937" text-anchor="middle">
+    <text x="120" y="60">b</text>
+    <text x="200" y="112">a</text>
+    <text x="280" y="60">a</text>
+    <text x="360" y="88">b</text>
+    <text x="360" y="164">a</text>
+    <text x="280" y="222">b</text>
+  </g>
+  <g stroke="#2563eb" stroke-width="2" fill="#dbeafe">
+    <circle cx="120" cy="120" r="22"/>
+    <circle cx="280" cy="120" r="22"/>
+    <circle cx="440" cy="120" r="22"/>
+    <circle cx="440" cy="120" r="18" fill="none"/>
+  </g>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#1f2937" text-anchor="middle">
+    <text x="120" y="126">q₀</text>
+    <text x="280" y="126">q₁</text>
+    <text x="440" y="126">q₂</text>
+  </g>
+</svg>

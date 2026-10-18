@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="470" viewBox="0 0 1000 470" role="img" aria-label="Where filtert mit einem Predicate, Select projiziert auf einen anderen Typ">
+<title>Where filtert mit einem Predicate, Select projiziert auf einen anderen Typ</title>
+<defs><marker id="arrow-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9d9d9c"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0090d4"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f39000"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#71af2e"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#cc0935"/></marker><marker id="arrow-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6cc1b0"/></marker></defs>
+<rect x="1" y="1" width="998" height="468" rx="14" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="30.0" y="42.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Where filtert, Select projiziert</text>
+<text x="30.0" y="82.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">5 × Person</text>
+<rect x="30.0" y="95.0" width="130.4" height="36.0" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="38.0" y="118.6" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="114.4" lengthAdjust="spacingAndGlyphs">Anna  Wien 17</text>
+<text x="205.0" y="120.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="#4a7a1c" xml:space="preserve">✓</text>
+<rect x="30.0" y="145.0" width="130.4" height="36.0" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="38.0" y="168.6" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="114.4" lengthAdjust="spacingAndGlyphs">Ben   Graz 24</text>
+<text x="205.0" y="170.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="#a8072c" xml:space="preserve">✗</text>
+<rect x="30.0" y="195.0" width="130.4" height="36.0" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="38.0" y="218.6" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="114.4" lengthAdjust="spacingAndGlyphs">Clara Wien 31</text>
+<text x="205.0" y="220.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="#4a7a1c" xml:space="preserve">✓</text>
+<rect x="30.0" y="245.0" width="130.4" height="36.0" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="38.0" y="268.6" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="114.4" lengthAdjust="spacingAndGlyphs">David Linz 16</text>
+<text x="205.0" y="270.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="#a8072c" xml:space="preserve">✗</text>
+<rect x="30.0" y="295.0" width="130.4" height="36.0" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="38.0" y="318.6" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="114.4" lengthAdjust="spacingAndGlyphs">Emma  Wien 45</text>
+<text x="205.0" y="320.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="#4a7a1c" xml:space="preserve">✓</text>
+<rect x="240.0" y="160.0" width="230.0" height="92.0" rx="8" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="355.0" y="186.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="17" font-weight="bold" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">Where</text>
+<text x="355.0" y="212.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="15" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">p =&gt; p.City == &quot;Wien&quot;</text>
+<text x="355.0" y="238.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">Predicate: Person → bool</text>
+<line x1="220.0" y1="206.0" x2="238.0" y2="206.0" stroke="#f39000" stroke-width="2" marker-end="url(#arrow-orange)"/>
+<line x1="470.0" y1="206.0" x2="508.0" y2="206.0" stroke="#f39000" stroke-width="2" marker-end="url(#arrow-orange)"/>
+<text x="515.0" y="82.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">3 × Person</text>
+<rect x="515.0" y="145.0" width="130.4" height="36.0" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="523.0" y="168.6" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="114.4" lengthAdjust="spacingAndGlyphs">Anna  Wien 17</text>
+<rect x="515.0" y="195.0" width="130.4" height="36.0" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="523.0" y="218.6" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="114.4" lengthAdjust="spacingAndGlyphs">Clara Wien 31</text>
+<rect x="515.0" y="245.0" width="130.4" height="36.0" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="523.0" y="268.6" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="114.4" lengthAdjust="spacingAndGlyphs">Emma  Wien 45</text>
+<rect x="690.0" y="160.0" width="170.0" height="92.0" rx="8" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+<text x="775.0" y="186.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="17" font-weight="bold" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">Select</text>
+<text x="775.0" y="212.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="15" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">p =&gt; p.FirstName</text>
+<text x="775.0" y="238.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">Projection: Person → string</text>
+<line x1="675.0" y1="206.0" x2="688.0" y2="206.0" stroke="#71af2e" stroke-width="2" marker-end="url(#arrow-green)"/>
+<line x1="860.0" y1="206.0" x2="880.0" y2="206.0" stroke="#71af2e" stroke-width="2" marker-end="url(#arrow-green)"/>
+<text x="885.0" y="82.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">3 × string</text>
+<rect x="885.0" y="145.0" width="68.8" height="36.0" rx="6" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="893.0" y="168.6" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="52.8" lengthAdjust="spacingAndGlyphs">&quot;Anna&quot;</text>
+<rect x="885.0" y="195.0" width="77.6" height="36.0" rx="6" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="893.0" y="218.6" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="61.6" lengthAdjust="spacingAndGlyphs">&quot;Clara&quot;</text>
+<rect x="885.0" y="245.0" width="68.8" height="36.0" rx="6" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="893.0" y="268.6" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="52.8" lengthAdjust="spacingAndGlyphs">&quot;Emma&quot;</text>
+<text x="515.0" y="320.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="start" fill="#a35f00" xml:space="preserve">weniger Elemente,</text>
+<text x="515.0" y="340.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="start" fill="#a35f00" xml:space="preserve">gleicher Typ</text>
+<text x="885.0" y="320.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="start" fill="#4a7a1c" xml:space="preserve">gleich viele</text>
+<text x="885.0" y="340.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="start" fill="#4a7a1c" xml:space="preserve">Elemente,</text>
+<text x="885.0" y="360.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="start" fill="#4a7a1c" xml:space="preserve">anderer Typ</text>
+<rect x="30.0" y="375.0" width="940.0" height="72.0" rx="8" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="50.0" y="403.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">In SQL:</text>
+<text x="130.0" y="403.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">SELECT FirstName FROM Persons WHERE City = &#x27;Wien&#x27;</text>
+<text x="130.0" y="431.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Where entspricht WHERE (Filterung), Select entspricht der SELECT-Liste (Projektion).</text>
+</svg>

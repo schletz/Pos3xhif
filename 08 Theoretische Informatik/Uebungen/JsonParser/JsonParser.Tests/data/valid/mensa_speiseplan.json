@@ -1,0 +1,26 @@
+{
+  "mensa": "Mensa Spengergasse",
+  "woche": 42,
+  "tage": [
+    {
+      "tag": "Montag",
+      "gerichte": [
+        { "name": "Wiener Schnitzel mit Erdäpfelsalat", "preis": 7.90, "vegetarisch": false, "allergene": ["A", "C", "G"] },
+        { "name": "Gemüselaibchen", "preis": 5.50, "vegetarisch": true, "allergene": ["A"] }
+      ]
+    },
+    {
+      "tag": "Dienstag",
+      "gerichte": [
+        { "name": "Kaspressknödelsuppe", "preis": 4.20, "vegetarisch": true, "allergene": ["A", "C", "G", "L"] },
+        { "name": "Tafelspitz", "preis": 8.40, "vegetarisch": false, "allergene": [] }
+      ]
+    },
+    {
+      "tag": "Mittwoch",
+      "gerichte": [],
+      "hinweis": "Wandertag, die Mensa bleibt geschlossen."
+    }
+  ],
+  "aktion": null
+}

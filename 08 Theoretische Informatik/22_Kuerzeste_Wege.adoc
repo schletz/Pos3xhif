@@ -1,0 +1,347 @@
+= Kürzeste Wege mit Dijkstra
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Du willst mit dem Auto von Graz nach Bregenz fahren.
+Das Navi sucht dir nicht die Route mit den wenigsten Straßenabschnitten, sondern die mit den wenigsten Kilometern (oder Minuten).
+Im Graphen dazu hat jede Kante ein *Gewicht*.
+Gesucht ist der Weg, bei dem die Summe der Gewichte am kleinsten ist.
+Das Standardverfahren dafür hat der niederländische Informatiker Edsger W. Dijkstra 1956 erfunden.
+Es steckt bis heute in Navigationssystemen, in Routern im Internet und in Spielen, in denen Figuren den Weg über eine Karte finden.
+
+[TIP]
+====
+*Zum Selbst-Erarbeiten: der interaktive Dijkstra-Trainer*
+
+Im https://die-spengergasse.github.io/course-pos-csharp_basics/08%20Theoretische%20Informatik/22_Kuerzeste_Wege.html[Dijkstra-Trainer] siehst du den Algorithmus mit Distanztabelle und Warteschlange als Animation.
+Danach führst du ihn selbst Schritt für Schritt aus, auch auf Zufallsgraphen, und bekommst bei jedem Schritt Rückmeldung.
+So hast du beliebig viele Übungsaufgaben.
+====
+
+== Gewichtete Graphen
+
+In einem *gewichteten Graphen* trägt jede Kante eine Zahl, ihr _Gewicht_.
+Was die Zahl bedeutet, hängt von der Anwendung ab: Kilometer, Fahrzeit in Minuten, Kosten in Euro oder Energie in kWh.
+
+* Die *Länge eines Weges* ist die Summe der Gewichte seiner Kanten.
+Die Anzahl der Kanten spielt keine Rolle.
+* Ein *kürzester Weg* von s nach v ist ein Weg mit der kleinsten Länge.
+Es kann mehrere gleich lange geben.
+* Die *Distanz* d(v) ist die Länge eines kürzesten Weges vom Startknoten s zu v. Es gilt d(s) = 0. Ist v gar nicht erreichbar, schreibt man d(v) = ∞.
+
+Als Beispiel dient in dieser Einheit ein Straßennetz zwischen den österreichischen Landeshauptstädten.
+Die Kilometer sind gerundet und das Netz ist *stark vereinfacht*: Es enthält nur einige Hauptverbindungen, echte Routen können anders verlaufen.
+Jede Straße ist in beide Richtungen befahrbar, der Graph ist also ungerichtet.
+
+[cols=",,>",options="header"]
+|===
+|Von |Nach |km
+|Bregenz |Innsbruck |195
+|Innsbruck |Salzburg |185
+|Salzburg |Linz |130
+|Salzburg |Klagenfurt |225
+|Linz |St. Pölten |130
+|Linz |Graz |220
+|St. Pölten |Wien |65
+|Wien |Eisenstadt |60
+|Wien |Graz |200
+|Eisenstadt |Graz |165
+|Graz |Klagenfurt |140
+|===
+
+== Warum die Breitensuche hier nicht reicht
+
+Die Breitensuche (BFS) findet den Weg mit den *wenigsten Kanten*.
+Das ist nur dann der kürzeste Weg, wenn alle Kanten gleich lang sind.
+Im Straßennetz geht das schief.
+Suchst du mit BFS einen Weg von Eisenstadt nach Linz, bekommst du Eisenstadt → Graz → Linz.
+Das sind nur zwei Kanten, aber 385 km.
+Über Wien und St.
+Pölten sind es drei Kanten, aber nur 255 km.
+
+image::{root_dir}/images/22_bfs_vs_dijkstra.svg[]
+
+Man kann sich Dijkstra wie eine Breitensuche vorstellen, die nicht Kante für Kante, sondern Kilometer für Kilometer wächst.
+Stell dir vor, in Eisenstadt startet eine Welle, die sich auf allen Straßen gleich schnell ausbreitet.
+Die Städte werden in der Reihenfolge erreicht, in der die Welle dort ankommt: Wien nach 60 km, St.
+Pölten nach 125 km, Graz nach 165 km und Linz nach 255 km.
+Die Reihenfolge, in der die Welle ankommt, ist genau die Reihenfolge der Distanzen.
+
+== Die Idee des Algorithmus
+
+Dijkstra führt eine *Distanztabelle*.
+Darin steht für jeden Knoten die bisher beste bekannte Distanz und der *Vorgänger* auf diesem Weg.
+Am Anfang hat der Start die Distanz 0 und alle anderen Knoten ∞.
+Jeder Knoten ist entweder _offen_ oder _fertig_.
+Fertig heißt: Die Distanz in der Tabelle ist endgültig.
+
+. Wähle unter den offenen Knoten den mit der *kleinsten Distanz*.
+Nenne ihn u. Er ist ab jetzt fertig.
+. Prüfe jeden Nachbarn v von u, der noch offen ist.
+Ist d(u) {plus} Gewicht(u, v) *kleiner* als d(v), hast du einen besseren Weg gefunden: Setze d(v) auf den neuen Wert und u als Vorgänger von v. Diesen Schritt nennt man *Relaxieren* der Kante (u, v).
+. Wiederhole, bis kein offener Knoten mit einer Distanz kleiner als ∞ übrig ist.
+
+Warum darf u in Schritt 1 sofort fertig sein?
+Jeder andere Weg zu u müsste über einen anderen offenen Knoten führen.
+Der ist aber schon mindestens so weit entfernt wie u, und jede weitere Kante macht den Weg nur länger, denn *Gewichte sind nicht negativ*.
+Diese Voraussetzung ist der Kern des Algorithmus.
+Am Ende dieser Einheit siehst du, was ohne sie passiert.
+
+== Dijkstra per Hand
+
+Wir berechnen die Distanzen ab *Graz*.
+In der Tabelle steht jede Zeile für einen Durchlauf.
+Die Spalten sind schon in der Reihenfolge sortiert, in der die Städte fertig werden.
+
+image::{root_dir}/images/22_dijkstra_schritte.svg[]
+
+Die interessanten Stellen:
+
+* *Schritt 1:* Graz ist fertig (0 km).
+Alle vier Nachbarn bekommen eine Distanz: Klagenfurt 140, Eisenstadt 165, Wien 200, Linz 220.
+* *Schritt 2:* Klagenfurt hat die kleinste Distanz.
+Von dort erreichst du Salzburg mit 140 {plus} 225 = 365 km.
+* *Schritt 3:* Von Eisenstadt käme man mit 165 {plus} 60 = 225 km nach Wien.
+Wien hat aber schon 200. Der neue Weg ist nicht besser, die Tabelle bleibt gleich.
+* *Schritt 5:* Über Linz erreichst du Salzburg mit 220 {plus} 130 = 350 km.
+Das ist besser als 365. Salzburg bekommt die Distanz 350 und den Vorgänger Linz.
+* *Schritt 8:* Hier taucht Salzburg ein zweites Mal auf, mit dem alten Wert 365. Warum das passiert, klärt der nächste Abschnitt.
+
+Beachte: Die fertigen Distanzen kommen in aufsteigender Reihenfolge, genau wie bei der Welle.
+Ein Knoten, der fertig ist, ändert sich nie wieder.
+
+== Die Prioritätswarteschlange in .NET
+
+In Schritt 1 musst du immer den offenen Knoten mit der kleinsten Distanz finden.
+Dafür gibt es in .NET die Klasse `+PriorityQueue<TElement, TPriority>+`.
+Jeder Eintrag besteht aus einem Element und einer Priorität.
+`Dequeue` und `TryDequeue` liefern immer den Eintrag mit der *kleinsten* Priorität, egal in welcher Reihenfolge du die Einträge hineingelegt hast.
+
+[source,csharp]
+----
+PriorityQueue<string, int> queue = new();
+queue.Enqueue("Salzburg", 365);
+queue.Enqueue("Wien", 200);
+queue.Enqueue("Salzburg", 350);
+Console.WriteLine($"Einträge: {queue.Count}");
+
+while (queue.TryDequeue(out string? city, out int km))
+{
+    Console.WriteLine($"{city} {km}");
+}
+----
+
+[source,text]
+----
+Einträge: 3
+Wien 200
+Salzburg 350
+Salzburg 365
+----
+
+Zwei Eigenschaften musst du kennen:
+
+* Haben zwei Einträge dieselbe Priorität, ist *nicht festgelegt*, welcher zuerst kommt.
+Brauchst du eine feste Reihenfolge, musst du sie selbst in die Priorität einbauen.
+* Es gibt *keine Methode, die die Priorität eines Eintrags verkleinert* (in der Literatur _DecreaseKey_ genannt).
+Findet Dijkstra einen besseren Weg nach Salzburg, legst du Salzburg einfach noch einmal mit der neuen Distanz hinein.
+Der alte Eintrag (Salzburg, 365) bleibt in der Warteschlange.
+Er ist *veraltet*.
+
+Ein veralteter Eintrag stört nicht, solange du ihn erkennst.
+Er kommt immer erst nach dem neuen Eintrag dran, weil seine Priorität größer ist.
+Wenn du ihn herausnimmst, vergleichst du seine Priorität mit der Distanztabelle.
+Ist sie größer als die Distanz in der Tabelle, überspringst du den Eintrag.
+Genau das ist Schritt 8 in der Tabelle oben.
+
+== Dijkstra in C#
+
+Der Graph ist ein `Dictionary`, das jeder Stadt eine Liste ihrer Nachbarn mit der Entfernung zuordnet.
+Die Distanztabelle besteht aus zwei weiteren `Dictionary`-Objekten: eines für die Distanzen und eines für die Vorgänger.
+
+[source,csharp]
+----
+Road[] roads =
+[
+    new("Bregenz", "Innsbruck", 195), new("Innsbruck", "Salzburg", 185),
+    new("Salzburg", "Linz", 130), new("Salzburg", "Klagenfurt", 225),
+    new("Linz", "St. Pölten", 130), new("Linz", "Graz", 220),
+    new("St. Pölten", "Wien", 65), new("Wien", "Eisenstadt", 60),
+    new("Wien", "Graz", 200), new("Eisenstadt", "Graz", 165),
+    new("Graz", "Klagenfurt", 140)
+];
+
+Dictionary<string, List<(string To, int Km)>> graph = [];
+foreach (Road road in roads)
+{
+    AddNeighbor(graph, road.From, road.To, road.Km);
+    AddNeighbor(graph, road.To, road.From, road.Km);
+}
+
+(Dictionary<string, int> distance, Dictionary<string, string> previous) = Dijkstra(graph, "Graz");
+foreach ((string city, int km) in distance.OrderBy(entry => entry.Value))
+{
+    Console.WriteLine($"{city,-11}{km,4} km");
+}
+Console.WriteLine(string.Join(" -> ", BuildPath(previous, "Graz", "Bregenz")));
+
+static void AddNeighbor(Dictionary<string, List<(string To, int Km)>> graph, string from, string to, int km)
+{
+    if (!graph.TryGetValue(from, out List<(string To, int Km)>? neighbors))
+    {
+        neighbors = [];
+        graph[from] = neighbors;
+    }
+    neighbors.Add((to, km));
+}
+
+static (Dictionary<string, int>, Dictionary<string, string>) Dijkstra(
+    Dictionary<string, List<(string To, int Km)>> graph, string start)
+{
+    Dictionary<string, int> distance = new() { [start] = 0 };       // (1)
+    Dictionary<string, string> previous = [];
+    PriorityQueue<string, int> queue = new();
+    queue.Enqueue(start, 0);
+
+    while (queue.TryDequeue(out string? city, out int km))           // (2)
+    {
+        if (km > distance[city]) { continue; }                      // (3)
+        foreach ((string next, int edgeKm) in graph[city])
+        {
+            int newKm = km + edgeKm;
+            if (!distance.TryGetValue(next, out int oldKm) || newKm < oldKm)   // (4)
+            {
+                distance[next] = newKm;
+                previous[next] = city;
+                queue.Enqueue(next, newKm);                          // (5)
+            }
+        }
+    }
+    return (distance, previous);
+}
+
+static List<string> BuildPath(Dictionary<string, string> previous, string start, string target)
+{
+    List<string> path = [target];
+    string city = target;
+    while (city != start)                                           // (6)
+    {
+        city = previous[city];
+        path.Add(city);
+    }
+    path.Reverse();
+    return path;
+}
+
+record Road(string From, string To, int Km);
+----
+
+[source,text]
+----
+Graz          0 km
+Klagenfurt  140 km
+Eisenstadt  165 km
+Wien        200 km
+Linz        220 km
+St. Pölten  265 km
+Salzburg    350 km
+Innsbruck   535 km
+Bregenz     730 km
+Graz -> Linz -> Salzburg -> Innsbruck -> Bregenz
+----
+
+* *(1)* Die Distanztabelle enthält am Anfang nur den Start.
+Ein Knoten, der noch nicht im `Dictionary` steht, hat die Distanz ∞.
+So brauchst du keinen Ersatzwert wie `int.MaxValue`, bei dem eine Addition überlaufen könnte.
+* *(2)* `TryDequeue` liefert den Eintrag mit der kleinsten Distanz und `false`, sobald die Warteschlange leer ist.
+Dann ist der Algorithmus fertig.
+* *(3)* Das ist der Test auf veraltete Einträge.
+Steht in der Tabelle schon eine kleinere Distanz, wurde die Stadt bereits über einen kürzeren Weg bearbeitet.
+Ohne diese Zeile würde Salzburg in Schritt 8 ein zweites Mal bearbeitet werden.
+* *(4)* Relaxieren: Die Bedingung ist erfüllt, wenn `next` noch ∞ hat oder der neue Weg kürzer ist.
+Bei einem gleich langen Weg bleibt der alte Vorgänger stehen.
+* *(5)* Statt die Priorität zu ändern, kommt ein neuer Eintrag in die Warteschlange.
+* *(6)* `BuildPath` folgt den Vorgängern vom Ziel zurück zum Start.
+Das erklärt der nächste Abschnitt.
+
+Fertige Nachbarn prüft der Code nicht eigens.
+Ihre Distanz ist schon die kleinste, deshalb ist die Bedingung in (4) für sie nie erfüllt.
+
+== Den Weg rekonstruieren
+
+Die Distanztabelle sagt dir, _wie weit_ es nach Bregenz ist, aber nicht _wie_ du hinkommst.
+Dafür ist das `Dictionary` mit den Vorgängern da.
+Es speichert für jede Stadt nur einen einzigen Schritt: die Stadt, von der aus der kürzeste Weg hereinkommt.
+Den ganzen Weg bekommst du, indem du vom Ziel aus rückwärts den Vorgängern folgst, bis du beim Start ankommst:
+
+[source,text]
+----
+Bregenz <- Innsbruck <- Salzburg <- Linz <- Graz
+----
+
+`BuildPath` sammelt die Städte in dieser Reihenfolge und dreht die Liste am Ende mit `Reverse` um.
+Das funktioniert, weil jeder Teilweg eines kürzesten Weges selbst ein kürzester Weg ist: Der kürzeste Weg nach Bregenz führt über Innsbruck, also ist sein Anfang der kürzeste Weg nach Innsbruck.
+
+Ist das Ziel nicht erreichbar, steht es nicht in `distance`, und `+previous[city]+` würde eine `KeyNotFoundException` werfen.
+Prüfe deshalb vorher mit `distance.ContainsKey(target)`, ob es überhaupt einen Weg gibt.
+
+Ein Lauf von Dijkstra liefert übrigens nicht nur den Weg nach Bregenz, sondern die kürzesten Wege von Graz zu *allen* Städten.
+Die Vorgänger bilden zusammen einen Baum mit Graz als Wurzel, den _Kürzeste-Wege-Baum_.
+
+== Grenzen: negative Kantengewichte
+
+Bei Kilometern und Minuten sind Gewichte nie negativ.
+Es gibt aber Anwendungen, in denen negative Gewichte Sinn ergeben.
+Ein Elektroauto verbraucht bergauf viel Energie, bergab lädt es den Akku wieder auf (_Rekuperation_).
+Misst du die Kanten in kWh, kann eine Bergabfahrt ein negatives Gewicht haben.
+
+image::{root_dir}/images/22_negative_kante.svg[]
+
+Dijkstra nimmt nach dem Start zuerst das Tal heraus (2 kWh), weil es die kleinste Distanz hat.
+Das Tal ist damit fertig.
+Erst danach wird der Pass bearbeitet, und über ihn käme man mit 5 {plus} (−4) = 1 kWh ins Tal.
+Die Annahme „ein Umweg über einen anderen offenen Knoten kann nur länger werden“ stimmt nicht mehr.
+Dijkstra liefert für das Tal den falschen Wert 2.
+
+Noch schlimmer ist ein *Kreis mit negativer Summe*.
+Dort wird jeder Weg kürzer, je öfter du im Kreis fährst.
+Einen kürzesten Weg gibt es dann gar nicht.
+In einem ungerichteten Graphen ist jede negative Kante schon so ein Kreis: Du fährst sie einfach hin und zurück.
+
+Für Graphen mit negativen Gewichten gibt es den *Bellman-Ford-Algorithmus*.
+Er verzichtet auf das „fertig“ und relaxiert stattdessen alle Kanten immer wieder, bis sich nichts mehr ändert.
+Er erkennt auch Kreise mit negativer Summe.
+Bellman-Ford ist nicht Teil dieser Einheit.
+
+// tag::pdf_exclude[]
+== Übungen
+
+. Führe Dijkstra im Straßennetz dieser Einheit per Hand aus, diesmal mit Start *Innsbruck*.
+Zeichne die Distanztabelle wie oben, mit einer Zeile pro Schritt, und gib für jede Stadt auch den Vorgänger an.
+Schreib dazu, was in jedem Schritt in der Warteschlange steht.
+. Erweitere das C#-Programm um eine Methode, die einen Weg als lesbaren Text ausgibt, mit den Kilometern für jeden Abschnitt und der Summe am Ende: `+Graz -> Linz (220 km) -> Salzburg (130 km) -> ... Gesamt: 730 km+`.
+Ist das Ziel nicht erreichbar, soll die Methode das melden.
+. Oft brauchst du nur den Weg zu *einem* Ziel.
+Schreib eine Variante von `Dijkstra`, die einen Zielknoten bekommt und abbricht, sobald dessen Distanz feststeht.
+Überlege genau, an welcher Stelle im Algorithmus du abbrechen darfst, und begründe es mit einem Beispiel aus dem Straßennetz.
+. Im Übungsprojekt link:{github_url}/08%20Theoretische%20Informatik/Uebungen/Routenplaner.7z[Routenplaner.7z] suchst du in einem U-Bahn-Netz die Verbindung mit den wenigsten Stationen und die schnellste Verbindung mit Umstiegen.
+Die Angabe steht im Archiv in der Datei _README.md_.
+
+// end::pdf_exclude[]
+
+== Zusatzmaterial
+
+Im https://die-spengergasse.github.io/course-pos-csharp_basics/08%20Theoretische%20Informatik/22_Kuerzeste_Wege.html[22_Kuerzeste_Wege.html] siehst du Dijkstra mit Distanztabelle und Warteschlange als Animation und führst den Algorithmus danach auf mehreren Graphen, auch auf Zufallsgraphen, selbst Schritt für Schritt aus.

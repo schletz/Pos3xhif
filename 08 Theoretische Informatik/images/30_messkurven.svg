@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="390" viewBox="0 0 720 390">
+  <rect x="0.5" y="0.5" width="719" height="389" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="204.0" y="36" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#ea580c" text-anchor="middle">List: Contains in der Schleife</text>
+  <g stroke="#d1d5db" stroke-width="1">
+    <line x1="68" y1="240.0" x2="340" y2="240.0"/>
+    <line x1="68" y1="180.0" x2="340" y2="180.0"/>
+    <line x1="68" y1="120.0" x2="340" y2="120.0"/>
+    <line x1="68" y1="60.0" x2="340" y2="60.0"/>
+  </g>
+  <g stroke="#1f2937" stroke-width="1.5"><line x1="68" y1="300" x2="340" y2="300"/><line x1="68" y1="300" x2="68" y2="60"/></g>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#1f2937">
+    <text x="62" y="304.0" text-anchor="end">0</text>
+    <text x="62" y="244.0" text-anchor="end">500</text>
+    <text x="62" y="184.0" text-anchor="end">1 000</text>
+    <text x="62" y="124.0" text-anchor="end">1 500</text>
+    <text x="62" y="64.0" text-anchor="end">2 000</text>
+    <text x="68.0" y="318" text-anchor="middle">0k</text>
+    <text x="136.0" y="318" text-anchor="middle">50k</text>
+    <text x="204.0" y="318" text-anchor="middle">100k</text>
+    <text x="272.0" y="318" text-anchor="middle">150k</text>
+    <text x="340.0" y="318" text-anchor="middle">200k</text>
+  </g>
+  <text x="204.0" y="338" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#1f2937" text-anchor="middle">n (Anzahl der Zahlen)</text>
+  <text x="26" y="180.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#1f2937" text-anchor="middle" transform="rotate(-90 26 180.0)">Laufzeit in ms</text>
+  <polyline points="68,300 102.0,297.0 136.0,291.7 170.0,281.4 204.0,267.3 238.0,249.1 272.0,188.5 306.0,144.9 340.0,91.4" fill="none" stroke="#ea580c" stroke-width="2.5"/>
+  <circle cx="102.0" cy="297.0" r="4" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+  <circle cx="136.0" cy="291.7" r="4" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+  <circle cx="170.0" cy="281.4" r="4" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+  <circle cx="204.0" cy="267.3" r="4" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+  <circle cx="238.0" cy="249.1" r="4" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+  <circle cx="272.0" cy="188.5" r="4" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+  <circle cx="306.0" cy="144.9" r="4" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+  <circle cx="340.0" cy="91.4" r="4" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+  <text x="330.0" y="95.4" font-family="Consolas, Menlo, monospace" font-size="13" fill="#ea580c" text-anchor="end">1,7 s</text>
+  <text x="564.0" y="36" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#16a34a" text-anchor="middle">HashSet: Add in der Schleife</text>
+  <g stroke="#d1d5db" stroke-width="1">
+    <line x1="428" y1="252.0" x2="700" y2="252.0"/>
+    <line x1="428" y1="204.0" x2="700" y2="204.0"/>
+    <line x1="428" y1="156.0" x2="700" y2="156.0"/>
+    <line x1="428" y1="108.0" x2="700" y2="108.0"/>
+    <line x1="428" y1="60.0" x2="700" y2="60.0"/>
+  </g>
+  <g stroke="#1f2937" stroke-width="1.5"><line x1="428" y1="300" x2="700" y2="300"/><line x1="428" y1="300" x2="428" y2="60"/></g>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#1f2937">
+    <text x="422" y="304.0" text-anchor="end">0</text>
+    <text x="422" y="256.0" text-anchor="end">1</text>
+    <text x="422" y="208.0" text-anchor="end">2</text>
+    <text x="422" y="160.0" text-anchor="end">3</text>
+    <text x="422" y="112.0" text-anchor="end">4</text>
+    <text x="422" y="64.0" text-anchor="end">5</text>
+    <text x="428.0" y="318" text-anchor="middle">0k</text>
+    <text x="496.0" y="318" text-anchor="middle">50k</text>
+    <text x="564.0" y="318" text-anchor="middle">100k</text>
+    <text x="632.0" y="318" text-anchor="middle">150k</text>
+    <text x="700.0" y="318" text-anchor="middle">200k</text>
+  </g>
+  <text x="564.0" y="338" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#1f2937" text-anchor="middle">n (Anzahl der Zahlen)</text>
+  <text x="386" y="180.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#1f2937" text-anchor="middle" transform="rotate(-90 386 180.0)">Laufzeit in ms</text>
+  <polyline points="428,300 462.0,287.1 496.0,276.3 530.0,277.7 564.0,245.1 598.0,182.7 632.0,209.2 666.0,135.1 700.0,109.4" fill="none" stroke="#16a34a" stroke-width="2.5"/>
+  <circle cx="462.0" cy="287.1" r="4" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <circle cx="496.0" cy="276.3" r="4" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <circle cx="530.0" cy="277.7" r="4" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <circle cx="564.0" cy="245.1" r="4" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <circle cx="598.0" cy="182.7" r="4" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <circle cx="632.0" cy="209.2" r="4" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <circle cx="666.0" cy="135.1" r="4" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <circle cx="700.0" cy="109.4" r="4" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="690.0" y="113.4" font-family="Consolas, Menlo, monospace" font-size="13" fill="#16a34a" text-anchor="end">4 ms</text>
+  <text x="360.0" y="374" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#6b7280" text-anchor="middle">Achtung: Die y-Achsen sind verschieden. Links reicht sie bis 2 000 ms, rechts bis 5 ms.</text>
+</svg>

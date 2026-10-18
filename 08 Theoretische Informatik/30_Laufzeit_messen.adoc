@@ -1,0 +1,296 @@
+= Laufzeit messen
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Zwei Programme lösen dieselbe Aufgabe und liefern dasselbe Ergebnis.
+Bei 1 000 Datensätzen merkst du keinen Unterschied.
+Bei einer Million Datensätzen ist das eine nach wenigen Hundertstelsekunden fertig, das andere nach eineinhalb Minuten.
+In dieser Einheit misst du solche Unterschiede selbst und lernst, wie man aus Messreihen abliest, wie schnell die Laufzeit mit der Eingabe wächst.
+
+== Das Beispiel: Duplikate finden
+
+Eine Methode soll prüfen, ob in einem Array eine Zahl doppelt vorkommt.
+Die erste Idee: Du gehst die Zahlen durch und merkst dir alle bisherigen Zahlen in einer `List`.
+Bevor du eine Zahl einfügst, schaust du nach, ob sie schon drin ist.
+Die zweite Variante macht dasselbe mit einem `HashSet`.
+
+Die beiden Methoden sind ein Ausschnitt aus dem Messprogramm weiter unten:
+
+[source,csharp]
+----
+static bool HasDuplicateList(int[] data)
+{
+    List<int> seen = [];
+    foreach (int x in data)
+    {
+        if (seen.Contains(x)) { return true; }      // (1)
+        seen.Add(x);
+    }
+    return false;
+}
+
+static bool HasDuplicateHashSet(int[] data)
+{
+    HashSet<int> seen = [];
+    foreach (int x in data)
+    {
+        if (!seen.Add(x)) { return true; }          // (2)
+    }
+    return false;
+}
+----
+
+* *(1)* `List.Contains` vergleicht die Zahl der Reihe nach mit allen Einträgen der Liste.
+Je mehr Zahlen schon in der Liste sind, desto länger dauert jeder Aufruf.
+* *(2)* `HashSet.Add` liefert `false`, wenn die Zahl schon enthalten ist.
+Ein `HashSet` findet eine Zahl über ihren Hashcode direkt, ohne die anderen Einträge anzusehen.
+
+Beide Methoden liefern immer dasselbe Ergebnis.
+Ob eine schneller ist und um wie viel, sagt dir nur eine Messung.
+
+== Messen mit Stopwatch
+
+Für Zeitmessungen gibt es in .NET die Klasse `Stopwatch` aus `System.Diagnostics`.
+Sie verwendet den genauesten Zeitgeber des Systems.
+`DateTime.Now` eignet sich dagegen nicht, denn es ändert sich unter Windows oft nur alle paar Millisekunden.
+
+Das folgende Programm misst beide Methoden für n = 10³ bis 10⁶. Die Testdaten enthalten *kein* Duplikat.
+Das ist der ungünstigste Fall, denn beide Methoden müssen alle Zahlen ansehen.
+Füge unten die beiden Methoden von oben an, dann kompiliert das Programm.
+Den vollständigen Code findest du auch in link:{github_url}/08%20Theoretische%20Informatik/Beispiele/30_DuplicateSearch[Beispiele/30_DuplicateSearch].
+
+[source,csharp]
+----
+using System.Diagnostics;
+
+int[] warmUp = CreateData(1_000);                                       // (1)
+for (int i = 0; i < 100; i++)
+{
+    HasDuplicateList(warmUp);
+    HasDuplicateHashSet(warmUp);
+}
+
+int[] sizes = [1_000, 10_000, 100_000, 1_000_000];
+Console.WriteLine($"{"n",10} {"List (ms)",12} {"HashSet (ms)",14}");
+foreach (int n in sizes)
+{
+    int[] data = CreateData(n);
+    double listMs = Measure(() => HasDuplicateList(data), n < 1_000_000 ? 5 : 1);   // (2)
+    double setMs = Measure(() => HasDuplicateHashSet(data), 5);
+    Console.WriteLine($"{n,10} {listMs,12:F3} {setMs,14:F3}");
+}
+
+static double Measure(Func<bool> action, int repetitions)
+{
+    double best = double.MaxValue;
+    for (int i = 0; i < repetitions; i++)
+    {
+        GC.Collect();                                                   // (3)
+        long start = Stopwatch.GetTimestamp();
+        bool result = action();
+        TimeSpan elapsed = Stopwatch.GetElapsedTime(start);             // (4)
+        if (result) { throw new InvalidOperationException("Test data must not contain duplicates."); }  // (5)
+        best = Math.Min(best, elapsed.TotalMilliseconds);               // (6)
+    }
+    return best;
+}
+
+static int[] CreateData(int n)
+{
+    int[] data = Enumerable.Range(0, n).ToArray();
+    new Random(42).Shuffle(data);                                       // (7)
+    return data;
+}
+----
+
+So sah das Ergebnis auf einem Intel Core i7-12700KF mit `dotnet run -c Release` aus.
+Auf deinem Rechner kommen andere Zahlen heraus, das Verhältnis zwischen den Spalten ist aber ähnlich.
+
+[source,text]
+----
+         n    List (ms)   HashSet (ms)
+      1000        0.059          0.013
+     10000        4.083          0.073
+    100000      244.988          1.506
+   1000000    89432.308         28.334
+----
+
+Bei 1 000 Zahlen sind beide Varianten praktisch gleich schnell.
+Bei einer Million braucht die `List`-Variante 89 Sekunden, die `HashSet`-Variante 28 Millisekunden.
+Das ist ein Faktor von über 3 000, und er wird mit größerem n immer größer.
+
+== Richtig messen
+
+Die markierten Stellen im Programm sind kein Zufall.
+Ohne sie bekommst du Zahlen, die wenig aussagen.
+
+* *Release-Build:* Starte Messungen immer mit `dotnet run -c Release` bzw. in Visual Studio mit der Konfiguration _Release_ und ohne Debugger (Strg{plus}F5).
+Im Debug-Build optimiert der Compiler nicht, damit du beim Debuggen jede Zeile und jede Variable siehst.
+Der Code ist dadurch oft um ein Vielfaches langsamer.
+* *(1) Aufwärmen:* .NET übersetzt eine Methode erst beim ersten Aufruf mit dem _JIT-Compiler_ (Just in Time) in Maschinencode.
+Zuerst entsteht schnell erzeugter, wenig optimierter Code.
+Wird eine Methode oft aufgerufen, übersetzt .NET sie im Hintergrund noch einmal mit allen Optimierungen (_Tiered Compilation_).
+Die ersten Aufrufe messen also auch den Compiler.
+Deshalb rufst du die Methoden vor der Messung einige Male mit kleinen Daten auf.
+* *(2) Wiederholen:* Eine einzelne Messung schwankt, weil andere Programme laufen, der Prozessor den Takt ändert oder Daten noch nicht im Cache liegen.
+Deshalb misst du mehrmals.
+Nur die `List`-Variante mit einer Million Zahlen misst das Programm einmal.
+Sie dauert so lange, dass kleine Störungen keine Rolle spielen.
+* *(3) Garbage Collector:* Der GC räumt nicht mehr benötigte Objekte weg und hält dafür das Programm kurz an.
+`GC.Collect()` vor der Messung sorgt dafür, dass er nicht mitten in der Messung Müll aus früheren Durchläufen wegräumt.
+* *(4) Zeit messen:* `Stopwatch.GetTimestamp()` liest den Zeitgeber aus, `Stopwatch.GetElapsedTime` berechnet die vergangene Zeit als `TimeSpan`.
+Gleichwertig ist `Stopwatch.StartNew()` mit `Stop()` und `Elapsed`.
+* *(5) Ergebnis verwenden:* Wird ein Ergebnis nie verwendet, darf der Compiler im Extremfall die Berechnung weglassen.
+Die Prüfung verhindert das und stellt nebenbei sicher, dass die Testdaten wirklich den gewünschten Fall abbilden.
+* *(6) Minimum statt Mittelwert:* Störungen machen eine Messung nur langsamer, nie schneller.
+Der schnellste Lauf ist deshalb der beste Schätzwert für die Laufzeit des Codes selbst.
+Auch der Median ist üblich.
+* *(7) Feste Testdaten:* Ein fester Seed liefert bei jedem Start dieselbe Reihenfolge.
+So sind Messungen wiederholbar und vergleichbar.
+
+== Messreihen
+
+Vier Messpunkte sagen wenig über die Form der Kurve.
+Misst du dieselben Methoden für n = 25 000, 50 000, …, 200 000, kannst du die Laufzeit über n zeichnen.
+Die Werte stammen vom selben Rechner wie oben, jeweils der schnellste von mehreren Läufen:
+
+image::{root_dir}/images/30_messkurven.svg[]
+
+Die Kurve der `List`-Variante biegt sich deutlich nach oben.
+Verdoppelt sich n von 100 000 auf 200 000, wird die Laufzeit mehr als sechsmal so groß.
+Die `HashSet`-Variante bleibt dagegen bei wenigen Millisekunden.
+Ihre Messpunkte springen sichtbar: Bei so kurzen Laufzeiten fallen Störungen und Cache-Effekte stark ins Gewicht, die Form der Kurve lässt sich kaum ablesen.
+Hier hilft der Verdopplungstest mit größeren n.
+
+Die Kurven verraten auch den Grund.
+Die `List`-Variante ruft n-mal `Contains` auf, und jeder Aufruf durchsucht eine Liste, die mit n wächst.
+Die Arbeit wächst also mit n · n. Die `HashSet`-Variante macht für jede Zahl ungefähr gleich viel Arbeit, zusammen also n-mal so viel.
+
+== Der Verdopplungstest
+
+Aus einer Kurve die Art des Wachstums abzulesen, ist ungenau.
+Einfacher ist der *Verdopplungstest*: Du verdoppelst n immer wieder und schaust, um welchen Faktor die Laufzeit steigt.
+
+* Wächst die Laufzeit linear, also wie a · n, dann ist T(2n) / T(n) = 2.
+* Wächst sie quadratisch, also wie a · n², dann ist T(2n) / T(n) = 4.
+* Allgemein: Wächst sie wie a · nᵏ, dann ist T(2n) / T(n) = 2ᵏ.
+
+Die Konstante a kürzt sich weg.
+Sie hängt vom Rechner ab, der Faktor 2ᵏ aber nicht.
+Das folgende Fragment ergänzt das Messprogramm.
+Es verwendet `Measure` und `CreateData` von oben und ersetzt die Schleife über `sizes`.
+
+[source,csharp]
+----
+DoublingTest("List", HasDuplicateList, 10_000, 6);
+DoublingTest("HashSet", HasDuplicateHashSet, 1_000_000, 5);
+
+static void DoublingTest(string name, Func<int[], bool> method, int startN, int steps)
+{
+    Console.WriteLine($"{name}:");
+    double previous = 0;
+    for (int i = 0, n = startN; i < steps; i++, n *= 2)
+    {
+        int[] data = CreateData(n);
+        double ms = Measure(() => method(data), 5);
+        string ratio = previous > 0 ? $"{ms / previous:F2}" : "";     // (1)
+        Console.WriteLine($"{n,10} {ms,10:F2} ms {ratio,6}");
+        previous = ms;
+    }
+}
+----
+
+* *(1)* Der Quotient aus der aktuellen und der vorherigen Messung ist der Faktor T(2n) / T(n).
+
+[source,text]
+----
+List:
+     10000       4.22 ms
+     20000      16.23 ms   3.85
+     40000      45.09 ms   2.78
+     80000     179.04 ms   3.97
+    160000     731.56 ms   4.09
+    320000    4169.53 ms   5.70
+HashSet:
+   1000000      37.55 ms
+   2000000      96.40 ms   2.57
+   4000000     191.53 ms   1.99
+   8000000     465.44 ms   2.43
+  16000000    1153.63 ms   2.48
+----
+
+image::{root_dir}/images/30_verdopplung.svg[]
+
+Bei der `List` liegt der Faktor meist bei 4, die Laufzeit wächst also quadratisch.
+Beim `HashSet` liegt er um 2 bis 2,5, das ist ungefähr linear.
+Einzelne Werte weichen ab, etwa 2,78 und 5,70 bei der `List`.
+Solche Ausreißer entstehen durch Caches, Taktänderungen und andere Programme.
+Entscheidend ist der Trend über mehrere Verdopplungen.
+
+Mit dem Faktor kannst du auch *vorhersagen*.
+Eine Million ist das 6,25-Fache von 160 000. Bei quadratischem Wachstum steigt die Laufzeit um 6,25² ≈ 39, also auf 732 ms · 39 ≈ 29 s. Gemessen wurden 89 s. Die Vorhersage stimmt in der Größenordnung, liegt aber um den Faktor 3 daneben.
+Bei großen Listen passen die Daten nicht mehr in den schnellen Cache des Prozessors, und jeder Vergleich wird teurer.
+
+== Grenzen der Messung
+
+Messungen sind unverzichtbar, wenn du wissen willst, wie schnell dein Programm wirklich ist.
+Als Maß für einen *Algorithmus* taugen sie aber nur bedingt:
+
+* *Die Zahlen hängen vom Rechner ab.*
+Prozessor, Cache, Speicher, Betriebssystem und .NET-Version beeinflussen das Ergebnis.
+Eine Laufzeit in Millisekunden kannst du nicht mit der eines Kollegen vergleichen.
+* *Die Zahlen hängen von den Daten ab.*
+Steht das Duplikat gleich am Anfang, sind beide Varianten sofort fertig.
+Eine Messung gilt nur für genau die Daten, mit denen du gemessen hast.
+* *Große n lassen sich nicht messen.*
+Für n = 10⁹ bräuchte die `List`-Variante bei quadratischem Wachstum etwa 89 s · 1 000² ≈ 9 · 10⁷ s, also rund drei Jahre.
+Das kannst du nur hochrechnen.
+* *Effekte überlagern sich.*
+Wie die Vorhersage oben zeigt, verändern Caches den Faktor.
+Bei sehr kurzen Laufzeiten geht das Ergebnis im Rauschen unter.
+* *Messen setzt fertigen Code voraus.*
+Vor der Implementierung kannst du nichts messen.
+Gerade dann willst du aber wissen, ob ein Ansatz für große Datenmengen taugt.
+
+Was über alle Rechner hinweg gleich bleibt, ist der Faktor beim Verdoppeln, also die *Art des Wachstums*.
+Sie hängt nur davon ab, wie viele Schritte der Algorithmus abhängig von n braucht.
+Für dieses maschinenunabhängige Maß gibt es eine eigene Schreibweise, die link:{github_url}/08%20Theoretische%20Informatik/31_O_Notation.adoc[O-Notation].
+
+== Genauer messen mit BenchmarkDotNet
+
+Die Stopwatch-Messung reicht, um große Unterschiede zu sehen.
+Für kleine Codeteile, bei denen es um Mikrosekunden geht, verwendest du das Paket _BenchmarkDotNet_.
+Es wärmt automatisch auf, wiederholt die Messung so oft, bis das Ergebnis statistisch stabil ist, und gibt Mittelwert, Streuung und belegten Speicher aus.
+Wie du ein Benchmark-Projekt anlegst, steht im Kapitel link:{github_url}/Professional%20C%23/70_Benchmark/README.md[Benchmarks mit Benchmark.NET].
+
+Für Messreihen ist das Attribut `+[Params]+` praktisch.
+Es steht auf einem öffentlichen Feld oder einer Property, z. B. `+[Params(1_000, 10_000, 100_000)] public int N;+`.
+BenchmarkDotNet führt dann jeden Benchmark für jeden Wert von `N` aus.
+Testdaten erzeugst du in einer Methode mit dem Attribut `+[GlobalSetup]+`, damit das Erzeugen nicht mitgemessen wird.
+
+// tag::pdf_exclude[]
+== Übungen
+
+. Schreibe eine Methode `+CountZeroSumTriples(int[] data)+`, die mit drei verschachtelten Schleifen zählt, wie viele Tripel von Positionen i < j < k es gibt, deren Zahlen zusammen 0 ergeben.
+Überlege vorher, welchen Faktor du beim Verdopplungstest erwartest.
+Führe den Test dann mit zufälligen Zahlen zwischen −1 000 und 1 000 durch und vergleiche.
+. Miss `HasDuplicateList` und `HasDuplicateHashSet` mit BenchmarkDotNet für n = 1 000, 10 000 und 100 000. Vergleiche die Ergebnisse mit den Stopwatch-Messungen auf deinem Rechner.
+. Starte das Messprogramm einmal mit `dotnet run` (Debug) und einmal mit `dotnet run -c Release`.
+Lass dabei die größte Eingabe weg.
+Um welchen Faktor unterscheiden sich die Laufzeiten?
+Ändert sich der Faktor beim Verdopplungstest?
+
+// end::pdf_exclude[]

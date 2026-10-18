@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="494" viewBox="0 0 960 494">
+<rect x="0.5" y="0.5" width="959" height="493" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1f2937"/></marker></defs>
+<rect x="20" y="20" width="920" height="34" fill="#f3f4f6" stroke="#d1d5db"/>
+<text x="30" y="42" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1f2937">Konstrukt</text>
+<text x="160" y="42" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1f2937">BNF</text>
+<text x="400" y="42" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1f2937">EBNF</text>
+<text x="575" y="42" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1f2937">Syntaxdiagramm</text>
+<rect x="20" y="54" width="920" height="60.0" fill="#ffffff" stroke="#d1d5db"/>
+<text x="30" y="89.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" fill="#1f2937">Folge</text>
+<text x="160" y="89.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">&lt;a&gt; ::= &lt;b&gt; "x"</text>
+<text x="400" y="89.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">a = b "x"</text>
+<path d="M580,76.0 V92.0" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M580,84.0 H590" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="590" y1="84.0" x2="612" y2="84.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="612" y="69.0" width="32" height="30" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="628.0" y="89.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">b</text>
+<path d="M644,84.0 H654" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="654" y1="84.0" x2="676" y2="84.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="676" y="69.0" width="32" height="30" rx="15" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+<text x="692.0" y="89.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">x</text>
+<path d="M708,84.0 H718" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="718" y1="84.0" x2="736" y2="84.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<path d="M736,76.0 V92.0" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<rect x="20" y="114.0" width="920" height="102.0" fill="#ffffff" stroke="#d1d5db"/>
+<text x="30" y="170.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" fill="#1f2937">Alternative</text>
+<text x="160" y="170.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">&lt;a&gt; ::= &lt;b&gt; | &lt;c&gt;</text>
+<text x="400" y="170.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">a = b | c</text>
+<path d="M580,136.0 V152.0" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M580,144.0 H590" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M590,144.0 H610" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="610" y1="144.0" x2="632" y2="144.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="632" y="129.0" width="32" height="30" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="648.0" y="149.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">b</text>
+<path d="M664,144.0 H674" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M674,144.0 H694" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M590,144.0 q10,0 10,10 V176.0 q0,10 10,10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="610" y1="186.0" x2="632" y2="186.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="632" y="171.0" width="32" height="30" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="648.0" y="191.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">c</text>
+<path d="M664,186.0 H674" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M674,186.0 H674 q10,0 10,-10 V154.0 q0,-10 10,-10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="694" y1="144.0" x2="712" y2="144.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<path d="M712,136.0 V152.0" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<rect x="20" y="216.0" width="920" height="102.0" fill="#ffffff" stroke="#d1d5db"/>
+<text x="30" y="272.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" fill="#1f2937">Gruppe</text>
+<text x="160" y="272.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">&lt;a&gt; ::= &lt;b&gt; "x" | &lt;c&gt; "x"</text>
+<text x="400" y="272.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">a = ( b | c ) "x"</text>
+<path d="M580,238.0 V254.0" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M580,246.0 H590" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M590,246.0 H610" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="610" y1="246.0" x2="632" y2="246.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="632" y="231.0" width="32" height="30" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="648.0" y="251.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">b</text>
+<path d="M664,246.0 H674" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M674,246.0 H694" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M590,246.0 q10,0 10,10 V278.0 q0,10 10,10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="610" y1="288.0" x2="632" y2="288.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="632" y="273.0" width="32" height="30" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="648.0" y="293.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">c</text>
+<path d="M664,288.0 H674" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M674,288.0 H674 q10,0 10,-10 V256.0 q0,-10 10,-10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="694" y1="246.0" x2="716" y2="246.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="716" y="231.0" width="32" height="30" rx="15" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+<text x="732.0" y="251.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">x</text>
+<path d="M748,246.0 H758" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="758" y1="246.0" x2="776" y2="246.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<path d="M776,238.0 V254.0" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<rect x="20" y="318.0" width="920" height="72.0" fill="#ffffff" stroke="#d1d5db"/>
+<text x="30" y="359.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" fill="#1f2937">Option</text>
+<text x="160" y="359.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">&lt;a&gt; ::= "x" &lt;b&gt; | &lt;b&gt;</text>
+<text x="400" y="359.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">a = [ "x" ] b</text>
+<path d="M580,352.0 V368.0" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M580,360.0 H590" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M590,360.0 H610" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="610" y1="360.0" x2="632" y2="360.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="632" y="345.0" width="32" height="30" rx="15" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+<text x="648.0" y="365.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">x</text>
+<path d="M664,360.0 H674" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M674,360.0 H694" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M590,360.0 q10,0 10,-10 V345.0 q0,-10 10,-10 H674 q10,0 10,10 V350.0 q0,10 10,10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M638.5,331.0 L645.5,335.0 L638.5,339.0 Z" fill="#1f2937"/>
+<line x1="694" y1="360.0" x2="716" y2="360.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="716" y="345.0" width="32" height="30" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="732.0" y="365.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">b</text>
+<path d="M748,360.0 H758" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="758" y1="360.0" x2="776" y2="360.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<path d="M776,352.0 V368.0" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<rect x="20" y="390.0" width="920" height="84.0" fill="#ffffff" stroke="#d1d5db"/>
+<text x="30" y="437.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" fill="#1f2937">Wiederholung</text>
+<text x="160" y="437.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">&lt;a&gt; ::= &lt;b&gt; | &lt;a&gt; "," &lt;b&gt;</text>
+<text x="400" y="437.0" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">a = b { "," b }</text>
+<path d="M580,424.0 V440.0" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M580,432.0 H590" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="590" y1="432.0" x2="612" y2="432.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="612" y="417.0" width="32" height="30" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="628.0" y="437.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">b</text>
+<path d="M644,432.0 H654" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M654,432.0 H694" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="694" y1="432.0" x2="716" y2="432.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="716" y="417.0" width="32" height="30" rx="15" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+<text x="732.0" y="437.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">,</text>
+<path d="M748,432.0 H758" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="758" y1="432.0" x2="780" y2="432.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="780" y="417.0" width="32" height="30" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="796.0" y="437.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">b</text>
+<path d="M812,432.0 H822" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M822,432.0 H862" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M654,432.0 q10,0 10,-10 V417.0 q0,-10 10,-10 H842 q10,0 10,10 V422.0 q0,10 10,10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M754.5,403.0 L761.5,407.0 L754.5,411.0 Z" fill="#1f2937"/>
+<path d="M822,432.0 q10,0 10,10 V447.0 q0,10 -10,10 H694 q-10,0 -10,-10 V442.0 q0,-10 10,-10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M761.5,453.0 L754.5,457.0 L761.5,461.0 Z" fill="#1f2937"/>
+<line x1="862" y1="432.0" x2="880" y2="432.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<path d="M880,424.0 V440.0" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="150" y1="20" x2="150" y2="474.0" stroke="#d1d5db"/>
+<line x1="390" y1="20" x2="390" y2="474.0" stroke="#d1d5db"/>
+<line x1="565" y1="20" x2="565" y2="474.0" stroke="#d1d5db"/>
+</svg>

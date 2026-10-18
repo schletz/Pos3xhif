@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="OpenCvSharp4" Version="4.*" />
+		<PackageReference Include="OpenCvSharp4.runtime.win" Version="4.*" />
+	</ItemGroup>
+</Project>

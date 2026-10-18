@@ -1,0 +1,564 @@
+= O, Teil 1: Werte und Regeln an genau einer Stelle
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Der Webshop verschickt ab 50 € gratis.
+Diese Regel steht im Warenkorb, im Checkout und auf der Rechnung, jedes Mal als `+if (order.Total >= 50m)+`.
+Nun ändert der Shop die Grenze auf 60 €.
+Du findest zwei der drei Stellen.
+Der Warenkorb zeigt bei 55 € weiter „Gratisversand“, der Checkout verlangt aber Versandkosten.
+In diesem Kapitel lernst du, Werte und Regeln so zu schreiben, dass eine Änderung genau *eine* Stelle betrifft.
+
+== Projekt anlegen
+
+Du brauchst eine Solution mit Application und Testprojekt.
+Die Befehle und alle Anpassungen der Projektdateien sind im Kapitel link:{github_url}/15%20Unittests/02_xUnit.adoc#projekt-anlegen[Unit Tests mit xUnit] genau erklärt.
+Unter macOS ersetzt du _rd_, _md_ und _move_ durch _rm -rf_, _mkdir_ und _mv_.
+
+[source,text]
+----
+rd /S /Q WebshopDemo
+md WebshopDemo
+cd WebshopDemo
+md WebshopDemo.Application
+cd WebshopDemo.Application
+dotnet new classlib
+cd ..
+md WebshopDemo.Tests
+cd WebshopDemo.Tests
+dotnet new install xunit.v3.templates
+dotnet new xunit3 -f net10.0
+move global.json ..
+dotnet reference add ..\WebshopDemo.Application
+cd ..
+dotnet new sln -f sln
+dotnet sln add WebshopDemo.Application
+dotnet sln add WebshopDemo.Tests
+start WebshopDemo.sln
+----
+
+Lösche _Class1.cs_ und _UnitTest1.cs_.
+Entferne in beiden Projektdateien die Zeile _ImplicitUsings_ und füge `+<TreatWarningsAsErrors>true</TreatWarningsAsErrors>+` hinzu.
+Im Testprojekt entfernst du zusätzlich `+<Using Include="Xunit" />+`.
+
+== Das O in SOLID
+
+Das *Open/Closed Principle* (OCP) hat Bertrand Meyer 1988 formuliert.
+Robert C. Martin hat es als Teil von SOLID bekannt gemacht:
+
+____
+Software entities should be open for extension, but closed for modification.
+____
+
+Auf Deutsch: Eine Klasse ist _offen_ für Erweiterungen, aber _geschlossen_ für Änderungen.
+Neues Verhalten ergänzt du, ohne bestehenden, getesteten Code zu ändern.
+Der Kern dieses Prinzips ist *Polymorphie*.
+Ihn lernst du in link:{github_url}/16%20SOLID/05_Open_Closed_Polymorphie.adoc[O&#44; Teil 2: Erweitern statt ändern] kennen.
+
+Dieses Kapitel zeigt die „kleine“ Form davon.
+Sie kommt im Alltag viel öfter vor:
+
+[%header]
+|===
+| |Teil 1 (dieses Kapitel) |Teil 2
+|Was ändert sich? |ein Wert oder eine Regel (50 € → 60 €) |ein neues Verhalten (eine neue Zahlungsart)
+|Wie viel änderst du? |genau eine Stelle |nichts Bestehendes, du ergänzt eine Klasse
+|Werkzeuge |Konstanten, Collections, Properties, Konstruktor |Interfaces und Polymorphie
+|===
+
+== Das Problem: Magic Values
+
+So sieht der Code oft aus, wenn ein Anfänger oder ein Agent ohne genaue Vorgaben ihn schreibt:
+
+*Order.cs*
+
+[source,csharp]
+----
+namespace WebshopDemo.Application;
+
+public class Order
+{
+    public Order(decimal total, string country)
+    {
+        Total = total;
+        Country = country;
+    }
+
+    public decimal Total { get; }
+    public string Country { get; }
+}
+----
+
+*CartView.cs*
+
+[source,csharp]
+----
+namespace WebshopDemo.Application;
+
+public class CartView
+{
+    public string GetShippingHint(Order order)
+    {
+        if (order.Total >= 50m)
+        {
+            return "Free shipping!";
+        }
+        return "Free shipping from 50 EUR";
+    }
+}
+----
+
+*CheckoutService.cs*
+
+[source,csharp]
+----
+namespace WebshopDemo.Application;
+
+public class CheckoutService
+{
+    public decimal GetShippingCost(Order order)
+    {
+        if (order.Total >= 50m)
+        {
+            return 0m;
+        }
+        return 4.90m;
+    }
+}
+----
+
+*InvoiceWriter.cs*
+
+[source,csharp]
+----
+namespace WebshopDemo.Application;
+
+public class InvoiceWriter
+{
+    public string GetShippingLine(Order order)
+    {
+        if (order.Total > 50m)
+        {
+            return "Shipping: free";
+        }
+        return "Shipping: 4.90 EUR";
+    }
+}
+----
+
+Jede Klasse für sich ist kurz und verständlich.
+Das Problem siehst du erst, wenn du alle drei vergleichst:
+
+* Die Zahl 50 steht an *vier* Stellen: in drei Bedingungen und in einem Text.
+* Die Versandkosten 4,90 € stehen an zwei Stellen, einmal als Zahl, einmal im Text.
+* _InvoiceWriter_ verwendet `+>+` statt `+>=+`.
+Bei genau 50 € ist der Versand im Checkout gratis, auf der Rechnung aber nicht.
+Das zeigt dieser Test:
+
+[source,csharp]
+----
+[Fact]
+public void GetShippingLine_At50Euro_MatchesFreeShippingInCheckout()
+{
+    Order order = new Order(total: 50m, country: "AT");
+
+    decimal cost = new CheckoutService().GetShippingCost(order);
+    string line = new InvoiceWriter().GetShippingLine(order);
+
+    Assert.Equal(0m, cost);
+    Assert.Equal("Shipping: free", line);
+}
+----
+
+[source,text]
+----
+Assert.Equal() Failure: Strings differ
+                     ↓ (pos 10)
+Expected: "Shipping: free"
+Actual:   "Shipping: 4.90 EUR"
+                     ↑ (pos 10)
+----
+
+Ein *Magic Value* ist ein Literal mitten in der Logik, dessen Bedeutung nicht im Code steht.
+Bei Zahlen sagt man auch *Magic Number*, bei Texten *Magic String*.
+Magic Values machen zwei Probleme:
+
+[%header]
+|===
+|Problem |Beispiel
+|Die Bedeutung fehlt |Ist 50 die Grenze für Gratisversand, für einen Rabatt oder für Ratenzahlung?
+|Die Regel ist verstreut |Eine Änderung braucht vier Stellen. Eine davon vergisst man (siehe link:{github_url}/16%20SOLID/02_DRY.adoc[DRY]).
+|===
+
+_Suchen und Ersetzen_ hilft nicht.
+Im Shop gibt es noch andere 50er: 50 Artikel pro Seite, 50 % Rabatt im Abverkauf.
+Du musst bei jedem Treffer entscheiden, ob er den Versand meint.
+
+image::{root_dir}/images/04_single_source.svg[Vorher: die Regel an vier Stellen. Nachher: eine Property, auf die alle Stellen zeigen.]
+
+== Lösung 1: Ein Name für den Wert
+
+Der erste Schritt: Der Wert bekommt einen Namen und steht an genau einer Stelle.
+
+*ShippingRules.cs*
+
+[source,csharp]
+----
+namespace WebshopDemo.Application;
+
+/// <summary>
+/// The shipping rules of the shop.
+/// </summary>
+public static class ShippingRules
+{
+    /// <summary>Orders with at least this total (in EUR) are shipped for free.</summary>
+    public const decimal FreeShippingThreshold = 50m;
+
+    /// <summary>Shipping cost in EUR for orders below the threshold.</summary>
+    public const decimal StandardShippingCost = 4.90m;
+}
+----
+
+Im Checkout steht jetzt `+if (order.Total >= ShippingRules.FreeShippingThreshold)+`.
+Auch der Text im Warenkorb verwendet die Konstante: `+$"Free shipping from {ShippingRules.FreeShippingThreshold} EUR"+`.
+
+=== const, static readonly oder Konstruktor?
+
+C# bietet drei Möglichkeiten, einen Wert an einer Stelle festzulegen:
+
+[%header]
+|===
+|Variante |Beispiel |Verwende sie, wenn ... |Einschränkung
+|`const` |`public const decimal FreeShippingThreshold = 50m;` |sich der Wert nur mit einer neuen Programmversion ändert. |Nur Zahlen, `bool`, `char` und `string`.
+|`static readonly` |`+public static readonly IReadOnlySet<string> DeliveryCountries = ...;+` |du ein Objekt brauchst (Collection, `TimeSpan`, `DateTime`). |Wird einmal beim Start gesetzt, danach nicht mehr.
+|Konstruktorparameter |`+new ShippingPolicy(freeShippingThreshold: 60m, ...)+` |der Wert aus der Konfiguration kommt, pro Shop verschieden ist oder Tests andere Werte brauchen. |Jemand muss das Objekt erzeugen und weitergeben.
+|===
+
+Bei `const` kopiert der Compiler den Wert an jede Stelle, die ihn verwendet.
+Ändert sich eine Konstante in einer DLL, musst du alle Projekte neu kompilieren, die sie verwenden.
+Innerhalb einer Solution merkst du davon nichts.
+
+== Lösung 2: Eine Liste an einer Stelle
+
+Der Shop liefert nur nach Österreich, Deutschland und in die Schweiz.
+Diese Regel steht im Checkout und im Formular für die Lieferadresse:
+
+[source,csharp]
+----
+// CheckoutService
+if (order.Country == "AT" || order.Country == "DE" || order.Country == "CH") { /* ... */ }
+
+// AddressForm
+if (country == "AT" || country == "DE") { /* ... */ }
+----
+
+Im Formular fehlt die Schweiz.
+Kommt Italien dazu, musst du jede dieser Bedingungen finden und erweitern.
+Das ist eine *hartcodierte Liste*: eine Aufzählung von Werten mitten in einer Bedingung.
+Besser ist eine Collection an genau einer Stelle:
+
+[source,csharp]
+----
+using System.Collections.Generic;
+
+namespace WebshopDemo.Application;
+
+public static class ShippingRules
+{
+    // FreeShippingThreshold and StandardShippingCost as above
+
+    /// <summary>Country codes (ISO 3166) the shop delivers to.</summary>
+    public static readonly IReadOnlySet<string> DeliveryCountries = new HashSet<string> { "AT", "DE", "CH" };
+}
+----
+
+Die Bedingung heißt jetzt überall `ShippingRules.DeliveryCountries.Contains(country)`.
+Ein neues Land ist eine Änderung in einer Zeile.
+
+* *Warum ein Set?*
+Ein `HashSet` enthält jeden Wert nur einmal, und `Contains` ist auch bei vielen Einträgen schnell.
+Siehe Kapitel link:{github_url}/01%20Types/04_Collections.adoc[Collections].
+* *Warum `IReadOnlySet`?*
+`readonly` schützt nur die Variable, nicht den Inhalt.
+Mit dem Typ `+IReadOnlySet<string>+` kann niemand von außen `Add()` aufrufen.
+
+== Properties statt Bedingungen
+
+Mit der Konstante steht der _Wert_ an einer Stelle.
+Die _Regel_ steht aber immer noch dreimal im Code:
+
+[source,csharp]
+----
+if (order.Total >= ShippingRules.FreeShippingThreshold)   // CartView, CheckoutService, InvoiceWriter
+----
+
+Der Fehler mit `+>+` statt `+>=+` kann also weiter passieren.
+Außerdem rechnet jede Klasse mit den Daten einer _anderen_ Klasse.
+Die Lösung: Die Klasse, der die Daten gehören, beantwortet die Frage selbst.
+Dafür eignet sich ein *berechnetes Property* (siehe Kapitel link:{github_url}/01%20Types/03_Properties.adoc[Properties]):
+
+*Order.cs*
+
+[source,csharp]
+----
+namespace WebshopDemo.Application;
+
+/// <summary>
+/// An order of the webshop.
+/// </summary>
+public class Order
+{
+    public Order(decimal total, string country)
+    {
+        Total = total;
+        Country = country;
+    }
+
+    public decimal Total { get; }
+    public string Country { get; }
+
+    /// <summary>True if the order is shipped for free.</summary>
+    public bool QualifiesForFreeShipping => Total >= ShippingRules.FreeShippingThreshold;
+
+    /// <summary>The shipping cost in EUR.</summary>
+    public decimal ShippingCost => QualifiesForFreeShipping ? 0m : ShippingRules.StandardShippingCost;
+
+    /// <summary>True if the shop delivers to the country of the order.</summary>
+    public bool CanBeDelivered => ShippingRules.DeliveryCountries.Contains(Country);
+}
+----
+
+Die anderen Klassen fragen nur noch: `if (order.QualifiesForFreeShipping)`.
+Der Checkout gibt einfach `order.ShippingCost` zurück.
+Die Tests prüfen die Regel jetzt an einer Stelle, auch an der Grenze:
+
+[source,csharp]
+----
+[Theory]
+[InlineData(49.99, false)]
+[InlineData(50, true)]
+public void QualifiesForFreeShipping_AtThreshold_ReturnsExpectedResult(decimal total, bool expected)
+{
+    Order order = new Order(total: total, country: "AT");
+
+    Assert.Equal(expected, order.QualifiesForFreeShipping);
+}
+
+[Fact]
+public void ShippingCost_Below50Euro_Returns4Point90()
+{
+    Order order = new Order(total: 49.99m, country: "AT");
+
+    Assert.Equal(4.90m, order.ShippingCost);
+}
+----
+
+=== Feature Envy und „Tell, don't ask“
+
+Dahinter stehen zwei bekannte Begriffe:
+
+[%header]
+|===
+|Begriff |Bedeutung |Im Beispiel
+|*Feature Envy* (Smell) |Eine Methode interessiert sich mehr für die Daten einer anderen Klasse als für die eigenen. |_CheckoutService_ liest `order.Total` und entscheidet selbst.
+|*Tell, don't ask* |Frag ein Objekt nicht nach seinen Daten, um dann selbst zu entscheiden. Lass das Objekt entscheiden. |_CheckoutService_ fragt `order.QualifiesForFreeShipping`.
+|===
+
+Streng genommen meint „Tell, don't ask“ Methoden, die etwas _tun_ (`order.MarkAsPaid()`).
+Für dieses Kapitel genügt die Grundidee: *Die Entscheidung gehört zu den Daten.*
+
+Property oder Methode?
+Ein Property passt, wenn die Berechnung schnell ist, keine Parameter braucht und nichts verändert.
+Braucht die Regel einen Parameter, ist es eine Methode, zum Beispiel `order.CanBeDeliveredTo(address)`.
+
+== Wenn sich der Wert ändern kann: Konfiguration
+
+Das Marketing will die Grenze für Gratisversand selbst ändern, ohne neue Programmversion.
+Außerdem gibt es bald einen Shop in der Schweiz mit einer anderen Grenze.
+Eine `const` reicht dafür nicht.
+Der Wert kommt jetzt von außen, zum Beispiel aus einer Konfigurationsdatei.
+Dafür bekommt die Regel eine eigene Klasse, und die Werte kommen über den Konstruktor:
+
+*ShippingPolicy.cs*
+
+[source,csharp]
+----
+using System.Collections.Generic;
+
+namespace WebshopDemo.Application;
+
+/// <summary>
+/// The configurable shipping rules of one shop.
+/// </summary>
+public class ShippingPolicy
+{
+    public ShippingPolicy(decimal freeShippingThreshold, decimal standardShippingCost,
+        IReadOnlySet<string> deliveryCountries)
+    {
+        FreeShippingThreshold = freeShippingThreshold;
+        StandardShippingCost = standardShippingCost;
+        DeliveryCountries = deliveryCountries;
+    }
+
+    public decimal FreeShippingThreshold { get; }
+    public decimal StandardShippingCost { get; }
+    public IReadOnlySet<string> DeliveryCountries { get; }
+
+    public bool QualifiesForFreeShipping(Order order) => order.Total >= FreeShippingThreshold;
+
+    public decimal GetShippingCost(Order order) => QualifiesForFreeShipping(order) ? 0m : StandardShippingCost;
+
+    public bool CanDeliverTo(string country) => DeliveryCountries.Contains(country);
+}
+----
+
+_Order_ hat jetzt nur noch `Total` und `Country`.
+Die Regel ist trotzdem an genau einer Stelle, nämlich in _ShippingPolicy_.
+Ein Test kann jede Grenze verwenden:
+
+[source,csharp]
+----
+[Fact]
+public void GetShippingCost_WithThreshold60And55Euro_Returns4Point90()
+{
+    ShippingPolicy policy = new ShippingPolicy(
+        freeShippingThreshold: 60m,
+        standardShippingCost: 4.90m,
+        deliveryCountries: new HashSet<string> { "AT" });
+    Order order = new Order(total: 55m, country: "AT");
+
+    decimal cost = policy.GetShippingCost(order);
+
+    Assert.Equal(4.90m, cost);
+}
+----
+
+Die Klassen _CartView_, _CheckoutService_ und _InvoiceWriter_ bekommen die _ShippingPolicy_ im Konstruktor.
+Diese Technik heißt _Constructor Injection_.
+Du lernst sie im Kapitel link:{github_url}/16%20SOLID/08_Dependency_Inversion.adoc#dependency-injection-die-technik-dazu[D: Dependency Inversion] kennen.
+
+[%header]
+|===
+|Der Wert ... |Wohin damit?
+|ändert sich nur mit einer neuen Programmversion |`const` oder `static readonly`, Regel als Property der Datenklasse
+|kommt aus der Konfiguration oder ist pro Shop verschieden |eigene Klasse wie _ShippingPolicy_, Werte über den Konstruktor
+|===
+
+== Lesbar für Menschen und für LLMs
+
+Vergleiche diese beiden Zeilen:
+
+[source,csharp]
+----
+if (order.Total >= 50m && ShippingRules.DeliveryCountries.Contains(order.Country)) { /* ... */ }
+
+if (order.QualifiesForFreeShipping && order.CanBeDelivered) { /* ... */ }
+----
+
+Beide tun dasselbe.
+Die erste Zeile musst du _übersetzen_: „50, das ist wohl die Grenze für Gratisversand.“
+Die zweite Zeile liest du wie einen Satz.
+Für einen Agent gilt dasselbe wie für dich (siehe link:{github_url}/16%20SOLID/01_Einfuehrung.adoc#sprechender-code-hilft-menschen-und-agents[Sprechender Code hilft Menschen und Agents]):
+
+[%header]
+|===
+|Aufgabe für den Agent |Mit `+order.Total >= 50m+` |Mit `order.QualifiesForFreeShipping`
+|Verstehen, was die Bedingung bedeutet |Er muss die Absicht aus Aufrufern, Texten und Tests erschließen. |Die Absicht steht im Namen.
+|„Gratisversand ab 60 €“ umsetzen |Er sucht alle `50` und entscheidet bei jeder, ob sie den Versand meint. |Er ändert eine Konstante.
+|Kosten |mehr Tokens lesen, mehr Denkaufwand (_Effort_) |wenige Tokens
+|===
+
+Moderne Modelle raten oft richtig.
+Verlassen kannst du dich darauf aber nicht.
+Jede Stelle, an der ein Agent raten muss, ist eine Stelle, an der er falsch raten kann.
+Ein guter Name nimmt ihm das Raten ab.
+
+== Wo ist die Grenze?
+
+Nicht jedes Literal ist ein Magic Value.
+Diese Werte sind in Ordnung:
+
+[%header]
+|===
+|Code |Magic Value? |Warum?
+|`if (items.Count == 0)` |nein |0 heißt „leer“. Das versteht jeder.
+|`+items[i + 1]+`, `+for (int i = 0; ...)+` |nein |Technik der Schleife, keine Geschäftsregel.
+|`percent / 100m` |nein |Allgemein bekannte Umrechnung.
+|`+new Order(total: 49.99m, ...)+` im Test |nein |Testdaten sollen konkret und nachrechenbar sein.
+|`+if (order.Total >= 50m)+` |*ja* |Geschäftsregel, die sich ändern kann.
+|`if (status == 3)` |*ja* |Niemand weiß, was 3 bedeutet. Hier passt ein `enum`.
+|===
+
+Die Faustregel: Würde eine neue Kollegin fragen „Warum genau dieser Wert?“ oder „Kann sich der Wert ändern?“, dann bekommt er einen Namen.
+
+Der Name muss die _Bedeutung_ nennen, nicht den Wert.
+`const decimal Fifty = 50m;` ist nutzlos.
+Ändert sich die Grenze auf 60, steht dann `Fifty = 60m` im Code.
+
+== Im Code-Review erkennen
+
+[%header]
+|===
+|Warnzeichen im Code |Verletztes Prinzip |Was du verlangst bzw. formulierst
+|Dieselbe Zahl in mehreren Klassen (`50m`, `4.90m`) |Magic Value, DRY |„Die Grenze für Gratisversand steht an vier Stellen. Lege sie als Konstante `FreeShippingThreshold` an einer Stelle an.“
+|Ein Wert steckt in einem Text (`"from 50 EUR"`) |Magic Value |„Der Text wiederholt die Grenze. Baue ihn aus der Konstante zusammen.“
+|`+x == "AT" \|\| x == "DE" \|\| ...+` |Hartcodierte Liste |„Lege die Lieferländer als `+IReadOnlySet<string>+` an einer Stelle an und prüfe mit `Contains`.“
+|Dieselbe Bedingung auf fremden Daten (`+order.Total >= ...+`) an mehreren Stellen |Feature Envy, OCP Teil 1 |„Die Regel gehört zu `Order`. Ersetze die Bedingung durch ein Property `QualifiesForFreeShipping`.“
+|`+>+` an einer Stelle, `+>=+` an einer anderen |Regel mehrfach implementiert |„Die Regel ist zweimal verschieden umgesetzt. Es darf nur eine Implementierung geben.“
+|`const` für einen Wert, der pro Shop oder Kunde verschieden ist |Konfiguration im Code |„Die Grenze ist Konfiguration. Übergib sie über den Konstruktor einer `ShippingPolicy`.“
+|`if (status == 3)` |Magic Value |„Ersetze den Statuscode durch ein `enum` mit sprechenden Namen.“
+|`const decimal Fifty = 50m;` |Name ohne Bedeutung |„Der Name wiederholt nur den Wert. Benenne, wofür der Wert steht.“
+|===
+
+// tag::pdf_exclude[]
+== Übungen
+
+. *Code Review auf Papier:* Ein Agent hat diese Methode geschrieben.
+Markiere alle Literale.
+Entscheide bei jedem, ob es ein Magic Value ist.
+Schreibe für jedes Problem einen Kommentar im Stil der Tabelle _Im Code-Review erkennen_: Was ist das Problem, und welche Konstante, welche Collection oder welches Property verlangst du (mit Name und Klasse)?
++
+[source,csharp]
+----
+public decimal CalculateDiscount(Customer customer, List<OrderItem> items)
+{
+    if (items.Count == 0)
+    {
+        return 0m;
+    }
+    decimal total = 0m;
+    for (int i = 0; i < items.Count; i++)
+    {
+        total += items[i].Price * items[i].Quantity;
+    }
+    if (customer.RegisteredAt < DateTime.Now.AddYears(-5) && total > 200m)
+    {
+        return total * 0.1m;
+    }
+    if (customer.Country == "AT" || customer.Country == "DE")
+    {
+        return total * 0.05m;
+    }
+    return 0m;
+}
+----
+. *PowerbankCheck:* Eine Airline prüft am Gate Powerbanks und verbotene Gegenstände im Gepäck.
+Der Code funktioniert, aber Grenzwerte wie 100 Wh und 160 Wh und die Liste der verbotenen Gegenstände stehen an vielen Stellen.
+Du baust ihn in Konstanten, Collections und Properties um, ohne die Tests zu ändern.
+Lade dazu link:{github_url}/16%20SOLID/Uebungen/PowerbankCheck.7z[PowerbankCheck.7z] herunter.
+Die Angabe steht im Archiv in der Datei _README.md_.
+
+// end::pdf_exclude[]

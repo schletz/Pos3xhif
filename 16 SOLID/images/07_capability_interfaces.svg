@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="560" viewBox="0 0 1100 560">
+  <defs><marker id="dep" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,1 L11,6 L1,11" fill="none" stroke="#1d1d1b" stroke-width="1.5"/></marker><marker id="tri" viewBox="0 0 16 16" refX="15" refY="8" markerWidth="16" markerHeight="16" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,1 L15,8 L1,15 Z" fill="#ffffff" stroke="#1d1d1b" stroke-width="1.5"/></marker></defs>
+  <rect x="0.5" y="0.5" width="1099" height="559" rx="8" fill="#ffffff" stroke="#9d9d9c"/>
+  <text x="550" y="38" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="21" font-weight="bold" fill="#1d1d1b" text-anchor="middle">Eine Klasse, mehrere Stecker: Jedes Feature nutzt nur sein Interface</text>
+  <rect x="450" y="150" width="200" height="82" rx="8" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.8"/>
+  <path d="M458,150 H642 Q650,150 650,158 V198 H450 V158 Q450,150 458,150 Z" fill="#ededed" stroke="none"/>
+  <rect x="450" y="150" width="200" height="82" rx="8" fill="none" stroke="#9d9d9c" stroke-width="1.8"/>
+  <polyline points="450,198 650,198" fill="none" stroke="#9d9d9c" stroke-width="1.2"/>
+  <text x="550.0" y="168" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#5f5f5e" text-anchor="middle">«record»</text>
+  <text x="550.0" y="188" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1d1d1b" text-anchor="middle">Product</text>
+  <text x="462" y="222" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">Ean, Name, Price</text>
+  <text x="550" y="256" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#5f5f5e" text-anchor="middle">IEquatable: automatisch, weil record</text>
+  <text x="550" y="278" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#5f5f5e" text-anchor="middle">IComparable: selbst implementiert</text>
+  <polyline points="450,200 376,200" fill="none" stroke="#1d1d1b" stroke-width="1.8"/>
+  <circle cx="365" cy="200" r="11" fill="#ffffff" stroke="#1d1d1b" stroke-width="1.8"/>
+  <path d="M362,183 A17,17 0 0 0 362,217" fill="none" stroke="#1d1d1b" stroke-width="1.8"/>
+  <polyline points="345,200 270,200" fill="none" stroke="#1d1d1b" stroke-width="1.8"/>
+  <text x="365" y="174" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="bold" fill="#1d1d1b" text-anchor="middle">IEquatable&lt;Product&gt;</text>
+  <polyline points="650,200 724,200" fill="none" stroke="#1d1d1b" stroke-width="1.8"/>
+  <circle cx="735" cy="200" r="11" fill="#ffffff" stroke="#1d1d1b" stroke-width="1.8"/>
+  <path d="M738,183 A17,17 0 0 1 738,217" fill="none" stroke="#1d1d1b" stroke-width="1.8"/>
+  <polyline points="755,200 830,200" fill="none" stroke="#1d1d1b" stroke-width="1.8"/>
+  <text x="735" y="174" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="bold" fill="#1d1d1b" text-anchor="middle">IComparable&lt;Product&gt;</text>
+  <rect x="30" y="90" width="240" height="162" rx="8" fill="#ffffff" stroke="#0090d4" stroke-width="1.8"/>
+  <path d="M38,90 H262 Q270,90 270,98 V122 H30 V98 Q30,90 38,90 Z" fill="#d1ebf7" stroke="none"/>
+  <rect x="30" y="90" width="240" height="162" rx="8" fill="none" stroke="#0090d4" stroke-width="1.8"/>
+  <polyline points="30,122 270,122" fill="none" stroke="#0090d4" stroke-width="1.2"/>
+  <text x="150.0" y="111" font-family="Consolas, Menlo, monospace" font-size="15" font-weight="bold" fill="#1d1d1b" text-anchor="middle">nutzt Equals()</text>
+  <text x="42" y="146" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">list.Contains(p)</text>
+  <text x="42" y="170" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">Distinct()</text>
+  <text x="42" y="194" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">HashSet&lt;Product&gt; *</text>
+  <text x="42" y="218" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">Dictionary-Schlüssel *</text>
+  <text x="42" y="242" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#5f5f5e" text-anchor="start">* dazu GetHashCode()</text>
+  <rect x="830" y="90" width="240" height="138" rx="8" fill="#ffffff" stroke="#0090d4" stroke-width="1.8"/>
+  <path d="M838,90 H1062 Q1070,90 1070,98 V122 H830 V98 Q830,90 838,90 Z" fill="#d1ebf7" stroke="none"/>
+  <rect x="830" y="90" width="240" height="138" rx="8" fill="none" stroke="#0090d4" stroke-width="1.8"/>
+  <polyline points="830,122 1070,122" fill="none" stroke="#0090d4" stroke-width="1.2"/>
+  <text x="950.0" y="111" font-family="Consolas, Menlo, monospace" font-size="15" font-weight="bold" fill="#1d1d1b" text-anchor="middle">nutzt CompareTo()</text>
+  <text x="842" y="146" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">list.Sort()</text>
+  <text x="842" y="170" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">OrderBy(p =&gt; p)</text>
+  <text x="842" y="194" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">SortedSet&lt;Product&gt;</text>
+  <text x="842" y="218" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">Largest(products)</text>
+  <rect x="160" y="390" width="310" height="92" rx="8" fill="#f6d3db" stroke="#cc0935" stroke-width="1.8" stroke-dasharray="7 5"/>
+  <text x="315" y="416" font-family="Consolas, Menlo, monospace" font-size="15" font-weight="bold" fill="#a8072c" text-anchor="middle">✗ IDisposable fehlt</text>
+  <text x="315" y="442" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="middle">using Product p = …;</text>
+  <text x="315" y="466" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="middle">kompiliert nicht (CS1674)</text>
+  <rect x="630" y="390" width="310" height="92" rx="8" fill="#f6d3db" stroke="#cc0935" stroke-width="1.8" stroke-dasharray="7 5"/>
+  <text x="785" y="416" font-family="Consolas, Menlo, monospace" font-size="15" font-weight="bold" fill="#a8072c" text-anchor="middle">✗ IEnumerable&lt;T&gt; fehlt</text>
+  <text x="785" y="442" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="middle">foreach (… in product)</text>
+  <text x="785" y="466" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="middle">kompiliert nicht (CS1579)</text>
+  <polyline points="500,300 315,390" fill="none" stroke="#cc0935" stroke-width="1.8" stroke-dasharray="7 5"/>
+  <polyline points="600,300 785,390" fill="none" stroke="#cc0935" stroke-width="1.8" stroke-dasharray="7 5"/>
+  <text x="550" y="525" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="middle">Kreis = Interface, das die Klasse anbietet · Halbkreis = Interface, das ein Feature verlangt</text>
+  <text x="550" y="546" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="middle">(UML-Notation „Ball and Socket“) · rot gestrichelt mit ✗: Stecker fehlt</text>
+</svg>

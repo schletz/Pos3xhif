@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="430" viewBox="0 0 1000 430" role="img" aria-label="IEnumerable führt die Lambda in C# aus, IQueryable übersetzt sie nach SQL">
+<title>IEnumerable führt die Lambda in C# aus, IQueryable übersetzt sie nach SQL</title>
+<defs><marker id="arrow-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9d9d9c"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0090d4"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f39000"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#71af2e"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#cc0935"/></marker><marker id="arrow-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6cc1b0"/></marker></defs>
+<rect x="1" y="1" width="998" height="428" rx="14" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="30.0" y="42.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Wer führt die Lambda aus?</text>
+<text x="30.0" y="82.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="start" fill="#00628f" xml:space="preserve">IEnumerable&lt;T&gt;: LINQ to Objects (Liste im Speicher)</text>
+<rect x="30.0" y="95.0" width="180.0" height="60.0" rx="8" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="120.0" y="131.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">List&lt;Person&gt;</text>
+<line x1="210.0" y1="125.0" x2="258.0" y2="125.0" stroke="#0090d4" stroke-width="2" marker-end="url(#arrow-blue)"/>
+<rect x="260.0" y="95.0" width="300.0" height="60.0" rx="8" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="410.0" y="121.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="15" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">.Where(p =&gt; p.Age &gt;= 18)</text>
+<text x="410.0" y="143.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">C# ruft die Lambda für jedes Element auf</text>
+<line x1="560.0" y1="125.0" x2="608.0" y2="125.0" stroke="#0090d4" stroke-width="2" marker-end="url(#arrow-blue)"/>
+<rect x="610.0" y="95.0" width="180.0" height="60.0" rx="8" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+<text x="700.0" y="131.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">Ergebnis</text>
+<text x="30.0" y="200.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="start" fill="#2f7d6e" xml:space="preserve">IQueryable&lt;T&gt;: EF Core (Datenbank)</text>
+<rect x="30.0" y="215.0" width="180.0" height="60.0" rx="8" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="120.0" y="251.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">_db.Shows</text>
+<line x1="210.0" y1="245.0" x2="258.0" y2="245.0" stroke="#6cc1b0" stroke-width="2" marker-end="url(#arrow-teal)"/>
+<rect x="260.0" y="215.0" width="300.0" height="60.0" rx="8" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="410.0" y="241.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">.Where(s =&gt; s.Date.Year == 2024)</text>
+<text x="410.0" y="263.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">Lambda wird als Daten gespeichert</text>
+<line x1="560.0" y1="245.0" x2="608.0" y2="245.0" stroke="#6cc1b0" stroke-width="2" marker-end="url(#arrow-teal)"/>
+<rect x="610.0" y="215.0" width="180.0" height="60.0" rx="8" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="700.0" y="241.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">SQL-Generator</text>
+<text x="700.0" y="263.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">des Providers</text>
+<line x1="790.0" y1="245.0" x2="838.0" y2="245.0" stroke="#6cc1b0" stroke-width="2" marker-end="url(#arrow-teal)"/>
+<path d="M840,215 v60 a60.0,10 0 0 0 120,0 v-60" fill="#e5f4f1" stroke="#6cc1b0" stroke-width="1.5"/>
+<ellipse cx="900.0" cy="215" rx="60.0" ry="10" fill="#e5f4f1" stroke="#6cc1b0" stroke-width="1.5"/>
+<text x="900.0" y="257.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">SQLite</text>
+<text x="700.0" y="310.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">WHERE strftime(&#x27;%Y&#x27;, s.Date) = &#x27;2024&#x27;</text>
+<line x1="700.0" y1="280.0" x2="700.0" y2="296.0" stroke="#9d9d9c" stroke-width="1.2" marker-end="url(#arrow-grey)"/>
+<path d="M700,318 L700,350 L560,350" fill="none" stroke="#cc0935" stroke-width="2" marker-end="url(#arrow-red)"/>
+<rect x="220.0" y="330.0" width="338.0" height="52.0" rx="8" fill="#f6d3db" stroke="#cc0935" stroke-width="1.5"/>
+<text x="389.0" y="352.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">Nicht übersetzbar?</text>
+<text x="389.0" y="373.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="15" font-weight="normal" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">✗ InvalidOperationException</text>
+<text x="30.0" y="410.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Die Abfrage läuft erst bei ToList(), First(), Count(), Any() oder foreach. Davor ist sie nur eine Beschreibung.</text>
+</svg>

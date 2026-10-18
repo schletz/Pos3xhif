@@ -1,0 +1,352 @@
+= Endliche Automaten
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Ein endlicher Automat ist die einfachste Maschine, die eine Sprache erkennen kann.
+Er liest ein Wort Zeichen für Zeichen und merkt sich dabei nur, in welchem _Zustand_ er gerade ist.
+Am Ende sagt er „ja“ oder „nein“.
+Genau so arbeiten Lexer in Compilern, Eingabeprüfungen in Formularen und manche Regex-Engines.
+
+[TIP]
+====
+*Zum Selbst-Erarbeiten: der interaktive Automaten-Trainer*
+
+Im https://die-spengergasse.github.io/course-pos-csharp_basics/08%20Theoretische%20Informatik/13_Endliche_Automaten.html[Automaten-Trainer] siehst du, wie ein DEA ein Wort Zeichen für Zeichen liest.
+Danach baust du selbst Automaten per Mausklick, und der Trainer prüft sie sofort.
+So findest du die Fehler in deinem Automaten, bevor sie dich im Test erwischen.
+====
+
+== Ein Automat aus dem Alltag
+
+Ein Getränkeautomat verkauft eine Flasche um 1,50 €.
+Er nimmt nur 50-Cent-Münzen (`h`) und 1-Euro-Münzen (`e`).
+Der Automat muss sich nicht jede Münze merken.
+Es reicht, wenn er weiß, wie viel schon eingeworfen wurde.
+Mehr als 1,50 € muss er sich nie merken, ab da gibt er das Getränk aus.
+Er hat also nur vier Zustände: _0 ct_, _50 ct_, _1 €_ und _bezahlt_.
+
+[%header]
+|===
+|Zustand |`h` |`e`
+|→ 0 ct |50 ct |1 €
+|50 ct |1 € |bezahlt
+|1 € |bezahlt |bezahlt
+|++*++ bezahlt |– |–
+|===
+
+Jede Zeile sagt, in welchen Zustand der Automat nach einer Münze wechselt.
+Der Pfeil → markiert den Startzustand, der Stern ++*++ den Zustand, in dem das Getränk kommt.
+Die Münzfolge `heh` endet in _bezahlt_, die Folge `hh` nicht.
+Die Striche bedeuten: Nach dem Bezahlen nimmt der Automat keine Münzen mehr an.
+Was mit solchen Lücken passiert, klärt der Abschnitt über den Fehlerzustand.
+
+Die Folge der Münzen ist ein Wort über dem Alphabet Σ = {h, e}.
+Der Automat beschreibt damit eine Sprache: alle Münzfolgen, bei denen erst die letzte Münze den Preis von 1,50 € erreicht.
+
+== Der deterministische endliche Automat (DEA)
+
+Formal ist ein *deterministischer endlicher Automat* (DEA, englisch _DFA_) ein 5-Tupel M = (Q, Σ, δ, q₀, F):
+
+[%header]
+|===
+|Teil |Bedeutung
+|Q |endliche Menge von Zuständen
+|Σ |Eingabealphabet
+|δ: Q × Σ → Q |Übergangsfunktion: aus Zustand und Zeichen folgt der nächste Zustand
+|q₀ ∈ Q |Startzustand
+|F ⊆ Q |Menge der Endzustände (akzeptierende Zustände)
+|===
+
+_Deterministisch_ heißt: Für jeden Zustand und jedes Zeichen gibt es höchstens einen Folgezustand.
+Der Automat muss nie raten.
+
+=== Beispiel: Wörter, die auf `ab` enden
+
+Die Sprache L = { w ∈ {a, b}++*++ | w endet auf `ab` } enthält `ab`, `aab`, `bab` und `abab`, aber nicht ε, `a`, `ba` oder `abb`.
+Der Automat muss sich nur merken, wie viel vom Ende `ab` er gerade gesehen hat:
+
+* q₀: Das Wortende passt noch gar nicht (Start, oder zuletzt `b` ohne `a` davor).
+* q₁: Das letzte Zeichen war ein `a`.
+* q₂: Die letzten zwei Zeichen waren `ab`.
+
+image::{root_dir}/images/13_dea_endet_auf_ab.svg[]
+
+Im *Zustandsdiagramm* ist jeder Zustand ein Kreis.
+Der Pfeil von links zeigt auf den Startzustand.
+Endzustände haben einen Doppelkreis.
+Ein Pfeil von p nach q mit der Beschriftung `a` bedeutet δ(p, a) = q. Ein Pfeil, der zum selben Zustand zurückführt, heißt _Schleife_.
+
+Interessant sind die Pfeile, die aus q₂ herausführen.
+Liest der Automat in q₂ ein `a`, ist zwar das `ab` kaputt, aber das neue `a` kann der Anfang eines neuen `ab` sein.
+Deshalb geht es nach q₁ und nicht nach q₀.
+
+=== Die Übergangstabelle
+
+Dieselbe Information steht kompakter in einer *Übergangstabelle*.
+Jede Zeile ist ein Zustand, jede Spalte ein Zeichen.
+In der Zelle steht der Folgezustand.
+
+[%header]
+|===
+|δ |`a` |`b`
+|→ q₀ |q₁ |q₀
+|q₁ |q₁ |q₂
+|++*++ q₂ |q₁ |q₀
+|===
+
+Das Diagramm ist für Menschen leichter zu lesen.
+Die Tabelle eignet sich besser für Programme, denn ein Programm kann sie direkt als zweidimensionales Array oder `Dictionary` speichern.
+
+=== Ein Wort prüfen
+
+Der Automat startet in q₀ und wendet für jedes Zeichen δ an.
+Ist er nach dem letzten Zeichen in einem Endzustand, *akzeptiert* er das Wort.
+Sonst *lehnt er es ab*.
+
+[source,text]
+----
+Wort abab:   q₀ --a--> q₁ --b--> q₂ --a--> q₁ --b--> q₂   q₂ ∈ F  -> akzeptiert
+Wort aba:    q₀ --a--> q₁ --b--> q₂ --a--> q₁             q₁ ∉ F  -> abgelehnt
+Wort ε:      q₀                                           q₀ ∉ F  -> abgelehnt
+----
+
+Man schreibt δ++*++(q, w) für den Zustand, in dem der Automat nach dem ganzen Wort w landet.
+Die Sprache des Automaten ist dann L(M) = { w ∈ Σ++*++ | δ++*++(q₀, w) ∈ F }.
+
+Beachte zwei Dinge:
+
+* Der Automat entscheidet erst *am Ende* des Wortes.
+Dass er unterwegs in q₂ war, zählt bei `aba` nicht.
+* Der Automat liest jedes Zeichen genau *einmal* von links nach rechts.
+Er kann nicht zurückspringen und hat außer dem Zustand keinen Speicher.
+
+== Der Fehlerzustand
+
+Beim Getränkeautomaten fehlten Übergänge.
+In der Praxis lässt man solche Lücken oft offen, weil das Diagramm sonst unübersichtlich wird.
+Gemeint ist immer dasselbe: Es gibt einen *Fehlerzustand* (auch _Senke_ oder _Trap State_), der kein Endzustand ist und den man nie wieder verlässt.
+Jeder fehlende Übergang führt dorthin.
+Ein fehlender Übergang bedeutet also: Das Wort wird abgelehnt, egal was noch kommt.
+
+Als Beispiel prüfen wir Ganzzahl-Literale mit optionalem Vorzeichen: `42`, `-7` und `++0815+` gehören dazu, aber nicht ε, `+++`, `4-2` oder `12a`.
+Das Alphabet sind alle Zeichen, die in der Eingabe vorkommen können.
+Damit die Grafik lesbar bleibt, steht `+0–9+` für zehn einzelne Pfeile und `sonst` für alle Zeichen, für die kein anderer Pfeil passt.
+
+image::{root_dir}/images/13_dea_ganzzahl.svg[]
+
+* S (Start): Noch nichts gelesen.
+Ein Vorzeichen führt nach V, eine Ziffer direkt nach Z.
+* V (Vorzeichen): Es muss jetzt eine Ziffer kommen.
+Ein zweites Vorzeichen ist ein Fehler.
+* Z (Ziffern): Mindestens eine Ziffer gelesen.
+Das ist der einzige Endzustand.
+* F (Fehler): Hier bleibt der Automat bis zum Ende des Wortes.
+
+Ab jetzt lassen wir den Fehlerzustand in Diagrammen meist weg.
+Du musst ihn dir aber immer dazudenken.
+
+== Ein DEA in C#
+
+Ein konkreter DEA lässt sich in C# sehr direkt umsetzen.
+Die Zustände werden ein `enum`, die Übergangsfunktion δ ein `switch`-Ausdruck über das Tupel `(state, c)`.
+
+[source,csharp]
+----
+string[] words = ["42", "-7", "+0815", "", "+", "4-2", "12a"];
+foreach (string word in words)
+{
+    string quoted = $"\"{word}\"";
+    Console.WriteLine($"{quoted,-8} {(IsInteger(word) ? "akzeptiert" : "abgelehnt")}");
+}
+
+static bool IsInteger(string word)
+{
+    State state = State.Start;                          // (1)
+    foreach (char c in word)
+    {
+        state = (state, c) switch                       // (2)
+        {
+            (State.Start, '+' or '-') => State.Sign,
+            (State.Start or State.Sign or State.Digits, >= '0' and <= '9') => State.Digits,
+            _ => State.Error                            // (3)
+        };
+        if (state == State.Error) { return false; }     // (4)
+    }
+    return state == State.Digits;                       // (5)
+}
+
+enum State { Start, Sign, Digits, Error }
+----
+
+[source,text]
+----
+"42"     akzeptiert
+"-7"     akzeptiert
+"+0815"  akzeptiert
+""       abgelehnt
+"+"      abgelehnt
+"4-2"    abgelehnt
+"12a"    abgelehnt
+----
+
+* *(1)* q₀ ist `State.Start`.
+* *(2)* Jeder Zweig des `switch` ist ein Pfeil im Diagramm.
+Die Patterns `pass:c['+' or '-']` und `+>= '0' and <= '9'+` fassen mehrere Zeichen zu einem Pfeil zusammen, wie `+0–9+` in der Grafik.
+Mit `State.Start or State.Sign or State.Digits` gilt ein Zweig für drei Zustände.
+* *(3)* Der Discard `+_+` ist der Pfeil `sonst`.
+Alle fehlenden Übergänge führen in den Fehlerzustand.
+Das gilt auch für F selbst, deshalb braucht F keinen eigenen Zweig.
+* *(4)* Aus dem Fehlerzustand kommt der Automat nie wieder heraus.
+Wir können also sofort abbrechen, statt den Rest des Wortes zu lesen.
+* *(5)* F = \{Z}.
+Das Wort wird akzeptiert, wenn der Automat am Ende in `State.Digits` steht.
+
+Der Compiler hilft dir hier: Fehlt der Discard `+_+`, warnt er, dass der `switch` nicht alle Fälle abdeckt.
+Mit `TreatWarningsAsErrors` wird daraus ein Fehler.
+Du kannst also keinen Übergang vergessen, ohne es zu merken.
+
+Diese Umsetzung ist schnell und gut lesbar, aber fest verdrahtet.
+Willst du einen anderen Automaten, musst du neuen Code schreiben.
+Wie du einen Automaten stattdessen aus einer Übergangstabelle als Daten baust, programmierst du im Übungsprojekt.
+
+== Nichtdeterministische Automaten (NEA)
+
+Beim DEA war es knifflig, die Pfeile aus q₂ richtig zu setzen.
+Einfacher wäre ein Automat, der _rät_: „Ich lese beliebig viel, und wenn das vorletzte Zeichen kommt, springe ich los.“
+Genau das erlaubt ein *nichtdeterministischer endlicher Automat* (NEA, englisch _NFA_):
+
+* Aus einem Zustand dürfen für dasselbe Zeichen *mehrere* Pfeile oder *gar keiner* führen.
+* Es darf *ε-Übergänge* geben.
+Über einen solchen Pfeil wechselt der Automat den Zustand, ohne ein Zeichen zu lesen.
+
+Ein NEA *akzeptiert* ein Wort, wenn es *mindestens einen* Weg durch den Automaten gibt, der das ganze Wort liest und in einem Endzustand endet.
+Die Übergangsfunktion liefert daher eine Menge von Zuständen: δ: Q × (Σ ∪ {ε}) → 𝒫(Q). 𝒫(Q) ist die _Potenzmenge_ von Q, also die Menge aller Teilmengen.
+
+image::{root_dir}/images/13_nea_beispiel.svg[]
+
+Der obere NEA erkennt wieder die Wörter, die auf `ab` enden.
+In q₀ liest er beliebige Zeichen.
+Bei einem `a` kann er in q₀ bleiben _oder_ nach q₁ gehen.
+Für `bab` gibt es den Weg q₀ → q₀ → q₁ → q₂, also wird `bab` akzeptiert.
+Andere Wege, etwa q₀ → q₀ → q₀ → q₀, enden nicht in einem Endzustand.
+Das stört nicht, denn ein erfolgreicher Weg genügt.
+
+Der untere NEA erkennt Ganzzahlen mit optionalem Vorzeichen.
+Der ε-Übergang drückt „optional“ aus: Der Automat kann das Vorzeichen lesen oder ohne Lesen nach p₁ gehen.
+
+Ein NEA ist leichter zu entwerfen, aber schwerer auszuführen.
+Ein Programm müsste alle Wege gleichzeitig verfolgen.
+Zum Glück lässt sich jeder NEA in einen DEA umbauen.
+
+== Vom NEA zum DEA: die Potenzmengenkonstruktion
+
+Die Idee: Der DEA merkt sich die *Menge aller Zustände*, in denen der NEA gerade sein könnte.
+Jede solche Menge wird ein Zustand des DEA.
+So geht die Konstruktion:
+
+. Der Startzustand des DEA ist die Menge \{q₀}.
+. Für jede neue Menge M und jedes Zeichen x bildest du die Menge aller Zustände, die der NEA von irgendeinem Zustand in M mit x erreicht.
+. Taucht dabei eine neue Menge auf, bekommt sie eine eigene Zeile.
+Du machst weiter, bis keine neuen Mengen mehr entstehen.
+. Endzustände des DEA sind alle Mengen, die mindestens einen Endzustand des NEA enthalten.
+
+Für den oberen NEA aus der Grafik sieht das so aus:
+
+* \{q₀} mit `a`: Von q₀ geht es nach q₀ und q₁, also {q₀, q₁}.
+Mit `b` nur nach \{q₀}.
+* {q₀, q₁} mit `a`: Von q₀ nach q₀ und q₁, von q₁ mit `a` nirgends hin.
+Ergebnis {q₀, q₁}.
+* {q₀, q₁} mit `b`: Von q₀ nach q₀, von q₁ nach q₂.
+Ergebnis {q₀, q₂}.
+Diese Menge ist neu.
+* {q₀, q₂} mit `a`: {q₀, q₁}.
+Mit `b`: \{q₀}.
+Keine neue Menge mehr, fertig.
+
+image::{root_dir}/images/13_potenzmenge.svg[]
+
+Nur {q₀, q₂} enthält den Endzustand q₂.
+Benennst du die Mengen in A, B und C um, bekommst du genau den DEA vom Anfang dieser Einheit.
+
+Ein NEA mit n Zuständen hat 2ⁿ Teilmengen.
+Im schlimmsten Fall wird der DEA also sehr groß.
+In der Praxis entstehen aber meist nur wenige Mengen, weil du nur die erreichbaren Mengen aufschreibst.
+
+=== ε-Übergänge
+
+Gibt es ε-Übergänge, kommt ein Schritt dazu.
+Die *ε-Hülle* einer Menge M sind alle Zustände, die du von M aus nur über ε-Pfeile erreichst (M selbst gehört dazu).
+Du bildest die ε-Hülle für die Startmenge und nach jedem gelesenen Zeichen.
+
+Für den unteren NEA aus der Grafik ist die Startmenge die ε-Hülle von \{p₀}, also {p₀, p₁}:
+
+[%header]
+|===
+|DEA-Zustand |`+++`, `-` |`0`–`9`
+|→ {p₀, p₁} |\{p₁} |\{p₂}
+|\{p₁} |– |\{p₂}
+|++*++ \{p₂} |– |\{p₂}
+|===
+
+Die Striche stehen für die leere Menge ∅.
+Sie ist der Fehlerzustand.
+Das Ergebnis ist der Ganzzahl-DEA von vorhin: {p₀, p₁} ist S, \{p₁} ist V und \{p₂} ist Z.
+
+== Was endliche Automaten können und was nicht
+
+Es gilt ein wichtiger Satz, den wir hier nicht beweisen: *DEA, NEA und reguläre Ausdrücke beschreiben genau dieselben Sprachen.*
+Man nennt sie die _regulären Sprachen_.
+Das sind die Typ-3-Sprachen der Chomsky-Hierarchie.
+
+* Zu jedem NEA gibt es einen DEA (die Potenzmengenkonstruktion zeigt, wie).
+* Zu jedem regulären Ausdruck gibt es einen NEA.
+Für jede der drei Operationen Vereinigung, Konkatenation und Stern gibt es einen kleinen NEA-Baustein mit ε-Übergängen.
+Die Bausteine werden nach dem Aufbau des Ausdrucks zusammengesteckt (_Thompson-Konstruktion_).
+* Zu jedem DEA gibt es einen regulären Ausdruck.
+
+Ein endlicher Automat hat nur endlich viele Zustände und sonst keinen Speicher.
+Deshalb kann er nicht beliebig weit zählen.
+Die Sprache aⁿbⁿ = {ε, `ab`, `aabb`, …} ist nicht regulär: Der Automat müsste sich die Anzahl der `a` merken, und dafür reichen endlich viele Zustände nicht.
+Dasselbe gilt für korrekt geklammerte Ausdrücke.
+Für solche Sprachen brauchst du eine kontextfreie Grammatik und einen Parser.
+
+// tag::pdf_exclude[]
+== Übungen
+
+. Zeichne einen DEA über Σ = {a, b}, der alle Wörter akzeptiert, die das Teilwort `aba` enthalten, z. B. `aba` und `babab`, aber nicht `abba`.
+Gib ihn auch als Übergangstabelle an und prüfe damit die Wörter `ababa`, `abab` und `bbaab`.
+. Wandle den folgenden NEA über Σ = {0, 1} mit der Potenzmengenkonstruktion in einen DEA um.
+Er akzeptiert alle Wörter, deren vorletztes Zeichen `1` ist.
+Gib die Tabelle des DEA an und zeichne ihn.
++
+[%header]
+|===
+|δ |`0` |`1`
+|→ r₀ |\{r₀} |{r₀, r₁}
+|r₁ |\{r₂} |\{r₂}
+|++*++ r₂ |∅ |∅
+|===
+. Schreibe in C# eine Methode `bool IsTime(string word)`, die mit einem DEA (`enum` und `switch`-Ausdruck) Uhrzeiten im Format `hh:mm` von `00:00` bis `23:59` erkennt.
+`7:30`, `24:00` und `12:60` werden abgelehnt.
+Zeichne den Automaten vorher.
+. Im Übungsprojekt link:{github_url}/08%20Theoretische%20Informatik/Uebungen/Dfa.7z[Dfa.7z] baust du eine allgemeine Klasse für DEAs und setzt damit mehrere Automaten um.
+Die Angabe steht im Archiv in der Datei _README.md_.
+
+// end::pdf_exclude[]
+
+== Zusatzmaterial
+
+Im https://die-spengergasse.github.io/course-pos-csharp_basics/08%20Theoretische%20Informatik/13_Endliche_Automaten.html[13_Endliche_Automaten.html] siehst du einen DEA Schritt für Schritt arbeiten und baust danach selbst Automaten per Mausklick, die automatisch geprüft werden.

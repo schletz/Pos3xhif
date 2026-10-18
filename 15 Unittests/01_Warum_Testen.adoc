@@ -1,0 +1,241 @@
+= Warum testen?
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Du programmierst einen Notenrechner: Er bekommt die erreichten Prozent und liefert die Note.
+Du probierst 90 % aus, die Konsole zeigt `1`.
+Passt.
+Eine Woche später änderst du die Grenze für das „Gut“.
+Funktioniert 90 % noch?
+Und 87,5 %?
+Und was passiert bei -5 %?
+Um das zu wissen, müsstest du alles wieder von Hand ausprobieren.
+In diesem Kapitel siehst du, warum man das *automatisch* macht und welche Arten von Tests es gibt.
+Im nächsten Kapitel schreibst du die Tests dann selbst mit xUnit.
+
+== Das Problem: Testen von Hand
+
+Im Kapitel _Types in C#_ hast du die Konsolenausgabe angesehen und mit dem erwarteten Ergebnis verglichen:
+
+[source,csharp]
+----
+Console.WriteLine(GradeCalculator.CalculateGrade(90m));     // Expected: 1
+Console.WriteLine(GradeCalculator.CalculateGrade(87.5m));   // Expected: 1
+Console.WriteLine(GradeCalculator.CalculateGrade(49.99m));  // Expected: 5
+----
+
+Das funktioniert bei drei Zeilen.
+Bei einem echten Projekt mit hunderten Methoden nicht mehr:
+
+[%header]
+|===
+|Problem |Folge
+|Ein Mensch muss vergleichen. |Bei 200 Zeilen Ausgabe übersieht man einen Fehler.
+|Man testet nur, was man gerade ändert. |Ein Fehler in einem anderen Teil fällt nicht auf.
+|Das Wissen steht nur im Kopf. |Ein Kollege weiß nicht, welche Fälle du geprüft hast.
+|Es kostet bei jeder Änderung Zeit. |Irgendwann testet niemand mehr.
+|===
+
+Ein Fehler, der durch eine Änderung in Code entsteht, der vorher schon funktioniert hat, heißt *Regression*.
+Gegen Regressionen hilft nur, nach _jeder_ Änderung _alle_ Fälle zu prüfen.
+Das schafft nur ein Programm.
+
+== Was ist ein Unit Test?
+
+Ein *Unit Test* ist eine Methode, die eine kleine Einheit (engl. _unit_) deines Programms aufruft und das Ergebnis automatisch prüft.
+Die Einheit ist meist eine Methode oder eine Klasse.
+
+[source,csharp]
+----
+[Fact]
+public void CalculateGrade_With90Percent_Returns1()
+{
+    int grade = GradeCalculator.CalculateGrade(90m);
+    Assert.Equal(1, grade);
+}
+----
+
+* `+[Fact]+` markiert die Methode als Test.
+Ein Testprogramm (der _Test Runner_) findet alle Methoden mit diesem Attribut und führt sie aus.
+* `Assert.Equal(expected, actual)` vergleicht.
+Stimmen die Werte nicht überein, schlägt der Test fehl („rot“).
+Sonst ist er bestanden („grün“).
+
+Jetzt prüft ein Programm in Millisekunden, was du vorher von Hand gemacht hast.
+Und es macht das nach jeder Änderung wieder, ohne etwas zu vergessen.
+
+*Tests sind eine Spezifikation.*
+Ein Test beschreibt genau, was der Code tun soll: „Bei 90 % kommt 1 heraus.“
+Wenn du später nicht mehr weißt, was bei 87,5 % herauskommen soll, liest du den Test.
+Deshalb bekommst du in den Übungen dieses Kurses oft fertige Tests: Sie sind die Angabe.
+
+=== Was macht einen guten Unit Test aus?
+
+Die Abkürzung *FIRST* fasst die Eigenschaften zusammen:
+
+[%header,cols="2,3,9"]
+|===
+|Buchstabe |Eigenschaft |Bedeutung
+|*F* |_Fast_ |Ein Test läuft in Millisekunden. Sonst führt sie niemand oft aus.
+|*I* |_Independent_ |Kein Test hängt von einem anderen ab. Die Reihenfolge ist egal.
+|*R* |_Repeatable_ |Gleiches Ergebnis bei jedem Lauf, auf jedem Rechner, zu jeder Uhrzeit.
+|*S* |_Self-validating_ |Der Test sagt selbst „grün“ oder „rot“. Niemand muss Ausgaben lesen.
+|*T* |_Timely_ |Der Test entsteht zusammen mit dem Code, nicht Wochen später.
+|===
+
+[[tests-als-feedback-für-agents]]
+== Tests als Feedback für Agents
+
+Immer mehr Code schreiben _Coding Agents_.
+Das sind KI-Programme wie GitHub Copilot, Claude Code oder Codex, die selbstständig Dateien ändern und Befehle ausführen.
+Ein Agent kann aber nicht „sehen“, ob sein Code das Richtige tut.
+Er braucht ein Signal von außen.
+Tests liefern dieses Signal:
+
+image::{root_dir}/images/01_feedback_loop.svg[Feedback-Schleife mit Tests]
+
+. Der Agent ändert den Code.
+. Er führt `dotnet test` aus.
+. Ist ein Test rot, liest er die Ausgabe, zum Beispiel `Expected: 1, Actual: 2`.
+. Aus Testname und Ausgabe schließt er, wo der Fehler liegt, und beginnt wieder bei 1.
+
+Ohne Tests weiß der Agent nur, dass der Code *kompiliert*.
+Das ist zu wenig.
+Mit Tests weiß er, ob der Code *das Richtige* tut.
+Für dich als Mensch gilt übrigens dieselbe Schleife.
+
+Daraus folgen zwei Regeln:
+
+* *Tests sind die Spezifikation, nicht das Hindernis.*
+Ein Agent (oder ein Schüler), der einen Test so lange ändert, bis er grün ist, hat nichts gelöst.
+Er hat nur die Angabe umgeschrieben.
+Deshalb steht in jeder Übung: _Die Tests darfst du nicht ändern._
+* *Gute Tests erklären den Fehler.*
+Ein Testname wie `+CalculateGrade_At87Point5Percent_Returns1+` und eine klare Ausgabe zeigen sofort, was kaputt ist.
+Ein Test namens `Test1` zeigt nur, _dass_ etwas kaputt ist.
+Das hilft Menschen und Agents gleichermaßen.
+
+[CAUTION]
+====
+Lässt du einen Agent Code schreiben, sieh dir im Diff (in der Liste der Änderungen) immer auch die Testdateien an.
+Ein geändertes `Assert` oder ein gelöschter Test ist ein Warnsignal.
+====
+
+== Die Testpyramide
+
+Unit Tests prüfen eine Methode isoliert.
+Das reicht nicht für alles: Speichert das Programm die Daten wirklich in der Datenbank?
+Kann ein User im Browser bestellen?
+Dafür gibt es weitere Testebenen.
+Die *Testpyramide* zeigt, wie viele Tests man von jeder Ebene schreibt:
+
+image::{root_dir}/images/01_testpyramide.svg[Die Testpyramide]
+
+[%header,cols="3,4,5"]
+|===
+|Ebene |Was wird geprüft? |Beispiel in diesem Kurs
+|*Unit Test* |Eine Methode oder Klasse ohne Datenbank, Netzwerk oder Dateien |`GradeCalculator.CalculateGrade(90m)` liefert `1`.
+|*Integration Test* |Mehrere Teile zusammen |Im Kapitel EF Core: Ein Objekt wird in eine SQLite-Datenbank geschrieben und wieder gelesen.
+|*End-to-End Test* (E2E) |Die ganze Anwendung, so wie sie ein User bedient |Ein Programm öffnet den Browser, klickt auf „Bestellen“ und prüft die Bestätigung.
+|===
+
+Warum eine Pyramide und nicht ein Würfel mit gleich vielen Tests pro Ebene?
+
+* *Geschwindigkeit:* 1 000 Unit Tests laufen in einer Sekunde.
+Ein einziger E2E-Test braucht oft mehrere Sekunden, weil ein Browser startet.
+* *Fehlersuche:* Schlägt ein Unit Test fehl, weißt du genau, welche Methode schuld ist.
+Schlägt ein E2E-Test fehl, kann der Fehler überall liegen: im Code, in der Datenbank, im Netzwerk.
+* *Stabilität:* Je mehr Teile beteiligt sind, desto öfter schlägt ein Test ohne echten Fehler fehl, zum Beispiel weil das Netzwerk langsam war.
+Solche Tests heißen _flaky_ (wackelig).
+
+[NOTE]
+====
+Auch Integration Tests schreibt man mit xUnit.
+Die Tests im Kapitel EF Core verwenden eine echte SQLite-Datenbank und sind daher streng genommen Integration Tests.
+Umgangssprachlich sagt man trotzdem oft „Unittest“ zu allem, was mit xUnit läuft.
+====
+
+== Testarten nach Zweck
+
+Unabhängig von der Ebene unterscheidet man Tests danach, _welchen Fall_ sie prüfen:
+
+[%header,cols="3,4,5"]
+|===
+|Testart |Prüft ... |Beispiel Notenrechner
+|*Happy Path* |den normalen Fall mit gültigen Daten. Alles geht gut. |90 % → Note 1
+|*Edge Case* (Grenzfall) |Werte am Rand des Erlaubten: Grenzen, 0, Maximum, leere Liste |87,5 % → Note 1, 0 % → Note 5, 100 % → Note 1
+|*Fehlerfall* (Negativtest) |ungültige Eingaben. Der Code muss sie ablehnen. |-5 % → `ArgumentOutOfRangeException`
+|*Smoke Test* |ganz grob, ob das Programm überhaupt läuft |Die App startet, eine Note wird berechnet.
+|===
+
+=== Happy Path ist nicht genug
+
+Anfänger testen oft nur den Happy Path.
+Der funktioniert aber meistens, weil du beim Programmieren genau an diesen Fall gedacht hast.
+Fehler stecken an den Rändern: Hast du `+>+` oder `+>=+` geschrieben?
+Was passiert bei einer leeren Liste?
+Bei `null`?
+Ein typischer Fehler ist der _Off-by-one-Fehler_: Eine Grenze ist um eins (oder um eine Kommastelle) verschoben.
+
+[source,csharp]
+----
+if (percent > 87.5m) { return 1; }     // Bug: 87.5 % should give grade 1
+----
+
+Ein Test mit 90 % findet diesen Fehler nie.
+Ein Test mit genau 87,5 % findet ihn sofort.
+
+=== Smoke Test
+
+Der Name kommt aus der Elektronik: Man schaltet ein neues Gerät ein und schaut, ob Rauch aufsteigt.
+Ein Smoke Test prüft also nicht die Details, sondern nur: Startet die Anwendung?
+Erreicht sie die Datenbank?
+Liefert die Startseite eine Antwort?
+Smoke Tests laufen zuerst, zum Beispiel direkt nach dem Installieren einer neuen Version auf dem Server.
+Schlägt schon der Smoke Test fehl, braucht man die restlichen Tests gar nicht mehr auszuführen.
+
+Im Kapitel link:{github_url}/15%20Unittests/03_Testfaelle_finden.adoc[Testfälle finden] lernst du, wie du Edge Cases nicht nur errätst, sondern *systematisch* findest.
+
+// tag::pdf_exclude[]
+== Übungen
+
+. *Zuordnen:* Ordne jeden Test einer Ebene der Testpyramide zu (Unit, Integration oder E2E).
+Begründe deine Wahl in einem Satz.
+* `Order.MarkAsPaid()` setzt `IsPaid` auf `true`.
+* Ein Student wird über EF Core in einer SQLite-Datenbank gespeichert und mit seiner Klasse wieder geladen.
+* Ein Programm öffnet die Webseite der Schule, meldet sich an und prüft, ob der Stundenplan angezeigt wird.
+* `CheckoutService.Checkout()` liefert `false`, wenn ein Fake Payment Provider die Zahlung ablehnt.
+* Ein Service liest Wetterdaten von einem echten Webservice und speichert sie in der Datenbank.
+. *Testfälle finden:* Eine Methode `bool IsValidPassword(string password)` prüft ein Passwort.
+Es ist gültig, wenn es mindestens 8 und höchstens 64 Zeichen hat und mindestens eine Ziffer enthält.
+Schreibe in einer Tabelle auf:
+* einen Happy-Path-Test,
+* mindestens vier Edge Cases,
+* mindestens zwei Fehlerfälle.
++
+Gib bei jedem Fall die Eingabe und das erwartete Ergebnis an.
+. *Smoke Test:* Du installierst eine neue Version eines Webshops auf dem Server.
+Welche drei Dinge prüft ein Smoke Test?
+Warum prüft er _nicht_, ob der Rabatt für Stammkunden richtig berechnet wird?
+. *Agent im Einsatz:* Ein Coding Agent meldet: „Alle 42 Tests sind grün.“
+Im Diff siehst du, dass er in einem Test `Assert.Equal(1, grade)` durch `Assert.Equal(2, grade)` ersetzt hat.
+Was ist das Problem?
+Was antwortest du dem Agent?
+. *FIRST:* Eine Methode prüft, ob ein Gutschein abgelaufen ist, und verwendet dafür `DateTime.Now`.
+Gegen welche Eigenschaft aus FIRST verstößt ein Test dieser Methode?
+Beschreibe eine Situation, in der der Test plötzlich rot wird, obwohl niemand den Code geändert hat.
+
+// end::pdf_exclude[]

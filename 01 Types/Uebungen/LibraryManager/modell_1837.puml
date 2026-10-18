@@ -1,0 +1,80 @@
+@startuml
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 15
+skinparam ArrowThickness 1.5
+skinparam class {
+  BackgroundColor #ffffff
+  HeaderBackgroundColor #ededed
+  BorderColor #1d1d1b
+  BorderThickness 1.5
+  FontStyle bold
+}
+skinparam stereotypeCBackgroundColor #d1ebf7
+skinparam stereotypeABackgroundColor #fdebd1
+skinparam stereotypeIBackgroundColor #e5f4f1
+skinparam stereotypeEBackgroundColor #e5f1d9
+hide empty fields
+hide empty methods
+
+class ReservationManager
+{
+    +Reservations : IReadOnlyList<PublicationReservation> {readOnly}
+    ---
+    +bool TryAddReservation(PublicationReservation reservation)
+    +IReadOnlyList<PublicationReservation> GetPendingReservations(DateTime date)
+}
+ReservationManager "1" o--> "*" PublicationReservation
+
+class PublicationReservation
+{
+    +Customer : Customer {readOnly}
+    +Publication : Publication {readOnly}
+    +ReservationFrom : DateTime {readOnly}
+    +ReturnDate : DateTime?
+    +MaxReturnDate : DateTime {readOnly}
+    +IsReturned : bool {readOnly}
+    ---
+    +PublicationReservation(Customer customer, Publication publication, DateTime reservationFrom)
+    +bool IsPendingReservation(DateTime date)
+}
+PublicationReservation "*" --> "1" Customer
+PublicationReservation "*" --> "1" Publication
+
+class Customer
+{
+    +CardId : int {readOnly}
+    +Firstname : string {readOnly}
+    +Lastname : string {readOnly}
+    ---
+    +Customer(int cardId, string firstname, string lastname)
+}
+
+abstract class Publication
+{
+    +Publisher : string {readOnly}
+    +{abstract} ReturnAfterDays : int {readOnly}
+    ---
+    #Publication(string publisher)
+}
+
+class Book
+{
+    +Title : string {readOnly}
+    +Year : int {readOnly}
+    +ReturnAfterDays : int {readOnly}
+    ---
+    +Book(string publisher, string title, int year)
+}
+Book -up-|> Publication
+
+class Magazine
+{
+    +Name : string {readOnly}
+    +PublicationDate : DateTime {readOnly}
+    +ReturnAfterDays : int {readOnly}
+    ---
+    +Magazine(string publisher, string name, DateTime publicationDate)
+}
+Magazine -up-|> Publication
+@enduml

@@ -1,0 +1,443 @@
+= Graphen
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Ein Navi sucht den Weg durch ein Straßennetz.
+NuGet findet heraus, welche Pakete es vor deinem Projekt bauen muss.
+Ein soziales Netz schlägt dir Leute vor, die deine Freunde kennen.
+Das sind drei ganz verschiedene Probleme, aber sie haben dieselbe Struktur: Es gibt _Dinge_ und _Beziehungen_ zwischen diesen Dingen.
+Genau das beschreibt ein *Graph*.
+Wenn du ein Problem einmal als Graph formuliert hast, kannst du dafür bekannte Algorithmen verwenden.
+Die nächsten Kapitel stellen die wichtigsten davon vor.
+
+== Knoten und Kanten
+
+Ein Graph G = (V, E) besteht aus
+
+* einer Menge V von *Knoten* (englisch _vertices_ oder _nodes_) und
+* einer Menge E von *Kanten* (englisch _edges_).
+Jede Kante verbindet zwei Knoten.
+
+Gezeichnet wird ein Knoten als Kreis, eine Kante als Linie oder Pfeil.
+Wo die Knoten auf dem Papier liegen, spielt keine Rolle.
+Entscheidend ist nur, welche Knoten verbunden sind.
+
+image::{root_dir}/images/20_graph_typen.svg[]
+
+Die Grafik zeigt die wichtigsten Arten von Graphen:
+
+* *Ungerichtet:* Eine Kante {A, B} gilt in beide Richtungen.
+Beispiele: Freundschaften, Straßen ohne Einbahn, Türen zwischen Räumen.
+* *Gerichtet:* Eine Kante (A, B) ist ein Pfeil von A nach B. Der Rückweg gilt nur, wenn es auch einen Pfeil (B, A) gibt.
+Beispiele: Einbahnstraßen, „folgt“ auf Instagram, Links zwischen Webseiten.
+Auch der Automat aus link:{github_url}/08%20Theoretische%20Informatik/13_Endliche_Automaten.adoc[Endliche Automaten] ist ein gerichteter Graph, dessen Kanten mit Zeichen beschriftet sind.
+* *Gewichtet:* Jede Kante trägt eine Zahl, das _Gewicht_.
+Das kann eine Länge in Kilometern, eine Fahrzeit oder ein Preis sein.
+Gewichtete Graphen können gerichtet oder ungerichtet sein.
+
+== Wichtige Begriffe
+
+[%header]
+|===
+|Begriff |Bedeutung
+|*benachbart* |Zwei Knoten sind _benachbart_ (Nachbarn), wenn eine Kante sie verbindet.
+|*Grad* deg(v) |Anzahl der Kanten an einem Knoten. In gerichteten Graphen unterscheidet man *Eingangsgrad* (Pfeile hinein) und *Ausgangsgrad* (Pfeile hinaus).
+|*Pfad* (Weg) |Folge von Knoten, bei der aufeinanderfolgende Knoten durch eine Kante verbunden sind, z. B. A → B → C. Die *Länge* ist die Anzahl der Kanten.
+|*Zyklus* (Kreis) |Pfad, der zu seinem Startknoten zurückkehrt, ohne eine Kante doppelt zu benutzen, z. B. A → B → C → A.
+|*zusammenhängend* |Ein ungerichteter Graph ist zusammenhängend, wenn es von jedem Knoten zu jedem anderen einen Pfad gibt.
+|*Zusammenhangskomponente* |Ein größtmöglicher zusammenhängender Teil des Graphen. Ein nicht zusammenhängender Graph zerfällt in mehrere Komponenten.
+|*DAG* |_Directed Acyclic Graph_: gerichteter Graph ohne Zyklus.
+|*Baum* |Zusammenhängender, ungerichteter Graph ohne Zyklus.
+|===
+
+Ein paar Beobachtungen an der Grafik:
+
+* Im ungerichteten Graphen hat C den Grad 3, D nur den Grad 1. Zählst du alle Grade zusammen (2 {plus} 2 {plus} 3 {plus} 1 = 8), bekommst du genau doppelt so viel wie die Anzahl der Kanten (4).
+Das ist kein Zufall: Jede Kante hat zwei Enden und zählt deshalb bei zwei Knoten.
+* Im gerichteten Graphen hat C den Eingangsgrad 1 (von B) und den Ausgangsgrad 2 (nach A und D).
+Der Pfad A → B → C → A ist ein Zyklus.
+* Der DAG hat keinen Zyklus.
+Solche Graphen beschreiben Abhängigkeiten: „B braucht A“, „D braucht B und C“.
+Ein Zyklus würde bedeuten, dass etwas indirekt von sich selbst abhängt.
+Wie man daraus eine gültige Reihenfolge berechnet, zeigt die link:{github_url}/08%20Theoretische%20Informatik/23_Topologische_Sortierung.adoc[Topologische Sortierung].
+
+=== Bäume als Spezialfall
+
+Ein *Baum* ist ein zusammenhängender Graph ohne Zyklus.
+Daraus folgt:
+
+* Zwischen zwei Knoten gibt es genau einen Pfad (ohne Umwege).
+* Ein Baum mit n Knoten hat genau n − 1 Kanten.
+Nimmst du eine Kante weg, zerfällt er in zwei Teile.
+Fügst du eine hinzu, entsteht ein Zyklus.
+
+Oft wählt man einen Knoten als *Wurzel* und zeichnet den Baum von oben nach unten.
+Dann hat jeder Knoten außer der Wurzel genau einen _Elternknoten_.
+Knoten ohne Kinder heißen _Blätter_.
+Bäume kennst du schon: die Ordnerstruktur auf deiner Festplatte, das DOM einer Webseite oder den AST aus dem Kapitel link:{github_url}/08%20Theoretische%20Informatik/15_Parser.adoc[Parser].
+
+== Probleme als Graph modellieren
+
+Das Modellieren ist der wichtigste Schritt.
+Du musst dir zwei Fragen beantworten: _Was sind die Knoten?_ und _Wann gibt es eine Kante?_
+Dazu kommt: Ist die Beziehung gerichtet, und brauche ich Gewichte?
+
+image::{root_dir}/images/20_modellierung.svg[]
+
+Im Beispiel soll ein Programm Besucher durch ein Stockwerk führen.
+Jeder Raum wird ein Knoten, jede Tür eine Kante.
+Weil man durch eine Tür in beide Richtungen gehen kann, ist der Graph ungerichtet.
+Alles andere lässt das Modell weg: wie groß die Räume sind, wo die Tische stehen, welche Farbe die Wände haben.
+Am Graphen siehst du sofort, was am Grundriss nicht so leicht zu erkennen ist: Ins Buffet kommst du nur durch die Aula, und der Gang ist der zentrale Knoten mit dem höchsten Grad.
+
+[%header]
+|===
+|Anwendung |Knoten |Kanten |Art
+|Straßennetz |Kreuzungen, Orte |Straßenabschnitte |gewichtet (km oder Minuten), gerichtet bei Einbahnen
+|Öffentlicher Verkehr |Haltestellen |direkte Fahrt zur nächsten Haltestelle |gewichtet (Minuten)
+|Abhängigkeiten |Pakete, Projekte, Lehrveranstaltungen |„braucht“ |gerichtet, sollte ein DAG sein
+|Soziales Netz |Personen |Freundschaft bzw. „folgt“ |ungerichtet bzw. gerichtet
+|Web |Seiten |Links |gerichtet
+|Labyrinth, Spielfeld |Felder |Nachbarfeld ohne Mauer |ungerichtet
+|Spiel, Automat |Zustände |Züge, Übergänge |gerichtet
+|===
+
+Dieselbe Situation kann je nach Frage unterschiedlich modelliert werden.
+Willst du beim öffentlichen Verkehr die Umstiege zählen, reicht ein Knoten pro Haltestelle nicht mehr.
+Dann brauchst du zum Beispiel einen Knoten pro Haltestelle _und_ Linie und eigene Kanten für das Umsteigen.
+
+== Graphen speichern
+
+Für das Programm brauchst du eine Datenstruktur.
+Es gibt drei übliche Darstellungen.
+Die Grafik zeigt einen ungerichteten Graphen mit 5 Knoten und 6 Kanten als Adjazenzmatrix und als Adjazenzliste.
+Die Kante B–D ist hervorgehoben.
+
+image::{root_dir}/images/20_adjazenz.svg[]
+
+=== Adjazenzmatrix
+
+Die Knoten werden durchnummeriert (A = 0, B = 1, …).
+Eine n × n-Matrix enthält in Zeile i und Spalte j eine 1, wenn es eine Kante von Knoten i zu Knoten j gibt.
+Bei einem ungerichteten Graphen ist die Matrix symmetrisch zur Hauptdiagonale.
+Bei einem gewichteten Graphen steht statt der 1 das Gewicht in der Zelle.
+
+[source,csharp]
+----
+string[] names = ["A", "B", "C", "D", "E"];
+int[,] matrix =
+{
+    // A  B  C  D  E
+    { 0, 1, 1, 0, 0 },  // A
+    { 1, 0, 1, 1, 0 },  // B
+    { 1, 1, 0, 0, 1 },  // C
+    { 0, 1, 0, 0, 1 },  // D
+    { 0, 0, 1, 1, 0 },  // E
+};
+
+int b = Array.IndexOf(names, "B");
+int d = Array.IndexOf(names, "D");
+Console.WriteLine($"Kante B-D: {matrix[b, d] == 1}");
+Console.WriteLine($"Kante A-E: {matrix[0, 4] == 1}");
+----
+
+[source,text]
+----
+Kante B-D: True
+Kante A-E: False
+----
+
+Ob es eine bestimmte Kante gibt, liest du direkt in einer Zelle ab.
+Dafür braucht die Matrix immer n · n Zellen, egal wie viele Kanten es gibt.
+Ein Straßennetz mit 10 000 Kreuzungen hätte 100 Millionen Zellen, obwohl an jeder Kreuzung nur drei oder vier Straßen zusammenkommen.
+Fast alle Zellen wären 0.
+
+=== Adjazenzliste
+
+Jeder Knoten bekommt die Liste seiner Nachbarn.
+In C# passt dafür ein `+Dictionary<string, List<string>>+`: Der Schlüssel ist der Knoten, der Wert die Liste der Nachbarn.
+
+[source,csharp]
+----
+var adjacency = new Dictionary<string, List<string>>
+{
+    ["A"] = ["B", "C"],
+    ["B"] = ["A", "C", "D"],
+    ["C"] = ["A", "B", "E"],
+    ["D"] = ["B", "E"],
+    ["E"] = ["C", "D"],
+};
+
+foreach (var (node, neighbors) in adjacency)
+{
+    Console.WriteLine($"{node}: {string.Join(", ", neighbors)}");
+}
+Console.WriteLine($"Kante B-D: {adjacency["B"].Contains("D")}");
+----
+
+[source,text]
+----
+A: B, C
+B: A, C, D
+C: A, B, E
+D: B, E
+E: C, D
+Kante B-D: True
+----
+
+Die Liste speichert nur Kanten, die es wirklich gibt.
+Jede ungerichtete Kante steht zweimal darin: B–D bei B _und_ bei D. Die Knoten brauchen keine Nummern, jeder Typ mit sinnvollem `Equals` und `GetHashCode` kann ein Knoten sein.
+Um alle Nachbarn eines Knotens zu besuchen, gehst du einfach seine Liste durch.
+Genau das brauchen die Suchalgorithmen in den nächsten Kapiteln.
+
+=== Kantenliste
+
+Die einfachste Darstellung ist eine Liste aller Kanten, hier als Tupel.
+So stehen Graphen oft in Dateien: eine Kante pro Zeile, bei Bedarf mit Gewicht, z. B. als CSV.
+Zum Arbeiten wandelt man die Kantenliste meist in eine Adjazenzliste um:
+
+[source,csharp]
+----
+(string From, string To)[] edges = [("A", "B"), ("A", "C"), ("B", "C"), ("B", "D"), ("C", "E"), ("D", "E")];
+
+var adjacency = new Dictionary<string, List<string>>();
+foreach (var (from, to) in edges)
+{
+    adjacency.TryAdd(from, []);       // (1)
+    adjacency.TryAdd(to, []);
+    adjacency[from].Add(to);          // (2)
+    adjacency[to].Add(from);
+}
+Console.WriteLine($"{edges.Length} Kanten, {adjacency.Count} Knoten");
+Console.WriteLine($"C: {string.Join(", ", adjacency["C"])}");
+----
+
+[source,text]
+----
+6 Kanten, 5 Knoten
+C: A, B, E
+----
+
+* *(1)* `TryAdd` legt einen Knoten nur an, wenn es ihn noch nicht gibt.
+Knoten entstehen so automatisch aus den Kanten.
+* *(2)* Der Graph ist ungerichtet, also wird jede Kante in beide Richtungen eingetragen.
+In einem gerichteten Graphen fällt die zweite Zeile weg.
+
+=== Welche Darstellung wann?
+
+[%header]
+|===
+|Darstellung |praktisch, wenn … |unpraktisch, wenn …
+|Adjazenzmatrix |der Graph _dicht_ ist (fast jeder Knoten mit fast jedem verbunden), du oft fragst „Gibt es die Kante u–v?“, die Knoten ohnehin Nummern 0 … n−1 haben |der Graph _dünn_ ist (wenige Kanten pro Knoten) und viele Knoten hat
+|Adjazenzliste |du die Nachbarn eines Knotens durchgehen willst (Suchen, Wege), der Graph dünn ist, die Knoten Namen oder Objekte sind |du nur wissen willst, ob es eine bestimmte Kante gibt (dafür musst du die Nachbarliste durchsuchen)
+|Kantenliste |du Graphen speicherst, einliest oder ausgibst, oder alle Kanten der Reihe nach brauchst (z. B. nach Gewicht sortiert) |du die Nachbarn eines Knotens brauchst
+|===
+
+Die meisten Graphen aus der Praxis sind dünn: Eine Kreuzung hat wenige Straßen, eine Person kennt nicht alle anderen Menschen.
+Deshalb ist die Adjazenzliste der Normalfall.
+
+== Eine Klasse für Graphen
+
+Damit du nicht jedes Mal ein `Dictionary` von Hand befüllst, packen wir die Adjazenzliste in eine generische Klasse `+Graph<TNode>+`.
+Der Typparameter `TNode` erlaubt Knoten vom Typ `string`, `int` oder auch eigene Records.
+Kanten sind ein `+record Edge<TNode>+` mit Start, Ziel und Gewicht.
+So kann dieselbe Klasse gerichtete, ungerichtete und gewichtete Graphen speichern.
+
+Der vollständige Code liegt in link:{github_url}/08%20Theoretische%20Informatik/Beispiele/20_Graph[Beispiele/20_Graph].
+Öffne die Datei _GraphDemo.sln_ oder starte das Programm in der Konsole:
+
+[source,text]
+----
+cd Beispiele/20_Graph
+dotnet run --project GraphDemo
+----
+
+[%header]
+|===
+|Datei |Inhalt
+|_Edge.cs_ |`+record Edge<TNode>+`
+|_Graph.cs_ |die Klasse `+Graph<TNode>+` mit Adjazenzliste
+|_Program.cs_ |baut zwei Graphen aus Kantenlisten und gibt sie aus
+|===
+
+Die Codeblöcke mit _Auszug aus …_ stammen aus diesen Dateien.
+Die XML-Kommentare sind weggelassen.
+Einzeln kompilieren die Auszüge nicht, das ganze Projekt schon.
+
+_Auszug aus Edge.cs:_
+
+[source,csharp]
+----
+public record Edge<TNode>(TNode From, TNode To, int Weight = 1)
+{
+    public override string ToString() => Weight == 1 ? $"{From} -> {To}" : $"{From} -> {To} ({Weight})";
+}
+----
+
+Ein ungewichteter Graph ist einfach ein Graph, in dem jede Kante das Gewicht 1 hat.
+Deshalb ist `Weight` optional.
+
+_Auszug aus Graph.cs:_
+
+[source,csharp]
+----
+public class Graph<TNode>(bool isDirected) where TNode : notnull      // (1)
+{
+    private readonly Dictionary<TNode, List<Edge<TNode>>> _adjacency = [];   // (2)
+
+    public bool IsDirected => isDirected;
+    public IEnumerable<TNode> Nodes => _adjacency.Keys;
+    public int NodeCount => _adjacency.Count;
+
+    public void AddNode(TNode node) => _adjacency.TryAdd(node, []);
+
+    public void AddEdge(TNode from, TNode to, int weight = 1)
+    {
+        AddNode(from);
+        AddNode(to);
+        _adjacency[from].Add(new Edge<TNode>(from, to, weight));
+        if (!isDirected)
+        {
+            _adjacency[to].Add(new Edge<TNode>(to, from, weight));       // (3)
+        }
+    }
+
+    public IReadOnlyList<Edge<TNode>> EdgesFrom(TNode node) =>
+        _adjacency.TryGetValue(node, out List<Edge<TNode>>? edges)
+            ? edges
+            : throw new KeyNotFoundException($"Unknown node {node}.");
+
+    public IEnumerable<TNode> Neighbors(TNode node) => EdgesFrom(node).Select(e => e.To);   // (4)
+
+    public bool HasEdge(TNode from, TNode to) =>
+        _adjacency.TryGetValue(from, out List<Edge<TNode>>? edges) && edges.Any(e => e.To.Equals(to));
+
+    public static Graph<TNode> FromEdgeList(IEnumerable<Edge<TNode>> edges, bool isDirected)   // (5)
+    {
+        var graph = new Graph<TNode>(isDirected);
+        foreach (Edge<TNode> edge in edges)
+        {
+            graph.AddEdge(edge.From, edge.To, edge.Weight);
+        }
+        return graph;
+    }
+}
+----
+
+* *(1)* Der Primary Constructor bekommt nur die Information, ob der Graph gerichtet ist.
+Die Einschränkung `where TNode : notnull` ist nötig, weil `TNode` als Schlüssel im `Dictionary` dient, und Schlüssel dürfen nicht `null` sein.
+* *(2)* Die Adjazenzliste speichert pro Knoten nicht nur die Nachbarn, sondern ganze Kanten.
+So bleibt das Gewicht erhalten.
+* *(3)* Ungerichtete Kanten werden in beide Richtungen gespeichert, wie bei der Kantenliste oben.
+Wer die Klasse benutzt, muss sich darum nicht kümmern.
+* *(4)* `Neighbors` liefert nur die Zielknoten, `EdgesFrom` die Kanten samt Gewicht.
+Die Nachbarn kommen in der Reihenfolge, in der die Kanten eingefügt wurden.
+* *(5)* Eine statische _Factory-Methode_ baut den Graphen aus einer Kantenliste.
+
+_Program.cs_ liest die Kantenliste aus einem Text mit einer Kante pro Zeile.
+Die Hilfsmethode `ParseEdges` bekommt eine Funktion, die einen Knotennamen in den Knotentyp umwandelt.
+So funktioniert sie für `string` und `int`.
+
+_Auszug aus Program.cs:_
+
+[source,csharp]
+----
+string exampleEdges = """
+    A B
+    A C
+    B C
+    B D
+    C E
+    D E
+    """;
+Graph<string> graph = Graph<string>.FromEdgeList(ParseEdges(exampleEdges, name => name), isDirected: false);
+
+// ...
+
+string streetEdges = """
+    1 2 120
+    2 3 90
+    3 1 150
+    2 4 60
+    4 3 70
+    """;
+Graph<int> streets = Graph<int>.FromEdgeList(ParseEdges(streetEdges, int.Parse), isDirected: true);
+
+// ...
+
+static IEnumerable<Edge<TNode>> ParseEdges<TNode>(string text, Func<string, TNode> parseNode)
+{
+    foreach (string line in text.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+    {
+        string[] parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        int weight = parts.Length > 2 ? int.Parse(parts[2]) : 1;
+        yield return new Edge<TNode>(parseNode(parts[0]), parseNode(parts[1]), weight);
+    }
+}
+----
+
+Der zweite Graph beschreibt Kreuzungen (Nummern 1 bis 4) mit Einbahnstraßen und ihrer Länge in Metern.
+Die Ausgabe des Programms:
+
+[source,text]
+----
+Ungerichteter Graph mit 5 Knoten:
+  A: B, C
+  B: A, C, D
+  C: A, B, E
+  D: B, E
+  E: C, D
+  Kante B-D? True   Kante A-E? False
+
+Gerichteter, gewichteter Graph mit 4 Knoten:
+  1: 1 -> 2 (120)
+  2: 2 -> 3 (90), 2 -> 4 (60)
+  3: 3 -> 1 (150)
+  4: 4 -> 3 (70)
+  Kante 1->2? True   Kante 2->1? False
+----
+
+Beim gerichteten Graphen gibt es die Kante 1 → 2, aber nicht 2 → 1. Von Kreuzung 2 kommst du trotzdem zu Kreuzung 1 zurück, nur eben über einen Umweg: 2 → 3 → 1. Solche Umwege systematisch zu finden, ist die Aufgabe der Suchalgorithmen im nächsten Kapitel.
+
+// tag::pdf_exclude[]
+== Übungen
+
+. Gegeben ist die Adjazenzmatrix eines *gerichteten* Graphen mit den Knoten 0 bis 4. Zeichne den Graphen und gib ihn als Adjazenzliste an.
+Bestimme für jeden Knoten Eingangs- und Ausgangsgrad.
+Gibt es einen Zyklus?
++
+[%header]
+|===
+| |0 |1 |2 |3 |4
+|*0* |0 |1 |0 |1 |0
+|*1* |0 |0 |1 |0 |0
+|*2* |0 |0 |0 |1 |1
+|*3* |0 |1 |0 |0 |0
+|*4* |0 |0 |0 |0 |0
+|===
++
+Schreib danach in C# zwei Methoden: `+Dictionary<int, List<int>> ToAdjacencyList(int[,] matrix)+` und `+int[,] ToMatrix(Dictionary<int, List<int>> adjacency, int nodeCount)+`.
+Prüfe, dass du nach beiden Umwandlungen wieder die Ausgangsmatrix bekommst.
+. Erweitere `+Graph<TNode>+` aus link:{github_url}/08%20Theoretische%20Informatik/Beispiele/20_Graph[Beispiele/20_Graph] um die Methoden `int Degree(TNode node)` für ungerichtete Graphen sowie `int InDegree(TNode node)` und `int OutDegree(TNode node)` für gerichtete Graphen.
+Gib für beide Graphen aus _Program.cs_ die Grade aller Knoten aus.
+. Modelliere ein Freundschaftsnetz mit mindestens 8 Personen als `+Graph<string>+`.
+Lies die Freundschaften aus einer Kantenliste ein.
+Begründe, ob der Graph gerichtet oder ungerichtet sein soll, und wie sich das ändert, wenn es statt um Freundschaften um „folgt“ geht.
+Schreib eine Methode `CommonFriends(graph, a, b)`, die alle gemeinsamen Freunde zweier Personen alphabetisch sortiert liefert.
+. Im Übungsprojekt link:{github_url}/08%20Theoretische%20Informatik/Uebungen/Routenplaner.7z[Routenplaner.7z] baust du aus einer CSV-Datei einen Graphen für ein U-Bahn-Netz und suchst darin Verbindungen.
+Die Angabe steht im Archiv in der Datei _README.md_.
+
+// end::pdf_exclude[]

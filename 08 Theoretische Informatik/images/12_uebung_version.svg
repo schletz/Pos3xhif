@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="136" viewBox="0 0 960 136">
+<rect x="0.5" y="0.5" width="959" height="135" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1f2937"/></marker></defs>
+<text x="20" y="36" font-family="Consolas, Menlo, monospace" font-size="15" font-weight="bold" fill="#1f2937">version</text>
+<path d="M20,80.0 V98.0" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M20,89.0 H35" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="35" y1="89.0" x2="57" y2="89.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="57" y="74.0" width="71" height="30" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="92.5" y="94.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">number</text>
+<path d="M128,89.0 H138" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="138" y1="89.0" x2="160" y2="89.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="160" y="74.0" width="32" height="30" rx="15" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+<text x="176.0" y="94.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">.</text>
+<path d="M192,89.0 H202" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="202" y1="89.0" x2="224" y2="89.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="224" y="74.0" width="71" height="30" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="259.5" y="94.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">number</text>
+<path d="M295,89.0 H305" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="305" y1="89.0" x2="327" y2="89.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="327" y="74.0" width="32" height="30" rx="15" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+<text x="343.0" y="94.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">.</text>
+<path d="M359,89.0 H369" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="369" y1="89.0" x2="391" y2="89.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="391" y="74.0" width="71" height="30" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="426.5" y="94.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">number</text>
+<path d="M462,89.0 H472" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M472,89.0 H492" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="492" y1="89.0" x2="514" y2="89.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="514" y="74.0" width="32" height="30" rx="15" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+<text x="530.0" y="94.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">-</text>
+<path d="M546,89.0 H556" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="556" y1="89.0" x2="578" y2="89.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="578" y="74.0" width="63" height="30" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="609.5" y="94.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">label</text>
+<path d="M641,89.0 H651" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M651,89.0 H691" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="691" y1="89.0" x2="713" y2="89.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="713" y="74.0" width="32" height="30" rx="15" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+<text x="729.0" y="94.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">.</text>
+<path d="M745,89.0 H755" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="755" y1="89.0" x2="777" y2="89.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="777" y="74.0" width="63" height="30" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="808.5" y="94.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">label</text>
+<path d="M840,89.0 H850" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M850,89.0 H890" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M651,89.0 q10,0 10,-10 V74.0 q0,-10 10,-10 H870 q10,0 10,10 V79.0 q0,10 10,10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M767.0,60.0 L774.0,64.0 L767.0,68.0 Z" fill="#1f2937"/>
+<path d="M850,89.0 q10,0 10,10 V104.0 q0,10 -10,10 H691 q-10,0 -10,-10 V99.0 q0,-10 10,-10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M774.0,110.0 L767.0,114.0 L774.0,118.0 Z" fill="#1f2937"/>
+<path d="M890,89.0 H910" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M472,89.0 q10,0 10,-10 V62.0 q0,-10 10,-10 H890 q10,0 10,10 V79.0 q0,10 10,10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M687.5,48.0 L694.5,52.0 L687.5,56.0 Z" fill="#1f2937"/>
+<line x1="910" y1="89.0" x2="930" y2="89.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<path d="M930,80.0 V98.0" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+</svg>

@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="250" viewBox="0 0 640 250">
+  <rect x="0.5" y="0.5" width="639" height="249" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="20" y="32" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600" fill="#1f2937">Münzsystem {1, 3, 4}, Betrag 6</text>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600" fill="#1f2937">
+    <text x="20" y="91">Greedy</text>
+    <text x="20" y="171">Optimal</text>
+  </g>
+  <!-- greedy: 4 + 1 + 1 -->
+  <g stroke="#dc2626" stroke-width="2" fill="#fee2e2">
+    <rect x="130" y="66" width="240" height="40" rx="4"/>
+    <rect x="370" y="66" width="60" height="40" rx="4"/>
+    <rect x="430" y="66" width="60" height="40" rx="4"/>
+  </g>
+  <!-- optimum: 3 + 3 -->
+  <g stroke="#16a34a" stroke-width="2" fill="#dcfce7">
+    <rect x="130" y="146" width="180" height="40" rx="4"/>
+    <rect x="310" y="146" width="180" height="40" rx="4"/>
+  </g>
+  <g font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937" text-anchor="middle">
+    <text x="250" y="91">4</text>
+    <text x="400" y="91">1</text>
+    <text x="460" y="91">1</text>
+    <text x="220" y="171">3</text>
+    <text x="400" y="171">3</text>
+  </g>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">
+    <text x="510" y="91" fill="#dc2626">3 Münzen</text>
+    <text x="510" y="171" fill="#16a34a">2 Münzen</text>
+  </g>
+  <text x="130" y="126" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#6b7280">4 ist die größte passende Münze. Für den Rest 2 bleiben nur zwei 1er.</text>
+  <!-- scale -->
+  <g stroke="#6b7280" stroke-width="1">
+    <line x1="130" y1="206" x2="490" y2="206"/>
+    <line x1="130" y1="202" x2="130" y2="210"/>
+    <line x1="190" y1="202" x2="190" y2="210"/>
+    <line x1="250" y1="202" x2="250" y2="210"/>
+    <line x1="310" y1="202" x2="310" y2="210"/>
+    <line x1="370" y1="202" x2="370" y2="210"/>
+    <line x1="430" y1="202" x2="430" y2="210"/>
+    <line x1="490" y1="202" x2="490" y2="210"/>
+  </g>
+  <g font-family="Consolas, Menlo, monospace" font-size="12" fill="#6b7280" text-anchor="middle">
+    <text x="130" y="226">0</text>
+    <text x="190" y="226">1</text>
+    <text x="250" y="226">2</text>
+    <text x="310" y="226">3</text>
+    <text x="370" y="226">4</text>
+    <text x="430" y="226">5</text>
+    <text x="490" y="226">6</text>
+  </g>
+</svg>

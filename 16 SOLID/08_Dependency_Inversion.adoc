@@ -1,0 +1,576 @@
+= D: Dependency Inversion
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Ein Agent schreibt dir einen _CheckoutService_ für den Webshop.
+Die Tests sind grün.
+Mitten in `Checkout()` steht aber `new ConsoleLogger()`.
+Jeder Test schreibt jetzt in die Konsole, und ob der Service etwas protokolliert, kannst du nicht prüfen.
+In diesem Kapitel lernst du das *D* in SOLID kennen, das _Dependency Inversion Principle_, und die Technik dazu: _Dependency Injection_.
+
+== Projekt anlegen
+
+Du brauchst eine Solution mit Application und Testprojekt.
+Die Befehle und alle Anpassungen der Projektdateien sind im Kapitel link:{github_url}/15%20Unittests/02_xUnit.adoc#projekt-anlegen[Unit Tests mit xUnit] genau erklärt.
+Unter macOS ersetzt du _rd_, _md_ und _move_ durch _rm -rf_, _mkdir_ und _mv_.
+
+[source,text]
+----
+rd /S /Q WebshopDemo
+md WebshopDemo
+cd WebshopDemo
+md WebshopDemo.Application
+cd WebshopDemo.Application
+dotnet new classlib
+cd ..
+md WebshopDemo.Tests
+cd WebshopDemo.Tests
+dotnet new install xunit.v3.templates
+dotnet new xunit3 -f net10.0
+move global.json ..
+dotnet reference add ..\WebshopDemo.Application
+cd ..
+dotnet new sln -f sln
+dotnet sln add WebshopDemo.Application
+dotnet sln add WebshopDemo.Tests
+start WebshopDemo.sln
+----
+
+Lösche _Class1.cs_ und _UnitTest1.cs_.
+Entferne in beiden Projektdateien die Zeile _ImplicitUsings_ und füge `+<TreatWarningsAsErrors>true</TreatWarningsAsErrors>+` hinzu.
+Im Testprojekt entfernst du zusätzlich `+<Using Include="Xunit" />+`.
+
+== Ausgangslage
+
+Wir setzen das Webshop-Beispiel aus dem Kapitel link:{github_url}/01%20Types/06_Interfaces.adoc[Interfaces] fort.
+_Order_ speichert nur Daten.
+Ein *Service* wie _CheckoutService_ führt einen Ablauf aus, hier „Bestellung bezahlen“.
+Alle Klassen sind `public`, denn das Testprojekt muss sie sehen.
+
+*Order.cs*, *IPaymentProvider.cs* und *CreditCard.cs* (im Projekt _WebshopDemo.Application_)
+
+[source,csharp]
+----
+namespace WebshopDemo.Application;
+
+public class Order
+{
+    public Order(string customerEmail, decimal totalAmount)
+    {
+        CustomerEmail = customerEmail;
+        TotalAmount = totalAmount;
+    }
+
+    public string CustomerEmail { get; }
+    public decimal TotalAmount { get; }
+    public bool IsPaid { get; private set; }
+
+    public void MarkAsPaid() => IsPaid = true;
+}
+----
+
+[source,csharp]
+----
+namespace WebshopDemo.Application;
+
+public interface IPaymentProvider
+{
+    bool Pay(decimal amount);
+}
+----
+
+[source,csharp]
+----
+using System;
+
+namespace WebshopDemo.Application;
+
+public class CreditCard : IPaymentProvider
+{
+    public CreditCard(decimal limit, DateTime expiration)
+    {
+        Limit = limit;
+        Expiration = expiration;
+    }
+
+    public decimal Limit { get; }
+    public DateTime Expiration { get; }
+
+    public bool Pay(decimal amount)
+    {
+        if (amount > Limit) { return false; }
+        if (Expiration < DateTime.UtcNow) { return false; }
+        return true;
+    }
+}
+----
+
+== Das Problem: Eine Klasse erzeugt ihre Abhängigkeiten selbst
+
+Der Service soll protokollieren, ob eine Zahlung geklappt hat.
+Den Payment Provider bekommt er schon von außen.
+Den Logger erzeugt er aber selbst, direkt in der Methode:
+
+[source,csharp]
+----
+using System;
+
+namespace WebshopDemo.Application;
+
+public class ConsoleLogger
+{
+    public void Log(string message) => Console.WriteLine($"[LOG] {message}");
+}
+
+public class CheckoutService
+{
+    private readonly IPaymentProvider _paymentProvider;
+
+    public CheckoutService(IPaymentProvider paymentProvider)
+    {
+        _paymentProvider = paymentProvider;
+    }
+
+    public bool Checkout(Order order)
+    {
+        ConsoleLogger logger = new ConsoleLogger();   // (!)
+        if (order.IsPaid) { return false; }
+        if (!_paymentProvider.Pay(order.TotalAmount))
+        {
+            logger.Log($"Payment of {order.TotalAmount} for {order.CustomerEmail} declined.");
+            return false;
+        }
+        order.MarkAsPaid();
+        logger.Log($"Payment of {order.TotalAmount} for {order.CustomerEmail} succeeded.");
+        return true;
+    }
+}
+----
+
+Die Zeile mit `new ConsoleLogger()` macht mehrere Probleme:
+
+[%header]
+|===
+|Problem |Warum?
+|*Nicht austauschbar* |Sollen die Logs in eine Datei oder an einen Logging-Dienst gehen, musst du _CheckoutService_ ändern.
+|*Nicht testbar* |Im Test kannst du nicht prüfen, ob und was geloggt wurde. Jeder Test schreibt in die Konsole.
+|*Nicht abschaltbar* |Jeder, der den Service verwendet, bekommt Konsolenausgaben. Auch eine Web-App, die gar keine Konsole hat.
+|*Versteckt* |Der Konstruktor zeigt nicht, dass der Service in die Konsole schreibt.
+|===
+
+== Das Dependency Inversion Principle
+
+Robert C. Martin hat das Prinzip so formuliert:
+
+____
+. High-level modules should not depend on low-level modules.
+Both should depend on abstractions.
+. Abstractions should not depend on details.
+Details should depend on abstractions.
+____
+
+[%header]
+|===
+|Begriff |Bedeutung |Im Beispiel
+|*High-level Modul* |Code mit Geschäftslogik. Er beschreibt, _was_ die Firma tut. |_CheckoutService_
+|*Low-level Modul* |Technisches Detail. Es beschreibt, _wie_ etwas technisch passiert. |_ConsoleLogger_, _CreditCard_
+|*Abstraktion* |Interface oder abstrakte Klasse. Sie beschreibt nur, was etwas kann. |_ILogger_, _IPaymentProvider_
+|===
+
+Die Regel „Bestellung zuerst bezahlen, dann als bezahlt markieren“ ändert sich selten.
+Ob die Logs in die Konsole oder in eine Datei gehen, ändert sich oft.
+Daher soll die stabile Geschäftslogik nicht vom wechselnden Detail abhängen.
+
+=== Was wird „umgedreht“?
+
+image::{root_dir}/images/08_dip_inversion.svg[Vorher zeigt der Pfeil vom Service zum Detail, nachher vom Detail zum Interface]
+
+* *Vorher:* Der Pfeil im Klassendiagramm zeigt von _CheckoutService_ nach unten zu _ConsoleLogger_.
+Die Geschäftslogik hängt vom Detail ab.
+* *Nachher:* _CheckoutService_ verwendet nur noch _ILogger_.
+_ConsoleLogger_ implementiert _ILogger_.
+Der Pfeil vom Detail zeigt jetzt *nach oben*.
+Diese Umkehrung (_Inversion_) gibt dem Prinzip den Namen.
+* Zur Laufzeit ruft der Service weiterhin `Log()` von _ConsoleLogger_ auf.
+Umgedreht wird nur die Abhängigkeit im *Quellcode*: _CheckoutService.cs_ erwähnt _ConsoleLogger_ nicht mehr.
+
+*Das Interface gehört zum Service, nicht zur Implementierung.*
+Der Service legt fest, was er braucht (`Log(string message)`), jede Implementierung richtet sich danach.
+In größeren Solutions liegt _ILogger_ daher im Projekt _Application_ und _ConsoleLogger_ in einem Projekt wie _Infrastructure_.
+_Infrastructure_ referenziert _Application_, nie umgekehrt.
+
+=== Teil 2: Abstraktionen hängen nicht von Details ab
+
+Auch ein Interface kann ein Detail „verraten“:
+
+[source,csharp]
+----
+public interface IPaymentProvider
+{
+    bool Pay(decimal amount);
+    string CreditCardNumber { get; }   // Detail of one implementation
+}
+----
+
+Eine Prepaid Karte hat keine Kreditkartennummer.
+Ein Interface beschreibt daher nur, was der *Aufrufer* braucht.
+Typen wie `SqlConnection` oder `HttpClient` darin sind ein Warnzeichen.
+
+== Depend on interfaces, not on concretes
+
+[IMPORTANT]
+====
+*Depend on interfaces, not on concretes:* Eine Klasse mit Logik hängt von *Interfaces* ab, nicht von *konkreten Klassen*.
+
+*Prüffrage:* Steht im Konstruktor, in einem Feld oder in einem Property eines Services eine konkrete Klasse wie _ConsoleLogger_?
+Oder steht `new ConsoleLogger()` in einer Methode?
+Dann ist der Service fest an diese Klasse gebunden.
+
+*Ausnahme:* Datenklassen wie _Order_, _Product_ oder _string_ darfst du direkt verwenden.
+Sie enthalten nur Daten, keine austauschbare Logik.
+====
+
+[[dependency-injection-die-technik-dazu]]
+== Dependency Injection: die Technik dazu
+
+*Dependency Injection (DI)* bedeutet: Eine Klasse erzeugt ihre Abhängigkeiten *nicht selbst* mit `new`.
+Sie bekommt sie *von außen* übergeben („injiziert“).
+Sie verlangt dabei nur ein Interface.
+DI ist die Technik, das Dependency Inversion Principle ist das Ziel.
+
+Beim Payment Provider machen wir das schon.
+Jetzt behandeln wir den Logger genauso:
+
+*ILogger.cs* und *ConsoleLogger.cs*
+
+[source,csharp]
+----
+namespace WebshopDemo.Application;
+
+public interface ILogger
+{
+    void Log(string message);
+}
+----
+
+[source,csharp]
+----
+using System;
+
+namespace WebshopDemo.Application;
+
+public class ConsoleLogger : ILogger
+{
+    public void Log(string message) => Console.WriteLine($"[LOG] {message}");
+}
+----
+
+*CheckoutService.cs*
+
+[source,csharp]
+----
+namespace WebshopDemo.Application;
+
+public class CheckoutService
+{
+    private readonly IPaymentProvider _paymentProvider;
+
+    public CheckoutService(IPaymentProvider paymentProvider)   // (1)
+    {
+        _paymentProvider = paymentProvider;
+    }
+
+    public ILogger? Logger { get; set; }                        // (2)
+
+    public bool Checkout(Order order)
+    {
+        if (order.IsPaid) { return false; }
+        if (!_paymentProvider.Pay(order.TotalAmount))
+        {
+            Logger?.Log($"Payment of {order.TotalAmount} for {order.CustomerEmail} declined.");
+            return false;
+        }
+        order.MarkAsPaid();
+        Logger?.Log($"Payment of {order.TotalAmount} for {order.CustomerEmail} succeeded.");
+        return true;
+    }
+}
+----
+
+* *(1) Constructor Injection:* Ohne Payment Provider kann der Service nicht arbeiten.
+Daher verlangt der Konstruktor ihn, sonst lässt sich der Service gar nicht erstellen.
+* *(2) Property Injection:* Statt `new ConsoleLogger()` steht hier nur noch das Interface _ILogger_.
+Logging ist optional.
+Daher ist der Logger ein nullable Property, das man von außen setzen *kann*.
+Mit `?.` wird `Log()` nur aufgerufen, wenn ein Logger gesetzt ist.
+
+=== Constructor oder Property Injection?
+
+Die Entscheidung folgt der *Multiplizität* aus dem Kapitel link:{github_url}/01%20Types/06_Interfaces.adoc#multiplizit%C3%A4t-muss-es-das-objekt-geben[Interfaces]:
+
+[%header]
+|===
+| |Constructor Injection |Property Injection
+|Multiplizität |*1* (Pflicht) |*0..1* (optional)
+|C# |Konstruktorparameter, _private readonly_ Feld |nullable Property mit _set_
+|Beispiel |_IPaymentProvider_ |_ILogger?_
+|Vorteil |Objekt ist immer vollständig. Der Compiler erzwingt die Abhängigkeit. |Objekt funktioniert auch ohne.
+|Risiko |– |Vergisst man das Setzen, fehlt die Funktion ohne Fehlermeldung.
+|===
+
+*Regel:* Verwende Constructor Injection.
+Property Injection nur, wenn die Abhängigkeit wirklich optional ist.
+
+== Wer erzeugt die Objekte? Der Composition Root
+
+Irgendwo muss `+new CreditCard(...)+` stehen.
+Das passiert an *einer* Stelle, dem *Composition Root*.
+Dort entscheidest du, welche Implementierungen verwendet werden.
+Alle anderen Klassen kennen nur Interfaces.
+In einem Test ist der Composition Root der Arrange-Teil:
+
+*CheckoutServiceTests.cs* (im Projekt _WebshopDemo.Tests_)
+
+[source,csharp]
+----
+using System;
+using WebshopDemo.Application;
+using Xunit;
+
+namespace WebshopDemo.Tests;
+
+public class CheckoutServiceTests
+{
+    [Fact]
+    public void Checkout_WithCreditCardWithinLimit_ReturnsTrue()
+    {
+        // Composition root of this test: here you decide which implementations are used.
+        IPaymentProvider paymentProvider = new CreditCard(limit: 1000, expiration: new DateTime(2030, 12, 31));
+        CheckoutService checkoutService = new CheckoutService(paymentProvider);
+        Order order = new Order(customerEmail: "max@example.com", totalAmount: 250);
+
+        bool success = checkoutService.Checkout(order);
+
+        Assert.True(success);
+    }
+}
+----
+
+Der Test setzt keinen Logger.
+Das ist erlaubt, denn Logging ist optional.
+Willst du die Meldungen sehen, ergänzt du `checkoutService.Logger = new ConsoleLogger();`.
+Für eine Prepaid Karte änderst du nur die erste Zeile.
+_CheckoutService_ bleibt in beiden Fällen unverändert.
+
+=== Ausblick: der DI Container in ASP.NET Core
+
+In ASP.NET Core ist der Composition Root die Datei _Program.cs_.
+Dort schreibst du kein `new`.
+Du *registrierst* nur, welche Klasse zu welchem Interface gehört:
+
+[source,csharp]
+----
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using WebshopDemo.Application;
+
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+// Composition root: register which class is used for which interface.
+builder.Services.AddScoped<IPaymentProvider, CreditCard>();
+builder.Services.AddScoped<CheckoutService>();
+----
+
+Der *DI Container* erzeugt die Objekte und übergibt sie an die Konstruktoren.
+Das Beispiel ist vereinfacht: Der Container füllt nur Konstruktorparameter mit registrierten Typen, _CreditCard_ bräuchte dafür einen anderen Konstruktor.
+Property Injection kennt er nicht.
+Für Logging gibt es dort `+ILogger<T>+` aus _Microsoft.Extensions.Logging_, es kommt über den Konstruktor.
+
+== Testen mit einem Fake
+
+Ob die Zahlung mit _CreditCard_ klappt, hängt von Limit und Ablaufdatum ab.
+Ein echter Zahlungsdienst würde sogar Geld abbuchen.
+Mit DI übergibst du im Test eine *Fake*-Implementierung.
+Sie zahlt nicht wirklich, sondern liefert ein festgelegtes Ergebnis und merkt sich jeden Aufruf.
+
+*FakePaymentProvider.cs* (im Projekt _WebshopDemo.Tests_)
+
+[source,csharp]
+----
+using System.Collections.Generic;
+using WebshopDemo.Application;
+
+namespace WebshopDemo.Tests;
+
+public class FakePaymentProvider : IPaymentProvider
+{
+    private readonly bool _result;
+    private readonly List<decimal> _payments = new();
+
+    public FakePaymentProvider(bool result)
+    {
+        _result = result;
+    }
+
+    public IReadOnlyList<decimal> Payments => _payments;
+
+    public bool Pay(decimal amount)
+    {
+        _payments.Add(amount);
+        return _result;
+    }
+}
+----
+
+Damit testest du Fälle, die mit einer echten Kreditkarte schwer herzustellen sind.
+Der zweite Test prüft sogar, ob der Service den Payment Provider *aufgerufen* hat:
+
+[source,csharp]
+----
+[Fact]
+public void Checkout_WhenPaymentDeclined_ReturnsFalse()
+{
+    FakePaymentProvider paymentProvider = new FakePaymentProvider(result: false);
+    CheckoutService checkoutService = new CheckoutService(paymentProvider);
+    Order order = new Order(customerEmail: "max@example.com", totalAmount: 250);
+
+    bool success = checkoutService.Checkout(order);
+
+    Assert.False(success);
+}
+
+[Fact]
+public void Checkout_WhenOrderAlreadyPaid_DoesNotCallPaymentProvider()
+{
+    FakePaymentProvider paymentProvider = new FakePaymentProvider(result: true);
+    CheckoutService checkoutService = new CheckoutService(paymentProvider);
+    Order order = new Order(customerEmail: "max@example.com", totalAmount: 250);
+    order.MarkAsPaid();
+
+    checkoutService.Checkout(order);
+
+    Assert.Empty(paymentProvider.Payments);
+}
+----
+
+[NOTE]
+====
+*Begriffe:* Eine einfache Ersatzimplementierung für Tests heißt _Fake_.
+Bibliotheken wie https://github.com/devlooped/moq[Moq] oder https://nsubstitute.github.io/[NSubstitute] erzeugen solche Klassen automatisch.
+Man spricht dann von _Mocks_.
+Beides funktioniert nur mit DI.
+====
+
+== Versteckte Abhängigkeiten
+
+Der erste Test oben ist heute grün.
+Ab 2031 wird er rot, obwohl niemand den Code geändert hat.
+Der Grund steht in _CreditCard_: `DateTime.UtcNow`.
+Auch das ist eine Abhängigkeit, nur sieht man sie nicht im Konstruktor.
+Solche *versteckten Abhängigkeiten* gibt es oft:
+
+[%header]
+|===
+|Im Code |Problem |Ersatz über DI
+|`DateTime.Now`, `DateTime.UtcNow` |Ergebnis hängt vom Tag ab, Grenzfälle sind nicht testbar. |`TimeProvider` im Konstruktor
+|`new Random()` |Jeder Lauf liefert andere Zahlen. |`Random` im Konstruktor, im Test mit festem Startwert
+|`Console.WriteLine()` |Ausgabe ist nicht prüfbar und nicht abschaltbar. |`ILogger` oder ein eigenes Interface
+|`new SmtpClient()`, `new SqlConnection()` |Test braucht Mailserver oder Datenbank. |Interface wie `IEmailSender`
+|===
+
+Wie du `TimeProvider` übergibst und im Test durch einen Fake ersetzt, steht im Abschnitt link:{github_url}/15%20Unittests/03_Testfaelle_finden.adoc#deterministische-tests[Deterministische Tests].
+
+== Was bringt das?
+
+[%header]
+|===
+|Vorteil |Im Beispiel
+|*Testbarkeit* |Wir testen „Zahlung abgelehnt“ mit einem Fake, ohne echte Zahlung.
+|*Austauschbarkeit* |Konsole oder Datei, Kreditkarte oder Prepaid Karte: nur der Composition Root ändert sich.
+|*Sichtbare Abhängigkeiten* |Der Konstruktor zeigt, was der Service braucht.
+|===
+
+[WARNING]
+====
+*Nicht übertreiben:* Ein Interface lohnt sich für Abhängigkeiten mit Logik oder Technik (Zahlung, E-Mail, Datenbank, Zeit).
+Ein Interface _IOrder_ für die Datenklasse _Order_ nicht.
+====
+
+== Im Code-Review erkennen
+
+[%header]
+|===
+|Warnzeichen im Code |Verletzt |Was du verlangst
+|`new ConsoleLogger()`, `new SmtpClient()` in einer Methode eines Services |DIP: Service erzeugt sein Detail selbst |„`CheckoutService` erzeugt `ConsoleLogger` selbst. Definiere `ILogger` und übergib ihn per Constructor Injection.“
+|Konstruktorparameter, Feld oder Property mit konkreter Klasse (`CreditCard card`) |Depend on interfaces, not on concretes |„Der Service soll von `IPaymentProvider` abhängen, nicht von `CreditCard`.“
+|`DateTime.Now`, `new Random()`, `Console.WriteLine()` in der Logik |Versteckte Abhängigkeit |„Die Zeit ist eine versteckte Abhängigkeit. Übergib einen `TimeProvider` im Konstruktor.“
+|Interface mit Typen wie `SqlConnection` oder Members, die nur eine Implementierung hat |DIP Teil 2: Abstraktion hängt vom Detail ab |„`IPaymentProvider` verrät ein Detail von `CreditCard`. Entferne `CreditCardNumber` aus dem Interface.“
+|Das Projekt _Application_ referenziert _Infrastructure_ |DIP: Pfeil zeigt nach unten |„Das Interface gehört zur Application. Verschiebe `ILogger` nach _Application_ und drehe die Referenz um.“
+|Pflicht-Abhängigkeit als nullable Property, im Code `+PaymentProvider!.Pay(...)+` |Falsche Injection-Art |„Ohne Payment Provider kann der Service nicht bezahlen. Verlange ihn im Konstruktor.“
+|Ein Interface für jede Datenklasse (`IOrder`, `IProduct`) |Over-Engineering |„`Order` enthält nur Daten. Das Interface `IOrder` bringt nichts, entferne es.“
+|===
+
+// tag::pdf_exclude[]
+== Übungen
+
+. *Bestellbestätigung:* Nach einer erfolgreichen Zahlung bekommt der Kunde eine E-Mail.
+Du schreibst die Klassen und den Fake für den E-Mail Versand und erweiterst _CheckoutService_ mit DI.
+Die Tests sind vorgegeben.
+Lade dazu link:{github_url}/16%20SOLID/Uebungen/OrderConfirmation.7z[OrderConfirmation.7z] herunter.
+Die Angabe steht im Archiv in der Datei _README.md_.
+. *Code Review:* Ein Agent hat diesen Service geschrieben.
+_SqlInvoiceRepository_ liest offene Rechnungen aus einer Datenbank.
+_Invoice_ ist eine Datenklasse.
++
+[source,csharp]
+----
+using System;
+using System.Net.Mail;
+
+public class InvoiceReminderService
+{
+    private readonly SqlInvoiceRepository _repository = new SqlInvoiceRepository();
+
+    public int SendReminders()
+    {
+        SmtpClient smtpClient = new SmtpClient("mail.example.com");
+        int count = 0;
+        foreach (Invoice invoice in _repository.GetUnpaidInvoices())
+        {
+            if (invoice.DueDate >= DateTime.Now) { continue; }
+            smtpClient.Send("shop@example.com", invoice.CustomerEmail, "Payment reminder",
+                $"Please pay {invoice.Amount} as soon as possible.");
+            Console.WriteLine($"Reminder sent to {invoice.CustomerEmail}.");
+            count++;
+        }
+        return count;
+    }
+}
+----
+
+* Markiere jede Abhängigkeit von einem Detail und schreibe dazu einen Review-Kommentar.
+* Zeichne das Klassendiagramm vor und nach deinem Vorschlag.
+Achte auf die Pfeilrichtung.
+* Beschreibe drei Testfälle für `SendReminders()`.
+Welche davon kannst du mit dem jetzigen Code als Unit Test schreiben?
+
+// end::pdf_exclude[]
+
+== Weitere Informationen
+
+* https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection[Dependency Injection in .NET] (Microsoft Learn)
+* https://en.wikipedia.org/wiki/Dependency_inversion_principle[Dependency inversion principle] (Wikipedia)
+* https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices[Unit Testing Best Practices] (Microsoft Learn)

@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Breiten- und Tiefensuche</title>
+<style>
+  :root {
+    --bg: #f8fafc; --card: #ffffff; --fg: #1f2937; --muted: #6b7280; --border: #d1d5db; --soft: #f3f4f6;
+    --line: #1f2937;
+    --n-stroke: #2563eb; --n-fill: #dbeafe;
+    --a-stroke: #ea580c; --a-fill: #ffedd5;
+    --ok-stroke: #16a34a; --ok-fill: #dcfce7;
+    --err-stroke: #dc2626; --err-fill: #fee2e2;
+    --gray-stroke: #6b7280; --gray-fill: #e5e7eb;
+    --btn: #2563eb; --btn-fg: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f172a; --card: #1e293b; --fg: #e5e7eb; --muted: #9ca3af; --border: #475569; --soft: #334155;
+      --line: #cbd5e1;
+      --n-stroke: #60a5fa; --n-fill: #1e3a8a;
+      --a-stroke: #fb923c; --a-fill: #7c2d12;
+      --ok-stroke: #4ade80; --ok-fill: #14532d;
+      --err-stroke: #f87171; --err-fill: #7f1d1d;
+      --gray-stroke: #9ca3af; --gray-fill: #374151;
+      --btn: #3b82f6; --btn-fg: #ffffff;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", Helvetica, Arial, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.5; }
+  code, .mono { font-family: Consolas, Menlo, monospace; }
+  code { background: var(--soft); padding: 0 4px; border-radius: 4px; }
+  header { position: sticky; top: 0; z-index: 5; background: var(--card); border-bottom: 1px solid var(--border);
+           padding: 8px 16px; display: flex; align-items: center; gap: 16px; }
+  header h1 { font-size: 18px; margin: 0; flex: 1; }
+  #progressText { font-variant-numeric: tabular-nums; color: var(--muted); }
+  #progressBar { position: absolute; left: 0; bottom: -1px; height: 3px; background: var(--btn); transition: width .3s; }
+  main { max-width: 1180px; margin: 0 auto; padding: 16px; }
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide h2 { margin: 4px 0 8px; font-size: 24px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; margin: 10px 0; }
+  .card h3 { margin: 0 0 6px; font-size: 15px; }
+  .nav { display: flex; justify-content: space-between; max-width: 1180px; margin: 0 auto; padding: 0 16px 24px; }
+  button, select, input[type=number] { font: inherit; border: 1px solid var(--border); background: var(--card); color: var(--fg);
+           border-radius: 6px; padding: 4px 10px; }
+  button { cursor: pointer; }
+  button:hover:not(:disabled) { border-color: var(--btn); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  button.primary { background: var(--btn); color: var(--btn-fg); border-color: var(--btn); }
+  button[aria-pressed="true"] { background: var(--n-fill); border-color: var(--n-stroke); font-weight: 600; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 6px 0; }
+  .row label { display: inline-flex; align-items: center; gap: 6px; }
+  .muted { color: var(--muted); }
+  .hint { font-size: 14px; color: var(--muted); }
+  .grid2 { display: grid; grid-template-columns: minmax(0, 3fr) minmax(280px, 2fr); gap: 16px; align-items: start; }
+  .grid2.even { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 900px) { .grid2, .grid2.even { grid-template-columns: 1fr; } }
+  svg.graph { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--border);
+              border-radius: 8px; user-select: none; -webkit-user-select: none; touch-action: none; }
+  svg.graph text { font-family: "Segoe UI", Helvetica, Arial, sans-serif; fill: var(--fg); }
+  .e { stroke: var(--line); stroke-width: 1.6; opacity: .55; }
+  .e.tree { stroke-width: 3; opacity: 1; }
+  .e.focus { stroke: var(--a-stroke); stroke-width: 4; opacity: 1; }
+  .e.del:hover { stroke: var(--err-stroke); opacity: 1; }
+  .e-hit { stroke: transparent; stroke-width: 14; }
+  .mode-delete .e-hit { cursor: pointer; }
+  .n circle.body { fill: var(--n-fill); stroke: var(--n-stroke); stroke-width: 2; }
+  .n text.name { font-size: 17px; text-anchor: middle; dominant-baseline: central; pointer-events: none; font-weight: 600; }
+  .n.open circle.body { fill: var(--a-fill); stroke: var(--a-stroke); stroke-dasharray: 5 3; stroke-width: 2.5; }
+  .n.visited circle.body { fill: var(--gray-fill); stroke: var(--gray-stroke); }
+  .n.current circle.body { fill: var(--a-fill); stroke: var(--a-stroke); stroke-width: 4; stroke-dasharray: none; }
+  .n.focus circle.ring { stroke: var(--a-stroke); stroke-width: 2; fill: none; }
+  .n.start circle.startring { stroke: var(--ok-stroke); stroke-width: 3; fill: none; }
+  .n.wrong circle.body { fill: var(--err-fill); stroke: var(--err-stroke); stroke-width: 4; stroke-dasharray: none; }
+  .n.tip circle.ring { stroke: var(--ok-stroke); stroke-width: 4; fill: none; stroke-dasharray: 4 3; }
+  .n.pending circle.body { stroke: var(--a-stroke); stroke-width: 4; }
+  .clickable .n { cursor: pointer; }
+  .badge circle { fill: var(--a-stroke); }
+  svg.graph .badge text { fill: #ffffff; font-size: 11px; font-weight: 700; text-anchor: middle; dominant-baseline: central; }
+  svg.graph text.dist { font-size: 12px; fill: var(--muted); text-anchor: middle; font-family: Consolas, Menlo, monospace; }
+  .rubber { stroke: var(--a-stroke); stroke-width: 2; stroke-dasharray: 6 4; pointer-events: none; }
+  .container { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; min-height: 40px; }
+  .container.stack { flex-direction: column; align-items: flex-start; }
+  .slot { font-family: Consolas, Menlo, monospace; font-size: 17px; min-width: 38px; height: 34px; padding: 0 8px; border-radius: 6px;
+          border: 2px solid var(--a-stroke); background: var(--a-fill); display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+  .slot small { font-size: 11px; color: var(--muted); }
+  .slot.stale { border-color: var(--gray-stroke); background: var(--gray-fill); color: var(--muted); text-decoration: line-through; }
+  .slot.first { box-shadow: 0 0 0 3px var(--n-fill); }
+  .clabel { font-size: 12px; color: var(--muted); }
+  .empty { color: var(--muted); font-style: italic; }
+  .chips { display: flex; flex-wrap: wrap; gap: 4px; }
+  .chip { font-family: Consolas, Menlo, monospace; padding: 1px 8px; border-radius: 12px; border: 1px solid var(--border); background: var(--soft); }
+  .chip b { color: var(--a-stroke); font-size: 12px; margin-right: 3px; }
+  .chip.ok { background: var(--ok-fill); border-color: var(--ok-stroke); }
+  pre.code { margin: 0; font-family: Consolas, Menlo, monospace; font-size: 13.5px; line-height: 1.55; overflow-x: auto; }
+  pre.code span { display: block; padding: 0 6px; border-radius: 4px; }
+  pre.code span.active { background: var(--a-fill); outline: 1px solid var(--a-stroke); }
+  .log { min-height: 3em; font-size: 15px; }
+  table.adj { border-collapse: collapse; font-family: Consolas, Menlo, monospace; font-size: 14px; }
+  table.adj td { padding: 1px 8px; border-bottom: 1px solid var(--border); }
+  table.adj td:first-child { font-weight: 700; }
+  table.adj tr.cur td { background: var(--a-fill); }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; align-items: center; }
+  .legend svg { width: 30px; height: 30px; vertical-align: middle; }
+  .feedback { padding: 8px 12px; border-radius: 6px; margin-top: 8px; display: none; }
+  .feedback.ok { display: block; background: var(--ok-fill); border: 1px solid var(--ok-stroke); }
+  .feedback.bad { display: block; background: var(--err-fill); border: 1px solid var(--err-stroke); }
+  .feedback.info { display: block; background: var(--soft); border: 1px solid var(--border); }
+  .rules li { margin-bottom: 4px; }
+  .stats { font-size: 14px; color: var(--muted); }
+  kbd { font-family: Consolas, Menlo, monospace; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 4px; padding: 0 4px; background: var(--soft); }
+  fieldset { border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; margin: 6px 0; }
+  legend { font-size: 13px; color: var(--muted); padding: 0 4px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Breiten- und Tiefensuche</h1>
+  <span id="progressText">1 / 5</span>
+  <div id="progressBar"></div>
+</header>
+
+<main>
+  <!-- Slide 1 -->
+  <section class="slide" data-slide="0">
+    <h2>Einen Graphen durchsuchen</h2>
+    <div class="grid2">
+      <div>
+        <p>Breitensuche (<b>BFS</b>) und Tiefensuche (<b>DFS</b>) besuchen von einem Startknoten aus jeden erreichbaren
+          Knoten genau einmal. Sie unterscheiden sich nur darin, <b>wo sie sich die offenen Knoten merken</b>:</p>
+        <ul>
+          <li>Die <b>Breitensuche</b> verwendet eine <b>Queue</b>: Wer zuerst hineinkommt, kommt zuerst heraus (FIFO).
+            Sie besucht den Graphen Ebene für Ebene.</li>
+          <li>Die <b>Tiefensuche</b> verwendet einen <b>Stack</b>: Wer zuletzt hinaufgelegt wird, kommt zuerst herunter
+            (LIFO). Sie folgt einem Pfad so tief wie möglich und kehrt dann um.</li>
+        </ul>
+        <p>Ein Knoten ist <b>entdeckt</b> (offen), sobald er in der Queue bzw. auf dem Stack liegt. Er ist
+          <b>besucht</b>, wenn die Suche ihn herausnimmt und seine Nachbarn betrachtet.</p>
+        <p><b>Wichtige Regel:</b> Die Nachbarn eines Knotens werden immer <b>aufsteigend nach Namen</b> betrachtet.
+          Die Tabelle rechts zeigt die sortierten Nachbarlisten.</p>
+        <p class="muted">Blättern: Pfeiltasten <kbd>←</kbd> <kbd>→</kbd> oder die Buttons unten.</p>
+      </div>
+      <div>
+        <svg class="graph" id="introSvg" viewBox="0 0 540 380" aria-label="Beispielgraph"></svg>
+        <div class="card">
+          <h3>Nachbarn (aufsteigend)</h3>
+          <table class="adj" id="introAdj"></table>
+        </div>
+        <div class="card legend" id="legend1"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 2 -->
+  <section class="slide" data-slide="1">
+    <h2>Breitensuche mit einer Queue</h2>
+    <p>Nimm den vordersten Knoten aus der Queue und besuche ihn. Hänge jeden Nachbarn, der noch nicht entdeckt ist,
+      <b>hinten</b> an. Neben jedem Knoten steht sein <b>Abstand</b> vom Start in Kanten. Die dicken Kanten führen zum
+      Vorgänger, über den ein Knoten entdeckt wurde.</p>
+    <div class="player" id="playerBfs"></div>
+  </section>
+
+  <!-- Slide 3 -->
+  <section class="slide" data-slide="2">
+    <h2>Tiefensuche mit einem Stack</h2>
+    <p>Nimm den obersten Knoten vom Stack. Ist er schon besucht, überspringe ihn. Sonst besuche ihn und lege seine noch
+      nicht besuchten Nachbarn <b>absteigend</b> auf den Stack. So liegt der kleinste Nachbar oben und kommt als
+      Nächstes dran. Diese Variante besucht die Knoten in derselben Reihenfolge wie die rekursive Tiefensuche.</p>
+    <div class="player" id="playerDfs"></div>
+  </section>
+
+  <!-- Slide 4 -->
+  <section class="slide" data-slide="3">
+    <h2>Vergleich und Regeln für die Übung</h2>
+    <div class="grid2 even">
+      <div class="card"><h3>Breitensuche ab A</h3><svg class="graph" id="cmpBfs" viewBox="0 0 540 380"></svg>
+        <div class="mono" id="cmpBfsOrder"></div></div>
+      <div class="card"><h3>Tiefensuche ab A</h3><svg class="graph" id="cmpDfs" viewBox="0 0 540 380"></svg>
+        <div class="mono" id="cmpDfsOrder"></div></div>
+    </div>
+    <div class="card rules">
+      <h3>So rechnet der Übungsteil</h3>
+      <ul>
+        <li>Alle Graphen sind ungerichtet. Die Nachbarn werden <b>aufsteigend nach Namen</b> betrachtet.</li>
+        <li><b>BFS:</b> Der Start kommt in die Queue und ist entdeckt. Dann immer: vordersten Knoten herausnehmen und
+          <b>besuchen</b>, alle noch nicht entdeckten Nachbarn aufsteigend hinten anhängen.</li>
+        <li><b>DFS (iterativ mit Stack):</b> Der Start kommt auf den Stack. Dann immer: obersten Knoten herunternehmen.
+          Schon besucht? Überspringen. Sonst <b>besuchen</b> und alle noch nicht besuchten Nachbarn
+          <b>absteigend</b> hinauflegen. Ein Knoten darf mehrmals auf dem Stack liegen.</li>
+        <li>Das ergibt dieselbe Reihenfolge wie die <b>rekursive DFS</b>, die die Nachbarn aufsteigend durchgeht und
+          sofort in den ersten unbesuchten Nachbarn absteigt.</li>
+        <li>Du klickst jeweils den Knoten an, der als <b>nächster besucht</b> wird. Danach nimmt die Seite ihn heraus
+          und legt seine Nachbarn in die Queue bzw. auf den Stack.</li>
+      </ul>
+      <h3>Graph erzeugen</h3>
+      <ul>
+        <li><b>Zufallsgraph:</b> Knotenzahl und Dichte wählen, dann auf „Neuer Zufallsgraph“ klicken.</li>
+        <li><b>Selbst zeichnen:</b> Modus „Zeichnen“. Klick auf eine freie Stelle setzt einen Knoten. Ziehst du von einem
+          Knoten zu einem anderen, entsteht eine Kante. Mit „Verschieben“ ordnest du Knoten neu an, mit „Löschen“
+          entfernst du Knoten oder Kanten per Klick.</li>
+        <li>Start wählst du in der Auswahlliste oder im Modus „Start wählen“ per Klick auf einen Knoten.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Slide 5 -->
+  <section class="slide" data-slide="4">
+    <h2>Übung: Welcher Knoten wird als Nächstes besucht?</h2>
+    <div class="grid2">
+      <div>
+        <div class="row" id="setupRow1">
+          <label>Knoten <select id="nodeCount"></select></label>
+          <label>Dichte <select id="density">
+            <option value="0">dünn</option><option value="1" selected>mittel</option><option value="2">dicht</option>
+          </select></label>
+          <button id="randomBtn">Neuer Zufallsgraph</button>
+        </div>
+        <div class="row" id="toolbar">
+          <button data-mode="start" aria-pressed="true">▶ Start wählen</button>
+          <button data-mode="draw" aria-pressed="false">＋ Zeichnen</button>
+          <button data-mode="move" aria-pressed="false">✥ Verschieben</button>
+          <button data-mode="delete" aria-pressed="false">✕ Löschen</button>
+          <button id="clearBtn">Leeren</button>
+        </div>
+        <svg class="graph" id="exSvg" viewBox="0 0 700 440" aria-label="Übungsgraph"></svg>
+        <div class="hint" id="modeHint"></div>
+        <div class="card legend" id="legend2"></div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="row">
+            <label>Verfahren <select id="algo"><option value="bfs">Breitensuche (BFS)</option><option value="dfs">Tiefensuche (DFS)</option></select></label>
+            <label>Start <select id="startSel"></select></label>
+          </div>
+          <div class="row">
+            <button class="primary" id="runBtn">Suche starten</button>
+            <button id="tipBtn" disabled>Tipp</button>
+            <button id="stopBtn" disabled>Abbrechen</button>
+          </div>
+          <div class="row"><label><input type="checkbox" id="helpers" checked> Queue/Stack und offene Knoten anzeigen</label></div>
+          <div class="feedback" id="feedback"></div>
+          <div class="stats" id="stats"></div>
+        </div>
+        <div class="card" id="containerCard">
+          <h3 id="containerTitle">Queue</h3>
+          <div id="exContainer"></div>
+        </div>
+        <div class="card">
+          <h3>Besuchsreihenfolge</h3>
+          <div class="chips" id="exOrder"></div>
+        </div>
+        <div class="card">
+          <h3>Nachbarn (aufsteigend)</h3>
+          <table class="adj" id="exAdj"></table>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="nav">
+  <button id="prevBtn">← Zurück</button>
+  <button id="nextBtn" class="primary">Weiter →</button>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  const SVGNS = 'http://www.w3.org/2000/svg';
+  const R = 20;
+  const SPEEDS = [1700, 1150, 750, 450, 230];
+  const LETTERS = 'ABCDEFGHIJKLMNOP'.split('');
+
+  // ---------- storage (the page also works without localStorage) ----------
+  const store = {
+    get(key, fallback) {
+      try {
+        const raw = window.localStorage.getItem('ti-21-' + key);
+        return raw === null ? fallback : JSON.parse(raw);
+      } catch (e) { return fallback; }
+    },
+    set(key, value) {
+      try { window.localStorage.setItem('ti-21-' + key, JSON.stringify(value)); } catch (e) { /* ignore */ }
+    }
+  };
+
+  // ---------- helpers ----------
+  function svgEl(tag, attrs, parent) {
+    const el = document.createElementNS(SVGNS, tag);
+    for (const k in attrs) { el.setAttribute(k, attrs[k]); }
+    if (parent) { parent.appendChild(el); }
+    return el;
+  }
+  function byName(a, b) { return a < b ? -1 : a > b ? 1 : 0; }
+  function edgeKey(a, b) { return a < b ? a + '|' + b : b + '|' + a; }
+  function list(names) { return names.join(', '); }
+  function nodeById(graph, id) { return graph.nodes.find(n => n.id === id) || null; }
+
+  /** Builds the adjacency lists of an undirected graph, neighbours sorted ascending by name. */
+  function adjacencyOf(graph) {
+    const adj = {};
+    for (const n of graph.nodes) { adj[n.id] = []; }
+    for (const [a, b] of graph.edges) { adj[a].push(b); adj[b].push(a); }
+    for (const k in adj) { adj[k].sort(byName); }
+    return adj;
+  }
+
+  // ---------- search engine ----------
+  /**
+   * Runs BFS or DFS and records every small step as a snapshot.
+   * checkpoints[k] is the index of the snapshot after k nodes have been visited completely.
+   */
+  function simulate(graph, start, mode) {
+    const adj = adjacencyOf(graph);
+    const steps = [], checkpoints = [];
+    const container = [], order = [], tree = [];
+    const discovered = new Set(), visited = new Set(), dist = {};
+    let current = null;
+    function snap(line, text, focus, focusEdge) {
+      steps.push({
+        line, text, focus: focus || null, focusEdge: focusEdge || null, current,
+        container: container.map(e => ({ node: e.node, from: e.from })),
+        order: order.slice(), discovered: Array.from(discovered), tree: tree.slice(), dist: Object.assign({}, dist)
+      });
+    }
+    container.push({ node: start, from: null });
+    if (mode === 'bfs') {
+      discovered.add(start);
+      dist[start] = 0;
+      snap(0, `Start bei <b>${start}</b>: ${start} kommt in die Queue und ist damit entdeckt.`, start);
+      checkpoints.push(steps.length - 1);
+      while (container.length > 0) {
+        const entry = container.shift();
+        const v = entry.node;
+        current = v; visited.add(v); order.push(v);
+        snap(3, `<b>${v}</b> vorne aus der Queue nehmen und besuchen (${order.length}. Knoten).`, v);
+        if (adj[v].length === 0) { snap(4, `${v} hat keine Nachbarn.`, v); }
+        for (const w of adj[v]) {
+          if (discovered.has(w)) {
+            snap(5, `Nachbar <b>${w}</b>: schon entdeckt, also nichts tun.`, w, [v, w]);
+          } else {
+            discovered.add(w); dist[w] = dist[v] + 1; tree.push([v, w]); container.push({ node: w, from: v });
+            snap(6, `Nachbar <b>${w}</b>: noch nicht entdeckt, also hinten in die Queue (Abstand ${dist[w]}).`, w, [v, w]);
+          }
+        }
+        checkpoints.push(steps.length - 1);
+      }
+      current = null;
+      snap(1, `Die Queue ist leer, die Suche ist fertig. Reihenfolge: <b>${order.join(' ')}</b>`);
+    } else {
+      snap(0, `Start bei <b>${start}</b>: ${start} kommt auf den Stack.`, start);
+      checkpoints.push(steps.length - 1);
+      while (container.length > 0) {
+        const entry = container.pop();
+        const v = entry.node;
+        if (visited.has(v)) {
+          snap(4, `<b>${v}</b> oben vom Stack nehmen: schon besucht, also überspringen.`, v);
+          continue;
+        }
+        current = v; visited.add(v); order.push(v);
+        if (entry.from !== null) { tree.push([entry.from, v]); }
+        snap(3, `<b>${v}</b> oben vom Stack nehmen und besuchen (${order.length}. Knoten).`, v);
+        if (adj[v].length === 0) { snap(5, `${v} hat keine Nachbarn.`, v); }
+        for (let i = adj[v].length - 1; i >= 0; i--) {
+          const w = adj[v][i];
+          if (visited.has(w)) {
+            snap(6, `Nachbar <b>${w}</b>: schon besucht, also nicht hinauflegen.`, w, [v, w]);
+          } else {
+            container.push({ node: w, from: v });
+            snap(7, `Nachbar <b>${w}</b>: noch nicht besucht, also auf den Stack.`, w, [v, w]);
+          }
+        }
+        checkpoints.push(steps.length - 1);
+      }
+      current = null;
+      snap(1, `Der Stack ist leer, die Suche ist fertig. Reihenfolge: <b>${order.join(' ')}</b>`);
+    }
+    return { steps, checkpoints, order, adj };
+  }
+
+  const CODE = {
+    bfs: [
+      'queue.Enqueue(start); discovered.Add(start);',
+      'while (queue.Count > 0)',
+      '{',
+      '    node = queue.Dequeue();        // besuchen',
+      '    foreach (neighbor in graph[node])   // aufsteigend',
+      '        if (discovered.Add(neighbor))',
+      '            queue.Enqueue(neighbor);',
+      '}'
+    ],
+    dfs: [
+      'stack.Push(start);',
+      'while (stack.Count > 0)',
+      '{',
+      '    node = stack.Pop();',
+      '    if (!visited.Add(node)) continue;   // überspringen',
+      '    for (i = neighbors.Length - 1; i >= 0; i--)',
+      '        if (!visited.Contains(neighbors[i]))',
+      '            stack.Push(neighbors[i]);',
+      '}'
+    ]
+  };
+
+  // ---------- rendering ----------
+  /**
+   * Draws a graph. view: { step, mode, showOpen, showDist, start, wrong, tip, pending, rubber, deleteMode, clickable }
+   */
+  function renderGraph(svg, graph, view) {
+    while (svg.firstChild) { svg.removeChild(svg.firstChild); }
+    const s = view.step;
+    const visited = new Set(s ? s.order : []);
+    const open = new Set();
+    if (s && view.showOpen) {
+      for (const e of s.container) { if (!visited.has(e.node)) { open.add(e.node); } }
+    }
+    const tree = new Set(s ? s.tree.map(([a, b]) => edgeKey(a, b)) : []);
+    const focusEdge = s && s.focusEdge ? edgeKey(s.focusEdge[0], s.focusEdge[1]) : null;
+    svg.classList.toggle('clickable', !!view.clickable);
+    svg.classList.toggle('mode-delete', !!view.deleteMode);
+    const gEdges = svgEl('g', {}, svg);
+    for (const [a, b] of graph.edges) {
+      const na = nodeById(graph, a), nb = nodeById(graph, b);
+      const key = edgeKey(a, b);
+      let cls = 'e';
+      if (tree.has(key)) { cls += ' tree'; }
+      if (key === focusEdge) { cls += ' focus'; }
+      if (view.deleteMode) { cls += ' del'; }
+      svgEl('line', { x1: na.x, y1: na.y, x2: nb.x, y2: nb.y, class: cls }, gEdges);
+      svgEl('line', { x1: na.x, y1: na.y, x2: nb.x, y2: nb.y, class: 'e-hit', 'data-edge': key }, gEdges);
+    }
+    if (view.rubber) {
+      svgEl('line', { x1: view.rubber.x1, y1: view.rubber.y1, x2: view.rubber.x2, y2: view.rubber.y2, class: 'rubber' }, svg);
+    }
+    for (const n of graph.nodes) {
+      let cls = 'n';
+      if (visited.has(n.id)) { cls += ' visited'; }
+      if (open.has(n.id)) { cls += ' open'; }
+      if (s && s.current === n.id) { cls += ' current'; }
+      if (s && s.focus === n.id && s.focus !== s.current) { cls += ' focus'; }
+      if (view.start === n.id) { cls += ' start'; }
+      if (view.wrong === n.id) { cls += ' wrong'; }
+      if (view.tip === n.id) { cls += ' tip'; }
+      if (view.pending === n.id) { cls += ' pending'; }
+      const g = svgEl('g', { class: cls, 'data-node': n.id }, svg);
+      svgEl('circle', { cx: n.x, cy: n.y, r: R + 7, class: 'startring', fill: 'none' }, g);
+      svgEl('circle', { cx: n.x, cy: n.y, r: R + 4, class: 'ring', fill: 'none' }, g);
+      svgEl('circle', { cx: n.x, cy: n.y, r: R, class: 'body' }, g);
+      svgEl('text', { x: n.x, y: n.y, class: 'name' }, g).textContent = n.id;
+      const idx = s ? s.order.indexOf(n.id) : -1;
+      if (idx >= 0) {
+        const b = svgEl('g', { class: 'badge' }, g);
+        svgEl('circle', { cx: n.x + R * 0.85, cy: n.y - R * 0.85, r: 10 }, b);
+        svgEl('text', { x: n.x + R * 0.85, y: n.y - R * 0.85 }, b).textContent = idx + 1;
+      }
+      if (view.showDist && s && s.dist[n.id] !== undefined) {
+        svgEl('text', { x: n.x, y: n.y + R + 21, class: 'dist' }, g).textContent = 'd=' + s.dist[n.id];
+      }
+    }
+  }
+
+  /** Shows the queue (left = front) or the stack (top first). Already visited stack entries are struck through. */
+  function renderContainer(el, step, mode) {
+    el.innerHTML = '';
+    const visited = new Set(step.order);
+    const box = document.createElement('div');
+    box.className = 'container' + (mode === 'dfs' ? ' stack' : '');
+    const entries = mode === 'dfs' ? step.container.slice().reverse() : step.container;
+    const label = (t) => { const s = document.createElement('span'); s.className = 'clabel'; s.textContent = t; return s; };
+    if (entries.length === 0) {
+      const e = document.createElement('span'); e.className = 'empty'; e.textContent = '(leer)'; box.appendChild(e);
+    } else {
+      box.appendChild(label(mode === 'dfs' ? 'oben' : 'vorne'));
+      entries.forEach((entry, i) => {
+        const slot = document.createElement('span');
+        slot.className = 'slot' + (visited.has(entry.node) ? ' stale' : '') + (i === 0 ? ' first' : '');
+        slot.innerHTML = entry.node + (entry.from ? ` <small>von ${entry.from}</small>` : '');
+        if (visited.has(entry.node)) { slot.title = 'schon besucht, wird übersprungen'; }
+        box.appendChild(slot);
+      });
+      box.appendChild(label(mode === 'dfs' ? 'unten' : 'hinten'));
+    }
+    el.appendChild(box);
+  }
+
+  function renderOrder(el, order) {
+    el.innerHTML = order.length ? order.map((n, i) => `<span class="chip"><b>${i + 1}</b>${n}</span>`).join('') : '<span class="empty">noch keiner</span>';
+  }
+
+  function renderAdj(table, adj, current) {
+    table.innerHTML = Object.keys(adj).sort(byName)
+      .map(k => `<tr${k === current ? ' class="cur"' : ''}><td>${k}</td><td>${adj[k].length ? adj[k].join(', ') : '–'}</td></tr>`).join('');
+  }
+
+  function renderLegend(el) {
+    const item = (cls, text) => `<span><svg viewBox="0 0 30 30"><g class="n ${cls}"><circle cx="15" cy="15" r="13" class="startring" fill="none"/><circle cx="15" cy="15" r="9" class="body"/></g></svg> ${text}</span>`;
+    el.innerHTML = item('', 'unentdeckt') + item('open', 'entdeckt, offen') + item('current', 'gerade besucht') +
+      item('visited', 'besucht (Zahl = Reihenfolge)') + item('start', 'Start (grüner Ring)') +
+      '<span><svg viewBox="0 0 30 30"><line x1="2" y1="15" x2="28" y2="15" class="e tree"/></svg> Kante zum Vorgänger</span>';
+  }
+
+  // ---------- intro graph ----------
+  const INTRO = {
+    nodes: [
+      { id: 'A', x: 70, y: 190 }, { id: 'C', x: 200, y: 105 }, { id: 'E', x: 200, y: 275 }, { id: 'B', x: 330, y: 55 },
+      { id: 'F', x: 330, y: 190 }, { id: 'D', x: 330, y: 320 }, { id: 'G', x: 460, y: 125 }, { id: 'H', x: 460, y: 320 }
+    ],
+    edges: [['A', 'C'], ['A', 'E'], ['B', 'C'], ['C', 'F'], ['D', 'E'], ['E', 'F'], ['B', 'G'], ['F', 'G'], ['D', 'H']]
+  };
+  renderGraph(document.getElementById('introSvg'), INTRO, {});
+  renderAdj(document.getElementById('introAdj'), adjacencyOf(INTRO), null);
+  renderLegend(document.getElementById('legend1'));
+  renderLegend(document.getElementById('legend2'));
+
+  for (const mode of ['bfs', 'dfs']) {
+    const sim = simulate(INTRO, 'A', mode);
+    const last = sim.steps[sim.checkpoints[sim.checkpoints.length - 1]];
+    renderGraph(document.getElementById(mode === 'bfs' ? 'cmpBfs' : 'cmpDfs'), INTRO,
+      { step: Object.assign({}, last, { current: null, focus: null, focusEdge: null }), showDist: mode === 'bfs' });
+    document.getElementById(mode === 'bfs' ? 'cmpBfsOrder' : 'cmpDfsOrder').textContent = 'Reihenfolge: ' + sim.order.join(' ');
+  }
+
+  // ---------- animation player ----------
+  function createPlayer(root, mode) {
+    const name = mode === 'bfs' ? 'Queue' : 'Stack';
+    root.innerHTML = `
+      <div class="row">
+        <label>Start <select data-role="start">${INTRO.nodes.map(n => n.id).sort(byName).map(n => `<option>${n}</option>`).join('')}</select></label>
+        <button data-role="reset">⏮ Zurücksetzen</button>
+        <button data-role="back">◀ Schritt zurück</button>
+        <button data-role="step" class="primary">Schritt ▶</button>
+        <button data-role="play">▶ Play</button>
+        <label>Geschwindigkeit <input type="range" data-role="speed" min="1" max="5" value="3" aria-label="Geschwindigkeit"></label>
+      </div>
+      <div class="grid2">
+        <div>
+          <svg class="graph" data-role="svg" viewBox="0 0 540 380"></svg>
+          <div class="card log" data-role="log"></div>
+        </div>
+        <div>
+          <div class="card"><h3>${name}</h3><div data-role="container"></div></div>
+          <div class="card"><h3>Besuchsreihenfolge</h3><div class="chips" data-role="order"></div></div>
+          <div class="card"><pre class="code" data-role="code"></pre></div>
+          <div class="card"><h3>Nachbarn (aufsteigend)</h3><table class="adj" data-role="adj"></table></div>
+        </div>
+      </div>`;
+    const q = role => root.querySelector(`[data-role="${role}"]`);
+    let sim = null, idx = 0, timer = null;
+    q('code').innerHTML = CODE[mode].map(l => `<span>${l.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>`).join('');
+
+    function draw() {
+      const s = sim.steps[idx];
+      renderGraph(q('svg'), INTRO, { step: s, showOpen: true, showDist: mode === 'bfs', start: q('start').value });
+      renderContainer(q('container'), s, mode);
+      renderOrder(q('order'), s.order);
+      renderAdj(q('adj'), sim.adj, s.current);
+      q('log').innerHTML = `<span class="muted">Schritt ${idx + 1} / ${sim.steps.length}:</span> ${s.text}`;
+      Array.from(q('code').children).forEach((el, i) => el.classList.toggle('active', i === s.line));
+      q('step').disabled = idx >= sim.steps.length - 1;
+      q('back').disabled = idx === 0;
+    }
+    function reset() { stop(); sim = simulate(INTRO, q('start').value, mode); idx = 0; draw(); }
+    function step() { if (idx < sim.steps.length - 1) { idx++; draw(); } if (idx >= sim.steps.length - 1) { stop(); } }
+    function back() { stop(); if (idx > 0) { idx--; draw(); } }
+    function play() {
+      if (timer) { stop(); return; }
+      if (idx >= sim.steps.length - 1) { idx = 0; draw(); }
+      q('play').textContent = '⏸ Pause';
+      const tick = () => { step(); if (timer !== null && idx < sim.steps.length - 1) { timer = setTimeout(tick, SPEEDS[q('speed').value - 1]); } };
+      timer = setTimeout(tick, 200);
+    }
+    function stop() {
+      if (timer) { clearTimeout(timer); }
+      timer = null;
+      q('play').textContent = '▶ Play';
+    }
+    q('start').addEventListener('change', reset);
+    q('reset').addEventListener('click', reset);
+    q('step').addEventListener('click', () => { stop(); step(); });
+    q('back').addEventListener('click', back);
+    q('play').addEventListener('click', play);
+    reset();
+    return { stop, state: () => ({ idx, total: sim.steps.length, order: sim.order.slice() }) };
+  }
+  const playerBfs = createPlayer(document.getElementById('playerBfs'), 'bfs');
+  const playerDfs = createPlayer(document.getElementById('playerDfs'), 'dfs');
+
+  // ---------- random graph generation ----------
+  const VB = { w: 700, h: 440 };
+  const DENSITY = [0.15, 0.45, 0.8];
+
+  function segDist(p, a, b) {
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / (dx * dx + dy * dy)));
+    return Math.hypot(p.x - (a.x + t * dx), p.y - (a.y + t * dy));
+  }
+  function crosses(a, b, c, d) {
+    if (a === c || a === d || b === c || b === d) { return false; }
+    const o = (p, q, r) => Math.sign((q.x - p.x) * (r.y - p.y) - (q.y - p.y) * (r.x - p.x));
+    return o(a, b, c) !== o(a, b, d) && o(c, d, a) !== o(c, d, b);
+  }
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; }
+    return arr;
+  }
+
+  /** Creates a connected, crossing-free random graph with n nodes on a jittered grid. */
+  function randomGraph(n, density) {
+    for (let attempt = 0; attempt < 60; attempt++) {
+      const cols = Math.ceil(Math.sqrt(n * 1.6)), rows = Math.ceil(n / cols);
+      const cw = (VB.w - 80) / cols, ch = (VB.h - 70) / rows;
+      const cells = shuffle(Array.from({ length: cols * rows }, (_, i) => i)).slice(0, n);
+      const names = shuffle(LETTERS.slice(0, n));
+      const nodes = cells.map((c, i) => ({
+        id: names[i],
+        x: Math.round(40 + (c % cols + 0.5) * cw + (Math.random() - 0.5) * cw * 0.4),
+        y: Math.round(35 + (Math.floor(c / cols) + 0.5) * ch + (Math.random() - 0.5) * ch * 0.4)
+      }));
+      const maxLen = 1.75 * Math.max(cw, ch);
+      const cand = [];
+      for (let i = 0; i < n; i++) {
+        for (let j = i + 1; j < n; j++) {
+          const a = nodes[i], b = nodes[j];
+          const len = Math.hypot(a.x - b.x, a.y - b.y);
+          if (len > maxLen) { continue; }
+          if (nodes.some(p => p !== a && p !== b && segDist(p, a, b) < R + 12)) { continue; }
+          cand.push({ a, b, w: len * (0.6 + Math.random() * 0.8) });
+        }
+      }
+      cand.sort((x, y) => x.w - y.w);
+      const parent = {};
+      nodes.forEach(nd => { parent[nd.id] = nd.id; });
+      const find = x => (parent[x] === x ? x : (parent[x] = find(parent[x])));
+      const chosen = [];
+      const free = c => !chosen.some(e => crosses(c.a, c.b, e.a, e.b));
+      for (const c of cand) {
+        const ra = find(c.a.id), rb = find(c.b.id);
+        if (ra !== rb && free(c)) { parent[ra] = rb; chosen.push(c); }
+      }
+      if (chosen.length !== n - 1) { continue; }
+      for (const c of shuffle(cand.filter(c => !chosen.includes(c)))) {
+        if (Math.random() < DENSITY[density] && free(c)) { chosen.push(c); }
+      }
+      return { nodes, edges: chosen.map(c => [c.a.id, c.b.id]) };
+    }
+    return { nodes: [{ id: 'A', x: 200, y: 220 }, { id: 'B', x: 500, y: 220 }], edges: [['A', 'B']] };
+  }
+
+  // ---------- exercise ----------
+  const exSvg = document.getElementById('exSvg');
+  const ex = {
+    graph: null, mode: 'start', start: null,
+    run: null,          // { sim, algo, k, mistakes, tips, done }
+    wrong: null, tip: null, drag: null
+  };
+  const stats = Object.assign({ runs: 0, perfect: 0 }, store.get('stats', {}));
+
+  const nodeCountSel = document.getElementById('nodeCount');
+  for (let i = 4; i <= 12; i++) { nodeCountSel.insertAdjacentHTML('beforeend', `<option${i === 8 ? ' selected' : ''}>${i}</option>`); }
+  const settings = store.get('settings', null);
+  if (settings) {
+    if (settings.nodes) { nodeCountSel.value = String(settings.nodes); }
+    if (settings.density !== undefined) { document.getElementById('density').value = String(settings.density); }
+    if (settings.algo) { document.getElementById('algo').value = settings.algo; }
+    if (settings.helpers !== undefined) { document.getElementById('helpers').checked = !!settings.helpers; }
+  }
+  function saveSettings() {
+    store.set('settings', {
+      nodes: +nodeCountSel.value, density: +document.getElementById('density').value,
+      algo: document.getElementById('algo').value, helpers: document.getElementById('helpers').checked
+    });
+  }
+  function saveGraph() { store.set('graph', { graph: ex.graph, start: ex.start }); }
+
+  function feedback(kind, html) {
+    const el = document.getElementById('feedback');
+    el.className = 'feedback ' + kind;
+    el.innerHTML = html;
+  }
+  function clearFeedback() { const el = document.getElementById('feedback'); el.className = 'feedback'; el.innerHTML = ''; }
+
+  function updateStartSelect() {
+    const sel = document.getElementById('startSel');
+    const ids = ex.graph.nodes.map(n => n.id).sort(byName);
+    if (!ids.includes(ex.start)) { ex.start = ids.length ? ids[0] : null; }
+    sel.innerHTML = ids.map(id => `<option${id === ex.start ? ' selected' : ''}>${id}</option>`).join('');
+  }
+
+  function currentStep() {
+    if (!ex.run) { return null; }
+    return ex.run.sim.steps[ex.run.sim.checkpoints[ex.run.k]];
+  }
+
+  /** True while a search is in progress; a finished search keeps its result visible but unlocks the setup. */
+  function locked() { return !!ex.run && !ex.run.done; }
+
+  /** Leaves a finished search, e.g. when the user changes the graph or the settings. */
+  function leaveFinishedRun() { if (ex.run && ex.run.done) { ex.run = null; ex.wrong = null; ex.tip = null; } }
+
+  function drawExercise() {
+    const running = locked();
+    const helpers = document.getElementById('helpers').checked;
+    const algo = ex.run ? ex.run.algo : document.getElementById('algo').value;
+    let step = currentStep();
+    if (step) { step = Object.assign({}, step, { focus: null, focusEdge: null }, helpers ? {} : { tree: [] }); }
+    renderGraph(exSvg, ex.graph, {
+      step, showOpen: helpers, start: ex.start, wrong: ex.wrong, tip: ex.tip,
+      pending: ex.drag && ex.drag.kind === 'edge' ? ex.drag.from : null,
+      rubber: ex.drag && ex.drag.kind === 'edge' && ex.drag.moved ? ex.drag.rubber : null,
+      deleteMode: !running && ex.mode === 'delete', clickable: running || ex.mode !== 'draw'
+    });
+    document.getElementById('containerTitle').textContent = algo === 'bfs' ? 'Queue' : 'Stack';
+    const cont = document.getElementById('exContainer');
+    document.getElementById('containerCard').style.display = helpers ? '' : 'none';
+    if (step) { renderContainer(cont, step, algo); } else { cont.innerHTML = '<span class="empty">Starte eine Suche.</span>'; }
+    renderOrder(document.getElementById('exOrder'), step ? step.order : []);
+    renderAdj(document.getElementById('exAdj'), adjacencyOf(ex.graph), step ? step.current : null);
+    document.getElementById('runBtn').disabled = running || !ex.start;
+    document.getElementById('stopBtn').disabled = !ex.run;
+    document.getElementById('stopBtn').textContent = running ? 'Abbrechen' : 'Ergebnis ausblenden';
+    document.getElementById('tipBtn').disabled = !running;
+    for (const id of ['algo', 'startSel', 'randomBtn', 'clearBtn', 'nodeCount', 'density']) { document.getElementById(id).disabled = running; }
+    document.querySelectorAll('#toolbar button[data-mode]').forEach(b => {
+      b.disabled = running;
+      b.setAttribute('aria-pressed', String(!running && b.dataset.mode === ex.mode));
+    });
+    document.getElementById('modeHint').textContent = running
+      ? 'Klicke den Knoten an, der als Nächstes besucht wird.'
+      : ex.run ? 'Die Suche ist fertig. Mit „Suche starten“ beginnst du eine neue Runde, oder du änderst den Graphen.' : {
+        start: 'Klicke einen Knoten an, um ihn als Start zu wählen (grüner Ring).',
+        draw: 'Klick auf eine freie Stelle: neuer Knoten. Von Knoten zu Knoten ziehen: neue Kante.',
+        move: 'Knoten mit der Maus verschieben.',
+        delete: 'Knoten oder Kante anklicken, um sie zu löschen.'
+      }[ex.mode];
+    document.getElementById('stats').textContent =
+      `Abgeschlossene Durchläufe: ${stats.runs}, davon ohne Fehler: ${stats.perfect}`;
+  }
+
+  function setGraph(graph, start) {
+    ex.graph = graph; ex.start = start || null; ex.run = null; ex.wrong = null; ex.tip = null;
+    updateStartSelect();
+    saveGraph();
+    drawExercise();
+  }
+
+  function newRandom() {
+    clearFeedback();
+    setGraph(randomGraph(+nodeCountSel.value, +document.getElementById('density').value), null);
+  }
+
+  function startRun() {
+    if (!ex.start) { feedback('info', 'Der Graph braucht mindestens einen Knoten.'); return; }
+    const algo = document.getElementById('algo').value;
+    ex.run = { sim: simulate(ex.graph, ex.start, algo), algo, k: 0, mistakes: 0, tips: 0, done: false };
+    ex.wrong = null; ex.tip = null;
+    feedback('info', algo === 'bfs'
+      ? `Breitensuche ab <b>${ex.start}</b>. Der Start liegt in der Queue. Welcher Knoten wird als Erstes besucht?`
+      : `Tiefensuche ab <b>${ex.start}</b>. Der Start liegt auf dem Stack. Welcher Knoten wird als Erstes besucht?`);
+    drawExercise();
+  }
+
+  function stopRun() { ex.run = null; ex.wrong = null; ex.tip = null; clearFeedback(); drawExercise(); }
+
+  /** Explains why the clicked node is not the next visited node. */
+  function explainMistake(step, algo, clicked, expected, adj) {
+    const visitedIdx = step.order.indexOf(clicked);
+    if (visitedIdx >= 0) {
+      return `<b>${clicked}</b> wurde schon besucht (als ${visitedIdx + 1}. Knoten). Jeder Knoten wird nur einmal besucht.`;
+    }
+    if (adj[clicked].length === 0) {
+      return `<b>${clicked}</b> hat keine Kanten. Die Suche kann ${clicked} deshalb nie erreichen. Als Nächstes wird <b>${expected}</b> besucht.`;
+    }
+    const neighbors = adj[clicked].join(', ');
+    if (algo === 'bfs') {
+      const own = step.container.find(e => e.node === clicked);
+      const front = step.container[0];
+      if (own && own.from === front.from) {
+        return `<b>${clicked}</b> steht zwar in der Queue, aber nicht vorne. Vorne steht <b>${expected}</b>. Beide wurden von ` +
+          `${own.from} aus entdeckt, und ${own.from} hängt seine Nachbarn aufsteigend nach Namen an. Deshalb steht ${expected} vor ${clicked}.`;
+      }
+      if (own) {
+        return `<b>${clicked}</b> steht zwar in der Queue, aber nicht vorne. Vorne steht <b>${expected}</b>` +
+          (front.from ? ` (entdeckt von ${front.from})` : '') + `. ${expected} wurde früher entdeckt als ${clicked}` +
+          ` (entdeckt von ${own.from}). Die Queue gibt die Knoten in der Reihenfolge heraus, in der sie hineingekommen sind (FIFO).`;
+      }
+      return `<b>${clicked}</b> ist noch gar nicht entdeckt: Noch kein besuchter Knoten hat ${clicked} als Nachbarn. ` +
+        `${clicked} kommt erst in die Queue, wenn einer seiner Nachbarn (${neighbors}) besucht wird. Vorne in der Queue steht <b>${expected}</b>.`;
+    }
+    const visited = new Set(step.order);
+    const top = step.container.slice().reverse();
+    const skipped = [];
+    let expectedEntry = null;
+    for (const e of top) {
+      if (visited.has(e.node)) { skipped.push(e.node); } else { expectedEntry = e; break; }
+    }
+    const skipText = skipped.length
+      ? ` Ganz oben ${skipped.length === 1 ? 'liegt' : 'liegen'} zwar ${list(skipped)}, ${skipped.length === 1 ? 'der ist' : 'die sind'} aber schon besucht und ${skipped.length === 1 ? 'wird' : 'werden'} übersprungen.`
+      : '';
+    const own = step.container.find(e => e.node === clicked);
+    if (own) {
+      let text = `<b>${clicked}</b> liegt zwar auf dem Stack, aber nicht oben.${skipText} Der oberste unbesuchte Knoten ist <b>${expected}</b>` +
+        (expectedEntry && expectedEntry.from ? ` (hinaufgelegt von ${expectedEntry.from})` : '') +
+        '. Der Stack gibt immer den zuletzt hinaufgelegten Knoten zuerst heraus (LIFO).';
+      if (expectedEntry && step.container.some(e => e.node === clicked && e.from === expectedEntry.from) && clicked > expected) {
+        text += ` Die Nachbarn von ${expectedEntry.from} werden absteigend hinaufgelegt, deshalb liegt der kleinste oben.`;
+      }
+      return text;
+    }
+    return `<b>${clicked}</b> liegt nicht auf dem Stack: Noch kein besuchter Knoten hat ${clicked} hinaufgelegt. ` +
+      `Das passiert erst, wenn ein Nachbar von ${clicked} (${neighbors}) besucht wird.${skipText} Als Nächstes wird <b>${expected}</b> besucht.`;
+  }
+
+  /** Describes what happened when the node was visited (for positive feedback). */
+  function describeVisit(run, node) {
+    // A node is visited only once, so every entry that came from it was added during this visit.
+    const after = run.sim.steps[run.sim.checkpoints[run.k]];
+    const added = after.container.filter(e => e.from === node).map(e => e.node);
+    if (added.length === 0) {
+      return `${node} hat keine noch nicht ${run.algo === 'bfs' ? 'entdeckten' : 'besuchten'} Nachbarn, es kommt nichts dazu.`;
+    }
+    return run.algo === 'bfs'
+      ? `Hinten an die Queue angehängt: ${list(added)}.`
+      : `Absteigend auf den Stack gelegt: ${list(added)}. Oben liegt jetzt ${added[added.length - 1]}.`;
+  }
+
+  function onRunClick(id) {
+    const run = ex.run;
+    if (run.done) { return; }
+    const step = currentStep();
+    const expected = run.sim.order[run.k];
+    ex.tip = null;
+    if (id !== expected) {
+      run.mistakes++;
+      ex.wrong = id;
+      feedback('bad', '✗ ' + explainMistake(step, run.algo, id, expected, run.sim.adj));
+      drawExercise();
+      return;
+    }
+    ex.wrong = null;
+    run.k++;
+    let text = `✓ Richtig, <b>${id}</b> ist der ${run.k}. besuchte Knoten. ` + describeVisit(run, id);
+    if (run.k === run.sim.order.length) {
+      run.done = true;
+      const unreached = ex.graph.nodes.map(n => n.id).filter(n => !run.sim.order.includes(n)).sort(byName);
+      const rest = run.sim.steps[run.sim.checkpoints[run.k]].container.length;
+      text += '<br><b>Fertig!</b> ' + (run.algo === 'bfs' ? 'Die Queue ist leer. '
+        : rest ? 'Auf dem Stack liegen nur noch schon besuchte Knoten, die übersprungen werden. ' : 'Der Stack ist leer. ') +
+        `Reihenfolge: <span class="mono">${run.sim.order.join(' ')}</span>. Fehler: ${run.mistakes}, Tipps: ${run.tips}.`;
+      if (unreached.length) {
+        text += unreached.length === 1
+          ? ` Nicht besucht: ${unreached[0]}. Dieser Knoten ist vom Start aus nicht erreichbar (andere Zusammenhangskomponente).`
+          : ` Nicht besucht: ${list(unreached)}. Diese Knoten sind vom Start aus nicht erreichbar (andere Zusammenhangskomponente).`;
+      }
+      stats.runs++;
+      if (run.mistakes === 0 && run.tips === 0) { stats.perfect++; }
+      store.set('stats', stats);
+    }
+    feedback('ok', text);
+    drawExercise();
+  }
+
+  function showTip() {
+    const run = ex.run;
+    if (!run || run.done) { return; }
+    run.tips++;
+    const expected = run.sim.order[run.k];
+    ex.tip = expected;
+    ex.wrong = null;
+    const step = currentStep();
+    let why;
+    if (run.k === 0) {
+      why = `Am Anfang liegt nur der Start ${expected} ${run.algo === 'bfs' ? 'in der Queue' : 'auf dem Stack'}.`;
+    } else if (run.algo === 'bfs') {
+      why = `${expected} steht vorne in der Queue.`;
+    } else {
+      const visited = new Set(step.order);
+      const skipped = [];
+      for (const e of step.container.slice().reverse()) {
+        if (!visited.has(e.node)) { break; }
+        skipped.push(e.node);
+      }
+      why = (skipped.length ? `Oben liegen schon besuchte Knoten (${list(skipped)}), die übersprungen werden. ` : '') +
+        `${expected} ist der oberste unbesuchte Knoten auf dem Stack.`;
+    }
+    feedback('info', `Tipp: Als Nächstes wird <b>${expected}</b> besucht (grün gestrichelt). ${why} Klicke ihn an.`);
+    drawExercise();
+  }
+
+  // ---------- editor (pointer handling) ----------
+  function svgPoint(evt) {
+    const pt = exSvg.createSVGPoint();
+    pt.x = evt.clientX; pt.y = evt.clientY;
+    const p = pt.matrixTransform(exSvg.getScreenCTM().inverse());
+    return { x: Math.max(R + 2, Math.min(VB.w - R - 2, p.x)), y: Math.max(R + 2, Math.min(VB.h - R - 2, p.y)) };
+  }
+  function nodeAt(p) { return ex.graph.nodes.find(n => Math.hypot(n.x - p.x, n.y - p.y) <= R + 4) || null; }
+  function nextLetter() { return LETTERS.find(l => !ex.graph.nodes.some(n => n.id === l)) || null; }
+
+  exSvg.addEventListener('pointerdown', evt => {
+    const p = svgPoint(evt);
+    const hitNode = evt.target.closest ? evt.target.closest('[data-node]') : null;
+    const node = hitNode ? nodeById(ex.graph, hitNode.getAttribute('data-node')) : nodeAt(p);
+    if (locked()) {
+      if (node) { onRunClick(node.id); }
+      return;
+    }
+    leaveFinishedRun();
+    clearFeedback();
+    if (ex.mode === 'start') {
+      if (node) { ex.start = node.id; updateStartSelect(); saveGraph(); drawExercise(); }
+      return;
+    }
+    if (ex.mode === 'delete') {
+      const edgeAttr = evt.target.getAttribute && evt.target.getAttribute('data-edge');
+      if (node) {
+        ex.graph.nodes = ex.graph.nodes.filter(n => n !== node);
+        ex.graph.edges = ex.graph.edges.filter(([a, b]) => a !== node.id && b !== node.id);
+      } else if (edgeAttr) {
+        ex.graph.edges = ex.graph.edges.filter(([a, b]) => edgeKey(a, b) !== edgeAttr);
+      } else { return; }
+      updateStartSelect(); saveGraph(); drawExercise();
+      return;
+    }
+    if (ex.mode === 'move') {
+      if (node) { ex.drag = { kind: 'move', node }; exSvg.setPointerCapture(evt.pointerId); }
+      return;
+    }
+    // draw mode
+    if (node) {
+      ex.drag = { kind: 'edge', from: node.id, moved: false, rubber: { x1: node.x, y1: node.y, x2: node.x, y2: node.y } };
+      exSvg.setPointerCapture(evt.pointerId);
+      drawExercise();
+      return;
+    }
+    const letter = nextLetter();
+    if (!letter) { feedback('info', `Mehr als ${LETTERS.length} Knoten sind nicht möglich.`); return; }
+    if (ex.graph.nodes.some(n => Math.hypot(n.x - p.x, n.y - p.y) < 2 * R + 10)) { feedback('info', 'Zu nah an einem anderen Knoten.'); return; }
+    ex.graph.nodes.push({ id: letter, x: Math.round(p.x), y: Math.round(p.y) });
+    if (!ex.start) { ex.start = letter; }
+    updateStartSelect(); saveGraph(); drawExercise();
+  });
+
+  exSvg.addEventListener('pointermove', evt => {
+    if (!ex.drag) { return; }
+    const p = svgPoint(evt);
+    if (ex.drag.kind === 'move') {
+      ex.drag.node.x = Math.round(p.x); ex.drag.node.y = Math.round(p.y);
+    } else {
+      ex.drag.moved = true;
+      ex.drag.rubber.x2 = p.x; ex.drag.rubber.y2 = p.y;
+    }
+    drawExercise();
+  });
+
+  function endDrag(evt) {
+    if (!ex.drag) { return; }
+    const drag = ex.drag;
+    ex.drag = null;
+    if (drag.kind === 'edge') {
+      const target = nodeAt(svgPoint(evt));
+      if (target && target.id !== drag.from) {
+        if (ex.graph.edges.some(([a, b]) => edgeKey(a, b) === edgeKey(drag.from, target.id))) {
+          feedback('info', `Die Kante ${drag.from}–${target.id} gibt es schon.`);
+        } else {
+          ex.graph.edges.push([drag.from, target.id]);
+        }
+      }
+    }
+    saveGraph();
+    drawExercise();
+  }
+  exSvg.addEventListener('pointerup', endDrag);
+  exSvg.addEventListener('pointercancel', () => { ex.drag = null; drawExercise(); });
+
+  document.querySelectorAll('#toolbar button[data-mode]').forEach(b => b.addEventListener('click', () => {
+    ex.mode = b.dataset.mode; leaveFinishedRun(); clearFeedback(); drawExercise();
+  }));
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    clearFeedback(); ex.mode = 'draw'; setGraph({ nodes: [], edges: [] }, null);
+  });
+  document.getElementById('randomBtn').addEventListener('click', () => { saveSettings(); newRandom(); });
+  document.getElementById('startSel').addEventListener('change', e => { ex.start = e.target.value; leaveFinishedRun(); saveGraph(); drawExercise(); });
+  document.getElementById('algo').addEventListener('change', () => { saveSettings(); leaveFinishedRun(); drawExercise(); });
+  document.getElementById('nodeCount').addEventListener('change', saveSettings);
+  document.getElementById('density').addEventListener('change', saveSettings);
+  document.getElementById('helpers').addEventListener('change', () => { saveSettings(); drawExercise(); });
+  document.getElementById('runBtn').addEventListener('click', startRun);
+  document.getElementById('stopBtn').addEventListener('click', stopRun);
+  document.getElementById('tipBtn').addEventListener('click', showTip);
+
+  /** Accepts only well-formed saved graphs, so a broken localStorage entry cannot break the page. */
+  function validGraph(g) {
+    if (!g || !Array.isArray(g.nodes) || !Array.isArray(g.edges)) { return false; }
+    const ids = new Set(g.nodes.map(n => n && n.id));
+    return g.nodes.every(n => n && LETTERS.includes(n.id) && isFinite(n.x) && isFinite(n.y)) && ids.size === g.nodes.length &&
+      g.edges.every(e => Array.isArray(e) && e.length === 2 && ids.has(e[0]) && ids.has(e[1]) && e[0] !== e[1]);
+  }
+  const saved = store.get('graph', null);
+  if (saved && validGraph(saved.graph)) { setGraph(saved.graph, saved.start); } else { newRandom(); }
+
+  // ---------- slides ----------
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  let current = Math.min(Math.max(store.get('slide', 0) | 0, 0), slides.length - 1);
+  function showSlide(i) {
+    current = Math.min(Math.max(i, 0), slides.length - 1);
+    slides.forEach((s, k) => s.classList.toggle('active', k === current));
+    document.getElementById('progressText').textContent = `${current + 1} / ${slides.length}`;
+    document.getElementById('progressBar').style.width = `${(current + 1) / slides.length * 100}%`;
+    document.getElementById('prevBtn').disabled = current === 0;
+    document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    playerBfs.stop(); playerDfs.stop();
+    store.set('slide', current);
+    window.scrollTo(0, 0);
+  }
+  document.getElementById('prevBtn').addEventListener('click', () => showSlide(current - 1));
+  document.getElementById('nextBtn').addEventListener('click', () => showSlide(current + 1));
+  document.addEventListener('keydown', evt => {
+    const tag = evt.target && evt.target.tagName;
+    if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') { return; }
+    if (evt.ctrlKey || evt.altKey || evt.metaKey) { return; }
+    if (evt.key === 'ArrowRight' || evt.key === 'PageDown') { showSlide(current + 1); evt.preventDefault(); }
+    if (evt.key === 'ArrowLeft' || evt.key === 'PageUp') { showSlide(current - 1); evt.preventDefault(); }
+  });
+  showSlide(current);
+
+  /** Read-only hooks for automated tests. */
+  window.searchDebug = {
+    simulate: (graph, start, mode) => simulate(graph, start, mode).order,
+    intro: INTRO,
+    expected: () => (ex.run && !ex.run.done ? ex.run.sim.order[ex.run.k] : null),
+    graph: () => JSON.parse(JSON.stringify(ex.graph)),
+    players: () => ({ bfs: playerBfs.state(), dfs: playerDfs.state() }),
+    toScreen: (x, y) => {
+      const r = exSvg.getBoundingClientRect();
+      return { x: r.left + x * r.width / VB.w, y: r.top + y * r.height / VB.h };
+    }
+  };
+})();
+</script>
+</body>
+</html>

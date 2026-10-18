@@ -1,0 +1,38 @@
+@startuml
+set separator none
+
+package "System.Collections.Generic"
+{
+    interface "IReadOnlyList<T>" as IReadOnlyList
+    {
+        +T this[int index] { get; }
+        +int Count { get; }
+    }
+    interface "IList<T>" as IList
+    {
+        +T this[int index] { get; set; }
+        +int Count { get; }
+        +void Add(T item)
+        +bool Remove(T item)
+    }
+
+    class "List<T>" as List
+    {
+        +T this[int index] { get; set; }
+        +int Count { get; }
+        +void Add(T item)
+        +bool Remove(T item)
+    }
+    List .up.|> IReadOnlyList
+    List .up.|> IList
+}
+
+class Order
+{
+    +Products : IReadOnlyList<Product>
+    ---
+    +void AddProduct(Product product)
+}
+
+Order -down-> IReadOnlyList
+@enduml

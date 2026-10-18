@@ -1,0 +1,11 @@
+[
+  {"name": "Burgenland", "hauptstadt": "Eisenstadt", "flaeche": 3965.2, "einwohner": 301250},
+  {"name": "Kärnten", "hauptstadt": "Klagenfurt am Wörthersee", "flaeche": 9536.5, "einwohner": 568984},
+  {"name": "Niederösterreich", "hauptstadt": "St. Pölten", "flaeche": 19179.6, "einwohner": 1723981},
+  {"name": "Oberösterreich", "hauptstadt": "Linz", "flaeche": 11982.5, "einwohner": 1522825},
+  {"name": "Salzburg", "hauptstadt": "Salzburg", "flaeche": 7154.6, "einwohner": 568346},
+  {"name": "Steiermark", "hauptstadt": "Graz", "flaeche": 16399.3, "einwohner": 1269186},
+  {"name": "Tirol", "hauptstadt": "Innsbruck", "flaeche": 12648.4, "einwohner": 775970},
+  {"name": "Vorarlberg", "hauptstadt": "Bregenz", "flaeche": 2601.5, "einwohner": 405474},
+  {"name": "Wien", "hauptstadt": "Wien", "flaeche": 414.9, "einwohner": 2028399}
+]

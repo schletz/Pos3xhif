@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="410" viewBox="0 0 640 410">
+  <rect x="0.5" y="0.5" width="639" height="409" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker>
+    <marker id="arrowOrange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ea580c"/></marker>
+  </defs>
+  <rect x="12" y="30" width="616" height="80" fill="#f3f4f6"/>
+  <text x="24.0" y="75.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#6b7280" text-anchor="start">Abstand 0</text>
+  <text x="24.0" y="155.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#6b7280" text-anchor="start">Abstand 1</text>
+  <rect x="12" y="190" width="616" height="80" fill="#f3f4f6"/>
+  <text x="24.0" y="235.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#6b7280" text-anchor="start">Abstand 2</text>
+  <text x="24.0" y="315.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#6b7280" text-anchor="start">Abstand 3</text>
+  <line x1="408.0" y1="160.6" x2="342.0" y2="219.4" stroke="#6b7280" stroke-width="1.4" stroke-dasharray="5 4"/>
+  <line x1="318.3" y1="241.0" x2="256.7" y2="299.0" stroke="#6b7280" stroke-width="1.4" stroke-dasharray="5 4"/>
+  <line x1="318.0" y1="80.6" x2="252.7" y2="138.7" stroke="#1f2937" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <line x1="342.0" y1="80.6" x2="407.3" y2="138.7" stroke="#ea580c" stroke-width="2.6" marker-end="url(#arrowOrange)"/>
+  <line x1="228.7" y1="161.3" x2="172.0" y2="218.0" stroke="#1f2937" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <line x1="252.0" y1="160.6" x2="317.3" y2="218.7" stroke="#1f2937" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <line x1="431.3" y1="161.3" x2="488.0" y2="218.0" stroke="#ea580c" stroke-width="2.6" marker-end="url(#arrowOrange)"/>
+  <line x1="171.7" y1="241.0" x2="232.6" y2="298.3" stroke="#1f2937" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <line x1="500.0" y1="246.0" x2="500.0" y2="293.0" stroke="#ea580c" stroke-width="2.6" marker-end="url(#arrowOrange)"/>
+  <circle cx="330.0" cy="70.0" r="16" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+  <text x="330.0" y="75.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">A</text>
+  <circle cx="240.0" cy="150.0" r="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="240.0" y="155.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">C</text>
+  <circle cx="420.0" cy="150.0" r="16" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+  <text x="420.0" y="155.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">E</text>
+  <circle cx="160.0" cy="230.0" r="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="160.0" y="235.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">B</text>
+  <circle cx="330.0" cy="230.0" r="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="330.0" y="235.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">F</text>
+  <circle cx="500.0" cy="230.0" r="16" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+  <text x="500.0" y="235.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">D</text>
+  <circle cx="245.0" cy="310.0" r="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="245.0" y="315.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">G</text>
+  <circle cx="500.0" cy="310.0" r="16" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+  <text x="500.0" y="315.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">H</text>
+  <circle cx="345.0" cy="55.0" r="9" fill="#ea580c"/>
+  <text x="345.0" y="59.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" font-weight="bold">1</text>
+  <circle cx="255.0" cy="135.0" r="9" fill="#ea580c"/>
+  <text x="255.0" y="139.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" font-weight="bold">2</text>
+  <circle cx="435.0" cy="135.0" r="9" fill="#ea580c"/>
+  <text x="435.0" y="139.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" font-weight="bold">3</text>
+  <circle cx="175.0" cy="215.0" r="9" fill="#ea580c"/>
+  <text x="175.0" y="219.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" font-weight="bold">4</text>
+  <circle cx="345.0" cy="215.0" r="9" fill="#ea580c"/>
+  <text x="345.0" y="219.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" font-weight="bold">5</text>
+  <circle cx="515.0" cy="215.0" r="9" fill="#ea580c"/>
+  <text x="515.0" y="219.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" font-weight="bold">6</text>
+  <circle cx="260.0" cy="295.0" r="9" fill="#ea580c"/>
+  <text x="260.0" y="299.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" font-weight="bold">7</text>
+  <circle cx="515.0" cy="295.0" r="9" fill="#ea580c"/>
+  <text x="515.0" y="299.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" font-weight="bold">8</text>
+  <line x1="24" y1="378" x2="62" y2="378" stroke="#1f2937" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <text x="70.0" y="383.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">Vorgänger → Knoten</text>
+  <line x1="210" y1="378" x2="248" y2="378" stroke="#6b7280" stroke-width="1.4" stroke-dasharray="5 4"/>
+  <text x="256.0" y="383.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">andere Kante</text>
+  <circle cx="366.0" cy="378.0" r="9" fill="#ea580c"/>
+  <text x="366.0" y="382.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" font-weight="bold">1</text>
+  <text x="380.0" y="383.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">Besuchsreihenfolge</text>
+  <line x1="510" y1="378" x2="548" y2="378" stroke="#ea580c" stroke-width="2.6"/>
+  <text x="556.0" y="383.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">Weg A → H</text>
+</svg>

@@ -1,0 +1,60 @@
+extends: default-with-font-fallbacks
+# Fallback fonts for glyphs that Noto Serif lacks (sub/superscripts, arrows, math symbols).
+# The paths point to the fonts of the asciidoctor docker image used by convert_adoc.
+font:
+  catalog:
+    merge: true
+    DejaVu Sans:
+      normal: /usr/share/fonts/dejavu/DejaVuSans.ttf
+      bold: /usr/share/fonts/dejavu/DejaVuSans-Bold.ttf
+      italic: /usr/share/fonts/dejavu/DejaVuSans-Oblique.ttf
+      bold_italic: /usr/share/fonts/dejavu/DejaVuSans-BoldOblique.ttf
+    DejaVu Math:
+      normal: /usr/share/fonts/dejavu/DejaVuMathTeXGyre.ttf
+      bold: /usr/share/fonts/dejavu/DejaVuMathTeXGyre.ttf
+      italic: /usr/share/fonts/dejavu/DejaVuMathTeXGyre.ttf
+      bold_italic: /usr/share/fonts/dejavu/DejaVuMathTeXGyre.ttf
+  fallbacks: [M+ 1p Fallback, Noto Emoji, DejaVu Sans, DejaVu Math]
+page:
+  margin: [20mm, 20mm, 20mm, 20mm]
+cover:
+  front:
+    image: image:cover.pdf[page=1]
+title-page: false
+heading:
+  part_break_before: always
+  chapter_break_before: always
+  # h1 is used for part titles (book doctype) or the doctitle (article doctype).
+  # A part title sits alone on its page, pushed into the lower third.
+  h1_font_size: 36
+  h1_font_color: '7F7F7E'
+  h1_line_height: 1.15
+  h1_margin_page_top: 170mm
+  # h2 is used for chapter titles (book doctype only)
+  h2_font_size: floor($base_font_size_large * 1.59)
+  h3_font_size: round($base_font_size_large * 1.26)
+  h4_font_size: $base_font_size_large
+  h5_font_size: $base_font_size
+  h6_font_size: $base_font_size_small
+code:
+  # font_size: $base_font_size_small
+  font_size: $base_font_size
+  line_height: 1.15
+list:
+  item_spacing: $vertical_rhythm / 6
+table:
+  cell_padding: 1.3
+quote:
+  font_size: $base_font_size  
+footer:
+  recto:
+    left:
+      content: "{page-number} von {page-count}"
+    right:
+      content: "*{chapter-title}*"
+  verso:
+    left:
+      content: "*{chapter-title}*"
+    right:
+      content: "{page-number} von {page-count}"
+

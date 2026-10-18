@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="380" viewBox="0 0 780 380">
+  <rect x="0.5" y="0.5" width="779" height="379" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/>
+    </marker>
+  </defs>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#1f2937" text-anchor="middle">
+    <text x="72" y="38">Element</text>
+    <text x="232" y="38">GetHashCode()</text>
+    <text x="350" y="38">% 7</text>
+    <text x="492" y="38">Fach</text>
+    <text x="650" y="38">Einträge (Kette)</text>
+  </g>
+  <rect x="24" y="65" width="96" height="30" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="1.4"/>
+  <text x="72" y="85" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">"Wien"</text>
+  <line x1="124" y1="80" x2="176" y2="80" stroke="#1f2937" stroke-width="1.3" marker-end="url(#arrow)"/>
+  <text x="232" y="85" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">1946379</text>
+  <text x="350" y="85" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle">= 1</text>
+  <line x1="378" y1="80" x2="466" y2="107" stroke="#1f2937" stroke-width="1.3" marker-end="url(#arrow)"/>
+  <rect x="24" y="115" width="96" height="30" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="1.4"/>
+  <text x="72" y="135" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">"Graz"</text>
+  <line x1="124" y1="130" x2="176" y2="130" stroke="#1f2937" stroke-width="1.3" marker-end="url(#arrow)"/>
+  <text x="232" y="135" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">305847</text>
+  <text x="350" y="135" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle">= 3</text>
+  <line x1="378" y1="130" x2="466" y2="175" stroke="#1f2937" stroke-width="1.3" marker-end="url(#arrow)"/>
+  <rect x="24" y="165" width="96" height="30" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="1.4"/>
+  <text x="72" y="185" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">"Linz"</text>
+  <line x1="124" y1="180" x2="176" y2="180" stroke="#1f2937" stroke-width="1.3" marker-end="url(#arrow)"/>
+  <text x="232" y="185" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">7720541</text>
+  <text x="350" y="185" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle">= 3</text>
+  <line x1="378" y1="180" x2="466" y2="175" stroke="#1f2937" stroke-width="1.3" marker-end="url(#arrow)"/>
+  <rect x="24" y="215" width="96" height="30" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="1.4"/>
+  <text x="72" y="235" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">"Bregenz"</text>
+  <line x1="124" y1="230" x2="176" y2="230" stroke="#1f2937" stroke-width="1.3" marker-end="url(#arrow)"/>
+  <text x="232" y="235" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">4183926</text>
+  <text x="350" y="235" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle">= 5</text>
+  <line x1="378" y1="230" x2="466" y2="243" stroke="#1f2937" stroke-width="1.3" marker-end="url(#arrow)"/>
+  <rect x="470" y="56" width="44" height="34" fill="#f3f4f6" stroke="#d1d5db" stroke-width="1.3"/>
+  <text x="492" y="78" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">0</text>
+  <rect x="470" y="90" width="44" height="34" fill="#ffedd5" stroke="#ea580c" stroke-width="1.3"/>
+  <text x="492" y="112" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">1</text>
+  <line x1="514" y1="107" x2="556" y2="107" stroke="#1f2937" stroke-width="1.3" marker-end="url(#arrow)"/>
+  <rect x="560" y="94" width="86" height="26" rx="5" fill="#dbeafe" stroke="#2563eb" stroke-width="1.3"/>
+  <text x="603" y="112" font-family="Consolas, Menlo, monospace" font-size="13" fill="#1f2937" text-anchor="middle">"Wien"</text>
+  <rect x="470" y="124" width="44" height="34" fill="#f3f4f6" stroke="#d1d5db" stroke-width="1.3"/>
+  <text x="492" y="146" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">2</text>
+  <rect x="470" y="158" width="44" height="34" fill="#ffedd5" stroke="#ea580c" stroke-width="1.3"/>
+  <text x="492" y="180" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">3</text>
+  <line x1="514" y1="175" x2="556" y2="175" stroke="#1f2937" stroke-width="1.3" marker-end="url(#arrow)"/>
+  <rect x="560" y="162" width="86" height="26" rx="5" fill="#dbeafe" stroke="#2563eb" stroke-width="1.3"/>
+  <text x="603" y="180" font-family="Consolas, Menlo, monospace" font-size="13" fill="#1f2937" text-anchor="middle">"Graz"</text>
+  <line x1="646" y1="175" x2="666" y2="175" stroke="#1f2937" stroke-width="1.3" marker-end="url(#arrow)"/>
+  <rect x="670" y="162" width="86" height="26" rx="5" fill="#dbeafe" stroke="#2563eb" stroke-width="1.3"/>
+  <text x="713" y="180" font-family="Consolas, Menlo, monospace" font-size="13" fill="#1f2937" text-anchor="middle">"Linz"</text>
+  <rect x="470" y="192" width="44" height="34" fill="#f3f4f6" stroke="#d1d5db" stroke-width="1.3"/>
+  <text x="492" y="214" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">4</text>
+  <rect x="470" y="226" width="44" height="34" fill="#ffedd5" stroke="#ea580c" stroke-width="1.3"/>
+  <text x="492" y="248" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">5</text>
+  <line x1="514" y1="243" x2="556" y2="243" stroke="#1f2937" stroke-width="1.3" marker-end="url(#arrow)"/>
+  <rect x="560" y="230" width="86" height="26" rx="5" fill="#dbeafe" stroke="#2563eb" stroke-width="1.3"/>
+  <text x="603" y="248" font-family="Consolas, Menlo, monospace" font-size="13" fill="#1f2937" text-anchor="middle">"Bregenz"</text>
+  <rect x="470" y="260" width="44" height="34" fill="#f3f4f6" stroke="#d1d5db" stroke-width="1.3"/>
+  <text x="492" y="282" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">6</text>
+  <text x="560" y="214" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#ea580c">Kollision: zwei Einträge in Fach 3</text>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937">
+    <text x="24" y="326"><tspan font-weight="bold">Contains("Linz"):</tspan> Hashcode berechnen → Fach 3 → Equals mit "Graz": false → Equals mit "Linz": true</text>
+    <text x="24" y="350" fill="#6b7280">Die Hashcodes sind erfundene Beispielwerte. Echte Hashtabellen haben mehr Fächer.</text>
+  </g>
+</svg>

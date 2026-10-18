@@ -1,0 +1,439 @@
+= Dynamische Programmierung
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Am Ende der Greedy-Einheit stand ein Problem: Für das Münzsystem {1, 3, 4} findet Greedy nicht die beste Lösung.
+Probierst du dagegen alle Möglichkeiten durch, rechnest du dieselben Restbeträge immer wieder neu aus.
+*Dynamische Programmierung* (kurz _DP_) löst beides: Sie betrachtet alle Möglichkeiten, berechnet aber jedes Teilproblem nur *ein einziges Mal* und merkt sich das Ergebnis.
+
+Der Name klingt nach Programmiersprache, kommt aber aus den 1950er-Jahren.
+_Programmierung_ bedeutete damals so viel wie „Planung mit Tabellen“.
+Genau darum geht es: Du füllst eine Tabelle mit den Lösungen kleiner Teilprobleme und setzt daraus die Lösung des großen Problems zusammen.
+
+[TIP]
+====
+*Zum Selbst-Erarbeiten: der interaktive Tabellen-Trainer*
+
+Im https://die-spengergasse.github.io/course-pos-csharp_basics/08%20Theoretische%20Informatik/27_Dynamische_Programmierung.html[Tabellen-Trainer] siehst du, wie die Tabellen für Editierdistanz und Rucksack Zelle für Zelle entstehen.
+Danach füllst du selbst Tabellen für zufällige oder eigene Eingaben aus, und jede Zelle wird sofort geprüft.
+Das Füllen der Tabelle ist der Kern des Verfahrens, hier übst du es, so oft du willst.
+====
+
+== Überlappende Teilprobleme: Fibonacci
+
+Die Fibonacci-Zahlen sind so definiert:
+
+[source,text]
+----
+F(0) = 0
+F(1) = 1
+F(n) = F(n − 1) + F(n − 2)     für n ≥ 2
+
+n:     0  1  2  3  4  5  6   7   8   9  10
+F(n):  0  1  1  2  3  5  8  13  21  34  55
+----
+
+=== Naiv rekursiv
+
+Die Definition lässt sich direkt als rekursive Methode hinschreiben.
+Ein Zähler zeigt, wie oft sie aufgerufen wird:
+
+[source,csharp]
+----
+int calls = 0;
+Console.WriteLine($"Fib(5) = {Fib(5)}, Aufrufe: {calls}");
+calls = 0;
+Console.WriteLine($"Fib(6) = {Fib(6)}, Aufrufe: {calls}");
+
+long Fib(int n)
+{
+    calls++;                                // (1)
+    if (n < 2) { return n; }                // (2)
+    return Fib(n - 1) + Fib(n - 2);         // (3)
+}
+----
+
+[source,text]
+----
+Fib(5) = 5, Aufrufe: 15
+Fib(6) = 8, Aufrufe: 25
+----
+
+* *(1)* `Fib` ist hier eine lokale Funktion ohne `static`, damit sie die Variable `calls` der Top-Level-Statements verwenden kann.
+* *(2)* F(0) und F(1) sind die Basisfälle.
+* *(3)* Jeder andere Aufruf startet zwei weitere Aufrufe.
+
+Für 6 verschiedene Werte F(0) bis F(5) braucht `Fib(5)` also 15 Aufrufe.
+Der Aufrufbaum zeigt, woher sie kommen:
+
+image::{root_dir}/images/27_fib_aufrufbaum.svg[]
+
+`Fib(3)` wird zweimal berechnet, `Fib(2)` sogar dreimal, und jedes Mal mit dem ganzen Teilbaum darunter.
+Die Teilprobleme *überlappen* sich: Verschiedene Zweige des Baums brauchen dieselben Ergebnisse.
+Je größer n wird, desto öfter wiederholen sich dieselben Berechnungen.
+Schon bei `Fib(6)` sind es 25 Aufrufe für nur 7 verschiedene Werte.
+
+=== Top-down mit Memo
+
+Die Idee der *Memoization* (von _Memo_, Notiz): Bevor die Methode rechnet, schaut sie in einem `Dictionary` nach, ob sie das Ergebnis schon kennt.
+Nach dem Rechnen trägt sie es ein.
+
+[source,csharp]
+----
+Dictionary<int, long> memo = [];
+Console.WriteLine($"Fib(50) = {FibMemo(50, memo)}");
+Console.WriteLine($"Einträge im Memo: {memo.Count}");
+
+static long FibMemo(int n, Dictionary<int, long> memo)
+{
+    if (n < 2) { return n; }
+    if (memo.TryGetValue(n, out long known)) { return known; }      // (1)
+    long result = FibMemo(n - 1, memo) + FibMemo(n - 2, memo);     // (2)
+    memo[n] = result;                                              // (3)
+    return result;
+}
+----
+
+[source,text]
+----
+Fib(50) = 12586269025
+Einträge im Memo: 49
+----
+
+* *(1)* Ist F(n) schon bekannt, endet der Aufruf sofort.
+Das sind die orangen Knoten in der Grafik.
+Die grauen Teilbäume darunter fallen weg.
+* *(2)* Die Rekursion ist dieselbe wie vorher.
+Nur ihr Ergebnis wird aufgehoben.
+* *(3)* Das Memo enthält am Ende die Werte F(2) bis F(50), also 49 Einträge.
+
+Für `Fib(5)` sind es mit Memo 9 statt 15 Aufrufe.
+Jeder Wert F(2) bis F(n) wird genau einmal berechnet, und das Memo wächst nie über n Einträge hinaus.
+Diese Variante heißt _top-down_: Sie beginnt beim großen Problem F(n) und steigt rekursiv zu den kleinen ab.
+
+=== Bottom-up mit Tabelle
+
+Man kann auch umgekehrt vorgehen: Zuerst die kleinen Teilprobleme lösen, dann die größeren.
+Dann braucht es keine Rekursion und keine Prüfung, ob ein Wert schon da ist.
+Bei F(i) sind F(i − 1) und F(i − 2) immer schon berechnet.
+
+[source,csharp]
+----
+Console.WriteLine($"Fib(50) = {FibBottomUp(50)}");
+Console.WriteLine($"Fib(90) = {FibTwoVariables(90)}");
+
+static long FibBottomUp(int n)
+{
+    if (n < 2) { return n; }
+    long[] table = new long[n + 1];                 // (1)
+    table[1] = 1;
+    for (int i = 2; i <= n; i++)
+    {
+        table[i] = table[i - 1] + table[i - 2];     // (2)
+    }
+    return table[n];
+}
+
+static long FibTwoVariables(int n)
+{
+    long previous = 0, current = 1;                 // (3)
+    for (int i = 0; i < n; i++)
+    {
+        (previous, current) = (current, previous + current);
+    }
+    return previous;
+}
+----
+
+[source,text]
+----
+Fib(50) = 12586269025
+Fib(90) = 2880067194370816120
+----
+
+* *(1)* `+table[i]+` enthält am Ende F(i).
+Das Array wird automatisch mit 0 initialisiert, also stimmt `+table[0]+` schon.
+* *(2)* Die Schleife füllt die Tabelle von links nach rechts.
+Das ist die *Füllreihenfolge*: Jede Zelle braucht nur Zellen, die schon gefüllt sind.
+* *(3)* Weil jeder Wert nur seine zwei Vorgänger braucht, reichen auch zwei Variablen statt der ganzen Tabelle.
+Sie enthalten zu Beginn F(0) und F(1) und rücken in jedem Durchlauf um eins weiter.
+Mit dem Tupel `+(previous, current) = (…)+` werden beide gleichzeitig zugewiesen.
+
+Ein `long` reicht übrigens nur bis F(92).
+Danach läuft der Wert ohne Fehlermeldung über.
+Für größere Zahlen gibt es `System.Numerics.BigInteger`.
+
+== Die zwei Zutaten
+
+Dynamische Programmierung funktioniert, wenn ein Problem zwei Eigenschaften hat:
+
+* *Überlappende Teilprobleme.*
+Beim Zerlegen entstehen immer wieder dieselben Teilprobleme.
+Sonst gäbe es nichts zu merken.
+Bei Divide and Conquer (etwa Mergesort) sind die Teilprobleme dagegen verschieden, dort bringt ein Memo nichts.
+* *Optimale Teilstruktur.*
+Bei Optimierungsproblemen setzt sich die beste Lösung aus den besten Lösungen der Teilprobleme zusammen.
+Das Beispiel im nächsten Abschnitt zeigt, was das heißt.
+
+Für das Vorgehen gibt es ein Rezept:
+
+. Lege fest, was ein Teilproblem ist und was in einer Tabellenzelle steht.
+. Stelle eine *Rekursionsformel* auf: Wie berechnet sich eine Zelle aus kleineren Zellen?
+. Bestimme die *Basisfälle* und eine *Füllreihenfolge*, bei der jede benötigte Zelle schon gefüllt ist.
+. Lies das Ergebnis ab und rekonstruiere bei Bedarf, _wie_ es zustande kam.
+
+== Optimales Wechselgeld für {1, 3, 4}
+
+Zurück zum Gegenbeispiel aus der Greedy-Einheit.
+Gesucht ist die kleinste Anzahl an Münzen für den Betrag 6 mit den Münzen 1, 3 und 4.
+
+. *Teilproblem:* `+minCoins[a]+` ist die kleinste Anzahl an Münzen für den Betrag a.
+. *Rekursionsformel:* Die optimale Lösung für a endet mit _irgendeiner_ Münze m. Der Rest a − m muss dann selbst optimal gewechselt sein, sonst könnte man die ganze Lösung verbessern.
+Das ist die optimale Teilstruktur.
+Weil du nicht weißt, welche Münze die letzte ist, probierst du alle aus: `+minCoins[a] = 1 + Minimum von minCoins[a − m]+` über alle Münzen m ≤ a.
+. *Basisfall:* `+minCoins[0] = 0+`.
+Gefüllt wird von a = 1 aufwärts, denn a − m ist immer kleiner als a.
+
+[%header]
+|===
+|a |0 |1 |2 |3 |4 |5 |6
+|minCoins[a] |0 |1 |2 |1 |1 |2 |2
+|letzte Münze |– |1 |1 |3 |4 |1 |3
+|===
+
+Für a = 6 stehen drei Möglichkeiten zur Wahl: 1 {plus} minCoins[5] = 3, 1 {plus} minCoins[3] = 2 und 1 {plus} minCoins[2] = 3. Am besten ist die Münze 3. Um die Münzen selbst zu bekommen, merkst du dir in einer zweiten Zeile die letzte Münze und gehst rückwärts: 6 → (Münze 3) → 3 → (Münze 3) → 0.
+
+[source,csharp]
+----
+Console.WriteLine(string.Join(" + ", MakeOptimalChange(6, [1, 3, 4])));
+Console.WriteLine(string.Join(" + ", MakeOptimalChange(9, [3, 5])));
+
+static List<int> MakeOptimalChange(int amount, int[] coins)
+{
+    int[] minCoins = new int[amount + 1];                   // (1)
+    int[] lastCoin = new int[amount + 1];
+    for (int a = 1; a <= amount; a++)
+    {
+        minCoins[a] = int.MaxValue;                         // (2)
+        foreach (int coin in coins)
+        {
+            if (coin <= a && minCoins[a - coin] != int.MaxValue
+                && minCoins[a - coin] + 1 < minCoins[a])    // (3)
+            {
+                minCoins[a] = minCoins[a - coin] + 1;
+                lastCoin[a] = coin;
+            }
+        }
+    }
+    if (minCoins[amount] == int.MaxValue)
+    {
+        throw new ArgumentException($"{amount} lässt sich mit diesen Münzen nicht wechseln.");
+    }
+    List<int> result = [];
+    for (int a = amount; a > 0; a -= lastCoin[a])           // (4)
+    {
+        result.Add(lastCoin[a]);
+    }
+    return result;
+}
+----
+
+[source,text]
+----
+3 + 3
+3 + 3 + 3
+----
+
+* *(1)* `+minCoins[0]+` ist durch die Initialisierung des Arrays schon 0, der Basisfall.
+* *(2)* `int.MaxValue` steht für „noch keine Lösung gefunden“.
+* *(3)* Eine Münze kommt nur in Frage, wenn sie passt und der Rest wechselbar ist.
+Bei Gleichstand bleibt die Münze, die zuerst gefunden wurde.
+* *(4)* Die Rekonstruktion geht vom Betrag rückwärts und zieht jeweils die gemerkte letzte Münze ab.
+
+Auch der zweite Fall aus der Greedy-Einheit klappt jetzt: Für 9 mit den Münzen {3, 5} findet DP die Lösung 3 {plus} 3 {plus} 3, an der Greedy gescheitert ist.
+
+== Das 0/1-Rucksackproblem
+
+Für den Wandertag darf dein Rucksack höchstens *7 kg* wiegen.
+Zur Auswahl stehen vier Gegenstände, jeder mit einem Gewicht und einem Nutzwert:
+
+[%header]
+|===
+|Gegenstand |A |B |C |D
+|Gewicht (kg) |1 |3 |4 |5
+|Wert |1 |4 |5 |7
+|===
+
+Jeden Gegenstand nimmst du ganz oder gar nicht mit, daher der Name _0/1_.
+Gesucht ist die Auswahl mit dem größten Gesamtwert, die nicht mehr als 7 kg wiegt.
+
+Greedy liegt auch hier daneben.
+Wählt es nach dem Wert pro Kilogramm, nimmt es zuerst D (1,4 pro kg).
+Danach passt nur noch A, zusammen sind das 8. B und C wiegen zusammen genau 7 kg und haben den Wert 9.
+
+=== Die Tabelle
+
+. *Teilproblem:* `+best[i, c]+` ist der größte Wert, den du mit den ersten i Gegenständen und einer Kapazität von c kg erreichen kannst.
+. *Rekursionsformel:* Für den Gegenstand i mit Gewicht w und Wert v gibt es zwei Möglichkeiten:
+* Du nimmst ihn nicht mit.
+Dann bleibt der Wert aus der Zeile darüber: `+best[i − 1, c]+`.
+* Du nimmst ihn mit (nur wenn w ≤ c).
+Dann bekommst du v und hast für die übrigen Gegenstände noch c − w kg: `+v + best[i − 1, c − w]+`.
++
+`+best[i, c]+` ist das Maximum der beiden Möglichkeiten.
+. *Basisfall:* Ohne Gegenstände ist der Wert 0, also ist Zeile 0 überall 0. Gefüllt wird Zeile für Zeile von oben nach unten, in jeder Zeile von links nach rechts.
+Jede Zelle braucht nur Zellen aus der Zeile darüber.
+
+image::{root_dir}/images/27_rucksack_tabelle.svg[]
+
+Ein Beispiel: `+best[3, 7]+` betrifft Gegenstand C (4 kg, Wert 5).
+Ohne C ist der Wert `+best[2, 7] = 5+`.
+Mit C bleiben 3 kg, also `+5 + best[2, 3] = 5 + 4 = 9+`.
+Das Maximum ist 9.
+
+=== Die Auswahl rekonstruieren
+
+Die Zelle rechts unten sagt dir, _dass_ der beste Wert 9 ist, aber nicht, _welche_ Gegenstände dazu gehören.
+Das findest du heraus, indem du von `+best[4, 7]+` aus rückwärts gehst:
+
+* Steht in der Zeile darüber derselbe Wert, wurde der Gegenstand nicht gebraucht.
+Du gehst eine Zeile nach oben.
+* Ist der Wert anders, gehört der Gegenstand zur Auswahl.
+Du gehst eine Zeile nach oben und um sein Gewicht nach links.
+
+Der Weg in der Grafik ergibt B und C. Bei Gleichstand gilt die Regel „nicht mitgenommen“.
+Es kann daher noch andere Auswahlen mit demselben Wert geben, die dieser Rückweg nicht findet.
+
+=== In C#
+
+[source,csharp]
+----
+Item[] items = [new("A", 1, 1), new("B", 3, 4), new("C", 4, 5), new("D", 5, 7)];
+int capacity = 7;
+
+int[,] best = FillTable(items, capacity);
+for (int i = 0; i <= items.Length; i++)
+{
+    string name = i == 0 ? "-" : items[i - 1].Name;
+    IEnumerable<string> cells = Enumerable.Range(0, capacity + 1).Select(c => $"{best[i, c],3}");
+    Console.WriteLine($"{name} {string.Concat(cells)}");
+}
+Console.WriteLine($"Bester Wert: {best[items.Length, capacity]}");
+
+static int[,] FillTable(Item[] items, int capacity)
+{
+    int[,] best = new int[items.Length + 1, capacity + 1];     // (1)
+    for (int i = 1; i <= items.Length; i++)
+    {
+        Item item = items[i - 1];                              // (2)
+        for (int c = 0; c <= capacity; c++)
+        {
+            best[i, c] = best[i - 1, c];                       // (3)
+            if (item.Weight <= c)
+            {
+                best[i, c] = Math.Max(best[i, c], item.Value + best[i - 1, c - item.Weight]);   // (4)
+            }
+        }
+    }
+    return best;
+}
+
+record Item(string Name, int Weight, int Value);
+----
+
+[source,text]
+----
+-   0  0  0  0  0  0  0  0
+A   0  1  1  1  1  1  1  1
+B   0  1  1  4  5  5  5  5
+C   0  1  1  4  5  6  6  9
+D   0  1  1  4  5  7  8  9
+Bester Wert: 9
+----
+
+* *(1)* Ein zweidimensionales Array mit einer Zeile mehr als Gegenstände.
+Zeile 0 bleibt 0.
+* *(2)* Zeile i gehört zum Gegenstand `+items[i - 1]+`, weil die Zeilen bei 1 beginnen, das Array aber bei 0.
+* *(3)* Zuerst die Möglichkeit „nicht mitnehmen“.
+* *(4)* Passt der Gegenstand, wird geprüft, ob „mitnehmen“ besser ist.
+
+== Editierdistanz
+
+Eine Rechtschreibprüfung soll zu einem Tippfehler passende Wörter vorschlagen.
+Dafür braucht sie ein Maß, wie ähnlich sich zwei Wörter sind.
+Die *Editierdistanz* (auch _Levenshtein-Distanz_) ist die kleinste Anzahl von Einzelschritten, mit denen ein Wort in ein anderes übergeht.
+Erlaubt sind drei Schritte, jeder kostet 1:
+
+* einen Buchstaben *ersetzen* (`HAUS` → `MAUS`),
+* einen Buchstaben *löschen* (`STRAND` → `STAND`),
+* einen Buchstaben *einfügen* (`ROT` → `BROT`).
+
+=== Die Tabelle
+
+. *Teilproblem:* `+d[i, j]+` ist die Editierdistanz zwischen den ersten i Buchstaben des Ausgangsworts und den ersten j Buchstaben des Zielworts.
+Die Zeilen gehören zum Ausgangswort, die Spalten zum Zielwort.
+Zeile und Spalte 0 stehen für das leere Wort ε.
+. *Basisfälle:* `+d[i, 0] = i+`, denn aus i Buchstaben wird das leere Wort durch i-mal Löschen.
+`+d[0, j] = j+`, denn aus dem leeren Wort werden j Buchstaben durch j-mal Einfügen.
+. *Rekursionsformel:* Sind die Buchstaben i und j *gleich*, kostet die Zelle nichts extra: `+d[i, j] = d[i − 1, j − 1]+`.
+Sind sie *verschieden*, ist `+d[i, j]+` gleich 1 plus dem Minimum aus drei Nachbarzellen:
+* ↖ `+d[i − 1, j − 1]+`: Buchstabe i durch Buchstabe j *ersetzen*,
+* ↑ `+d[i − 1, j]+`: Buchstabe i *löschen*,
+* ← `+d[i, j − 1]+`: Buchstabe j *einfügen*.
+. *Füllreihenfolge:* Zeile für Zeile von oben nach unten, in jeder Zeile von links nach rechts.
+Die drei Nachbarn liegen links, oben und links oben und sind damit schon gefüllt.
+
+image::{root_dir}/images/27_editierdistanz_tabelle.svg[]
+
+In der Grafik wird `TRAUM` in `BAUM` verwandelt.
+Für die gestrichelte Zelle `+d[2, 1]+` (aus `TR` soll `B` werden) sind R und B verschieden.
+Das Minimum der drei Nachbarn ist 1, also ist `+d[2, 1] = 2+`.
+Weiter unten in der Tabelle sind die Buchstaben A, U und M gleich, dort wird der Wert diagonal übernommen.
+Rechts unten steht das Ergebnis: Die Editierdistanz ist *2*.
+
+Den grünen Rückweg findest du wie beim Rucksack: Du startest rechts unten und gehst jeweils zu der Nachbarzelle, aus der der Wert entstanden ist.
+Ein Schritt nach links oben bedeutet „behalten“ oder „ersetzen“, nach oben „löschen“ und nach links „einfügen“.
+Rückwärts gelesen ergibt sich: T löschen, R durch B ersetzen, A, U und M behalten.
+
+Manchmal passen mehrere Nachbarn.
+Bei `+d[2, 1]+` hätte auch der Weg nach oben gepasst: T durch B ersetzen und R löschen.
+Auch das sind 2 Schritte.
+Beide Wege sind gleich gut.
+
+Das Programm dazu schreibst du im Übungsprojekt selbst, zuerst naiv rekursiv und dann mit einer Tabelle.
+
+// tag::pdf_exclude[]
+== Übungen
+
+. Du steigst eine Treppe mit n Stufen hinauf und nimmst bei jedem Schritt 1 oder 2 Stufen.
+Auf wie viele Arten kommst du oben an?
+Für n = 3 sind es 3 Arten: 1{plus}1{plus}1, 1{plus}2 und 2{plus}1.
+Fülle eine Tabelle für n = 1 bis 8 per Hand.
+Schreibe dann eine C#-Methode `long CountWays(int n)`, einmal top-down mit Memo und einmal bottom-up.
+. Fülle die Rucksack-Tabelle für die Kapazität 8 und die Gegenstände P (2 kg, Wert 3), Q (3 kg, Wert 4), R (4 kg, Wert 5) und S (5 kg, Wert 6) per Hand und rekonstruiere die Auswahl.
+Erweitere danach das C#-Programm um eine Methode `+List<Item> Reconstruct(int[,] best, Item[] items, int capacity)+`, die die gewählten Gegenstände liefert.
+. Eine _Teilfolge_ eines Wortes entsteht, wenn du beliebige Buchstaben streichst.
+`AAS` ist zum Beispiel eine Teilfolge von `ANANAS`.
+Bestimme mit einer DP-Tabelle per Hand die längste gemeinsame Teilfolge von `ANANAS` und `BANANE`.
+Stelle zuerst die Rekursionsformel für eine Zelle auf und lege die Füllreihenfolge fest.
+. Im Übungsprojekt link:{github_url}/08%20Theoretische%20Informatik/Uebungen/Rechtschreibhilfe.7z[Rechtschreibhilfe.7z] programmierst du die Editierdistanz und schlägst damit Korrekturen für Tippfehler vor.
+Die Angabe steht im Archiv in der Datei _README.md_.
+
+// end::pdf_exclude[]
+
+== Zusatzmaterial
+
+Im https://die-spengergasse.github.io/course-pos-csharp_basics/08%20Theoretische%20Informatik/27_Dynamische_Programmierung.html[27_Dynamische_Programmierung.html] siehst du, wie die Tabellen für Editierdistanz und Rucksack Zelle für Zelle entstehen, und füllst danach selbst Tabellen für zufällige oder eigene Eingaben aus, wobei jede Zelle sofort geprüft wird.

@@ -1,0 +1,110 @@
+@startuml
+hide empty methods
+
+' --- Legende ---
+legend right
+<<RichType>>: Stark typisierte Primitive mit Logik
+<<ValueObject>>: Value Objects
+<<entity>>: Persistente Entität
+<<unique>>: Eindeutige Einschränkung
+<<nn>>: Not null
+endlegend
+
+' ========================
+'   Shared Types
+' ========================
+package "Shared" #EEF6FF {
+  class EmploymentPercentage << (R,#FFEECC) RichType >> {
+    +Value : int <<nn>>
+    --
+    +EmploymentPercentage(int value)
+  }
+
+  class OfficeLocation << (V,#CCEEFF) ValueObject >> {
+    +Building : string <<nn>>
+    +Room : string <<nn>>
+    --
+    +OfficeLocation(
+      string building, string room)
+  }
+
+  class SalaryRange << (V,#CCEEFF) ValueObject >> {
+    +Min : decimal <<nn>>
+    +Max : decimal <<nn>>
+    --
+    +SalaryRange(
+      decimal min, decimal max)
+  }
+
+  enum PerformanceRating {
+    Excellent <<AA>>
+    Good <<A>>
+    Satisfactory <<B>>
+    Poor <<C>>
+  }
+}
+
+abstract class Person <<entity>> {
+  +Firstname : string <<nn>>
+  +Lastname : string <<nn>>
+  +PersonType : string <<nn>>
+}
+
+note left of Person::PersonType
+Discriminator
+end note
+
+class Department <<entity>> {
+  +Name : string <<nn>>
+  +OfficeLocations : List<OfficeLocation> <<nn>>
+}
+Department --- OfficeLocation
+
+class Employee <<entity>> {
+  +EmployeeNumber : string <<nn>> <<unique>>
+  +HireDate : DateOnly <<nn>>
+  +Workload : EmploymentPercentage <<nn>>
+  +Department : Department <<nn>>
+}
+Employee -up-|> Person
+Employee -- EmploymentPercentage
+Employee "0..*" -- "1" Department : "> Department"
+
+class Candidate <<entity>> {
+  +Email : string <<nn>>
+  +LinkedinProfileUrl : string
+}
+
+Candidate -up-|> Person
+
+class JobPosting <<entity>> {
+  +Title : string <<nn>>
+  +Description : string <<nn>>
+  +Department : Department <<nn>>
+  +SalaryRange : SalaryRange <<nn>>
+}
+JobPosting --- SalaryRange
+JobPosting "0..*" -- "1" Department : "> Department"
+
+class JobApplication <<entity>> {
+  +Candidate : Candidate <<nn>>
+  +JobPosting : JobPosting <<nn>>
+  +AppliedAt : DateTime <<nn>>
+  +ApplicationInterview : ApplicationInterview
+}
+
+JobApplication "0..*" -- "1" JobPosting : "> JobPosting"
+JobApplication "0..*" -- "1" Candidate : "> Candidate"
+
+class ApplicationInterview <<entity>> {
+  +JobApplication : JobApplication <<nn>>
+  +InterviewDate : DateTime <<nn>>
+  +Interviewer : Employee <<nn>>
+  +Rating : PerformanceRating
+  +Notes : string
+}
+
+ApplicationInterview "0..1" -- "1" JobApplication : "> JobApplication"
+ApplicationInterview "0..*" -- "1" Employee : "> Interviewer"
+
+@enduml

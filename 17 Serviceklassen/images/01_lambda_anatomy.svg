@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="400" viewBox="0 0 900 400" role="img" aria-label="Von der Methode zur Lambda Expression">
+<title>Von der Methode zur Lambda Expression</title>
+<defs><marker id="arrow-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9d9d9c"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0090d4"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f39000"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#71af2e"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#cc0935"/></marker><marker id="arrow-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6cc1b0"/></marker></defs>
+<rect x="1" y="1" width="898" height="398" rx="14" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="30.0" y="42.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Von der Methode zur Lambda Expression</text>
+<text x="30.0" y="80.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="start" fill="#5f5f5e" xml:space="preserve">Methode</text>
+<rect x="30.0" y="95.0" width="60.0" height="30.0" rx="6" fill="#ffffff" stroke="#cc0935" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="38.0" y="117.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="20" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="44.0" lengthAdjust="spacingAndGlyphs">bool</text>
+<text x="60.0" y="160.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#a8072c" xml:space="preserve">✗</text>
+<rect x="100.0" y="95.0" width="93.0" height="30.0" rx="6" fill="#ffffff" stroke="#cc0935" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="108.0" y="117.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="20" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="77.0" lengthAdjust="spacingAndGlyphs">IsAdult</text>
+<text x="146.5" y="160.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#a8072c" xml:space="preserve">✗</text>
+<rect x="203.0" y="95.0" width="126.0" height="30.0" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="211.0" y="117.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="20" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="110.0" lengthAdjust="spacingAndGlyphs">(Person p)</text>
+<rect x="339.0" y="95.0" width="104.0" height="30.0" rx="6" fill="#ffffff" stroke="#cc0935" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="347.0" y="117.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="20" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="88.0" lengthAdjust="spacingAndGlyphs">{ return</text>
+<text x="391.0" y="160.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#a8072c" xml:space="preserve">✗</text>
+<rect x="453.0" y="95.0" width="137.0" height="30.0" rx="6" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+<text x="461.0" y="117.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="20" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="121.0" lengthAdjust="spacingAndGlyphs">p.Age &gt;= 18</text>
+<rect x="600.0" y="95.0" width="49.0" height="30.0" rx="6" fill="#ffffff" stroke="#cc0935" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="608.0" y="117.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="20" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="33.0" lengthAdjust="spacingAndGlyphs">; }</text>
+<text x="624.5" y="160.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#a8072c" xml:space="preserve">✗</text>
+<text x="870.0" y="80.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="end" fill="#a8072c" xml:space="preserve">✗ = entfällt</text>
+<text x="30.0" y="230.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="start" fill="#5f5f5e" xml:space="preserve">Lambda</text>
+<rect x="250.0" y="245.0" width="27.0" height="30.0" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="258.0" y="267.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="20" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="11.0" lengthAdjust="spacingAndGlyphs">p</text>
+<rect x="291.0" y="245.0" width="38.0" height="30.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="299.0" y="267.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="20" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="22.0" lengthAdjust="spacingAndGlyphs">=&gt;</text>
+<rect x="343.0" y="245.0" width="137.0" height="30.0" rx="6" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+<text x="351.0" y="267.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="20" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="121.0" lengthAdjust="spacingAndGlyphs">p.Age &gt;= 18</text>
+<path d="M266.0,125 C266.0,205 263.5,185 263.5,241" fill="none" stroke="#0090d4" stroke-width="2" marker-end="url(#arrow-blue)"/>
+<path d="M521.5,125 C521.5,200 411.5,185 411.5,241" fill="none" stroke="#71af2e" stroke-width="2" marker-end="url(#arrow-green)"/>
+<text x="30.0" y="320.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Parameter: Den Typ Person leitet der Compiler ab, die Klammern entfallen bei einem Parameter.</text>
+<text x="30.0" y="344.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">=&gt; ist der Lambda-Operator. Lies: „p geht über zu p.Age &gt;= 18“.</text>
+<text x="30.0" y="368.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Body: Ein einzelner Ausdruck ist automatisch der Rückgabewert, return und { } entfallen.</text>
+</svg>

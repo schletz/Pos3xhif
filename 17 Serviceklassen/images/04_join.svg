@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="400" viewBox="0 0 1000 400" role="img" aria-label="Join verbindet zwei Listen über einen gleichen Schlüssel ohne Navigation">
+<title>Join verbindet zwei Listen über einen gleichen Schlüssel ohne Navigation</title>
+<defs><marker id="arrow-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9d9d9c"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0090d4"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f39000"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#71af2e"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#cc0935"/></marker><marker id="arrow-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6cc1b0"/></marker></defs>
+<rect x="1" y="1" width="998" height="398" rx="14" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="30.0" y="42.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Join und LeftJoin über einen Schlüssel</text>
+<text x="30.0" y="82.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Shows (aus der Datenbank)</text>
+<text x="330.0" y="82.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Holidays (aus einer Datei)</text>
+<rect x="30.0" y="95.0" width="139.2" height="32.0" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="38.0" y="115.9" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="123.2" lengthAdjust="spacingAndGlyphs">2023-10-26  Funk</text>
+<rect x="30.0" y="141.0" width="131.5" height="32.0" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="38.0" y="161.9" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="115.5" lengthAdjust="spacingAndGlyphs">2023-11-03  Rap</text>
+<rect x="30.0" y="187.0" width="146.9" height="32.0" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="38.0" y="207.9" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="130.9" lengthAdjust="spacingAndGlyphs">2024-01-01  World</text>
+<rect x="30.0" y="233.0" width="131.5" height="32.0" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="38.0" y="253.9" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="115.5" lengthAdjust="spacingAndGlyphs">2024-02-04  Rap</text>
+<rect x="330.0" y="95.0" width="200.8" height="32.0" rx="6" fill="#e5f4f1" stroke="#6cc1b0" stroke-width="1.5"/>
+<text x="338.0" y="115.9" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="184.8" lengthAdjust="spacingAndGlyphs">2023-10-26  National Day</text>
+<rect x="330.0" y="141.0" width="170.0" height="32.0" rx="6" fill="#e5f4f1" stroke="#6cc1b0" stroke-width="1.5"/>
+<text x="338.0" y="161.9" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="154.0" lengthAdjust="spacingAndGlyphs">2024-01-01  New Year</text>
+<rect x="330.0" y="187.0" width="185.4" height="32.0" rx="6" fill="#e5f4f1" stroke="#6cc1b0" stroke-width="1.5"/>
+<text x="338.0" y="207.9" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="169.4" lengthAdjust="spacingAndGlyphs">2024-05-01  Labour Day</text>
+<path d="M210,111 L328,111" fill="none" stroke="#9d9d9c" stroke-width="1.5"/>
+<path d="M210,203 L328,157" fill="none" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="30.0" y="300.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Schlüssel: DateOnly.FromDateTime(s.Date) == h.Date</text>
+<text x="600.0" y="82.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Join: nur Paare</text>
+<rect x="600.0" y="95.0" width="162.3" height="30.0" rx="6" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+<text x="608.0" y="114.9" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="146.3" lengthAdjust="spacingAndGlyphs">Funk   National Day</text>
+<rect x="600.0" y="131.0" width="131.5" height="30.0" rx="6" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+<text x="608.0" y="150.9" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="115.5" lengthAdjust="spacingAndGlyphs">World  New Year</text>
+<text x="600.0" y="200.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">LeftJoin (.NET 10): alle Shows</text>
+<rect x="600.0" y="213.0" width="162.3" height="30.0" rx="6" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+<text x="608.0" y="232.9" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="146.3" lengthAdjust="spacingAndGlyphs">Funk   National Day</text>
+<rect x="600.0" y="249.0" width="100.7" height="30.0" rx="6" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="608.0" y="268.9" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="84.7" lengthAdjust="spacingAndGlyphs">Rap    null</text>
+<rect x="600.0" y="285.0" width="131.5" height="30.0" rx="6" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+<text x="608.0" y="304.9" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="115.5" lengthAdjust="spacingAndGlyphs">World  New Year</text>
+<rect x="600.0" y="321.0" width="100.7" height="30.0" rx="6" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="608.0" y="340.9" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="14" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="84.7" lengthAdjust="spacingAndGlyphs">Rap    null</text>
+<text x="30.0" y="350.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Join (INNER JOIN): Shows ohne passenden Feiertag fallen weg.</text>
+<text x="30.0" y="374.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">LeftJoin (LEFT JOIN): jede Show bleibt, der Feiertag ist dann null.</text>
+</svg>

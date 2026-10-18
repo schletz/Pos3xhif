@@ -1,0 +1,30 @@
+{
+	"Kategorien": {
+		"Kat001": { "Name": "Hardware" },
+		"Kat002": { "Name": "Pornos" }
+	},
+	"Artikel": {
+		"Kat001": {
+			"Ean1000001": { "Name": "Bernie" },
+			"Ean1000002": { "Name": "Bernie2" }
+		},
+		"Kat002": {
+			"Ean1000005": { "Name": "XXX1" },
+			"Ean1000006": { "Name": "XXX2" }
+		}
+	},
+	"Angebote": {
+		"Ean1000001": {
+			"Name": "Bernie",
+			"BesterPreis": 18.90,
+			"Hae001": {
+				"2019-01-01": { "Preis": 19.90 },
+				"2019-01-02": { "Preis": 18.90 }
+			},
+			"Hae002": {
+				"2019-01-01": { "Preis": 19.90 },
+				"2019-01-02": { "Preis": 18.90 }
+			}
+		}
+	}
+}

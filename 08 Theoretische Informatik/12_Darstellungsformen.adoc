@@ -1,0 +1,393 @@
+= Darstellungsformen von Grammatiken
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+In link:{github_url}/08%20Theoretische%20Informatik/11_Grammatiken.adoc[Grammatiken] schreibst du Produktionen wie `+S → aSb | ε+`.
+Für kleine Beispiele ist das ideal.
+Echte Sprachspezifikationen wie die von C# oder JSON brauchen aber eine Schreibweise, die man in einer Textdatei tippen kann, die auch bei hunderten Regeln lesbar bleibt und die Wiederholungen ohne Rekursion ausdrückt.
+Dafür gibt es BNF, EBNF und Syntaxdiagramme.
+Alle drei beschreiben dasselbe, nämlich kontextfreie Grammatiken.
+Wenn du sie lesen und ineinander umrechnen kannst, verstehst du jede Sprachspezifikation und kannst in link:{github_url}/08%20Theoretische%20Informatik/15_Parser.adoc[Parser] direkt aus einer EBNF einen Parser programmieren.
+
+== BNF
+
+Die *Backus-Naur-Form* stammt aus dem Bericht über die Sprache ALGOL 60 (1960) von John Backus und Peter Naur.
+Sie ist die Grammatik aus dem letzten Kapitel, nur anders aufgeschrieben:
+
+[%header]
+|===
+|Grammatik |BNF |Bedeutung
+|`A` |`+<a>+` |Nichtterminal in spitzen Klammern, der Name darf länger sein
+|`+→+` |`::=` |„wird ersetzt durch“
+|`+\|+` |`+\|+` |Alternative
+|`x` |`"x"` |Terminal
+|`ε` |`ε` |leeres Wort
+|===
+
+Im Original stehen die Terminale ohne Anführungszeichen.
+Wir setzen sie in `+"…"+`, damit du sie sofort von den Metazeichen `+|+`, `+<+` und `+>+` unterscheiden kannst.
+Eine natürliche Zahl sieht in BNF so aus:
+
+[source,text]
+----
+<number> ::= <digit> | <number> <digit>
+<digit>  ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+----
+
+BNF kennt keine Schleifen.
+Eine Zahl mit beliebig vielen Ziffern entsteht nur über die Rekursion `+<number> ::= <number> <digit>+`.
+Die Ableitung von `427` zeigt das:
+
+[source,text]
+----
+<number> ⇒ <number> <digit> ⇒ <number> <digit> <digit> ⇒ <digit> <digit> <digit> ⇒* 427
+----
+
+Auch arithmetische Ausdrücke mit den Präzedenzstufen aus link:{github_url}/08%20Theoretische%20Informatik/11_Grammatiken.adoc[Grammatiken] lassen sich in BNF aufschreiben.
+Die Linksrekursion `pass:c[<expr> "+" <term>]` sorgt dafür, dass `1 - 2 - 3` als `(1 - 2) - 3` gelesen wird:
+
+[source,text]
+----
+<expr>   ::= <term> | <expr> "+" <term> | <expr> "-" <term>
+<term>   ::= <factor> | <term> "*" <factor> | <term> "/" <factor>
+<factor> ::= <number> | "(" <expr> ")" | "-" <factor>
+----
+
+== EBNF
+
+Die *erweiterte BNF* ergänzt die BNF um Klammern für Option und Wiederholung.
+Niklaus Wirth hat 1977 eine einfache Form vorgeschlagen, 1996 wurde EBNF als ISO/IEC 14977 genormt.
+In diesem Kurs verwenden wir die folgende Schreibweise.
+Du findest sie auch in link:{github_url}/08%20Theoretische%20Informatik/15_Parser.adoc[Parser] und im Übungsprojekt link:{github_url}/08%20Theoretische%20Informatik/Uebungen/JsonParser/README.md[JsonParser].
+
+[%header]
+|===
+|Schreibweise |Bedeutung |Beispiel
+|`+name = …+` |eine Regel pro Zeile, ohne Abschlusszeichen |`pass:c[sign = "+" \| "-"]`
+|`"x"` |Terminal, steht in Anführungszeichen |`"while"`, `"("`
+|`a b` |Folge (Konkatenation), getrennt durch Leerzeichen |`"(" expr ")"`
+|`+a \| b+` |Alternative |`+"true" \| "false"+`
+|`+( … )+` |Gruppe |`pass:c[("+" \| "-") term]`
+|`+[ … ]+` |Option: 0- oder 1-mal |`+[ "-" ] number+`
+|`+{ … }+` |Wiederholung: 0- bis n-mal |`+digit { digit }+`
+|===
+
+Nichtterminale schreiben wir ohne spitze Klammern, klein und mit `+_+` (`+integer_literal+`).
+Die Folge bindet stärker als `+|+`.
+`+a b | c+` bedeutet also `+(a b) | c+` und nicht `+a (b | c)+`.
+Brauchst du das Zweite, setzt du Klammern.
+
+Damit werden die Regeln von oben kürzer und kommen ohne Rekursion aus:
+
+[source,text]
+----
+number = digit { digit }
+digit  = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+expr   = term { ("+" | "-") term }
+term   = factor { ("*" | "/") factor }
+factor = number | "(" expr ")" | "-" factor
+----
+
+* `+digit { digit }+` heißt „eine Ziffer, dann beliebig viele weitere“, also mindestens eine.
+Das Muster `+x { x }+` für „1- bis n-mal“ brauchst du ständig.
+* `pass:c[expr = term { ("+" | "-") term }]` liest du als „ein Term, danach beliebig oft ein Plus oder Minus mit einem weiteren Term“.
+Genau diese drei Regeln setzt du in link:{github_url}/08%20Theoretische%20Informatik/15_Parser.adoc[Parser] in C# um.
+* In `factor` bleibt Rekursion übrig: `"(" expr ")"` ruft wieder `expr` auf.
+Klammern können beliebig tief geschachtelt sein.
+Das lässt sich nicht durch eine Wiederholung ersetzen.
+
+Manche Zeichenmengen sind zum Aufzählen zu groß, z. B. alle Buchstaben.
+Für Bereiche schreiben wir `+"a" | … | "z"+`.
+Was sich gar nicht sinnvoll aufzählen lässt, beschreibst du wie in ISO 14977 in Worten zwischen Fragezeichen: `letter = ? ein Unicode-Buchstabe ?`.
+
+=== Andere EBNF-Varianten
+
+Es gibt nicht _die_ EBNF.
+Jede Spezifikation verwendet ihre eigene Variante.
+Die Ideen sind dieselben, nur die Zeichen unterscheiden sich.
+Dieselbe Regel in vier Schreibweisen:
+
+[%header]
+|===
+|Variante |Regel
+|ISO 14977 |`pass:c[expr = term, { ("+" \| "-"), term };]`
+|Wirth (1977) |`pass:c[expr = term { ("+" \| "-") term } .]`
+|W3C (z. B. XML-Spezifikation) |`pass:c[expr ::= term (("+" \| "-") term)*]`
+|ANTLR |`pass:c[expr : term (('+' \| '-') term)* ;]`
+|===
+
+* *ISO 14977* trennt die Elemente einer Folge mit `,` und beendet jede Regel mit `;`.
+* *Wirth* beendet jede Regel mit einem Punkt.
+* *W3C* und *ANTLR* verwenden die Quantoren aus den regulären Ausdrücken: `+x*+` für `+{ x }+`, `x?` für `+[ x ]+` und `pass:c[x+]` für `+x { x }+`.
+Du triffst sie in link:{github_url}/08%20Theoretische%20Informatik/14_Regulaere_Ausdruecke.adoc[Reguläre Ausdrücke] wieder.
+
+Die C#-Sprachspezifikation verwendet übrigens die ANTLR-Schreibweise.
+Wenn du die Notation von oben beherrschst, kannst du sie lesen.
+
+== Syntaxdiagramme
+
+Wirth hat für die Sprache Pascal (1973) eine grafische Form erfunden: das *Syntaxdiagramm*, auch _railroad diagram_ genannt.
+Du liest es wie einen Gleisplan:
+
+* Du startest links beim senkrechten Strich und folgst den Linien in Pfeilrichtung bis zum Strich rechts.
+* Ein *abgerundetes Feld* (orange) ist ein Terminal.
+Du liest genau diese Zeichen.
+* Ein *Rechteck* (blau) ist ein Nichtterminal.
+Hier springst du in das Diagramm mit diesem Namen und kommst danach zurück.
+* An einer *Weiche* darfst du einen der Wege wählen.
+Jeder Weg vom Start zum Ende ergibt ein gültiges Wort.
+
+Jedes EBNF-Konstrukt hat ein festes Gegenstück im Diagramm.
+Die Tabelle stellt alle drei Schreibweisen nebeneinander:
+
+image::{root_dir}/images/12_bnf_ebnf_vergleich.svg[]
+
+* *Folge:* Die Felder stehen hintereinander auf einer Linie.
+* *Alternative:* Die Linie teilt sich und läuft danach wieder zusammen.
+* *Option:* Eine Umgehung führt am Element vorbei.
+* *Wiederholung:* Die Umgehung erlaubt 0 Durchläufe, die Rückführung unten (Pfeil nach links) führt zurück an den Anfang und erlaubt beliebig viele weitere.
+
+Die drei Regeln für arithmetische Ausdrücke sehen als Syntaxdiagramm so aus:
+
+image::{root_dir}/images/12_syntax_ausdruck.svg[]
+
+Probiere es mit `+2 * (3 + 4)+`: In `expr` gehst du in `term`, dort in `factor` und liest `2` als `number`.
+Zurück in `term` nimmst du die Schleife, liest `+*+` und gehst wieder in `factor`.
+Jetzt nimmst du den mittleren Weg, liest `(` und springst in `expr`.
+Dort liest du `+3 + 4+` und kommst über `)` zurück.
+Weil danach kein Zeichen mehr kommt, verlässt du alle Diagramme über die Umgehung bzw. den Ausgang.
+
+== Umrechnen
+
+=== BNF in EBNF
+
+Die Rekursion in BNF dient fast immer nur dazu, eine Wiederholung auszudrücken.
+Mit vier Regeln ersetzt du sie durch EBNF-Klammern. x, y und z stehen dabei für beliebige Folgen:
+
+[%header]
+|===
+|BNF |EBNF |Warum
+|`+<a> ::= <a> x \| y+` |`+a = y { x }+` |Linksrekursion: Zuerst kommt einmal y, dann beliebig oft x.
+|`+<a> ::= x <a> \| y+` |`+a = { x } y+` |Rechtsrekursion: Beliebig oft x, am Ende einmal y.
+|`+<a> ::= x \| ε+` |`+a = [ x ]+` |Eine Alternative ist leer.
+|`+<a> ::= x y \| x z+` |`+a = x ( y \| z )+` |Gemeinsamer Anfang wird herausgehoben.
+|===
+
+Wende das auf `+<expr>+` an.
+Die Regel hat zwei rekursive Alternativen und eine ohne Rekursion:
+
+[source,text]
+----
+<expr> ::= <term> | <expr> "+" <term> | <expr> "-" <term>       (1)
+<expr> ::= <term> | <expr> ( "+" <term> | "-" <term> )           (2)
+<expr> ::= <term> | <expr> ("+" | "-") <term>                    (3)
+expr   = term { ("+" | "-") term }                               (4)
+----
+
+* *(1)* Die BNF-Regel aus dem ersten Abschnitt.
+* *(2)* Die beiden rekursiven Alternativen beginnen mit `+<expr>+`.
+Den gemeinsamen Anfang hebst du heraus.
+Klammern sind hier schon EBNF, das ist ein Zwischenschritt.
+* *(3)* Auch `+<term>+` ist in beiden Alternativen gleich und wandert nach hinten.
+* *(4)* Jetzt hat die Regel die Form `+<a> ::= <a> x | y+` mit y = `term` und x = `pass:c[("+" | "-") term]`.
+Daraus wird `+y { x }+`.
+
+Bei `+<number> ::= <digit> | <number> <digit>+` funktioniert es genauso: y = `digit`, x = `digit`, also `+number = digit { digit }+`.
+
+=== EBNF in BNF
+
+Der umgekehrte Weg geht immer.
+Für jede Klammer führst du ein neues Nichtterminal ein:
+
+[source,text]
+----
+a = [ x ]        →   <a> ::= x | ε
+a = { x }        →   <a> ::= ε | <a> x
+a = y ( p | q )  →   <a> ::= y <g>        <g> ::= p | q
+----
+
+Beispiel: `+number = digit { digit }+` wird zu
+
+[source,text]
+----
+<number> ::= <digit> <digits>
+<digits> ::= ε | <digits> <digit>
+----
+
+EBNF ist also nicht mächtiger als BNF.
+Beide beschreiben genau die kontextfreien Sprachen.
+EBNF ist nur kürzer und näher an einer Schleife im Programmcode.
+
+=== EBNF und Syntaxdiagramm
+
+Zwischen EBNF und Syntaxdiagramm übersetzt du Baustein für Baustein, wie in der Vergleichstabelle oben.
+Beim Lesen eines Diagramms gehst du von links nach rechts und fragst an jeder Weiche:
+
+. Teilt sich die Linie und läuft weiter rechts wieder zusammen?
+Dann ist es eine Alternative `+( | )+`.
+Ist einer der Wege leer, ist es eine Option `+[ ]+`.
+. Führt eine Linie nach links zurück?
+Dann ist es eine Wiederholung `+{ }+`.
+Alles, was zwischen dem Abzweig der Rückführung und ihrem Wiedereinstieg liegt, kommt in die Klammer.
+. Alles andere ist eine Folge.
+
+== Beispiele aus echten Spezifikationen
+
+=== Bezeichner in C#
+
+Die C#-Spezifikation (Abschnitt _Lexical structure_) definiert Bezeichner so, hier gekürzt:
+
+[source,text]
+----
+Simple_Identifier
+    : Available_Identifier
+    | Escaped_Identifier
+    ;
+fragment Available_Identifier
+    // excluding keywords or contextual keywords, see note below
+    : Basic_Identifier
+    ;
+fragment Escaped_Identifier
+    // Includes keywords and contextual keywords prefixed by '@'.
+    : '@' Basic_Identifier
+    ;
+fragment Basic_Identifier
+    : Identifier_Start_Character Identifier_Part_Character*
+    ;
+fragment Identifier_Start_Character
+    : Letter_Character
+    | Underscore_Character
+    ;
+----
+
+`fragment` ist ANTLR-spezifisch und bedeutet „Hilfsregel“.
+Lässt du die Unicode-Details weg (`+Letter_Character+` umfasst z. B. auch `ä` und `π`), bleibt in unserer EBNF:
+
+[source,text]
+----
+identifier = [ "@" ] ( letter | "_" ) { letter | digit | "_" }
+letter     = "a" | … | "z" | "A" | … | "Z"
+digit      = "0" | … | "9"
+----
+
+image::{root_dir}/images/12_syntax_bezeichner.svg[]
+
+Eine Regel steht nur als Kommentar in der Spezifikation: Ohne `@` darf ein Bezeichner kein Schlüsselwort sein.
+`class` ist laut Diagramm ein Bezeichner, der Compiler lehnt es trotzdem ab.
+Solche Ausnahmen prüft der Lexer mit einer Liste der Schlüsselwörter.
+Mit `@` ist `@class` erlaubt.
+
+=== Integer-Literale in C#
+
+Auch Zahlen im Quelltext sind Wörter einer Sprache.
+Die Spezifikation definiert dezimale Integer-Literale so:
+
+[source,text]
+----
+fragment Decimal_Integer_Literal
+    : Decimal_Digit Decorated_Decimal_Digit* Integer_Type_Suffix?
+    ;
+fragment Decorated_Decimal_Digit
+    : '_'* Decimal_Digit
+    ;
+fragment Integer_Type_Suffix
+    : 'U' | 'u' | 'L' | 'l' |
+      'UL' | 'Ul' | 'uL' | 'ul' | 'LU' | 'Lu' | 'lU' | 'lu'
+    ;
+----
+
+In unserer EBNF wird aus `+X*+` eine Wiederholung `+{ X }+` und aus `X?` eine Option `+[ X ]+`.
+Die Hilfsregel `+Decorated_Decimal_Digit+` setzen wir direkt ein:
+
+[source,text]
+----
+integer_literal = digit { { "_" } digit } [ integer_suffix ]
+integer_suffix  = "U" | "u" | "L" | "l" | "UL" | "Ul" | "uL" | "ul" | "LU" | "Lu" | "lU" | "lu"
+----
+
+image::{root_dir}/images/12_syntax_ganzzahl.svg[]
+
+Die verschachtelte Wiederholung erlaubt beliebig viele `+_+` zwischen zwei Ziffern.
+Weil am Ende der äußeren Schleife immer ein `digit` steht, kann ein Literal nie mit `+_+` enden.
+Du kannst die Regeln direkt im Compiler ausprobieren:
+
+[source,csharp]
+----
+long population = 9_200_000L;   // (1)
+int strange = 1__0;             // (2)
+int @int = 42;                  // (3)
+int _1000 = 1;                  // (4)
+uint mask = 0xFF_FFu;           // (5)
+
+Console.WriteLine($"{population} {strange} {@int} {_1000} {mask}");
+----
+
+[source,text]
+----
+9200000 10 42 1 65535
+----
+
+* *(1)* Gruppierung mit `+_+`, Suffix `L` für `long`.
+* *(2)* Mehrere `+_+` hintereinander sind erlaubt, auch wenn das niemand so schreibt.
+* *(3)* Mit `@` wird das Schlüsselwort `int` zu einem Bezeichner.
+* *(4)* `+_1000+` beginnt mit `+_+` und ist laut Diagramm ein _Bezeichner_, keine Zahl.
+* *(5)* Hexadezimale Literale haben das Präfix `0x`.
+Ihre Regel ist ähnlich aufgebaut.
+
+`+1_000_+` und `+1000_L+` liefern dagegen den Fehler `CS1013: Invalid number`.
+Ein Vorzeichen gehört übrigens nicht zum Literal.
+`-5` ist das Literal `5` mit dem Operator `-` davor, genau wie in der Regel `+factor = … | "-" factor+`.
+
+=== JSON
+
+Auf https://www.json.org/json-de.html[json.org] ist das ganze JSON-Format als Syntaxdiagramme gezeichnet: Objekt, Array, Wert, String, Zahl und Leerraum.
+Rechts daneben steht dieselbe Grammatik als Text in der McKeeman-Form, einer weiteren BNF-Variante.
+Sieh dir die Diagramme an.
+Im Übungsprojekt link:{github_url}/08%20Theoretische%20Informatik/Uebungen/JsonParser.7z[JsonParser.7z] schreibst du daraus selbst eine EBNF.
+Die Angabe steht im Archiv in der Datei _README.md_.
+
+// tag::pdf_exclude[]
+== Übungen
+
+. Schreibe eine EBNF für ein Datum nach ISO 8601 in der Form `JJJJ-MM-TT`, z. B. `2025-12-24`.
+Das Jahr hat genau 4 Ziffern, der Monat liegt zwischen `01` und `12`, der Tag zwischen `01` und `31`.
+Ob es den Tag im Monat wirklich gibt, prüft die Grammatik nicht.
+Schreibe danach eine EBNF für österreichische Telefonnummern (vereinfacht): Die Nummer beginnt entweder mit `0` oder mit `++43+` und einem Leerzeichen.
+Danach kommt die Vorwahl ohne führende Null (1 bis 4 Ziffern, die erste ist nicht `0`), dann ein Leerzeichen oder `/` und zuletzt die Teilnehmernummer mit 3 bis 10 Ziffern.
+Beispiele: `01 5880`, `0664/1234567`, `++43 664 1234567+`.
+Zeichne für eine der beiden Regeln das Syntaxdiagramm.
+. Übersetze das folgende Syntaxdiagramm in EBNF.
+Welche der Wörter `1.0.0`, `2.10.3-beta.1`, `1.2`, `1.0.0-` und `1.0.0-rc.2.x` werden beschrieben, wenn `number` eine Ziffernfolge und `label` eine Folge von Buchstaben und Ziffern ist?
++
+image::{root_dir}/images/12_uebung_version.svg[]
+. Schreibe die folgende BNF als EBNF und ersetze dabei Rekursion durch Wiederholung.
+Lässt sich jede Rekursion ersetzen?
+Begründe deine Antwort.
+Zeichne danach das Syntaxdiagramm für `list`.
++
+[source,text]
+----
+<list>   ::= "[" "]" | "[" <items> "]"
+<items>  ::= <item> | <items> "," <item>
+<item>   ::= <number> | <list>
+<number> ::= <digit> | <digit> <number>
+<digit>  ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+----
+. Übersetze die EBNF-Regel `+call = name "(" [ expr { "," expr } ] ")"+` in BNF.
+Führe dafür neue Nichtterminale ein.
+Die EBNF-Klammern `+[ ]+`, `+{ }+` und `( )` dürfen im Ergebnis nicht mehr vorkommen.
+
+// end::pdf_exclude[]

@@ -1,0 +1,583 @@
+= Wertetypen in C#
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Welchen Wert hat `a` nach diesen drei Zeilen?
+
+[source,csharp]
+----
+int a = 5;
+int b = a;
+b = 7;
+----
+
+`a` hat noch immer den Wert 5.
+Die Variable `b` hat bei der Zuweisung eine *Kopie* des Wertes bekommen.
+Typen mit diesem Verhalten heißen *Wertetypen* (_value types_).
+Die Variable enthält direkt den Wert und nicht nur einen Verweis darauf.
+In diesem Kapitel lernst du die eingebauten Wertetypen von C# kennen und erfährst, wo ihre Fallen liegen: Rundungsfehler, Überlauf, Typumwandlung, fehlende Werte und das Einlesen von Zahlen aus Strings.
+
+== Projekt anlegen
+
+Um die Beispiele mitzumachen, erstellst du eine .NET Konsolenapplikation.
+Führe dafür die folgenden Befehle in der Konsole aus.
+Unter macOS verwendest du statt `rd /S /Q` den Befehl `rm -rf` und statt `start` den Befehl `open`.
+
+[source,text]
+----
+rd /S /Q TypesDemo
+mkdir TypesDemo
+cd TypesDemo
+mkdir TypesDemo.Application
+cd TypesDemo.Application
+dotnet new console
+cd ..
+dotnet new sln -f sln
+dotnet sln add TypesDemo.Application
+start TypesDemo.sln
+----
+
+Öffne danach durch Doppelklick auf das Projekt (_TypesDemo.Application_) die Datei _TypesDemo.Application.csproj_.
+Ersetze den Inhalt durch die folgende Konfiguration:
+
+[source,xml]
+----
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+</Project>
+----
+
+[cols="1,3"]
+|===
+|Option |Bedeutung
+
+|`Nullable`
+|Der Compiler prüft, ob eine Variable `null` sein kann. Mehr dazu im Kapitel _Referenztypen_.
+
+|`TreatWarningsAsErrors`
+|Jede Warnung ist ein Fehler. Das Programm startet erst, wenn der Code sauber ist.
+|===
+
+Die Option `ImplicitUsings`, die `dotnet new` anlegt, haben wir entfernt.
+Du musst daher die verwendeten Namespaces mit `using` selbst angeben.
+So siehst du, woher ein Typ kommt.
+Jede _Program.cs_ in diesem Kapitel beginnt daher mit `using System;`.
+
+== Die eingebauten Wertetypen
+
+Die meisten Typen kennst du schon aus Java.
+In C# sind sie Kurzschreibweisen für Strukturen (_struct_) im Namespace _System_: `int` ist z. B. dasselbe wie `System.Int32`.
+
+[cols="1,1,3,1"]
+|===
+|Typ |Größe |Wertebereich bzw. Genauigkeit |Literal
+
+|`bool` |1 Byte |`true` oder `false` |`true`
+|`char` |2 Byte |ein Zeichen (UTF-16) |`'A'`
+|`int` |4 Byte |-2 147 483 648 bis 2 147 483 647 |`42`
+|`long` |8 Byte |etwa ±9,2 · 10^18^ |`42L`
+|`float` |4 Byte |etwa 7 Stellen |`1.5f`
+|`double` |8 Byte |etwa 15 bis 16 Stellen |`1.5`
+|`decimal` |16 Byte |28 bis 29 Stellen, exakte Dezimalzahlen |`1.5m`
+|`DateTime` |8 Byte |Datum und Uhrzeit |`new DateTime(2026, 10, 18)`
+|===
+
+Daneben gibt es die vorzeichenlosen (_unsigned_) Typen `byte`, `ushort`, `uint` und `ulong`.
+Du brauchst sie selten, denn fast alle Methoden in .NET arbeiten mit `int` und `long`.
+
+Die Deklaration funktioniert wie in Java.
+Große Zahlen kannst du mit dem Unterstrich `+_+` gliedern, der Compiler ignoriert das Zeichen.
+Mit `var` erkennt der Compiler den Typ selbst aus dem zugewiesenen Wert (_type inference_).
+
+[source,csharp]
+----
+int count = 1;
+bool isActive = true;
+long population = 9_000_000;   // Same as 9000000
+var price = 12.5m;             // The compiler infers decimal
+Console.WriteLine($"{count} {isActive} {population} {price}");
+
+long total;
+// error CS0165: Use of unassigned local variable 'total'
+Console.WriteLine(total);
+----
+
+Lokale Variablen musst du vor dem ersten Lesen initialisieren.
+Nur Felder einer Klasse bekommen automatisch einen Standardwert (0, `false`, ...).
+
+== Ganzzahlen: Division und Überlauf
+
+Bei Ganzzahlen gibt es zwei typische Fehler.
+Der Compiler meldet keinen davon.
+
+[source,csharp]
+----
+Console.WriteLine(7 / 2);            // 3, not 3.5
+Console.WriteLine(7 / 2.0);          // 3.5
+Console.WriteLine((double)7 / 2);    // 3.5
+
+int max = int.MaxValue;
+Console.WriteLine(max + 1);          // -2147483648
+Console.WriteLine(checked(max + 1)); // OverflowException
+----
+
+* *Ganzzahldivision:* Sind beide Operanden ganzzahlig, ist auch das Ergebnis ganzzahlig.
+Die Nachkommastellen werden abgeschnitten.
+Erst wenn ein Operand ein Gleitkommatyp ist, rechnet C# mit Nachkommastellen.
+* *Überlauf (_overflow_):* Überschreitet ein Ergebnis den Wertebereich, beginnt der Wert am anderen Ende des Bereichs.
+Mit `checked` wirft C# stattdessen eine _OverflowException_.
+
+== Gleitkommazahlen: double und decimal
+
+Was gibt dieses Programm aus?
+
+[source,csharp]
+----
+Console.WriteLine(0.1 + 0.2);           // 0.30000000000000004
+Console.WriteLine(0.1 + 0.2 == 0.3);    // False
+Console.WriteLine(0.1m + 0.2m == 0.3m); // True
+----
+
+`double` speichert Zahlen im Binärsystem.
+Die Zahl 0.1 ist im Binärsystem ein periodischer Bruch, so wie 1/3 = 0.333... im Dezimalsystem.
+Sie wird daher gerundet gespeichert, und die kleinen Fehler summieren sich.
+Der Typ `decimal` speichert Dezimalzahlen exakt, ist aber langsamer.
+
+NOTE: Auf einem deutschsprachigen Windows gibt `Console.WriteLine` ein Komma statt eines Punktes aus.
+
+[cols="1,2,2"]
+|===
+| |`double` |`decimal`
+
+|Genauigkeit |etwa 15 Stellen, binär gerundet |28 Stellen, Dezimalzahlen exakt
+|Geschwindigkeit |schnell (direkt im Prozessor) |langsamer
+|Verwende für |Messwerte, Physik, Statistik |Geldbeträge, Steuersätze
+|Vergleich |nie mit `==`, sondern `Math.Abs(a - b) < 1e-9` |mit `==` möglich
+|===
+
+== Typumwandlung (Casts)
+
+Darf ich einen `int` in einer `long` Variable speichern?
+Ja, denn jeder mögliche `int` Wert passt in einen `long`.
+Der Compiler wandelt den Wert ohne Hinweis um.
+Das nennt man _implizite Konvertierung_.
+
+image::{root_dir}/implicit_casts.svg[Implizite Konvertierungen zwischen den numerischen Typen in C#]
+
+Die Pfeile lassen sich verketten: _byte_ wird über _short_ und _int_ auch implizit zu _long_.
+Die gestrichelten Pfeile sind eine Ausnahme.
+Ein _long_ passt zwar ohne Cast in einen _float_, aber _float_ speichert nur rund 7 Stellen genau.
+
+In die Gegenrichtung brauchst du einen _expliziten Cast_.
+Damit sagst du dem Compiler: Ich weiß, dass Information verloren gehen kann.
+
+[source,csharp]
+----
+int count = 42;
+long total = count;           // OK, implicit
+// error CS0266: Cannot implicitly convert type 'long' to 'int'
+int small = total;
+int small2 = (int)total;      // OK, explicit cast
+
+Console.WriteLine((int)3.9);  // 3: decimal places are cut off, not rounded
+long big = 3_000_000_000;
+Console.WriteLine((int)big);  // -1294967296: the value does not fit
+----
+
+Brauchst du einen gerundeten Wert, verwende `Math.Round()` vor dem Cast.
+
+== Nullable value types
+
+Ein Sensor liefert eine Temperatur.
+Manchmal fällt er aus, dann gibt es keinen Messwert.
+Oft findet man dafür Code wie diesen:
+
+[source,csharp]
+----
+int temperature = -999;   // -999 means "no value"
+----
+
+Diese Lösung hat zwei Probleme:
+
+* Nur der Autor weiß, dass -999 ein Spezialwert ist.
+* Rechnet jemand versehentlich mit -999, läuft das Programm ohne Fehler weiter.
+Das Ergebnis ist aber sinnlos.
+
+C# bietet dafür _nullable value types_.
+Schreibst du ein `?` nach dem Typ (`int?`, `double?`, `DateTime?`, ...), kann die Variable zusätzlich den Wert `null` speichern.
+`null` bedeutet: Es gibt keinen Wert.
+
+[source,csharp]
+----
+int? temperature = null;  // Valid assignment
+temperature = 21;
+----
+
+=== Wie funktioniert int?
+
+`int?` ist die Kurzschreibweise für `Nullable<int>`.
+Das ist eine Struktur mit zwei Feldern: _HasValue_ gibt an, ob ein Wert vorhanden ist.
+_Value_ enthält den Wert.
+
+image::{root_dir}/nullable_value_type.svg[Speicheraufbau von int und int?]
+
+Die Variable selbst ist also nie "leer".
+Du kannst _HasValue_ deshalb auch dann abfragen, wenn kein Wert gespeichert ist.
+Liest du _Value_ ohne Wert, wirft C# eine _InvalidOperationException_.
+
+[source,csharp]
+----
+int? temperature = null;
+if (temperature.HasValue)               // false, no exception
+{
+    Console.WriteLine(temperature.Value);
+}
+if (temperature is int value)           // Pattern matching, value is an int
+{
+    Console.WriteLine(value);
+}
+----
+
+=== Rechnen mit null und der Operator ??
+
+Rechnest du mit einem nullable Typ, kann das Ergebnis wieder `null` sein.
+Ist ein Operand `null`, ist das Ergebnis `null`.
+
+[source,csharp]
+----
+int? temperature = null;
+int? higher = temperature + 1;  // null
+// error CS0266: Cannot implicitly convert type 'int?' to 'int'
+int result = temperature + 1;
+----
+
+Der _null-coalescing operator_ `??` löst das Problem.
+`x ?? y` liefert `x`, wenn `x` nicht `null` ist, sonst `y`.
+
+[source,csharp]
+----
+int result = temperature ?? 0;          // 0 if temperature is null
+int result2 = (temperature ?? 0) + 1;   // Parentheses matter, see below
+----
+
+Ob 0 ein sinnvoller Ersatzwert ist, hängt von der Aufgabe ab.
+Achte auf die Rangfolge der Operatoren: `+` wird vor `??` ausgeführt.
+
+[cols="2,1,1"]
+|===
+|Ausdruck |`a` ist `null` |`a` ist 5
+
+|`a ?? 0 + 2` (bedeutet `a ?? (0 + 2)`) |2 |5
+|`(a ?? 0) + 2` |2 |7
+|===
+
+== Werte aus Strings lesen (Parsen)
+
+Eingaben von der Tastatur oder aus einer Datei sind immer Strings.
+Das Umwandeln eines Strings in eine Zahl nennt man _parsen_.
+Ein Cast wie `(int)"12"` funktioniert nicht, denn der String muss Zeichen für Zeichen interpretiert werden.
+
+[cols="1,3"]
+|===
+|Methode |Verhalten bei einem ungültigen String
+
+|`int.Parse("A")`
+|wirft eine _FormatException_
+
+|`int.TryParse("A", out int value)`
+|liefert `false`. Bei Erfolg liefert die Methode `true` und schreibt die Zahl in `value`.
+|===
+
+[source,csharp]
+----
+int number = int.Parse("12");
+try
+{
+    int invalid = int.Parse("A");
+}
+catch (FormatException)
+{
+    Console.WriteLine("A is not a number.");
+}
+
+// out: the method writes the result into parsed
+if (int.TryParse("12", out int parsed))
+{
+    Console.WriteLine($"Success: {parsed}");
+}
+----
+
+=== Kommazahlen und die Spracheinstellung
+
+Ohne weitere Angabe verwendet `Parse()` die Spracheinstellung (_culture_) des Betriebssystems.
+Sie legt fest, welches Zeichen das Dezimalzeichen ist.
+Derselbe String liefert daher auf verschiedenen Computern verschiedene Ergebnisse:
+
+[cols="1,1,1,1"]
+|===
+|String |Deutsch (Österreich) |Deutsch (Deutschland) |Englisch (USA)
+
+|`"12.1"` |Fehler |121 |12.1
+|`"12,1"` |12.1 |12.1 |121
+|===
+
+Für Daten aus Dateien oder Schnittstellen gibst du deshalb immer `CultureInfo.InvariantCulture` an.
+Sie verwendet unabhängig vom Computer den Punkt als Dezimalzeichen.
+
+[source,csharp]
+----
+using System;
+using System.Globalization;
+
+double value = double.Parse("12.1", CultureInfo.InvariantCulture);  // 12.1
+Console.WriteLine(value);
+if (double.TryParse("12.1", CultureInfo.InvariantCulture, out double v))
+{
+    Console.WriteLine(v);
+}
+----
+
+=== Datumswerte
+
+Für Datumswerte gibst du mit `ParseExact()` bzw. `TryParseExact()` das genaue Format an.
+Achte auf die Groß- und Kleinschreibung: `MM` ist der Monat, `mm` die Minute.
+`HH` ist die Stunde im 24-Stunden-Format, `hh` im 12-Stunden-Format.
+Mit `hh` scheitert daher das Parsen von 18:07 Uhr.
+
+[source,csharp]
+----
+if (DateTime.TryParseExact(
+        "2026-01-22 18:07:08",              // String to parse
+        "yyyy-MM-dd HH:mm:ss",              // Format
+        CultureInfo.InvariantCulture,
+        DateTimeStyles.None,
+        out DateTime date))
+{
+    Console.WriteLine(date.ToString("yyyy-MM-dd HH:mm:ss"));
+}
+----
+
+== Für Profis: Wertetypen als Parameter, ref und out
+
+Übergibst du einen Wertetyp an eine Methode, bekommt die Methode eine Kopie.
+Ändert die Methode den Parameter, bleibt die Variable des Aufrufers unverändert.
+Das ist dasselbe Verhalten wie in Java.
+
+Mit den Schlüsselwörtern `ref` und `out` übergibst du stattdessen die Variable selbst.
+Die Methode kann dann die Variable des Aufrufers ändern.
+
+[cols="1,3"]
+|===
+|Schlüsselwort |Bedeutung
+
+|`ref`
+|Die Variable muss vor dem Aufruf einen Wert haben. Die Methode darf ihn lesen und ändern.
+
+|`out`
+|Die Variable braucht vorher keinen Wert. Die Methode *muss* ihr einen Wert zuweisen.
+|===
+
+`out` begegnet dir vor allem bei `TryParse()`.
+Für eigene Methoden gibt es eine besser lesbare Lösung: Die Methode gibt ein _Tuple_ mit mehreren Werten zurück.
+
+[source,csharp]
+----
+using System;
+
+int value = 1;
+Increment(value);
+Console.WriteLine(value);                  // 1: the method got a copy
+IncrementRef(ref value);
+Console.WriteLine(value);                  // 2
+
+if (TryGetCount(out int itemCount))        // Declares itemCount in the call
+{
+    Console.WriteLine($"{itemCount} items found.");
+}
+
+(bool success, int count) = GetCount();    // Better: return a tuple
+if (success) { Console.WriteLine($"{count} items found."); }
+
+// A switch expression on the tuple, _ (discard) matches any value
+string message = GetCount() switch
+{
+    (true, 0) => "No items found.",
+    (true, _) => "Some items found.",
+    (false, _) => "Error."
+};
+Console.WriteLine(message);
+
+static void Increment(int number) => number++;
+
+static void IncrementRef(ref int number) => number++;
+
+// The compiler reports an error if count is not assigned in every path.
+static bool TryGetCount(out int count)
+{
+    count = 1;
+    return true;
+}
+
+static (bool success, int count) GetCount() => (success: true, count: 1);
+----
+
+// tag::pdf_exclude[]
+== Übungen
+
+=== Rechnen mit nullable Typen
+
+Erstelle wie oben beschrieben das Projekt _TypesDemo_.
+Lege im Projekt die Datei _TypeExercise.cs_ mit dem folgenden Inhalt an.
+Implementiere die Methoden der Klasse _TypeExercise_ so, dass die Ausgabe deines Programmes der Ausgabe weiter unten entspricht.
+Ersetze dafür jedes `throw new NotImplementedException();` durch deinen Code.
+Die Beschreibung jeder Methode steht im Kommentar darüber.
+
+.TypeExercise.cs
+[source,csharp]
+----
+using System;
+
+namespace TypesDemo.Application;
+
+public class TypeExercise
+{
+    /// <summary>
+    /// Returns the area of a rectangle (length x width).
+    /// If length or width is null, the result is null.
+    /// Replace ? with the correct return type.
+    /// </summary>
+    public ? CalculateArea(double? length, double? width)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Returns the area of a rectangle (length x width).
+    /// If length or width is null, the result is 0.
+    /// </summary>
+    public double CalculateAreaOrZero(double? length, double? width)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Returns the gross price. The tax rates are stored as factors, e.g. 1.2 for 20 %.
+    /// Multiply the net price with the factor.
+    /// If productTaxFactor is not null, use only productTaxFactor.
+    /// Otherwise use categoryTaxFactor.
+    /// If both are null, use the factor 1.2.
+    /// Use the ?? operator.
+    /// </summary>
+    public decimal CalculatePrice(decimal netPrice, decimal? productTaxFactor, decimal? categoryTaxFactor)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Returns the average number of students per class (totalStudents / totalClasses).
+    /// </summary>
+    public double CalculateStudentsPerClass(int totalStudents, int totalClasses)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Returns an eighth (value / 8) of the given value.
+    /// Pay attention to the return type. Can this method throw an exception?
+    /// </summary>
+    public int CalculateEighth(long value)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Parses an age from user input.
+    /// Returns null if the input is not an integer or if the age is negative.
+    /// </summary>
+    public int? ParseAge(string input)
+    {
+        throw new NotImplementedException();
+    }
+}
+----
+
+Ersetze den Inhalt der Datei _Program.cs_ durch den folgenden Code.
+
+.Program.cs
+[source,csharp]
+----
+using System;
+using System.Globalization;
+using TypesDemo.Application;
+
+// Print numbers with a dot as decimal separator, independent of the Windows language settings.
+CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+
+TypeExercise exercise = new TypeExercise();
+
+Console.WriteLine("CalculateArea(3, 4):                " + exercise.CalculateArea(3, 4));
+Console.WriteLine("CalculateArea(3, null):             " + exercise.CalculateArea(3, null));
+Console.WriteLine("CalculateAreaOrZero(3, null):       " + exercise.CalculateAreaOrZero(3, null));
+
+Console.WriteLine("CalculatePrice(100, 1.2, null):     " + exercise.CalculatePrice(100, 1.2m, null));
+Console.WriteLine("CalculatePrice(100, 1.2, 1.1):      " + exercise.CalculatePrice(100, 1.2m, 1.1m));
+Console.WriteLine("CalculatePrice(100, null, 1.1):     " + exercise.CalculatePrice(100, null, 1.1m));
+Console.WriteLine("CalculatePrice(100, null, null):    " + exercise.CalculatePrice(100, null, null));
+
+Console.WriteLine("CalculateStudentsPerClass(100, 6):  " + exercise.CalculateStudentsPerClass(100, 6));
+Console.WriteLine("CalculateEighth(120):               " + exercise.CalculateEighth(120));
+
+Console.WriteLine("ParseAge(\"17\"):                     " + exercise.ParseAge("17"));
+Console.WriteLine("ParseAge(\"seventeen\"):              " + exercise.ParseAge("seventeen"));
+Console.WriteLine("ParseAge(\"-3\"):                     " + exercise.ParseAge("-3"));
+----
+
+Dein Programm muss diese Ausgabe liefern:
+
+[source,text]
+----
+CalculateArea(3, 4):                12
+CalculateArea(3, null):
+CalculateAreaOrZero(3, null):       0
+CalculatePrice(100, 1.2, null):     120.0
+CalculatePrice(100, 1.2, 1.1):      120.0
+CalculatePrice(100, null, 1.1):     110.0
+CalculatePrice(100, null, null):    120.0
+CalculateStudentsPerClass(100, 6):  16.666666666666668
+CalculateEighth(120):               15
+ParseAge("17"):                     17
+ParseAge("seventeen"):
+ParseAge("-3"):
+----
+
+=== Fragen zum Verständnis
+
+Beantworte die Fragen schriftlich.
+Prüfe deine Antwort, indem du kleine Programme schreibst.
+
+. Warum liefert `int x = 1 ?? 2;` einen Compilerfehler?
+. `int factor = 3_000;` Was gibt danach `Console.WriteLine(1_000_000 * factor);` aus? Erkläre das Ergebnis.
+. Du speicherst den Kontostand eines Bankkontos. Welchen Typ verwendest du und warum?
+. `Math.Round(2.5)` liefert 2, `Math.Round(3.5)` liefert 4. Finde in der Dokumentation von `Math.Round()` heraus, warum.
+
+// end::pdf_exclude[]

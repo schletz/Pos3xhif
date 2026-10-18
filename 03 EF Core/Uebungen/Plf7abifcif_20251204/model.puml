@@ -1,0 +1,103 @@
+@startuml
+' ---- Layout & Stil ----
+hide empty methods
+
+' ---- Legende ----
+legend right
+<<RichType>>: Stark typisierte Primitive
+<<ValueObject>>: Value Objects
+<<entity>>: Persistente Entität
+<<unique>>: Eindeutige Einschränkung auf Spaltenebene
+<<nn>>: Not null
+endlegend
+
+package "Shared" as P_Shared #EEF6FF {
+  class LicensePlateNumber << (R,#FFEECC) RichType >> {
+    +value: String <<nn>>
+  }
+
+  class ValidityPeriod << (V,#CCEEFF) ValueObject >> {
+    +from: Date <<nn>>
+    +to: Date <<nn>>
+  }
+}
+
+
+abstract class Vehicle <<entity>> {
+  +licensePlate: LicensePlateNumber <<nn>>
+  +registrationCountry: String <<nn>>
+  +type: String <<nn>>
+}
+
+note left of Vehicle::type
+Discriminator
+end note
+
+class Car <<entity>> {
+  +seatCount: Integer <<nn>>
+}
+
+class Motorcycle <<entity>> {
+  +engineCapacityCcm: Integer <<nn>>
+}
+
+Car -up-|> Vehicle
+Motorcycle -up-|> Vehicle
+
+enum Duration {
+  TenDays
+  TwoMonths
+  OneYear
+}
+
+enum VehicleKind {
+  Car <<C>>
+  Motorcycle <<M>>
+}
+
+class Sticker <<entity>> {
+  +number: Integer <<nn>> <<PK>>
+  +duration: Duration <<nn>>
+  +vehicleKind: VehicleKind <<nn>>
+}
+
+note left of Sticker::number
+primary key
+end note
+
+Sticker --- Duration
+Sticker --- VehicleKind
+
+class Customer <<entity>> {
+  +firstname: String <<nn>>
+  +lastname: String <<nn>>
+  +email: String <<nn>>
+}
+
+class Purchase <<entity>> {
+  +purchasedAt: DateTime <<nn>>
+  +validFor: ValidityPeriod <<nn>>
+  +price: Decimal <<nn>>
+  +sticker: Sticker <<nn>>
+  +vehicle: Vehicle <<nn>>
+  +customer: Customer <<nn>>
+  +paymentReceipt: PaymentReceipt
+}
+
+Purchase "0..*" -- "1" Sticker : "> sticker"
+Purchase "0..*" -- "1" Customer : "> customer"
+Purchase "0..*" --- "1" Vehicle : "> vehicle"
+Purchase --- ValidityPeriod
+
+class PaymentReceipt <<entity>> {
+  +receiptNumber: String <<nn>> <<unique>>
+  +issuedAt: DateTime <<nn>>
+  +purchase: Purchase <<nn>>
+}
+
+PaymentReceipt "0..1" -- "1" Purchase : "> purchase"
+
+
+
+
+@enduml

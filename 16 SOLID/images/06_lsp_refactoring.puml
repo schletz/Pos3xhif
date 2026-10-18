@@ -1,0 +1,85 @@
+@startuml
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 15
+skinparam ArrowThickness 1.5
+skinparam class {
+  BackgroundColor #ffffff
+  HeaderBackgroundColor #ededed
+  BorderColor #1d1d1b
+  BorderThickness 1.5
+  FontStyle bold
+}
+skinparam stereotypeCBackgroundColor #d1ebf7
+skinparam stereotypeABackgroundColor #fdebd1
+skinparam stereotypeIBackgroundColor #e5f4f1
+skinparam stereotypeEBackgroundColor #e5f1d9
+skinparam packageStyle rectangle
+skinparam package {
+  BorderColor #9d9d9c
+  FontStyle bold
+}
+skinparam note {
+  BorderColor #1d1d1b
+  FontColor #1d1d1b
+}
+hide empty members
+
+package "Vorher: 1 Interface für Pay und Refund" as before {
+  interface "IPaymentProvider" as OldProvider {
+    + Pay(amount : decimal) : bool
+    + Refund(amount : decimal) : bool
+  }
+  class "CreditCard" as OldCreditCard {
+    + Pay(amount : decimal) : bool
+    + Refund(amount : decimal) : bool
+  }
+  class "GiftCard" as OldGiftCard {
+    + Pay(amount : decimal) : bool
+    + Refund(amount : decimal) : bool
+  }
+  class "ReturnService" as OldReturnService {
+    + ProcessReturn(paymentProvider : IPaymentProvider, amount : decimal) : bool
+  }
+  OldCreditCard ..|> OldProvider
+  OldGiftCard ..|> OldProvider
+  OldReturnService --> OldProvider
+  note bottom of OldGiftCard #f6d3db
+    ✗ Refund() wirft
+    NotSupportedException
+  end note
+  note bottom of OldReturnService #f6d3db
+    ✗ stürzt ab oder
+    prüft mit is GiftCard
+  end note
+}
+
+package "Nachher: 2 Interfaces, je 1 Fähigkeit" as after {
+  interface IPaymentProvider {
+    + Pay(amount : decimal) : bool
+  }
+  interface IRefundable {
+    + Refund(amount : decimal) : bool
+  }
+  class CreditCard {
+    + Pay(amount : decimal) : bool
+    + Refund(amount : decimal) : bool
+  }
+  class GiftCard {
+    + Pay(amount : decimal) : bool
+  }
+  class ReturnService {
+    + ProcessReturn(refundable : IRefundable, amount : decimal) : bool
+  }
+  CreditCard ..|> IPaymentProvider
+  CreditCard ..|> IRefundable
+  GiftCard ..|> IPaymentProvider
+  ReturnService --> IRefundable
+  note bottom of ReturnService #e5f1d9
+    ✓ ProcessReturn(giftCard, ...)
+    kompiliert nicht
+  end note
+}
+
+OldProvider -[hidden]down- CreditCard
+@enduml

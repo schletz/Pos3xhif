@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The sample log is copied to the output folder of every referencing project (e.g. the tests). -->
+    <None Update="Data\access.log" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

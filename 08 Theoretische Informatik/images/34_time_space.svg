@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="390" viewBox="0 0 800 390">
+  <rect x="0.5" y="0.5" width="799" height="389" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/>
+    </marker>
+  </defs>
+
+  <!-- Column headers -->
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1f2937">
+    <text x="210" y="40">naiv</text>
+    <text x="510" y="40">optimiert</text>
+  </g>
+  <line x1="262" y1="35" x2="496" y2="35" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="379" y="27" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#6b7280" text-anchor="middle">Speicher gegen Zeit tauschen</text>
+
+  <!-- Row separators -->
+  <g stroke="#d1d5db" stroke-width="1">
+    <line x1="16" y1="52" x2="784" y2="52"/>
+    <line x1="16" y1="145" x2="784" y2="145"/>
+    <line x1="16" y1="235" x2="784" y2="235"/>
+    <line x1="16" y1="325" x2="784" y2="325"/>
+  </g>
+
+  <!-- Row titles -->
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1f2937">
+    <text x="20" y="92">Two-Sum</text>
+    <text x="20" y="182">Primzahlen bis N</text>
+    <text x="20" y="272">Viele Aufrufe</text>
+  </g>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#6b7280">
+    <text x="20" y="110">Schleifen → HashSet</text>
+    <text x="20" y="200">Probedivision → Sieb</text>
+    <text x="20" y="290">ohne Cache → Memoization</text>
+  </g>
+
+  <!-- Bar labels -->
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#1f2937">
+    <text x="210" y="84">Zeit</text>
+    <text x="210" y="116">Speicher</text>
+    <text x="510" y="84">Zeit</text>
+    <text x="510" y="116">Speicher</text>
+    <text x="210" y="174">Zeit</text>
+    <text x="210" y="206">Speicher</text>
+    <text x="510" y="174">Zeit</text>
+    <text x="510" y="206">Speicher</text>
+    <text x="210" y="264">Zeit</text>
+    <text x="210" y="296">Speicher</text>
+    <text x="510" y="264">Zeit</text>
+    <text x="510" y="296">Speicher</text>
+  </g>
+
+  <!-- Time bars -->
+  <g fill="#ffedd5" stroke="#ea580c" stroke-width="1.5">
+    <rect x="280" y="72" width="130" height="16" rx="2"/>
+    <rect x="580" y="72" width="45" height="16" rx="2"/>
+    <rect x="280" y="162" width="110" height="16" rx="2"/>
+    <rect x="580" y="162" width="50" height="16" rx="2"/>
+    <rect x="280" y="252" width="110" height="16" rx="2"/>
+    <rect x="580" y="252" width="45" height="16" rx="2"/>
+  </g>
+  <!-- Memory bars -->
+  <g fill="#dbeafe" stroke="#2563eb" stroke-width="1.5">
+    <rect x="280" y="104" width="6" height="16" rx="2"/>
+    <rect x="580" y="104" width="45" height="16" rx="2"/>
+    <rect x="280" y="194" width="6" height="16" rx="2"/>
+    <rect x="580" y="194" width="50" height="16" rx="2"/>
+    <rect x="280" y="284" width="6" height="16" rx="2"/>
+    <rect x="580" y="284" width="45" height="16" rx="2"/>
+  </g>
+
+  <!-- Values -->
+  <g font-family="Consolas, Menlo, monospace" font-size="12" fill="#1f2937">
+    <text x="418" y="85">O(n²)</text>
+    <text x="294" y="117">O(1)</text>
+    <text x="633" y="85">O(n)</text>
+    <text x="633" y="117">O(n)</text>
+    <text x="398" y="175">O(N·√N)</text>
+    <text x="294" y="207">O(1)</text>
+    <text x="638" y="175">O(N log log N)</text>
+    <text x="638" y="207">O(N)</text>
+    <text x="398" y="265">k-mal rechnen</text>
+    <text x="294" y="297">O(1)</text>
+    <text x="633" y="265">m-mal rechnen</text>
+    <text x="633" y="297">O(m)</text>
+  </g>
+
+  <!-- Footnote -->
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#6b7280">
+    <text x="20" y="350">Balkenlängen nur qualitativ. Speicher heißt zusätzlicher Speicher ohne die Eingabe.</text>
+    <text x="20" y="370">k = Anzahl der Aufrufe, m = Anzahl verschiedener Eingaben (m ≤ k).</text>
+  </g>
+</svg>

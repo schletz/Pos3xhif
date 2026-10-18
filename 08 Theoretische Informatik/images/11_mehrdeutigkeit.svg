@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="395" viewBox="0 0 720 395">
+<rect x="0.5" y="0.5" width="719" height="394" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+<text x="30" y="32" text-anchor="start" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1f2937">Zwei Ableitungsbäume für id + id * id</text>
+<text x="30" y="54" text-anchor="start" font-family="Consolas, Menlo, monospace" font-size="13" fill="#6b7280">Grammatik: E → E + E | E * E | ( E ) | id</text>
+<line x1="144.0" y1="117.0" x2="60.0" y2="153.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="60.0" y1="187.0" x2="60.0" y2="297.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="144.0" y1="117.0" x2="116.0" y2="297.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="144.0" y1="117.0" x2="228.0" y2="153.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="228.0" y1="187.0" x2="172.0" y2="223.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="172.0" y1="257.0" x2="172.0" y2="297.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="228.0" y1="187.0" x2="228.0" y2="297.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="228.0" y1="187.0" x2="284.0" y2="223.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="284.0" y1="257.0" x2="284.0" y2="297.0" stroke="#1f2937" stroke-width="1.2"/>
+<circle cx="144.0" cy="100.0" r="17" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+<text x="144.0" y="105.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1f2937">E</text>
+<circle cx="60.0" cy="170.0" r="17" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="60.0" y="175.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1f2937">E</text>
+<rect x="44.0" y="297.0" width="32" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+<text x="60.0" y="315.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937">id</text>
+<rect x="104.5" y="297.0" width="23" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+<text x="116.0" y="315.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937">+</text>
+<circle cx="228.0" cy="170.0" r="17" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="228.0" y="175.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1f2937">E</text>
+<circle cx="172.0" cy="240.0" r="17" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="172.0" y="245.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1f2937">E</text>
+<rect x="156.0" y="297.0" width="32" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+<text x="172.0" y="315.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937">id</text>
+<rect x="216.5" y="297.0" width="23" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+<text x="228.0" y="315.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937">*</text>
+<circle cx="284.0" cy="240.0" r="17" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="284.0" y="245.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1f2937">E</text>
+<rect x="268.0" y="297.0" width="32" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+<text x="284.0" y="315.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937">id</text>
+<line x1="590.0" y1="117.0" x2="506.0" y2="153.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="506.0" y1="187.0" x2="450.0" y2="223.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="450.0" y1="257.0" x2="450.0" y2="297.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="506.0" y1="187.0" x2="506.0" y2="297.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="506.0" y1="187.0" x2="562.0" y2="223.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="562.0" y1="257.0" x2="562.0" y2="297.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="590.0" y1="117.0" x2="618.0" y2="297.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="590.0" y1="117.0" x2="674.0" y2="153.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="674.0" y1="187.0" x2="674.0" y2="297.0" stroke="#1f2937" stroke-width="1.2"/>
+<circle cx="590.0" cy="100.0" r="17" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+<text x="590.0" y="105.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1f2937">E</text>
+<circle cx="506.0" cy="170.0" r="17" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="506.0" y="175.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1f2937">E</text>
+<circle cx="450.0" cy="240.0" r="17" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="450.0" y="245.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1f2937">E</text>
+<rect x="434.0" y="297.0" width="32" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+<text x="450.0" y="315.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937">id</text>
+<rect x="494.5" y="297.0" width="23" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+<text x="506.0" y="315.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937">+</text>
+<circle cx="562.0" cy="240.0" r="17" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="562.0" y="245.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1f2937">E</text>
+<rect x="546.0" y="297.0" width="32" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+<text x="562.0" y="315.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937">id</text>
+<rect x="606.5" y="297.0" width="23" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+<text x="618.0" y="315.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937">*</text>
+<circle cx="674.0" cy="170.0" r="17" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="674.0" y="175.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1f2937">E</text>
+<rect x="658.0" y="297.0" width="32" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+<text x="674.0" y="315.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937">id</text>
+<line x1="390" y1="80" x2="390" y2="380" stroke="#d1d5db" stroke-dasharray="4 4"/>
+<text x="172" y="345" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="13" fill="#ea580c">Wurzel: E → E + E</text>
+<text x="172" y="367" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#16a34a">2 + (3 · 4) = 14</text>
+<text x="562" y="345" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="13" fill="#ea580c">Wurzel: E → E * E</text>
+<text x="562" y="367" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#dc2626">(2 + 3) · 4 = 20</text>
+</svg>

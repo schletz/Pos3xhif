@@ -1,0 +1,310 @@
+= Programmieren im Zeitalter der Agents
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Du schreibst in einen Chat: „Programmiere mir den Checkout für einen Webshop in C#.“
+Nach 20 Sekunden hast du 300 Zeilen Code.
+Er kompiliert, und die Tests sind grün.
+Bist du fertig?
+Vielleicht.
+Vielleicht steht die Berechnung der Versandkosten aber an drei Stellen im Code.
+Beim nächsten Preiswechsel vergisst jemand eine davon, und die Rechnung stimmt nicht mehr mit dem Warenkorb überein.
+Ob Code _gut_ ist, sagt dir der Agent nicht von selbst.
+Das beurteilst du.
+In diesem Kapitelblock lernst du, guten und schlechten Code zu unterscheiden und Probleme mit den richtigen Fachbegriffen zu benennen.
+
+== Der Mythos: „Programmieren muss ich nicht mehr können“
+
+Viele glauben: Mit LLMs und Agents muss niemand mehr programmieren können.
+Ein *LLM* (_Large Language Model_) ist ein Sprachmodell wie ChatGPT, Claude oder Gemini.
+Ein *Coding Agent* ist ein Programm, das mit einem LLM selbstständig Dateien ändert und Befehle wie `dotnet test` ausführt.
+Man beschreibt, was man will, und der Code entsteht von selbst.
+Das stimmt nur zur Hälfte:
+
+*Agents kennen mehr Patterns und schreiben schneller als die meisten Entwickler.
+Die Entscheidungen bleiben aber bei dir.*
+
+Ein *Pattern* (Entwurfsmuster) ist eine bewährte Lösung für ein Problem, das immer wieder vorkommt.
+Es hat einen Namen, zum Beispiel _Strategy_.
+Wer den Namen kennt, muss die Lösung nicht jedes Mal neu erklären.
+
+[%header]
+|===
+|Das kann ein Agent gut |Das entscheidet er nicht für dich
+|In Sekunden viel Code schreiben |Was willst du eigentlich?
+|Hunderte Patterns und Bibliotheken kennen |Was ist in diesem Projekt wichtig?
+|Fehlermeldungen lesen und Code anpassen, bis Tests grün sind |Wann ist der Code gut genug?
+|===
+
+Warum kann der Agent diese drei Fragen nicht für dich beantworten?
+
+[%header]
+|===
+|Frage |Der Agent ... |Beispiel Webshop
+|Was willst du eigentlich? |kennt nur deinen Auftrag. Was fehlt, ergänzt er mit einer Annahme. |Gilt der Gratisversand ab 50 € vor oder nach dem Rabatt?
+|Was ist im Projekt wichtig? |kennt die Pläne deiner Firma nicht. |Nächstes Jahr kommt eine neue Zahlungsart dazu. Genau diese Stelle muss leicht erweiterbar sein.
+|Wann ist der Code gut genug? |kann immer noch eine Schicht Abstraktion ergänzen. |Ein Schulprojekt für zwei Wochen braucht keine Architektur für zehn Jahre.
+|===
+
+Diese Entscheidungen kannst du nur treffen, wenn du Code lesen und beurteilen kannst.
+In Firmen liest vor jeder Übernahme eine zweite Person den Code durch.
+Das heißt *Code Review*.
+Schreibt ein Agent den Code, bist du diese zweite Person.
+
+== Fachsprache als Kompression
+
+Zwei Expertinnen tauschen in fünf Sätzen mehr Information aus als ein Laie mit einer Expertin in einer Stunde.
+Der Grund: Fachbegriffe sind komprimiertes Wissen.
+Ein Wort wie _Constructor Injection_ steht für eine ganze Seite Erklärung.
+Kennen beide die Seite, genügt das Wort.
+
+Mit einem Agent ist es genauso.
+Er kennt die Fachbegriffe.
+Kennst du sie auch, schreibst du viel schärfere und klarere Aufträge:
+
+[%header]
+|===
+|Vager Auftrag |Präziser Auftrag
+|„Mach den Code besser.“ |„Extrahiere die Rabattberechnung in eine Strategie. `CheckoutService` bekommt sie per Constructor Injection.“
+|===
+
+Was passiert bei den beiden Aufträgen?
+
+* *Vager Auftrag:* Der Agent muss raten, was „besser“ heißt.
+Er benennt vielleicht Variablen um, ergänzt Kommentare und baut drei Klassen um, die du gar nicht ändern wolltest.
+Du bekommst einen Diff (die Liste der Änderungen) mit 400 Zeilen und musst alle prüfen.
+* *Präziser Auftrag:* Der Agent weiß genau, was er tun soll.
+Es entstehen ein Interface, eine Klasse und ein neuer Konstruktorparameter.
+Der Diff ist klein, und du prüfst ihn in einer Minute.
+
+Die beiden Begriffe im präzisen Auftrag lernst du in diesem Block kennen:
+
+* *Strategie* (_Strategy Pattern_): Ein Verfahren, zum Beispiel eine Rabattberechnung, steckt hinter einem Interface.
+Man kann es austauschen, ohne den Aufrufer zu ändern.
+Siehe link:{github_url}/16%20SOLID/05_Open_Closed_Polymorphie.adoc[O&#44; Teil 2: Erweitern statt ändern].
+* *Constructor Injection:* Eine Klasse erzeugt ihre Helfer nicht selbst mit `new`.
+Sie bekommt sie als Parameter im Konstruktor.
+Siehe link:{github_url}/16%20SOLID/08_Dependency_Inversion.adoc[D: Dependency Inversion].
+
+Weitere präzise Formulierungen, wie du sie nach diesem Block verwenden kannst:
+
+[%header]
+|===
+|Du siehst im Code ... |Du formulierst ...
+|Die Steuer wird an drei Stellen fast gleich berechnet. |„Die Steuerberechnung ist dreifach vorhanden (DRY). Fasse sie in einer Methode zusammen.“ (link:{github_url}/16%20SOLID/02_DRY.adoc[DRY])
+|`OrderService` validiert, rechnet, speichert und formatiert. |„`OrderService` hat vier Zuständigkeiten. Trenne die Formatierung der Bestätigung in eine eigene Klasse.“ (link:{github_url}/16%20SOLID/03_Single_Responsibility.adoc[S])
+|`+if (order.Total > 50)+` steht in mehreren Klassen. |„Die Regel für Gratisversand gehört zu `Order`. Ersetze die Bedingung durch eine Property `QualifiesForFreeShipping`.“ (link:{github_url}/16%20SOLID/04_Open_Closed_Werte.adoc[O&#44; Teil 1])
+|`GiftCard.Refund()` wirft `NotSupportedException`. |„`GiftCard` verletzt Liskov. Trenne `Refund()` in ein eigenes Interface `IRefundable`.“ (link:{github_url}/16%20SOLID/06_Liskov.adoc[L])
+|===
+
+Diese Sätze helfen dir nicht nur mit einem Agent.
+Sie sind auch die Sprache im Code Review mit Kolleginnen und Kollegen.
+Statt „das gefällt mir nicht“ sagst du, _was_ das Problem ist und _was_ du stattdessen erwartest.
+
+== Was ist „guter Code“?
+
+Zwei Programme liefern bei allen Tests dasselbe Ergebnis.
+Ist eines davon besser?
+Ja, denn „funktioniert“ ist nur die Mindestanforderung.
+Guter Code hat noch drei weitere Eigenschaften:
+
+[%header]
+|===
+|Eigenschaft |Prüffrage
+|*Funktioniert* |Liefert der Code das richtige Ergebnis? Sind die Tests grün?
+|*Lesbar* |Verstehst du in einer Minute, was eine Methode tut und warum?
+|*Änderbar* |Musst du für eine neue Anforderung nur eine Stelle ändern?
+|*Testbar* |Kannst du eine Klasse ohne Datenbank, Netzwerk oder aktuelle Uhrzeit testen?
+|===
+
+Der Kern dahinter sind die *Kosten einer Änderung*.
+Code wird viel öfter gelesen und geändert als neu geschrieben.
+Ein Beispiel: Der Gratisversand gilt ab jetzt ab 60 € statt ab 50 €.
+
+* Im guten Code änderst du *eine* Zeile.
+* Im schlechten Code steht `50` an fünf Stellen.
+Du findest vier davon.
+Die fünfte zeigt im Warenkorb weiter „Gratisversand“, die Rechnung verlangt aber Versandkosten.
+
+[[sprechender-code-hilft-menschen-und-agents]]
+=== Sprechender Code hilft Menschen und Agents
+
+Sieh dir diese Bedingung an:
+
+[source,csharp]
+----
+if (employee.MonthlySalary > 5000m)
+{
+    bonus = 0m;
+}
+----
+
+Was bedeutet 5000?
+Ist es eine Grenze für die Steuer, für den Bonus oder für etwas anderes?
+Gilt sie auch an anderen Stellen?
+Eine Zahl ohne Namen heißt *Magic Number*.
+Wer den Code liest, muss die Absicht erraten.
+Vergleiche:
+
+[source,csharp]
+----
+if (employee.HasHighSalary)
+{
+    bonus = 0m;
+}
+----
+
+[source,csharp]
+----
+namespace WebshopDemo.Application;
+
+/// <summary>
+/// An employee with a monthly gross salary.
+/// </summary>
+public class Employee
+{
+    /// <summary>Monthly gross salary above this limit counts as high.</summary>
+    public const decimal HighSalaryLimit = 5000m;
+
+    public Employee(decimal monthlySalary)
+    {
+        MonthlySalary = monthlySalary;
+    }
+
+    public decimal MonthlySalary { get; }
+
+    /// <summary>True if the salary is above <see cref="HighSalaryLimit"/>.</summary>
+    public bool HasHighSalary => MonthlySalary > HighSalaryLimit;
+}
+----
+
+Jetzt steht die Absicht im Namen, und die Grenze ist an genau einer Stelle definiert.
+Code mit solchen Namen heißt *sprechend*: Er erklärt sich selbst.
+
+Das gilt auch für ein LLM.
+Ein LLM liest Code in *Tokens* (Wortteilen).
+Bei `+> 5000m+` muss es mehr Code lesen, zum Beispiel andere Klassen, Kommentare und Tests.
+Es muss auch länger nachdenken, um die Absicht zu erschließen.
+Viele Agents haben dafür eine Einstellung für den Denkaufwand (_Effort_).
+Oft rät das Modell richtig.
+Verlassen kannst du dich aber nicht darauf.
+Bei `HasHighSalary` muss niemand raten, weder du noch der Agent.
+
+[NOTE]
+====
+Guter Code für Menschen ist auch guter Code für Agents.
+Was dich beim Lesen verwirrt, kostet auch ein LLM Tokens und macht Fehler wahrscheinlicher.
+====
+
+=== Code Smells
+
+Die Magic Number ist ein *Code Smell* (wörtlich „Code-Geruch“).
+Das ist ein Merkmal im Code, das auf ein Problem im Design hinweist.
+Der Code funktioniert, aber er „riecht“: Er wird schwer zu ändern oder zu testen sein.
+Bekannt wurde der Begriff durch das Buch _Refactoring_ von Martin Fowler.
+
+Ein Smell ist kein Fehler, sondern ein Hinweis.
+Du schaust genauer hin und entscheidest dann.
+Typische Smells:
+
+* Derselbe Code steht an mehreren Stellen (_Duplicated Code_).
+* Eine Klasse hat 500 Zeilen und macht alles (_God Class_).
+* Ein `switch` über eine Art oder einen Typ steht in mehreren Methoden.
+* Eine Methode wirft `NotSupportedException`, weil sie „eigentlich nicht passt“.
+
+Zu jedem Prinzip in diesem Block gehören bestimmte Smells.
+Die Übersicht am Ende des Kapitels zeigt sie.
+
+[[tests-als-sicherheitsnetz]]
+== Tests als Sicherheitsnetz
+
+Du hast einen Smell gefunden und willst den Code verbessern.
+Woher weißt du danach, dass noch alles funktioniert?
+
+*Refactoring* heißt: Du änderst die _Struktur_ des Codes, aber nicht sein _Verhalten_.
+Beispiele sind eine Methode umbenennen, doppelten Code in eine Methode auslagern oder eine große Klasse aufteilen.
+Eine neue Funktion oder ein Bugfix ist *kein* Refactoring.
+Mach das in einem eigenen Schritt.
+
+„Verhalten bleibt gleich“ musst du prüfen.
+Genau das leisten Tests.
+Sie sind dein *Sicherheitsnetz*:
+
+. Vor dem Refactoring sind alle Tests grün.
+. Du machst einen kleinen Schritt, zum Beispiel eine Methode auslagern.
+. Du führst `dotnet test` aus.
+. Ist ein Test rot, hast du Verhalten geändert.
+Mach den Schritt rückgängig oder korrigiere ihn.
+. Ist alles grün, machst du den nächsten Schritt.
+
+Für einen Agent gilt dieselbe Schleife.
+Ohne Tests weiß er nur, dass der Code kompiliert.
+Mehr dazu steht im Abschnitt link:{github_url}/15%20Unittests/01_Warum_Testen.adoc#tests-als-feedback-f%C3%BCr-agents[Tests als Feedback für Agents].
+
+[IMPORTANT]
+====
+In den Übungen dieses Blocks bekommst du funktionierenden, aber schlechten Code.
+Die Tests sind von Anfang an grün.
+Nach deinem Refactoring müssen sie immer noch grün sein.
+Die Tests darfst du nicht ändern.
+====
+
+== Überblick: DRY und SOLID
+
+Für änderbaren Code gibt es bekannte Prinzipien.
+*DRY* stammt aus dem Buch _The Pragmatic Programmer_ von Andrew Hunt und David Thomas.
+*SOLID* fasst fünf Prinzipien zusammen, die vor allem Robert C. Martin bekannt gemacht hat.
+Jeder Buchstabe steht für ein Prinzip.
+
+image::{root_dir}/images/01_solid_overview.svg[DRY und SOLID im Überblick]
+
+[%header]
+|===
+|Prinzip |In einem Satz |Typischer Smell |Kapitel
+|*DRY* – Don't Repeat Yourself |Jedes Wissen steht an genau einer Stelle im Code. |Fast gleicher Code an mehreren Stellen |link:{github_url}/16%20SOLID/02_DRY.adoc[DRY]
+|*S* – Single Responsibility |Eine Klasse hat nur einen Grund, sich zu ändern. |Klasse validiert, rechnet, speichert und formatiert |link:{github_url}/16%20SOLID/03_Single_Responsibility.adoc[S]
+|*O* – Open/Closed |Neues ergänzt du, ohne bestehenden Code zu ändern. |Dieselbe Bedingung (`+Total > 50+`) an mehreren Stellen; `switch` über eine Art |link:{github_url}/16%20SOLID/04_Open_Closed_Werte.adoc[O&#44; Teil 1], link:{github_url}/16%20SOLID/05_Open_Closed_Polymorphie.adoc[O&#44; Teil 2]
+|*L* – Liskov Substitution |Jede Implementierung hält, was ihr Interface oder ihre Basisklasse verspricht. |`NotSupportedException`; Aufrufer prüft den Typ mit `is` |link:{github_url}/16%20SOLID/06_Liskov.adoc[L]
+|*I* – Interface Segregation |Viele kleine, passende Interfaces statt eines großen. |Klassen implementieren Methoden, die sie nicht brauchen |link:{github_url}/16%20SOLID/07_Interface_Segregation.adoc[I]
+|*D* – Dependency Inversion |Klassen hängen von Abstraktionen ab, nicht von konkreten Details. |`new` für Logger, Datenbank oder Zahlungsdienst mitten in der Logik |link:{github_url}/16%20SOLID/08_Dependency_Inversion.adoc[D]
+|===
+
+Eine *Abstraktion* ist hier ein Interface oder eine abstrakte Klasse: Sie beschreibt, _was_ etwas kann, aber nicht, _wie_ es das macht.
+
+=== Prinzipien mit Augenmaß
+
+Prinzipien sind keine Gesetze.
+Wer jede Regel bis zum Ende befolgt, bekommt für jede Klasse ein Interface und für jede Zeile eine eigene Klasse.
+Das nennt man *Over-Engineering*: Der Code ist komplizierter, als das Problem verlangt.
+Auch Agents neigen manchmal dazu, weil sie viele Patterns kennen und gerne anwenden.
+
+Frag dich deshalb bei jedem Umbau:
+
+* Welches konkrete Problem löse ich damit?
+Welcher Smell verschwindet?
+* Wird die nächste wahrscheinliche Änderung dadurch billiger?
+* Versteht jemand anderer den Code danach schneller oder langsamer?
+
+Kannst du keine der Fragen mit „ja“ oder „schneller“ beantworten, lass den Code, wie er ist.
+
+== Wie die folgenden Kapitel aufgebaut sind
+
+Jedes Kapitel dieses Blocks folgt demselben Muster:
+
+. Ein Beispiel aus einem Webshop zeigt schlechten Code und das Problem dahinter.
+. Du siehst, wie der Code nach dem Prinzip aussieht und warum er besser ist.
+. Die Tabelle _Im Code-Review erkennen_ fasst Warnzeichen und präzise Formulierungen zusammen.
+. In der Übung baust du meist ein Projekt mit grünen Tests um, ohne die Tests zu ändern.

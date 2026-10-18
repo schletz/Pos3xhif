@@ -1,0 +1,167 @@
+= PLF in Programmieren und Software Engineering
+:source-highlighter: rouge
+:icons: font
+:pdf-page-header: true
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+
+____
+[.lead]
+Klasse: 7ABIF und 7ACIF +
+Datum: DO, 4. Dezember 2025 +
+Arbeitszeit: 3 UE
+____
+
+== Wichtiger Hinweis vor Arbeitsbeginn
+
+Auf dem Laufwerk _Z_ finden Sie die Datei _Plf7abifcif_20251204.7z_.
+Klicken Sie mit der rechten Maustaste auf die Datei und wählen Sie _Weitere Optionen_ - _7-Zip_ und _Extract here_.
+Gehen Sie dann in den Ordner _Plf7abifcif_ und starten Sie die Datei _start_solution.cmd_.
+Diese Datei lädt zuerst alle Dependencies aus dem Internet und startet dann das Projekt in diesem Ordner.
+Sie müssen das Programm nicht abgeben, denn Sie arbeiten direkt am Netzlaufwerk.
+
+[WARNING]
+====
+Füllen Sie die Datei _README.md_ in _Plf7abifcif/README.md_ mit Ihren Daten (Klasse, Name und Accountname) aus.
+*Falls Sie dies nicht machen, kann Ihre Arbeit nicht zugeordnet und daher nicht bewertet werden!*
+====
+
+[WARNING]
+====
+Während der Prüfung ist der Internetzugriff gesperrt.
+Für Visual Studio: Führen Sie niemals _Build_ - _Rebuild Solution_ aus, denn dadurch werden die lokalen Pakete gelöscht.
+Arbeiten Sie immer mit _Build_ - _Build Solution_ (F6).
+====
+
+== Aufgabe: Object Relation Mapping
+
+In Österreich benötigt man für die Benutzung von Autobahnen und Schnellstraßen eine sogenannte "Vignette" (Sticker).
+Das nachfolgende Domain Model zeigt ein Modell, wie der Verkauf dieser Vignetten in einem System abgebildet sein könnte.
+Die Kunden (Customer) werden mit Name und E-Mail erfasst.
+Das Fahrzeug (Vehicle) hat ein Kennzeichen (License Plate), das Land der Zulassung (Registration Country) wird ebenfalls gespeichert.
+
+Da die Vignetten für PKWs und Motorräder unterschiedliche Preise haben, werden die Subtypen _Car_ (PKW) und _Motorcycle_ (Motorrad) definiert.
+Die Vignette (Sticker) hat eine eindeutige Nummer, die von einem Fremdsystem generiert wird.
+Es gibt Vignetten mit 10 Tagen, 2 Monaten und einem Jahr Gültigkeit.
+Sie wird für eine bestimmte Fahrzeugart (vehicle kind) ausgestellt.
+
+Wird diese Vignette verkauft, wird der Verkauf in _Purchase_ gespeichert.
+Es ist möglich, dass eine Vignette mehrfach verkauft wird.
+Dies ist z. B. bei einem Bruch der Scheibe der Fall.
+
+Die Rechnung (payment receipt) wird auf Wunsch des Kunden ausgestellt und beinhaltet eine Rechnungsnummer (peceipt number).
+
+Das Domain Model hat folgendes Aussehen:
+
+[plantuml,format=svg]
+----
+include::model.puml[]
+----
+
+=== Hinweis zu Naming Conventions
+
+Das UML Diagramm ist plattformneutral.
+Implementieren Sie es in den für Ihre Sprache gebräuchlichen naming conventions wie z. B. die Großschreibung von Properties.
+Wählen Sie auch einen geeigneten Datentyp für Ihrer Sprache (z. B. in C# _int_, _string_, _DateOnly_ für _Date_ Werte, _DateTime_).
+
+=== Arbeitsauftrag
+
+==== Erstellung der Modelklassen
+
+Implementieren Sie das dargestellte Diagramm Modelklassen für den OR Mapper.
+
+Im Projekt _Plf7abifcif.Application_ befinden sich leere Klassen sowie die Klasse _StickerContext_ (C#), die Sie nutzen sollen.
+
+Beachten Sie bei der Umsetzung folgende Punkte:
+
+*Allgemeine Anforderungen*
+
+* Legen Sie nötige Konstruktoren an.
+  Ein _public_ Konstruktor soll alle im Modell enthaltenen Properties initialisieren.
+  Ergänzen Sie bei Bedarf die für den OR Mapper nötigen Konstruktoren.
+* Beachten Sie Attribute Constraints wie _not null_ (`++<<nn>>++`).
+* Verwenden sie eigene primary keys mit dem Namen _id_ (_Id_ in C#) (autoincrement), außer im Modell ist mit _PK_ explizit ein Schlüssel mit `++<<PK>>++` angegeben.
+* Die Foreign Keys werden nach der Convention Propertyname + Name des PK generiert. Dies ist z. B. bei der Zuweisung des FKs der dependent Entities wichtig.
+
+*Fachliche Anforderungen*
+
+* Die generierten Tabellennamen sollen in Einzahl erzeugt werden (_Customer_, _Sticker_, _Vehicle_, _Purchase_ und _PaymentReceipt_).
+* Das Attribut _Sticker.number_ soll als Primärschlüssel definiert werden.
+  Achten Sie bei foreign keys, die auf diese Tabelle verweisen, auf die richtige naming convention.
+* Das Attribut _PaymentReceipt.receiptNumber_ soll ein _unique constraint_ besitzen.
+* Es dürfen nicht 2 Fahrzeuge mit den gleichen Werten in _licensePlate_ und _registrationCounty_ angelegt werden können.
+  Stellen Sie dies durch ein unique constraint über diese 2 Spalten sicher.
+* Die Enum in _Sticker.duration_ soll als String mit den Stringwerten _TenDays_, _TwoMonths_ und _OneYear_ gespeichert werden.
+* Die Enum in _Sticker.vehicleKind_ soll als String mit den Stringwerten _C_ für den Wert _Car_ und _M_ für den Wert _Motorcycle_ gespeichert werden.
+* Das Attribut _Vehicle.type_ soll als discriminator definiert werden und folgende Werte annehmen: _C_ für den Typ _Car_ und _M_ für den Typ _Motorcycle_.
+* Das Attribut _Vehicle.licensePlate_ soll als _rich type_ definiert und als String gespeichert werden.
+* Der rich type _LicensePlateNumber_ soll prüfen, ob der Wert mindestens 5 Stellen lang ist.
+  Falls nicht, werfen Sie mit `throw new StickerException("Invalid License Plate")` eine Exception.
+* Das Attribut _Purchase.validFor_ soll als _value object_ (_Embedded_ in Java) definiert werden.
+  Die erzeugten Spalten sollen _ValidFor_From_ und _ValidFor_To_ in der Datenbank heißen (Standardverhalten in EF Core).
+
+Das durch den OR Mapper erzeugte Datenbankschema soll so aussehen:
+
+image::schema.png[]
+
+Der vorgegebene Test _T00_CanCreateDatabaseTest_ in _GradingTests_ prüft, ob mit Ihrer Implementierung überhaupt eine Datenbank erzeugt werden kann.
+*Läuft dieser Test nicht durch, können Sie keine positive Note erhalten.*
+
+Der vorgegebene Test _T00_SchemaTest_ in _GradingTests_ verwenden, um das Gesamtmodell zu prüfen. 
+Läuft dieser Test erfolgreich durch, sind Sie positiv.
+
+==== Verfassen von Tests
+
+In der Klasse _StickerContextTests_ im Projekt _Plf7abifcif.Test_ sollen Testmethoden verfasst werden, die die Richtigkeit der Konfiguration des OR Mappers beweisen sollen.
+
+* _AddPurchaseWithPaymentReceiptTest_ zeigt, dass Sie einen Verkauf (Purchase) samt Rechnung (Purchase) anlegen und persistieren können.
+* _LicensePlateNumberThrowsStickerExceptionIfNumberIsNotValidTest_ zeigt, dass die Validierung in _LicensePlateNumber_ funktioniert.
+  Sie müssen im Test nur eine Instanz dieser Klasse anlegen und das Fehlerverhalten prüfen.
+* _LicensePlateAndRegistrationCountryThrowsExceptionWhenDuplicateTest_ zeigt, dass beim Einfügen eines zweiten Fahrzeuges mit gleichen Werten in _licensePlate_ und _registrationCountry_ ein Fehler beim Persistieren geworfen wird.
+* _DiscriminatorInVehicleHasRightValuesTest_ zeigt, dass beim Speichern eines Objektes vom Typ _Car_ der Wert in _Vehicle.type_ gleich _C_ und beim Speichern eines Objektes vom Typ _Motorcycle_ der Wert in _Vehicle.type_ gleich _M_ ist.
+
+=== Bewertung
+
+Um eine positive Beurteilung erreichen zu können, muss das Programm kompilieren und die implementierten Modelklassen müssen ein Erzeugen der Datenbank über den OR Mapper ermöglichen.
+
+[%header,cols="8,1",format=tsv]
+|===
+Aufgabe (36 Punkte in Summe)	Ges
+Das Entity Customer wird mit den definierten Feldern Datenbank abgebildet.	1
+Das Entity Sticker wird mit den definierten Feldern Datenbank abgebildet.	1
+Das Entity Vehicle wird mit den definierten Feldern Datenbank abgebildet.	1
+Das Entity Car wird mit den definierten Feldern Datenbank abgebildet.	1
+Das Entity Motorcycle wird mit den definierten Feldern Datenbank abgebildet.	1
+Das Entity Puchase wird mit den definierten Feldern Datenbank abgebildet.	1
+Das Entity PaymentReceipt wird mit den definierten Feldern Datenbank abgebildet.	1
+Sticker.Number ist als primary key definiert.	2
+Die 1:1 Beziehung zwischen Purchase und PaymentReceipt ist korrekt konfiguriert.	2
+PaymentReceipt.Number ist unique.	1
+Das Tupel Vehicle.LicensePlate und Vehicle.RegistrationCountry ist unique.	2
+Purchase.ValidityPeriod ist als value object definiert.	2
+Vehicle.LicensePlateNumber ist als rich type definiert.	2
+Vehicle.Type ist als discriminator definiert.	1
+Vehicle.Type hat die korrekten Werte (C und M).	2
+Sticker.Duration wird als String gespeichert.	1
+Sticker.VehicleKind wird mit den korrekten Werten (C und M) gespeichert.	2
+Der Test AddPurchaseWithPaymentReceiptTest hat den richtigen Aufbau.	2
+Der Test AddPurchaseWithPaymentReceiptTest läuft durch.	1
+Der Test LicensePlateNumberThrowsStickerExceptionIfNumberIsNotValidTest hat den richtigen Aufbau.	2
+Der Test LicensePlateNumberThrowsStickerExceptionIfNumberIsNotValidTest läuft durch.	1
+Der Test LicensePlateAndRegistrationCountryThrowsExceptionWhenDuplicateTest hat den richtigen Aufbau.	2
+Der Test LicensePlateAndRegistrationCountryThrowsExceptionWhenDuplicateTest läuft durch.	1
+Der Test DiscriminatorInVehicleHasRightValuesTest hat den richtigen Aufbau.	2
+Der Test DiscriminatorInVehicleHasRightValuesTest läuft durch.	1
+|===
+
+36 - 32 Punkte: Sehr gut, 31 - 28 Punkte: Gut, 27 - 23 Punkte: Befriedigend, 22 - 19 Punkte: Genügend, 18 - 0 Punkte: Nicht genügend.

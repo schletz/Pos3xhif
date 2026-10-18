@@ -1,0 +1,11 @@
+{
+  "anfuehrung": "Sie sagte: \"Servus!\"",
+  "backslash": "C:\\Users\\Public",
+  "zeilen": "erste Zeile\nzweite Zeile",
+  "tabulator": "Name\tNote",
+  "alles": "\"\\\n\t",
+  "leer": "",
+  "umlaute": "Grüße aus Österreich – 5 € für ein Häferl Kaffee ☕",
+  "nur escapes": "\\\\\\\"",
+  "": "leerer Schlüssel"
+}

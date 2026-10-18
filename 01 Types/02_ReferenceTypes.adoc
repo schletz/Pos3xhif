@@ -1,0 +1,590 @@
+= Referenztypen und der Umgang mit null in C#
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Im Kapitel _Wertetypen_ hast du gesehen: Nach `int b = a;` ist `b` eine unabhängige Kopie.
+Bei Objekten einer Klasse ist das anders.
+Welcher Vorname wird hier ausgegeben?
+
+[source,csharp]
+----
+Person p1 = new Person("Max", "Muster");
+Person p2 = p1;
+p2.FirstName = "Eva";
+Console.WriteLine(p1.FirstName);
+----
+
+Die Ausgabe ist _Eva_, obwohl wir nur `p2` geändert haben.
+Eine Klasse ist ein *Referenztyp* (_reference type_).
+Die Variable enthält nicht das Objekt selbst, sondern nur einen Verweis (eine _Referenz_) darauf.
+In diesem Kapitel lernst du, wie Referenzen funktionieren und wie C# dich vor dem häufigsten Laufzeitfehler schützt: dem Zugriff auf `null`.
+
+== Projekt anlegen
+
+Für die Beispiele brauchst du eine .NET Konsolenapplikation.
+Führe diese Befehle in der Konsole aus.
+Unter macOS verwendest du statt `rd /S /Q` den Befehl `rm -rf` und statt `start` den Befehl `open`.
+
+[source,text]
+----
+rd /S /Q ReferenceTypesDemo
+mkdir ReferenceTypesDemo
+cd ReferenceTypesDemo
+mkdir ReferenceTypesDemo.Application
+cd ReferenceTypesDemo.Application
+dotnet new console
+cd ..
+dotnet new sln -f sln
+dotnet sln add ReferenceTypesDemo.Application
+start ReferenceTypesDemo.sln
+----
+
+Öffne danach die Projektdatei _ReferenceTypesDemo.Application.csproj_ (Doppelklick auf das Projekt).
+Entferne die Zeile _ImplicitUsings_ und füge _TreatWarningsAsErrors_ hinzu.
+Die Datei sieht dann so aus:
+
+[source,xml]
+----
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+</Project>
+----
+
+Die Option _Nullable_ ist für dieses Kapitel zentral.
+Was sie bewirkt, erfährst du im Abschnitt _Nullable reference types_.
+
+== Eine eigene Klasse
+
+Lege im Projekt die Datei _Person.cs_ an.
+Die Klasse hat zwei öffentliche Felder.
+Öffentliche Member schreibt man in C# groß (_PascalCase_).
+In der Praxis verwendet man statt öffentlicher Felder Properties, sie kommen im nächsten Kapitel.
+
+.Person.cs
+[source,csharp]
+----
+namespace ReferenceTypesDemo.Application;
+
+public class Person
+{
+    public string FirstName;
+    public string LastName;
+
+    public Person(string firstName, string lastName)
+    {
+        FirstName = firstName;
+        LastName = lastName;
+    }
+}
+----
+
+Ohne den Konstruktor kompiliert die Klasse nicht:
+
+[source,text]
+----
+error CS8618: Non-nullable field 'FirstName' must contain a non-null value
+when exiting constructor.
+Consider adding the 'required' modifier or declaring the field as nullable.
+----
+
+Der Compiler stellt sicher, dass _FirstName_ und _LastName_ nie `null` sind.
+Der Konstruktor erzwingt, dass jede Person einen Vor- und Nachnamen bekommt.
+
+Beim Aufruf kannst du die Parameter mit Namen angeben (_named arguments_).
+Das macht den Code lesbarer.
+Außerdem kannst du Vor- und Nachname nicht verwechseln, obwohl beide vom Typ `string` sind.
+
+[source,csharp]
+----
+Person p1 = new Person(firstName: "Max", lastName: "Muster");
+----
+
+== Wertetyp und Referenztyp
+
+`new Person(...)` erzeugt ein Objekt in einem eigenen Speicherbereich, dem _Heap_.
+Die Variable `p1` speichert nur die Adresse dieses Objektes.
+`p2 = p1` kopiert diese Adresse.
+Es gibt danach *ein* Objekt und *zwei* Referenzen darauf.
+
+image::{root_dir}/value_vs_reference.svg[Zuweisung bei Wertetypen und Referenztypen]
+
+[cols="1,3"]
+|===
+|Art |Typen
+
+|Wertetypen
+|`int`, `long`, `double`, `decimal`, `bool`, `char`, `DateTime`, `enum`, eigene `struct` Typen
+
+|Referenztypen
+|`string`, Arrays, `List<T>`, eigene `class` Typen
+|===
+
+Dasselbe gilt für Parameter.
+Übergibst du eine Person an eine Methode, bekommt die Methode eine Kopie der Adresse.
+Sie arbeitet also mit demselben Objekt und kann es ändern.
+
+[source,csharp]
+----
+Rename(p1);
+Console.WriteLine(p1.FirstName);   // Anna
+
+static void Rename(Person person) => person.FirstName = "Anna";
+----
+
+NOTE: `string` ist ein Referenztyp, verhält sich aber wie ein Wertetyp.
+Ein String kann nicht verändert werden (_immutable_).
+Methoden wie `ToUpper()` liefern immer einen neuen String.
+Wie Stack und Heap genau aufgebaut sind, zeigt das Kapitel _Collections_.
+
+== null: Eine Referenz ohne Objekt
+
+Eine Referenzvariable kann auch auf gar kein Objekt zeigen.
+Sie hat dann den Wert `null`.
+Greifst du über so eine Variable auf ein Feld oder eine Methode zu, gibt es eine _NullReferenceException_.
+Das ist einer der häufigsten Laufzeitfehler.
+
+[source,csharp]
+----
+Person? nobody = null;
+// Without the Nullable option: NullReferenceException at runtime
+// With the Nullable option: error CS8602: Dereference of a possibly null reference.
+Console.WriteLine(nobody.FirstName);
+----
+
+In diesem Projekt kompiliert der Code nicht einmal.
+Der Compiler meldet den Fehler schon vor dem Start.
+Wie das funktioniert, zeigt der nächste Abschnitt.
+
+== Nullable reference types
+
+Mit der Option _Nullable_ unterscheidet der Compiler zwei Arten von Referenzvariablen:
+
+[cols="1,3"]
+|===
+|Deklaration |Bedeutung
+
+|`string name`
+|Darf nie `null` sein. Du kannst ohne Prüfung auf `name.Length` zugreifen.
+
+|`string? name`
+|Darf `null` sein. Vor dem Zugriff musst du prüfen, ob ein Objekt vorhanden ist.
+|===
+
+[source,csharp]
+----
+string neverNull = string.Empty;
+string? canBeNull = null;
+
+// (1) error CS8600: Converting null literal or possible null value
+//     to non-nullable type.
+neverNull = null;
+// (2) error CS8602: Dereference of a possibly null reference.
+Console.WriteLine(canBeNull.Length);
+Console.WriteLine(canBeNull?.Length);  // (3) OK
+if (!string.IsNullOrEmpty(canBeNull))
+{
+    Console.WriteLine(canBeNull.Length);  // (4) OK
+}
+----
+
+* *(1)* Einer Variable vom Typ `string` darfst du nicht `null` zuweisen.
+* *(2)* Bei `string?` darfst du nicht ungeprüft auf Properties oder Methoden zugreifen.
+* *(3)* Der Operator `?.` (siehe unten) ist erlaubt.
+* *(4)* Der Compiler analysiert den Programmablauf.
+Er erkennt, dass `canBeNull` im if-Block nicht `null` sein kann.
+Das funktioniert, weil `IsNullOrEmpty()` mit einem _Attribute_ versehen ist:
+`IsNullOrEmpty([NotNullWhen(false)] string? value)`.
+Es sagt dem Compiler: Liefert die Methode `false`, ist der Parameter nicht `null`.
+Mehr dazu findest du unter https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/attributes/nullable-analysis[Attributes for null-state static analysis].
+
+`string?` sieht aus wie `int?`, ist aber etwas anderes.
+`int?` ist eine eigene Struktur mit _HasValue_ und _Value_.
+`string?` ist nur ein Hinweis für den Compiler.
+Im kompilierten Programm sind `string` und `string?` derselbe Typ.
+
+== Operatoren für null
+
+C# hat mehrere Operatoren, die den Umgang mit `null` kürzer machen.
+
+[cols="1,3"]
+|===
+|Ausdruck |Bedeutung
+
+|`x is null`, `x is not null` |Prüft, ob `x` null ist.
+|`x?.Length` |Liefert `null`, wenn `x` null ist. Sonst wird `x.Length` gelesen.
+|`x ?? y` |Liefert `x`, wenn `x` nicht null ist. Sonst `y`.
+|`x ??= y` |Weist `x` den Wert `y` zu, wenn `x` null ist.
+|`x!` |Schaltet die Prüfung des Compilers für `x` ab.
+|===
+
+=== is null
+
+[source,csharp]
+----
+string? text = null;
+if (text is null) { Console.WriteLine("text is null."); }
+if (text is not null) { Console.WriteLine("text is not null."); }
+----
+
+`text == null` funktioniert auch.
+In C# kann der Autor einer Klasse aber festlegen, was `==` bedeutet (_operator overloading_).
+Der Vergleich mit `==` ist daher nicht in jedem Fall verlässlich.
+`is` kann nicht überladen werden und prüft immer, ob die Referenz `null` ist.
+
+=== Der null-conditional operator ?.
+
+Der Operator `?.` liefert das Ergebnis der Property bzw. Methode.
+Ist das Objekt `null`, liefert er `null` und wirft keine Exception.
+
+[source,csharp]
+----
+string? name = "Max";
+string? empty = null;
+
+Console.WriteLine(name?.Length);             // 3
+Console.WriteLine(empty?.Length);            // null (an empty line), not 0!
+Console.WriteLine(empty?.ToUpper().Length);  // null, stops at the first ?.
+// error CS0266: Cannot implicitly convert type 'int?' to 'int'
+int length = name?.Length;
+int length2 = name?.Length ?? 0;             // OK
+----
+
+Das Ergebnis von `name?.Length` ist ein `int?`, denn es kann `null` sein.
+Mit `?? 0` machst du daraus wieder einen `int`.
+
+=== Der Operator ??=
+
+`??=` weist nur dann einen Wert zu, wenn die Variable `null` ist.
+
+[source,csharp]
+----
+string? nickname = null;
+// Same as: if (nickname is null) { nickname = "unknown"; }
+nickname ??= "unknown";
+----
+
+=== Der null-forgiving operator !
+
+Mit `!` sagst du dem Compiler: Diese Variable ist sicher nicht `null`.
+Der Compiler prüft dann nicht mehr.
+
+[source,csharp]
+----
+string? canBeNull = null;
+// Compiles, but throws a NullReferenceException at runtime
+Console.WriteLine(canBeNull!.Length);
+----
+
+Verwende `!` nur in begründeten Fällen.
+Du übernimmst damit die Verantwortung, die sonst der Compiler hat.
+Begründete Fälle sind z. B.:
+
+* Ältere Bibliotheken, die nullable reference types noch nicht unterstützen.
+* Frameworks wie EF Core, die Felder erst nach dem Konstruktor befüllen.
+* Komplexe Logik, die der Compiler nicht analysieren kann.
+
+== Vererbung und Typencasts
+
+Lege die Datei _Student.cs_ an.
+Ein Student ist eine Person mit Geburtsdatum.
+
+.Student.cs
+[source,csharp]
+----
+using System;
+
+namespace ReferenceTypesDemo.Application;
+
+public class Student : Person              // Java: Student extends Person
+{
+    public DateTime DateOfBirth;
+
+    // : base(...) calls the constructor of Person, like super(...) in Java.
+    public Student(string firstName, string lastName, DateTime dateOfBirth)
+        : base(firstName, lastName)
+    {
+        DateOfBirth = dateOfBirth;
+    }
+}
+----
+
+Eine Referenzvariable hat einen Typ (_statischer Typ_).
+Das Objekt am Heap hat ebenfalls einen Typ (_Laufzeittyp_).
+Die beiden Typen müssen nicht gleich sein.
+
+[source,csharp]
+----
+Person p = new Person("Max", "Mustermann");
+Student student = new Student("Max", "Muster", new DateTime(2008, 12, 31));
+Person p3 = student;                                  // (1)
+p3.DateOfBirth = new DateTime(2009, 1, 1);            // (2) error CS1061
+Console.WriteLine(((Student)p3).DateOfBirth);         // (3)
+Console.WriteLine(((Student)p).DateOfBirth);          // (4) Exception
+----
+
+image::{root_dir}/static_vs_runtime_type.svg[Statischer Typ der Variable und Laufzeittyp des Objektes]
+
+* *(1)* Ein Student _ist eine_ Person (_is-a_ Beziehung).
+Die Zuweisung an eine Variable vom Typ _Person_ ist daher ohne Cast möglich.
+* *(2)* Der Compiler sieht nur den Typ der Variable.
+Eine _Person_ hat kein _DateOfBirth_, daher gibt es einen Compilerfehler.
+* *(3)* Mit dem Cast sagst du: Hinter `p3` steckt ein Student.
+Das stimmt, daher wird der 31.12.2008 ausgegeben.
+Das Objekt hat sich durch die Zuweisung an `p3` nicht verändert.
+* *(4)* Hinter `p` steckt nur eine Person.
+Der Compiler kann das nicht prüfen, erst zur Laufzeit gibt es eine _InvalidCastException_.
+
+=== Sicher casten mit is und as
+
+Ein Cast wie in (4) bringt das Programm zum Absturz.
+Mit `is` und `as` prüfst du vorher, ob der Cast möglich ist.
+
+[source,csharp]
+----
+if (p3 is Student) { Console.WriteLine("p3 is a student."); }   // (1)
+Student? s2 = p as Student;                                      // (2)
+if (p3 is Student s3)                                            // (3)
+{
+    Console.WriteLine(s3.DateOfBirth);
+}
+----
+
+* *(1)* `is` prüft, ob das Objekt in den Typ umgewandelt werden kann.
+* *(2)* `as` versucht den Cast.
+Ist er nicht möglich, liefert `as` den Wert `null`.
+Die Variable muss daher den Typ `Student?` haben.
+Hier ist `s2` null, denn `p` ist nur eine Person.
+* *(3)* Seit C# 7 kannst du prüfen und casten in einem Schritt (_type pattern_).
+Ist `p3` ein Student, ist `s3` die Referenz mit dem Typ _Student_.
+Diese Form findest du in aktuellem C# Code am häufigsten.
+
+== Gleichheit: == und Equals
+
+Sind zwei Personen mit demselben Namen gleich?
+
+[source,csharp]
+----
+Person max1 = new Person("Max", "Muster");
+Person max2 = new Person("Max", "Muster");
+Person max3 = max1;
+Console.WriteLine(max1 == max2);           // False: two different objects
+Console.WriteLine(max1 == max3);           // True: the same object
+----
+
+Bei eigenen Klassen vergleicht `==` die Referenzen, nicht den Inhalt.
+Bei `string` vergleicht `==` dagegen den Inhalt, denn die Klasse _String_ überlädt den Operator.
+In Java brauchst du dafür `equals()`, in C# funktionieren beide Varianten.
+
+[source,csharp]
+----
+string str1 = "MAX";
+string str2 = "max".ToUpper();                        // A new object
+
+Console.WriteLine(str1 == str2);                       // True: same content
+Console.WriteLine(str1.Equals(str2));                  // True: same content
+Console.WriteLine(object.ReferenceEquals(str1, str2)); // False: 2 objects
+----
+
+Mit `object.ReferenceEquals()` prüfst du immer, ob zwei Variablen auf dasselbe Objekt zeigen.
+Wie du für eigene Klassen festlegst, wann zwei Objekte gleich sind, lernst du im Kapitel _Equality_.
+
+== Für Profis: Typprüfung mit switch
+
+Ein Serializer wandelt Objekte in Text um, z. B. in JSON.
+Er bekommt Werte beliebiger Typen und muss je nach Typ anders reagieren.
+Die _switch expression_ prüft den Typ und castet in einem Schritt.
+
+[source,csharp]
+----
+using System;
+using System.Globalization;
+
+Console.WriteLine(Format(true));     // 1
+Console.WriteLine(Format(12));       // 12
+Console.WriteLine(Format(3.123));    // 3.12
+Console.WriteLine(Format(3.123m));   // Unknown type
+
+// T is a type parameter (generics), inferred from the argument.
+static string Format<T>(T value) => value switch
+{
+    bool b => b ? "1" : "0",
+    int i => i.ToString(),
+    long l => l.ToString(),
+    float or double =>
+        string.Format(CultureInfo.InvariantCulture, "{0:0.00}", value),
+    null => "null",
+    _ => "Unknown type"
+};
+----
+
+Die Zweige werden von oben nach unten geprüft.
+Der erste passende Zweig liefert das Ergebnis.
+Der Unterstrich `+_+` (_discard_) passt auf jeden Wert.
+
+// tag::pdf_exclude[]
+== Übungen
+
+Erstelle wie oben beschrieben das Projekt _ReferenceTypesDemo_ mit den Dateien _Person.cs_ und _Student.cs_.
+
+=== Ausgabe vorhersagen
+
+Ersetze den Inhalt der Datei _Program.cs_ durch den folgenden Code.
+Starte das Programm noch nicht.
+Schreibe zuerst für jede Zeile auf, was du als Ausgabe erwartest.
+Starte dann das Programm und vergleiche.
+Erkläre jede Abweichung mit einer Skizze von Stack und Heap.
+
+.Program.cs
+[source,csharp]
+----
+using System;
+using ReferenceTypesDemo.Application;
+
+Person a = new Person("Anna", "Berger");
+Person b = a;
+Person c = new Person("Anna", "Berger");
+b.FirstName = "Eva";
+Console.WriteLine(a.FirstName);
+Console.WriteLine(a == b);
+Console.WriteLine(a == c);
+
+Rename(c);
+Console.WriteLine(c.FirstName);
+
+Replace(c);
+Console.WriteLine(c.FirstName);
+
+Person d = new Student("Tom", "Huber", new DateTime(2009, 5, 1));
+Console.WriteLine(d is Student);
+Console.WriteLine(d as Student is null);
+Console.WriteLine(a as Student is null);
+
+static void Rename(Person person) => person.FirstName = "Lena";
+
+static void Replace(Person person)
+{
+    person = new Person("Paul", "Gruber");
+    person.FirstName = "Max";
+}
+----
+
+=== Methoden mit nullable Parametern
+
+Lege im Projekt die Datei _ReferenceExercise.cs_ mit dem folgenden Inhalt an.
+Implementiere die Methoden so, dass die Ausgabe deines Programmes der Ausgabe weiter unten entspricht.
+Ersetze dafür jedes `throw new NotImplementedException();` durch deinen Code.
+Die Beschreibung jeder Methode steht im Kommentar darüber.
+Verwende die Operatoren `?.`, `??` und `is`.
+Der Compiler darf keine Warnung melden, verwende daher nicht den Operator `!`.
+
+.ReferenceExercise.cs
+[source,csharp]
+----
+using System;
+
+namespace ReferenceTypesDemo.Application;
+
+public class ReferenceExercise
+{
+    /// <summary>
+    /// Returns the length of the full name (firstName + lastName, without a space).
+    /// A part that is null counts as length 0.
+    /// </summary>
+    public int GetNameLength(string? firstName, string? lastName)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Returns the last name in upper case, e.g. "MUSTER".
+    /// Returns null if person is null.
+    /// </summary>
+    public string? GetUpperLastName(Person? person)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Returns "LastName FirstName", e.g. "Muster Max".
+    /// Returns "(unknown)" if person is null.
+    /// </summary>
+    public string GetDisplayName(Person? person)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Returns the date of birth if person is a Student.
+    /// Returns null if person is null or not a Student.
+    /// </summary>
+    public DateTime? GetDateOfBirth(Person? person)
+    {
+        throw new NotImplementedException();
+    }
+}
+----
+
+Ersetze den Inhalt der Datei _Program.cs_ durch den folgenden Code.
+
+.Program.cs
+[source,csharp]
+----
+using System;
+using ReferenceTypesDemo.Application;
+
+ReferenceExercise exercise = new ReferenceExercise();
+Person person = new Person("Max", "Muster");
+Person student = new Student("Eva", "Berger", new DateTime(2008, 12, 31));
+
+Console.WriteLine("GetNameLength(null, \"Muster\"):  " + exercise.GetNameLength(null, "Muster"));
+Console.WriteLine("GetNameLength(\"Max\", null):     " + exercise.GetNameLength("Max", null));
+Console.WriteLine("GetNameLength(null, null):      " + exercise.GetNameLength(null, null));
+
+Console.WriteLine("GetUpperLastName(person):       " + exercise.GetUpperLastName(person));
+Console.WriteLine("GetUpperLastName(null):         " + exercise.GetUpperLastName(null));
+
+Console.WriteLine("GetDisplayName(person):         " + exercise.GetDisplayName(person));
+Console.WriteLine("GetDisplayName(null):           " + exercise.GetDisplayName(null));
+
+Console.WriteLine("GetDateOfBirth(student):        " + exercise.GetDateOfBirth(student)?.ToString("yyyy-MM-dd"));
+Console.WriteLine("GetDateOfBirth(person):         " + exercise.GetDateOfBirth(person)?.ToString("yyyy-MM-dd"));
+Console.WriteLine("GetDateOfBirth(null):           " + exercise.GetDateOfBirth(null)?.ToString("yyyy-MM-dd"));
+----
+
+Dein Programm muss diese Ausgabe liefern:
+
+[source,text]
+----
+GetNameLength(null, "Muster"):  6
+GetNameLength("Max", null):     3
+GetNameLength(null, null):      0
+GetUpperLastName(person):       MUSTER
+GetUpperLastName(null):
+GetDisplayName(person):         Muster Max
+GetDisplayName(null):           (unknown)
+GetDateOfBirth(student):        2008-12-31
+GetDateOfBirth(person):
+GetDateOfBirth(null):
+----
+
+// end::pdf_exclude[]

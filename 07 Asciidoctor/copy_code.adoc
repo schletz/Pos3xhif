@@ -1,0 +1,78 @@
+= copy_code: Quelltext für die KI kopieren
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Bei Prompts sollte der gesamte Quelltext im context window sein, damit die KI vernünftige Antworten geben kann.
+Dieses Skript liest alle Quellcodedateien aus einem bestimmten Ordner inklusive Unterordner und gibt ihn auf der Standardausgabe (stdout) aus.
+
+*Downloadlink: link:copy_code.cs[copy_code.cs]*
+
+== Kompilieren
+
+Dieses Skript ist eine link:https://learn.microsoft.com/en-us/dotnet/core/sdk/file-based-apps[.NET 10 file-based app].
+Prüfe daher mit `dotnet --list-sdks`, ob du die .NET 10 SDK installiert hast.
+
+Lade die Datei link:copy_code.cs[copy_code.cs] herunter und gehe in der Konsole in diesen Ordner.
+Mit `dotnet publish copy_code.cs` kompilierst du das Skript und erstellst eine _exe_ Datei.
+Sie wird in _artifacts/copy_code_ abgelegt.
+Kopiere die Datei aus diesem Ordner z. B. nach _C:\scripts_ bzw. /User/(username)/scripts.
+Unter _macOS_ musst du mit _chmod a+x copy_code_ das Ausführungsrecht setzen.
+
+[TIP]
+====
+Füge den Ordner _C:\scripts_ bzw. /User/(username)/scripts zur _PATH_ Variable hinzu.
+Eine Anleitung für Windows ist auf https://www.simplified.guide/microsoft-windows/path-add zu finden.
+Beachte, dass in einer deutschen Windows Installation der Begriff _environment variables_ mit _Umgebungsvariablen_ übersetzt wird.
+====
+
+== Erzeugen einer "echten" exe Datei (optional)
+
+Wenn du *alle 3 property Optionen* in den ersten Zeilen durch
+
+[source,csharp]
+----
+#:property PublishAot=true
+----
+
+ersetzt, wird _dotnet publish_ eine "echte" exe Datei erstellen.
+Echt bedeutet, dass sie aus Maschinencode besteht, den z. B. auch kompilierte C Programme produzieren.
+Du brauchst unter Windows den Workload _Desktop development with C++_ in Visual Studio.
+Unter _macOS_ brauchst du _Command Line Tools for XCode_.
+
+Weitere Infos: link:https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot[Native AOT deployment]
+
+== Ausführen des Skripts
+
+Gehe nun in der Konsole einen Ordner über den Ordner, den du kopieren möchtest.
+Es gibt 2 Möglichkeiten, das Skript aufzurufen:
+
+* `copy_code MyDirectory > code.txt` schreibt alle Codefiles des Verzeichnisses _MyDirectory_ in _code.txt_.
+* `copy_code MyDirectory "cs|csproj" > code.txt` kopiert alle cs oder csproj Dateien des Verzeichnisses _MyDirectory_ in _code.txt_
+
+Der Filterausdruck ist ein regulärer Ausdruck und filtert nach der Erweiterung.
+Du kannst daher auch komplexere Ausdrücke verwenden.
+Gib sie immer unter Anführungszeichen.
+
+Nun kannst du die Datei _code.txt_ öffnen und für deinen Prompt kopieren.
+
+== Anpassen des Skripts
+
+Im Skript sind die Dateitypen, die beim Lesen des Verzeichnisses berücksichtigt werden, eingetragen.
+Du kannst sie im Quelltext anpassen.
+Standardmäßig werden die Verzeichnisse _bin_, _obj_, _node_modules_ ausgeschlossen.
+Es werden die folgenden Dateitypen berücksichtigt:
+_cs_, _csproj_, _java_, _rb_, _json_, _js_, _ts_, _jsx_, _tsx_, _py_, _txt_, _xml_, _adoc_, _md_, _cmd_, _sh_, _sql_, _yaml_, _puml_, _docx_.
+
+_docx_ Dateien werden mit der integrierten Methode _ReadWordXml_ gelesen.
+Es wird der Text ausgelesen und ausgegeben.
+Du kannst in _documentProcessors_ weitere Processors für andere Formate implementieren und einfügen.

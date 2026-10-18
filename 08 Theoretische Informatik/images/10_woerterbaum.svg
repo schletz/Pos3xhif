@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="840" height="350" viewBox="0 0 840 350">
+<rect x="0.5" y="0.5" width="839" height="349" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1f2937"/></marker></defs>
+<rect x="20" y="28" width="120" height="44" rx="6" fill="#f3f4f6" stroke="#d1d5db"/>
+<text x="36" y="56" font-family="Consolas, Menlo, monospace" font-size="18" fill="#1f2937" text-anchor="start" font-weight="bold">Σ⁰</text>
+<text x="72" y="55" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#6b7280" text-anchor="start" font-weight="normal">1 Wort</text>
+<rect x="20" y="108" width="120" height="44" rx="6" fill="#f3f4f6" stroke="#d1d5db"/>
+<text x="36" y="136" font-family="Consolas, Menlo, monospace" font-size="18" fill="#1f2937" text-anchor="start" font-weight="bold">Σ¹</text>
+<text x="72" y="135" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#6b7280" text-anchor="start" font-weight="normal">2 Wörter</text>
+<rect x="20" y="188" width="120" height="44" rx="6" fill="#f3f4f6" stroke="#d1d5db"/>
+<text x="36" y="216" font-family="Consolas, Menlo, monospace" font-size="18" fill="#1f2937" text-anchor="start" font-weight="bold">Σ²</text>
+<text x="72" y="215" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#6b7280" text-anchor="start" font-weight="normal">4 Wörter</text>
+<rect x="20" y="268" width="120" height="44" rx="6" fill="#f3f4f6" stroke="#d1d5db"/>
+<text x="36" y="296" font-family="Consolas, Menlo, monospace" font-size="18" fill="#1f2937" text-anchor="start" font-weight="bold">Σ³</text>
+<text x="72" y="295" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#6b7280" text-anchor="start" font-weight="normal">8 Wörter</text>
+<line x1="246.0" y1="229.6" x2="225.0" y2="270.4" stroke="#1f2937" stroke-width="1.5"/>
+<text x="223.9" y="249.1" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">+a</text>
+<line x1="266.0" y1="229.6" x2="287.0" y2="270.4" stroke="#1f2937" stroke-width="1.5"/>
+<text x="288.1" y="249.1" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">+b</text>
+<line x1="410.0" y1="229.6" x2="389.0" y2="270.4" stroke="#1f2937" stroke-width="1.5"/>
+<text x="387.9" y="249.1" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">+a</text>
+<line x1="430.0" y1="229.6" x2="451.0" y2="270.4" stroke="#1f2937" stroke-width="1.5"/>
+<text x="452.1" y="249.1" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">+b</text>
+<line x1="574.0" y1="229.6" x2="553.0" y2="270.4" stroke="#1f2937" stroke-width="1.5"/>
+<text x="551.9" y="249.1" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">+a</text>
+<line x1="594.0" y1="229.6" x2="615.0" y2="270.4" stroke="#1f2937" stroke-width="1.5"/>
+<text x="616.1" y="249.1" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">+b</text>
+<line x1="738.0" y1="229.6" x2="717.0" y2="270.4" stroke="#1f2937" stroke-width="1.5"/>
+<text x="715.9" y="249.1" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">+a</text>
+<line x1="758.0" y1="229.6" x2="779.0" y2="270.4" stroke="#1f2937" stroke-width="1.5"/>
+<text x="780.1" y="249.1" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">+b</text>
+<line x1="322.3" y1="145.4" x2="271.7" y2="194.6" stroke="#1f2937" stroke-width="1.5"/>
+<text x="287.9" y="165.7" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">+a</text>
+<line x1="353.7" y1="145.4" x2="404.3" y2="194.6" stroke="#1f2937" stroke-width="1.5"/>
+<text x="388.1" y="165.7" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">+b</text>
+<line x1="650.3" y1="145.4" x2="599.7" y2="194.6" stroke="#1f2937" stroke-width="1.5"/>
+<text x="615.9" y="165.7" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">+a</text>
+<line x1="681.7" y1="145.4" x2="732.3" y2="194.6" stroke="#1f2937" stroke-width="1.5"/>
+<text x="716.1" y="165.7" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">+b</text>
+<line x1="482.2" y1="59.6" x2="357.8" y2="120.4" stroke="#1f2937" stroke-width="1.5"/>
+<text x="414.3" y="83.3" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">+a</text>
+<line x1="521.8" y1="59.6" x2="646.2" y2="120.4" stroke="#1f2937" stroke-width="1.5"/>
+<text x="589.7" y="83.3" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">+b</text>
+<circle cx="215" cy="290" r="22" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="215" y="295" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle" font-weight="normal">aaa</text>
+<circle cx="297" cy="290" r="22" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="297" y="295" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle" font-weight="normal">aab</text>
+<circle cx="379" cy="290" r="22" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="379" y="295" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle" font-weight="normal">aba</text>
+<circle cx="461" cy="290" r="22" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="461" y="295" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle" font-weight="normal">abb</text>
+<circle cx="543" cy="290" r="22" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="543" y="295" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle" font-weight="normal">baa</text>
+<circle cx="625" cy="290" r="22" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="625" y="295" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle" font-weight="normal">bab</text>
+<circle cx="707" cy="290" r="22" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="707" y="295" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle" font-weight="normal">bba</text>
+<circle cx="789" cy="290" r="22" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="789" y="295" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle" font-weight="normal">bbb</text>
+<circle cx="256.0" cy="210" r="22" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="256.0" y="215" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle" font-weight="normal">aa</text>
+<circle cx="420.0" cy="210" r="22" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="420.0" y="215" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle" font-weight="normal">ab</text>
+<circle cx="584.0" cy="210" r="22" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="584.0" y="215" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle" font-weight="normal">ba</text>
+<circle cx="748.0" cy="210" r="22" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="748.0" y="215" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle" font-weight="normal">bb</text>
+<circle cx="338.0" cy="130" r="22" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="338.0" y="135" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle" font-weight="normal">a</text>
+<circle cx="666.0" cy="130" r="22" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="666.0" y="135" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle" font-weight="normal">b</text>
+<circle cx="502.0" cy="50" r="22" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="502.0" y="55" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle" font-weight="normal">ε</text>
+</svg>

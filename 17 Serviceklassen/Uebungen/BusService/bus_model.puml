@@ -1,0 +1,90 @@
+@startuml
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 15
+skinparam ArrowThickness 1.5
+skinparam class {
+  BackgroundColor #ffffff
+  HeaderBackgroundColor #ededed
+  BorderColor #1d1d1b
+  BorderThickness 1.5
+  FontStyle bold
+}
+skinparam stereotypeCBackgroundColor #d1ebf7
+skinparam stereotypeABackgroundColor #fdebd1
+skinparam stereotypeIBackgroundColor #e5f4f1
+skinparam stereotypeEBackgroundColor #e5f1d9
+hide empty methods
+
+class Line {
+  + Id : int
+  + Number : string
+  + Name : string
+  + LineStops : List<LineStop>
+  + Trips : List<Trip>
+}
+class Stop {
+  + Id : int
+  + Name : string
+  + Municipality : string
+  + LineStops : List<LineStop>
+}
+class LineStop {
+  + Id : int
+  + Line : Line
+  + Stop : Stop
+  + Position : int
+  + MinutesFromStart : int
+}
+class Vehicle {
+  + Id : int
+  + LicensePlate : string
+  + Model : string
+  + Seats : int
+  + IsAutonomous : bool
+  + CommissionedOn : DateOnly
+  + Trips : List<Trip>
+}
+class SafetyOperator {
+  + Id : int
+  + FirstName : string
+  + LastName : string
+  + CertifiedUntil : DateOnly
+  + Trips : List<Trip>
+}
+class Trip {
+  + Id : int
+  + Line : Line
+  + Vehicle : Vehicle
+  + SafetyOperator : SafetyOperator?
+  + PlannedDeparture : DateTime
+  + ActualDeparture : DateTime?
+  + IsCancelled : bool
+  + PassengerCount : int?
+  + Interventions : List<Intervention>
+}
+class Intervention {
+  + Id : int
+  + Trip : Trip
+  + Stop : Stop?
+  + Time : DateTime
+  + Reason : InterventionReason
+  + DurationSeconds : int
+}
+enum InterventionReason {
+  Obstacle
+  Weather
+  SensorFailure
+  Passenger
+  Traffic
+}
+
+Line "1" -- "*" LineStop
+Stop "1" -- "*" LineStop
+Line "1" -- "*" Trip
+Vehicle "1" -- "*" Trip
+SafetyOperator "0..1" -- "*" Trip
+Trip "1" -- "*" Intervention
+Stop "0..1" -- "*" Intervention
+Intervention ..> InterventionReason
+@enduml

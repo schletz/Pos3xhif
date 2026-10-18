@@ -1,0 +1,4 @@
+#!/bin/sh
+# Packs every changed exercise in <chapter>/Uebungen into <exercise>.7z and stages the archive.
+# Activate once per clone with: git config core.hooksPath .githooks
+exec python .githooks/build_exercise_archives.py

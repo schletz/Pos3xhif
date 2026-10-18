@@ -1,0 +1,28 @@
+@startuml
+skinparam defaultFontName monospaced
+skinparam rectangleBorderColor #555555
+skinparam ArrowColor #555555
+skinparam shadowing false
+
+rectangle "**override**\nTyp des //Objekts// entscheidet (Laufzeit)" as Override #F4FAF4 {
+    rectangle "class Teacher : Person\n{\n    public **override** string GetEmail() => ...\n}" as OCode #FFFFFF
+    rectangle "Person p = teacher;\np.GetEmail();" as OCall #FFFFFF
+    rectangle "**Teacher**.GetEmail()" as OMethod #C8E6C9
+    rectangle "testlehrerin@**teachers**.spengergasse.at" as OResult #FFFFFF
+    OCode -[hidden]down- OCall
+    OCall -down-> OMethod : ruft auf
+    OMethod -down-> OResult : liefert
+}
+
+rectangle "**new**\nTyp der //Variable// entscheidet (Compilezeit)" as New #FDF3F3 {
+    rectangle "class Teacher : Person\n{\n    public **new** string GetEmail() => ...\n}" as NCode #FFFFFF
+    rectangle "Person p = teacher;\np.GetEmail();" as NCall #FFFFFF
+    rectangle "**Person**.GetEmail()" as NMethod #FFCDD2
+    rectangle "testlehrerin@spengergasse.at" as NResult #FFFFFF
+    NCode -[hidden]down- NCall
+    NCall -down-> NMethod : ruft auf
+    NMethod -down-> NResult : liefert
+}
+
+Override -[hidden]right- New
+@enduml

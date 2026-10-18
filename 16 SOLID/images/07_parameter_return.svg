@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="520" viewBox="0 0 1000 520">
+  <defs><marker id="dep" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,1 L11,6 L1,11" fill="none" stroke="#1d1d1b" stroke-width="1.5"/></marker><marker id="tri" viewBox="0 0 16 16" refX="15" refY="8" markerWidth="16" markerHeight="16" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,1 L15,8 L1,15 Z" fill="#ffffff" stroke="#1d1d1b" stroke-width="1.5"/></marker></defs>
+  <rect x="0.5" y="0.5" width="999" height="519" rx="8" fill="#ffffff" stroke="#9d9d9c"/>
+  <text x="500" y="38" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="21" font-weight="bold" fill="#1d1d1b" text-anchor="middle">Parameter so klein wie möglich, Rückgabe so eng wie nötig</text>
+  <text x="30" y="80" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#00628f" text-anchor="start">Parameter: Was kann der Aufrufer übergeben?</text>
+  <rect x="205" y="95" width="172" height="52" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+  <text x="291.0" y="116" font-family="Consolas, Menlo, monospace" font-size="12" font-weight="bold" fill="#1d1d1b" text-anchor="middle">Total(</text>
+  <text x="291.0" y="136" font-family="Consolas, Menlo, monospace" font-size="12" font-weight="bold" fill="#1d1d1b" text-anchor="middle">List&lt;OrderItem&gt;)</text>
+  <rect x="385" y="95" width="172" height="52" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+  <text x="471.0" y="116" font-family="Consolas, Menlo, monospace" font-size="12" font-weight="bold" fill="#1d1d1b" text-anchor="middle">Total(</text>
+  <text x="471.0" y="136" font-family="Consolas, Menlo, monospace" font-size="12" font-weight="bold" fill="#1d1d1b" text-anchor="middle">IEnumerable&lt;OrderItem&gt;)</text>
+  <text x="195" y="184" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="end">List&lt;OrderItem&gt;</text>
+  <rect x="205" y="158" width="172" height="40" rx="6" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+  <text x="291.0" y="184" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#4a7a1c" text-anchor="middle">✓ passt</text>
+  <rect x="385" y="158" width="172" height="40" rx="6" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+  <text x="471.0" y="184" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#4a7a1c" text-anchor="middle">✓ passt</text>
+  <text x="195" y="232" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="end">OrderItem[]</text>
+  <rect x="205" y="206" width="172" height="40" rx="6" fill="#f6d3db" stroke="#cc0935" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="291.0" y="232" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#a8072c" text-anchor="middle">✗ CS1503</text>
+  <rect x="385" y="206" width="172" height="40" rx="6" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+  <text x="471.0" y="232" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#4a7a1c" text-anchor="middle">✓ passt</text>
+  <text x="195" y="280" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="end">IReadOnlyList&lt;…&gt;</text>
+  <rect x="205" y="254" width="172" height="40" rx="6" fill="#f6d3db" stroke="#cc0935" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="291.0" y="280" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#a8072c" text-anchor="middle">✗ CS1503</text>
+  <rect x="385" y="254" width="172" height="40" rx="6" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+  <text x="471.0" y="280" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#4a7a1c" text-anchor="middle">✓ passt</text>
+  <text x="195" y="328" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="end">HashSet&lt;OrderItem&gt;</text>
+  <rect x="205" y="302" width="172" height="40" rx="6" fill="#f6d3db" stroke="#cc0935" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="291.0" y="328" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#a8072c" text-anchor="middle">✗ CS1503</text>
+  <rect x="385" y="302" width="172" height="40" rx="6" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+  <text x="471.0" y="328" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#4a7a1c" text-anchor="middle">✓ passt</text>
+  <text x="195" y="376" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="end">LINQ-Abfrage</text>
+  <rect x="205" y="350" width="172" height="40" rx="6" fill="#f6d3db" stroke="#cc0935" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="291.0" y="376" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#a8072c" text-anchor="middle">✗ CS1503</text>
+  <rect x="385" y="350" width="172" height="40" rx="6" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+  <text x="471.0" y="376" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#4a7a1c" text-anchor="middle">✓ passt</text>
+  <text x="30" y="420" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">Total() braucht nur foreach. Mit IEnumerable&lt;T&gt; passt</text>
+  <text x="30" y="440" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">jede Collection, ohne Kopie durch ToList().</text>
+  <polyline points="575,70 575,490" fill="none" stroke="#9d9d9c" stroke-width="1.2" stroke-dasharray="4 4"/>
+  <text x="595" y="80" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#a35f00" text-anchor="start">Rückgabe: Was darf der Aufrufer damit tun?</text>
+  <rect x="595" y="95" width="385" height="114" rx="8" fill="#ffffff" stroke="#f39000" stroke-width="1.8"/>
+  <path d="M603,95 H972 Q980,95 980,103 V127 H595 V103 Q595,95 603,95 Z" fill="#fdebd1" stroke="none"/>
+  <rect x="595" y="95" width="385" height="114" rx="8" fill="none" stroke="#f39000" stroke-width="1.8"/>
+  <polyline points="595,127 980,127" fill="none" stroke="#f39000" stroke-width="1.2"/>
+  <text x="787.5" y="116" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1d1d1b" text-anchor="middle">Order</text>
+  <text x="607" y="151" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">- _items: List&lt;OrderItem&gt;</text>
+  <text x="607" y="175" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="bold" fill="#1d1d1b" text-anchor="start">+ Items: IReadOnlyList&lt;OrderItem&gt;</text>
+  <text x="607" y="199" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">+ AddItem(item)   prüft Regeln</text>
+  <text x="605" y="256" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">order.Items[0]</text>
+  <rect x="810" y="230" width="170" height="40" rx="6" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+  <text x="895" y="256" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#4a7a1c" text-anchor="middle">✓ lesen erlaubt</text>
+  <text x="605" y="304" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">order.Items.Count</text>
+  <rect x="810" y="278" width="170" height="40" rx="6" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+  <text x="895" y="304" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#4a7a1c" text-anchor="middle">✓ lesen erlaubt</text>
+  <text x="605" y="352" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">order.Items.Add(item)</text>
+  <rect x="810" y="326" width="170" height="40" rx="6" fill="#ededed" stroke="#9d9d9c" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="895" y="352" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#5f5f5e" text-anchor="middle">✗ Compilerfehler</text>
+  <text x="595" y="396" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">Gut so: Neue Positionen kommen nur über AddItem().</text>
+  <text x="595" y="416" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">Wäre Items eine List&lt;OrderItem&gt;, könnte jeder die</text>
+  <text x="595" y="436" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">Bestellung ohne Prüfung ändern.</text>
+</svg>

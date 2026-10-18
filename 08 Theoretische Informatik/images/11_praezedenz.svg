@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+<rect x="0.5" y="0.5" width="639" height="359" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+<text x="30" y="32" text-anchor="start" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1f2937">Eindeutiger Baum für id + id * id</text>
+<line x1="175.0" y1="97.0" x2="70.0" y2="125.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="70.0" y1="159.0" x2="70.0" y2="187.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="70.0" y1="221.0" x2="70.0" y2="249.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="70.0" y1="283.0" x2="70.0" y2="315.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="175.0" y1="97.0" x2="140.0" y2="315.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="175.0" y1="97.0" x2="280.0" y2="125.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="280.0" y1="159.0" x2="210.0" y2="187.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="210.0" y1="221.0" x2="210.0" y2="249.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="210.0" y1="283.0" x2="210.0" y2="315.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="280.0" y1="159.0" x2="280.0" y2="315.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="280.0" y1="159.0" x2="350.0" y2="187.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="350.0" y1="221.0" x2="350.0" y2="315.0" stroke="#1f2937" stroke-width="1.2"/>
+<circle cx="175.0" cy="80.0" r="17" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="175.0" y="85.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1f2937">E</text>
+<circle cx="70.0" cy="142.0" r="17" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="70.0" y="147.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1f2937">E</text>
+<circle cx="70.0" cy="204.0" r="17" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="70.0" y="209.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1f2937">T</text>
+<circle cx="70.0" cy="266.0" r="17" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="70.0" y="271.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1f2937">F</text>
+<rect x="54.0" y="315.0" width="32" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+<text x="70.0" y="333.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937">id</text>
+<rect x="128.5" y="315.0" width="23" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+<text x="140.0" y="333.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937">+</text>
+<circle cx="280.0" cy="142.0" r="17" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+<text x="280.0" y="147.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1f2937">T</text>
+<circle cx="210.0" cy="204.0" r="17" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="210.0" y="209.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1f2937">T</text>
+<circle cx="210.0" cy="266.0" r="17" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="210.0" y="271.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1f2937">F</text>
+<rect x="194.0" y="315.0" width="32" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+<text x="210.0" y="333.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937">id</text>
+<rect x="268.5" y="315.0" width="23" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+<text x="280.0" y="333.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937">*</text>
+<circle cx="350.0" cy="204.0" r="17" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="350.0" y="209.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1f2937">F</text>
+<rect x="334.0" y="315.0" width="32" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+<text x="350.0" y="333.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937">id</text>
+<text x="420" y="90" text-anchor="start" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">E → E + T | T</text>
+<text x="420" y="115" text-anchor="start" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">T → T * F | F</text>
+<text x="420" y="140" text-anchor="start" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">F → ( E ) | id</text>
+<text x="420" y="185" text-anchor="start" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937">+ hängt an E (oben),</text>
+<text x="420" y="205" text-anchor="start" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937">* hängt an T (tiefer).</text>
+<circle cx="428" cy="236" r="9" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+<text x="444" y="241" text-anchor="start" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937">T → T * F wird zuerst</text>
+<text x="444" y="261" text-anchor="start" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937">ausgewertet: 3 · 4 = 12,</text>
+<text x="444" y="281" text-anchor="start" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#16a34a">dann 2 + 12 = 14</text>
+</svg>

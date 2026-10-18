@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="450" viewBox="0 0 860 450">
+  <rect x="0.5" y="0.5" width="859" height="449" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <line x1="350" y1="20" x2="350" y2="370" stroke="#d1d5db" stroke-width="1.5"/>
+
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600" fill="#1f2937">
+    <text x="24" y="34">Netzplan: eine Station</text>
+    <text x="374" y="34">Graph: ein Knoten pro Station und Linie</text>
+  </g>
+
+  <!-- Left: Karlsplatz as one station with three lines -->
+  <g stroke="#1f2937" stroke-width="2">
+    <line x1="175" y1="205" x2="175" y2="90"/>
+    <line x1="175" y1="205" x2="175" y2="320"/>
+    <line x1="175" y1="205" x2="70" y2="205"/>
+    <line x1="175" y1="205" x2="290" y2="205"/>
+    <line x1="175" y1="205" x2="75" y2="290"/>
+  </g>
+  <g fill="#ffffff">
+    <rect x="164" y="141" width="22" height="18"/>
+    <rect x="164" y="262" width="22" height="18"/>
+    <rect x="88" y="196" width="22" height="18"/>
+    <rect x="245" y="196" width="22" height="18"/>
+    <rect x="102" y="254" width="22" height="18"/>
+  </g>
+  <g font-family="Consolas, Menlo, monospace" font-size="13" fill="#1f2937" text-anchor="middle">
+    <text x="175" y="155">U1</text>
+    <text x="175" y="276">U1</text>
+    <text x="99" y="210">U2</text>
+    <text x="256" y="210">U4</text>
+    <text x="113" y="268">U4</text>
+  </g>
+  <rect x="127" y="188" width="96" height="34" rx="6" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+  <text x="175" y="210" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="middle">Karlsplatz</text>
+  <g fill="#dbeafe" stroke="#2563eb" stroke-width="2">
+    <circle cx="175" cy="90" r="8"/>
+    <circle cx="175" cy="320" r="8"/>
+    <circle cx="70" cy="205" r="8"/>
+    <circle cx="290" cy="205" r="8"/>
+    <circle cx="75" cy="290" r="8"/>
+  </g>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">
+    <text x="175" y="72">Stephansplatz</text>
+    <text x="175" y="346">Taubstummengasse</text>
+    <text x="70" y="187">Museumsquartier</text>
+    <text x="290" y="187">Stadtpark</text>
+    <text x="75" y="316">Kettenbrückengasse</text>
+  </g>
+
+  <!-- Right: one node per line, transfer edges between them -->
+  <g stroke="#ea580c" stroke-width="2" stroke-dasharray="6 4">
+    <line x1="480" y1="210" x2="660" y2="130"/>
+    <line x1="480" y1="210" x2="660" y2="290"/>
+    <line x1="660" y1="130" x2="660" y2="290"/>
+  </g>
+  <g stroke="#1f2937" stroke-width="2">
+    <line x1="480" y1="210" x2="430" y2="95"/>
+    <line x1="480" y1="210" x2="430" y2="325"/>
+    <line x1="660" y1="130" x2="780" y2="130"/>
+    <line x1="660" y1="290" x2="790" y2="290"/>
+    <line x1="660" y1="290" x2="660" y2="370"/>
+  </g>
+  <g fill="#ffffff">
+    <rect x="562" y="161" width="16" height="18"/>
+    <rect x="562" y="241" width="16" height="18"/>
+    <rect x="652" y="201" width="16" height="18"/>
+    <rect x="445" y="143" width="16" height="18"/>
+    <rect x="445" y="259" width="16" height="18"/>
+    <rect x="737" y="121" width="16" height="18"/>
+    <rect x="746" y="281" width="16" height="18"/>
+    <rect x="652" y="329" width="16" height="18"/>
+  </g>
+  <g font-family="Consolas, Menlo, monospace" font-size="13" text-anchor="middle">
+    <g fill="#ea580c">
+      <text x="570" y="175">4</text>
+      <text x="570" y="255">4</text>
+      <text x="660" y="215">4</text>
+    </g>
+    <g fill="#1f2937">
+      <text x="453" y="157">2</text>
+      <text x="453" y="273">1</text>
+      <text x="745" y="135">2</text>
+      <text x="754" y="295">1</text>
+      <text x="660" y="343">2</text>
+    </g>
+  </g>
+  <g fill="#ffedd5" stroke="#ea580c" stroke-width="2">
+    <rect x="422" y="195" width="116" height="30" rx="6"/>
+    <rect x="602" y="115" width="116" height="30" rx="6"/>
+    <rect x="602" y="275" width="116" height="30" rx="6"/>
+  </g>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">
+    <text x="480" y="215">Karlsplatz (U1)</text>
+    <text x="660" y="135">Karlsplatz (U2)</text>
+    <text x="660" y="295">Karlsplatz (U4)</text>
+  </g>
+  <g fill="#dbeafe" stroke="#2563eb" stroke-width="2">
+    <circle cx="430" cy="95" r="8"/>
+    <circle cx="430" cy="325" r="8"/>
+    <circle cx="780" cy="130" r="8"/>
+    <circle cx="790" cy="290" r="8"/>
+    <circle cx="660" cy="370" r="8"/>
+  </g>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">
+    <text x="430" y="77">Stephansplatz (U1)</text>
+    <text x="430" y="351">Taubstummengasse (U1)</text>
+    <text x="780" y="110">Museumsquartier (U2)</text>
+    <text x="790" y="272">Stadtpark (U4)</text>
+    <text x="660" y="396">Kettenbrückengasse (U4)</text>
+  </g>
+
+  <!-- Legend -->
+  <line x1="24" y1="405" x2="64" y2="405" stroke="#1f2937" stroke-width="2"/>
+  <line x1="24" y1="429" x2="64" y2="429" stroke="#ea580c" stroke-width="2" stroke-dasharray="6 4"/>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937">
+    <text x="74" y="410">Fahrt zur Nachbarstation, Fahrzeit in Minuten</text>
+    <text x="74" y="434">Umstieg, fixe Umstiegszeit 4 Minuten</text>
+  </g>
+</svg>

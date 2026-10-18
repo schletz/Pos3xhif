@@ -1,0 +1,477 @@
+= I: Interface Segregation
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Du öffnest im Webshop die Klasse _GiftCard_.
+Sie hat sechs Methoden.
+Vier davon bestehen nur aus `throw new NotSupportedException()`.
+Und der _CheckoutService_, der nur bezahlen will, hängt trotzdem von allen sechs ab.
+Das *I* in SOLID, das _Interface Segregation Principle_ (ISP), beschreibt genau dieses Problem.
+_Segregation_ heißt Trennung.
+
+Ein Grundgedanke dieses Kapitels: Du schreibst selten ein Framework, sondern meist eine *Business App*, also eine Anwendung für die Abläufe einer Firma.
+Gut geschnittene Interfaces *benutzt* du trotzdem jeden Tag: bei `foreach`, `using`, `+List<T>.Sort()+` oder `+ILogger<T>+`.
+Du lernst hier, solche Interfaces zu lesen, richtig zu nutzen und schlechte Schnitte im Code Review zu erkennen.
+Die Grundlagen stehen im Abschnitt link:{github_url}/01%20Types/06_Interfaces.adoc#das-interface-segregation-principle[Das Interface Segregation Principle].
+Dieses Kapitel vertieft sie.
+
+[TIP]
+====
+*Zum Selbst-Erarbeiten: Interfaces nach Rollen schneiden*
+
+In der https://die-spengergasse.github.io/course-pos-csharp_basics/16%20SOLID/07_Interface_Segregation.html[interaktiven Präsentation zum Interface Segregation Principle] siehst du Schritt für Schritt, wie ein fettes Interface in Rollen zerfällt und wie die Collection-Interfaces in .NET aufeinander aufbauen.
+Danach wählst du in mehreren Runden das kleinste passende Interface für einen Parameter.
+Genau diese Entscheidung triffst du in jedem Code Review.
+====
+
+== Das Problem: ein Interface für alles
+
+Ein Agent hat für die Zahlungsarten im Webshop dieses Interface geschrieben:
+
+[source,csharp]
+----
+namespace WebshopDemo.Application;
+
+public interface IPaymentProvider
+{
+    bool Pay(decimal amount);
+    bool Refund(decimal amount);
+    string Authorize(decimal amount);            // reserves the amount, returns an id
+    bool Capture(string authorizationId);        // charges the reserved amount
+    IReadOnlyList<Transaction> GetStatement(DateOnly from, DateOnly to);
+    string ExportForAccounting(int year, int month);
+}
+----
+
+Ein Interface mit vielen Methoden für verschiedene Zwecke heißt *fettes Interface* (_fat interface_).
+Jede Zahlungsart muss alle sechs Methoden implementieren, auch wenn sie nicht passen:
+
+[source,csharp]
+----
+public class GiftCard : IPaymentProvider
+{
+    // Pay() and GetStatement() work as expected.
+
+    public bool Refund(decimal amount) =>
+        throw new NotSupportedException("A gift card cannot be refunded.");
+
+    public string Authorize(decimal amount) =>
+        throw new NotSupportedException("A gift card cannot authorize payments.");
+
+    public bool Capture(string authorizationId) =>
+        throw new NotSupportedException("A gift card cannot capture payments.");
+
+    public string ExportForAccounting(int year, int month) =>
+        throw new NotSupportedException("Gift cards are booked when they are sold.");
+}
+----
+
+Sieh dir an, wer das Interface verwendet.
+Eine Klasse, die ein Interface benutzt, heißt *Client* des Interfaces.
+
+image::{root_dir}/images/07_fat_interface.svg[Fettes Interface mit vier Clients und drei Implementierungen]
+
+Was kostet das fette Interface?
+
+[%header]
+|===
+|Wer |Problem
+|_GiftCard_, _Invoice_ |Sie implementieren Methoden, die sie nicht können. Ein Aufruf stürzt zur Laufzeit ab.
+|_CheckoutService_ |Er hängt von sechs Methoden ab und braucht eine. Ändert sich `ExportForAccounting()`, muss er neu kompiliert werden.
+|Unit Test |Ein Fake für den _CheckoutService_ braucht sechs Methoden. Fünf davon sind leer oder werfen.
+|Leserin im Code Review |Sie sieht am Konstruktor nicht, was der _CheckoutService_ wirklich braucht.
+|Neue Zahlungsart |Wer z. B. Kauf auf Raten ergänzt, muss sechs Methoden schreiben, bevor er bezahlen kann.
+|===
+
+== Das Prinzip
+
+Robert C. Martin hat das Prinzip so formuliert:
+
+____
+„Clients should not be forced to depend on methods they do not use.“
+
+Kein Client soll von Methoden abhängen müssen, die er nicht verwendet.
+____
+
+_Abhängen_ heißt hier: Der Client braucht den Typ, um zu kompilieren (siehe link:{github_url}/01%20Types/06_Interfaces.adoc#was-sind-dependencies-abh%C3%A4ngigkeiten[Was sind Dependencies?]).
+Martin entdeckte das Problem in den 1990er Jahren bei Xerox.
+Dort hatte eine einzige Klasse für Druckaufträge Methoden für alle Aufgaben.
+Jede kleine Änderung führte zu langen Builds im ganzen System.
+
+Wichtig ist die *Sicht des Clients*.
+Du fragst nicht: „Was kann eine Kreditkarte alles?“
+Du fragst: „Was braucht der _CheckoutService_?“
+Ein Interface, das genau die Bedürfnisse einer Gruppe von Clients beschreibt, heißt *Role Interface* (Rollen-Interface).
+Das Gegenteil ist ein *Header Interface*: Es kopiert einfach alle öffentlichen Methoden einer Klasse.
+
+=== Interfaces nach Rollen schneiden
+
+Schreibe zu jedem Client auf, was er braucht.
+Jede Zeile wird eine Rolle:
+
+[%header]
+|===
+|Client |braucht |Rolle (Interface)
+|_CheckoutService_ |`Pay()` |_IPaymentProvider_
+|_ReturnService_ |`Refund()` |_IRefundable_
+|_PreOrderService_ |`Authorize()`, `Capture()` |_IAuthorizable_
+|_AccountingExporter_ |`GetStatement()` |_IStatementSource_
+|===
+
+[source,csharp]
+----
+public interface IPaymentProvider
+{
+    bool Pay(decimal amount);
+}
+
+public interface IRefundable
+{
+    bool Refund(decimal amount);
+}
+
+public interface IAuthorizable
+{
+    string Authorize(decimal amount);
+    bool Capture(string authorizationId);
+}
+
+public interface IStatementSource
+{
+    IReadOnlyList<Transaction> GetStatement(DateOnly from, DateOnly to);
+}
+----
+
+Jede Klasse implementiert nur die Rollen, die sie wirklich erfüllt:
+
+[source,csharp]
+----
+public class GiftCard : IPaymentProvider, IStatementSource { /* ... */ }
+public class CreditCard : IPaymentProvider, IRefundable, IAuthorizable, IStatementSource { /* ... */ }
+----
+
+image::{root_dir}/images/07_role_interfaces.svg[Vier Rollen-Interfaces, jeder Client sieht nur seine Rolle]
+
+Drei Beobachtungen:
+
+* *Eine Rolle kann mehrere Methoden haben.*
+`Authorize()` ohne `Capture()` ist nutzlos.
+Was ein Client immer gemeinsam braucht, bleibt in einem Interface.
+Ein Interface pro Methode ist nicht das Ziel.
+* *Beim Schneiden findest du falsche Zuständigkeiten.*
+`ExportForAccounting()` erzeugt eine Datei für die Buchhaltung.
+Das ist keine Aufgabe eines Zahlungsmittels.
+Die Methode wandert in die Klasse _AccountingExporter_.
+Sie holt sich die Daten über _IStatementSource_ (siehe link:{github_url}/16%20SOLID/03_Single_Responsibility.adoc[S: Single Responsibility]).
+* *Der Fake im Test wird winzig.*
+Für den _CheckoutService_ genügt eine Zeile:
+
+[source,csharp]
+----
+public class AlwaysPayingProvider : IPaymentProvider
+{
+    public bool Pay(decimal amount) => true;
+}
+----
+
+Braucht ein Client zwei Rollen, bekommt er zwei Parameter im Konstruktor.
+Brauchen viele Clients immer dieselben Rollen zusammen, kannst du sie kombinieren: `+interface IFullPaymentProvider : IPaymentProvider, IRefundable { }+`.
+Ein Interface darf also von mehreren Interfaces erben.
+
+=== ISP und Liskov
+
+Im Kapitel link:{github_url}/16%20SOLID/06_Liskov.adoc[L: Liskov Substitution] hast du _IRefundable_ schon abgetrennt.
+Beide Prinzipien führen oft zum selben Umbau.
+Sie schauen aber aus verschiedenen Richtungen:
+
+[%header]
+|===
+|Prinzip |Blickrichtung |Frage
+|*L* |von der Implementierung |Hält _GiftCard_ alles, was _IPaymentProvider_ verspricht?
+|*I* |vom Client |Muss der _CheckoutService_ Methoden kennen, die er nicht nutzt?
+|===
+
+Ein fettes Interface verleitet zu Liskov-Verletzungen.
+Eine `NotSupportedException` ist deshalb fast immer ein Hinweis auf beide Prinzipien.
+
+== Das große Beispiel: Collections in .NET
+
+Die Rechnung im Webshop summiert die Positionen einer Bestellung:
+
+[source,csharp]
+----
+public static decimal Total(List<OrderItem> items)
+{
+    decimal total = 0m;
+    foreach (OrderItem item in items) { total += item.Price * item.Quantity; }
+    return total;
+}
+----
+
+Die Methode kompiliert, aber beim Aufruf gibt es Probleme:
+
+[source,csharp]
+----
+OrderItem[] fromJson = LoadItems();
+Total(fromJson);                 // CS1503: cannot convert from 'OrderItem[]' to 'List<OrderItem>'
+Total(order.Items);              // CS1503: IReadOnlyList<OrderItem> is not a List<OrderItem>
+Total(order.Items.ToList());     // compiles, but copies every element first
+----
+
+`Total()` verwendet nur `foreach`.
+Trotzdem verlangt es eine `+List<T>+` mit `Add()`, `Remove()`, `Sort()` und vielem mehr.
+Mit `+IEnumerable<OrderItem> items+` funktionieren alle drei Aufrufe ohne Kopie.
+Das Framework bietet dafür eine ganze Familie kleiner Interfaces an.
+Sie ist das beste Beispiel für ISP, das du täglich verwendest.
+
+image::{root_dir}/images/07_collection_hierarchy.svg[Die Collection-Interfaces in .NET mit Lese- und Schreibseite]
+
+=== Zwei Hierarchien nebeneinander
+
+* *Links (nur lesen):* Jede Ebene fügt genau eine Fähigkeit hinzu.
+`+IReadOnlyCollection<T>+` kennt die Anzahl, `+IReadOnlyList<T>+` zusätzlich den Index.
+`+IReadOnlySet<T>+` und `+IReadOnlyDictionary<TKey, TValue>+` sind die Varianten für Mengen und Schlüssel-Wert-Paare.
+* *Rechts (lesen und schreiben):* `+ICollection<T>+` bringt gleich _Count_, _Add_, _Remove_, _Clear_ und _Contains_ mit.
+`+IList<T>+`, `+ISet<T>+` und `+IDictionary<TKey, TValue>+` bauen darauf auf.
+* *Kein Pfeil dazwischen:* `+ICollection<T>+` erbt *nicht* von `+IReadOnlyCollection<T>+`, und `+IList<T>+` erbt nicht von `+IReadOnlyList<T>+`.
+
+Der Grund ist historisch.
+`+IList<T>+` gibt es seit .NET 2.0 (2005).
+Die _IReadOnly_-Interfaces kamen erst mit .NET Framework 4.5 (2012).
+Eine neue Basis für ein bestehendes Interface hätte vorhandenen Code gebrochen.
+Für dich hat das eine Folge:
+
+[source,csharp]
+----
+IList<int> numbers = new List<int> { 1, 2, 3 };
+PrintAll(numbers);   // CS1503: cannot convert from 'IList<int>' to 'IReadOnlyList<int>'
+
+static void PrintAll(IReadOnlyList<int> values) { /* ... */ }
+----
+
+Eine `+List<int>+` oder ein `+int[]+` kannst du übergeben, denn die Klassen implementieren beide Seiten.
+Eine Variable vom Typ `+IList<int>+` aber nicht.
+Verwende deshalb in deinem Code die _IReadOnly_-Interfaces, wenn du nur liest.
+
+=== Welche Klasse implementiert was?
+
+[cols=",^,^,^,^",options="header"]
+|===
+|Interface |`+List<T>+` |`+T[]+` |`+HashSet<T>+` |`+Dictionary<TKey, TValue>+`
+|`+IEnumerable<T>+` |✓ |✓ |✓ |✓ (Elemente: _KeyValuePair_)
+|`+IReadOnlyCollection<T>+` |✓ |✓ |✓ |✓ (Elemente: _KeyValuePair_)
+|`+IReadOnlyList<T>+` |✓ |✓ |✗ |✗
+|`+IReadOnlySet<T>+` |✗ |✗ |✓ |✗
+|`+IReadOnlyDictionary<TKey, TValue>+` |✗ |✗ |✗ |✓
+|`+ICollection<T>+` |✓ |✓ (wirft bei _Add_) |✓ |✓ (Elemente: _KeyValuePair_)
+|`+IList<T>+` |✓ |✓ (wirft bei _Add_) |✗ |✗
+|`+ISet<T>+` |✗ |✗ |✓ |✗
+|`+IDictionary<TKey, TValue>+` |✗ |✗ |✗ |✓
+|===
+
+=== Der historische Bruch: `+int[]+` ist eine `+IList<T>+`
+
+Ein Array hat eine feste Länge.
+Trotzdem implementiert es `+IList<T>+` mit `Add()` und `Remove()`:
+
+[source,csharp]
+----
+IList<int> numbers = new int[] { 1, 2, 3 };
+Console.WriteLine(numbers.IsReadOnly);   // True
+numbers[0] = 10;                         // works, although IsReadOnly is true
+numbers.Add(4);                          // NotSupportedException: Collection was of a fixed size.
+----
+
+Das ist genau das Problem von _GiftCard_: Eine Klasse implementiert ein Interface, dessen Versprechen sie nicht halten kann.
+Das verletzt Liskov.
+Die Property _IsReadOnly_ ist ein Notausgang.
+Der Client soll zur Laufzeit fragen, was der Compiler mit kleineren Interfaces schon beim Kompilieren prüfen könnte.
+`+ReadOnlyCollection<T>+` hat dasselbe Problem: Auch sie implementiert `+IList<T>+` und wirft bei jedem Schreibzugriff.
+
+[NOTE]
+====
+Die _IReadOnly_-Interfaces sind die nachträgliche Reparatur.
+Sie trennen Lesen und Schreiben, wie es ISP verlangt.
+Die alten Interfaces bleiben aus Kompatibilitätsgründen.
+====
+
+== Ein-Methoden-Interfaces: eine Fähigkeit, ein Interface
+
+Du schreibst `using`, `foreach` und `list.Sort()`, ohne an Interfaces zu denken.
+Dahinter steckt aber jedes Mal ein winziges Interface mit einer einzigen Methode:
+
+[%header]
+|===
+|Interface |Methode |Wer fragt danach
+|`IDisposable` |`Dispose()` |die `using`-Anweisung: gibt Dateien, Verbindungen usw. frei
+|`IAsyncDisposable` |`DisposeAsync()` |`await using`
+|`+IEnumerable<T>+` |`GetEnumerator()` |`foreach` und alle LINQ-Methoden
+|`+IComparable<T>+` |`CompareTo(other)` |`+List<T>.Sort()+`, `Array.Sort()`, `OrderBy()`, `+SortedSet<T>+`
+|`+IEquatable<T>+` |`Equals(other)` |`Contains()`, `Distinct()`, `+HashSet<T>+`, Schlüssel im Dictionary
+|===
+
+Mehr zu `+IEquatable<T>+` und `+IComparable<T>+` steht im Kapitel link:{github_url}/01%20Types/07_Equality.adoc[Equality].
+Genau genommen sucht `foreach` nur eine Methode `GetEnumerator()`.
+Fast immer kommt sie über `+IEnumerable<T>+`.
+
+Jedes Feature fragt nur nach *seiner* Fähigkeit.
+`+List<T>.Sort()+` interessiert sich nicht dafür, ob ein Produkt `Dispose()` kann.
+`using` interessiert sich nicht für `CompareTo()`.
+Eine Klasse bietet so viele Fähigkeiten an, wie sie braucht:
+
+[source,csharp]
+----
+public record Product(string Ean, string Name, decimal Price) : IComparable<Product>
+{
+    public int CompareTo(Product? other) => other is null ? 1 : Price.CompareTo(other.Price);
+}
+----
+
+Ein _record_ implementiert `+IEquatable<Product>+` automatisch.
+`+IComparable<Product>+` ergänzt du selbst.
+Damit funktionieren `products.Sort()` und `+new HashSet<Product>()+`.
+`using` und `foreach` mit einem Produkt kompilieren dagegen nicht.
+
+image::{root_dir}/images/07_capability_interfaces.svg[Product bietet IEquatable und IComparable an, using und foreach fehlen]
+
+=== So fragt eine Methode nach genau einer Fähigkeit
+
+Die Methode `Largest()` liefert das größte Element einer Sequenz.
+Sie braucht zwei Fähigkeiten: die Elemente durchlaufen und sie vergleichen.
+
+[source,csharp]
+----
+public static T Largest<T>(IEnumerable<T> items) where T : IComparable<T>
+{
+    using IEnumerator<T> enumerator = items.GetEnumerator();
+    if (!enumerator.MoveNext()) { throw new InvalidOperationException("The sequence is empty."); }
+    T largest = enumerator.Current;
+    while (enumerator.MoveNext())
+    {
+        if (enumerator.Current.CompareTo(largest) > 0) { largest = enumerator.Current; }
+    }
+    return largest;
+}
+----
+
+* `+IEnumerable<T> items+`: Jede Collection passt, auch eine LINQ-Abfrage.
+* `+where T : IComparable<T>+` ist eine *Constraint* (Einschränkung): `T` muss `+IComparable<T>+` implementieren.
+Sonst kompiliert der Aufruf nicht.
+* `+using IEnumerator<T>+`: Auch der Enumerator ist `IDisposable`.
+In fünf Zeilen stecken also drei Ein-Methoden-Interfaces.
+
+Vergleiche mit `+List<T>.Sort()+`.
+Diese Methode hat keine Constraint, weil eine Liste beliebige Typen enthalten darf.
+Fehlt `+IComparable<T>+`, merkst du es erst zur Laufzeit:
+
+[source,csharp]
+----
+List<Customer> customers = [new Customer("A"), new Customer("B")];
+customers.Sort();           // InvalidOperationException: Failed to compare two elements in the array.
+Largest(customers);         // CS0311: Customer cannot be used as type parameter 'T' ... IComparable<Customer>
+----
+
+Ein kleines Interface in der Signatur macht die Anforderung sichtbar.
+Der Compiler prüft sie für dich.
+
+== Ausblick: ASP.NET Core und EF Core
+
+In den Kapiteln zu ASP.NET Core und EF Core triffst du viele Interfaces.
+Sie sind fast alle nach Rollen geschnitten.
+Du implementierst sie selten selbst.
+Du *verlangst* sie im Konstruktor und nutzt sie:
+
+[%header]
+|===
+|Interface |Members |Rolle
+|`+ILogger<T>+` |`Log()`, `IsEnabled()`, `BeginScope()` |Meldungen protokollieren. `LogInformation()` usw. sind Extension Methods darauf.
+|`+IOptions<T>+` |nur `Value` |Einstellungen einmal lesen
+|`+IOptionsMonitor<T>+` |`CurrentValue`, `Get()`, `OnChange()` |Einstellungen lesen und auf Änderungen reagieren
+|`IHostedService` |`StartAsync()`, `StopAsync()` |Hintergrunddienst, der mit der App startet und stoppt
+|`IServiceProvider` |nur `GetService()` |Objekte aus dem DI-Container holen
+|`+IQueryable<T>+` |(erbt von `+IEnumerable<T>+`) |Abfragen, die EF Core in SQL übersetzt. `+DbSet<T>+` implementiert es.
+|===
+
+Bei den Optionen siehst du ISP besonders deutlich.
+Wer Einstellungen nur einmal liest, verlangt `+IOptions<T>+` mit einem einzigen Property.
+Wer auf Änderungen reagieren muss, verlangt `+IOptionsMonitor<T>+`.
+Jeder Client wählt die Rolle, die er braucht:
+
+[source,csharp]
+----
+public class ShippingCalculator
+{
+    private readonly ILogger<ShippingCalculator> _logger;
+    private readonly ShopSettings _settings;
+
+    public ShippingCalculator(ILogger<ShippingCalculator> logger, IOptions<ShopSettings> options)
+    {
+        _logger = logger;
+        _settings = options.Value;
+    }
+
+    public decimal GetShippingCost(decimal total)
+    {
+        _logger.LogInformation("Calculating shipping for {Total}", total);
+        return total >= _settings.FreeShippingLimit ? 0m : _settings.ShippingCost;
+    }
+}
+----
+
+Wie die Objekte in den Konstruktor kommen, zeigt das Kapitel link:{github_url}/16%20SOLID/08_Dependency_Inversion.adoc[D: Dependency Inversion].
+
+== Was heißt das für dich als Business-App-Entwickler?
+
+image::{root_dir}/images/07_parameter_return.svg[Parameter so klein wie möglich, Rückgabe so eng wie nötig]
+
+[%header]
+|===
+|Regel |Bedeutung |Beispiel
+|*Parameter so klein wie möglich* |Verlange nur die Fähigkeit, die die Methode nutzt. Dann passt jede Collection ohne Kopie. |`+Total(IEnumerable<OrderItem> items)+`
+|*Bei mehrfachem Durchlaufen größer* |Eine LINQ-Abfrage läuft bei jedem `foreach` neu. Brauchst du _Count_ oder mehrere Durchläufe, verlange `+IReadOnlyCollection<T>+` oder `+IReadOnlyList<T>+`. |`+Average(IReadOnlyCollection<decimal> prices)+`
+|*Rückgabe so eng wie nötig* |Gib eine interne Liste nie als `+List<T>+` heraus. Der Aufrufer könnte sie ohne Prüfung ändern. |`+public IReadOnlyList<OrderItem> Items => _items;+`
+|*Rückgabe nicht zu arm* |Liefert eine Methode eine fertige Liste, gib `+IReadOnlyList<T>+` zurück und nicht nur `+IEnumerable<T>+`. Sonst muss der Aufrufer für _Count_ alles durchlaufen. |`+IReadOnlyList<Product> FindByCategory(...)+`
+|*Eigene Interfaces nach Rollen* |Schneide nach dem, was ein Client braucht, nicht nach dem, was eine Klasse kann. |_IRefundable_ statt _IPaymentProvider_ mit allem
+|*Nicht für jede Klasse ein Interface* |Ein Interface lohnt sich bei mehreren Implementierungen oder einem Fake im Test. |siehe link:{github_url}/01%20Types/06_Interfaces.adoc#warum-interfaces[Warnung in Interfaces]
+|===
+
+[WARNING]
+====
+Agents erzeugen gerne *Header Interfaces*: zu _OrderService_ ein _IOrderService_ mit allen 15 öffentlichen Methoden.
+Das sieht nach sauberer Architektur aus.
+Jeder Client hängt aber wieder von allem ab.
+Frag nach: Welche Clients gibt es, und was braucht jeder davon?
+====
+
+== Im Code-Review erkennen
+
+[%header]
+|===
+|Warnzeichen |Prinzip |Was du verlangst bzw. wie du es präzise formulierst
+|Parameter `+List<T>+`, die Methode macht nur `foreach` |I |„`Total()` liest nur. Verlange `+IEnumerable<OrderItem>+` statt `+List<OrderItem>+`, dann brauchen Aufrufer kein `ToList()`.“
+|Aufrufer schreiben `.ToList()` oder `.ToArray()` nur für einen Methodenaufruf |I |„Der Parameter ist zu groß. Ändere ihn auf das kleinste Interface, das die Methode braucht.“
+|Parameter `+IList<T>+` oder `+ICollection<T>+`, aber die Methode ändert nichts |I |„Die Methode schreibt nicht. Verwende `+IReadOnlyList<T>+` bzw. `+IReadOnlyCollection<T>+`.“
+|Property oder Methode gibt eine interne `+List<T>+` zurück |I, Kapselung |„Gib `+_items+` als `+IReadOnlyList<OrderItem>+` heraus. Änderungen laufen nur über `AddItem()`.“
+|`NotImplementedException` oder `NotSupportedException` in einer Interface-Implementierung |I, L |„`GiftCard` muss Methoden implementieren, die sie nicht kann. Trenne das Interface nach Rollen, z. B. `IRefundable`.“
+|Interface mit 10 oder mehr Methoden für verschiedene Zwecke |I |„`IPaymentProvider` ist ein fettes Interface. Schneide es nach den Clients: Was braucht `CheckoutService`, was `ReturnService`?“
+|Fake im Unit Test hat viele leere oder werfende Methoden |I |„Der Test zeigt, dass der Client nur `Pay()` nutzt. Er soll nur ein Interface mit `Pay()` verlangen.“
+|`IXxxService` mit genau allen öffentlichen Methoden von `XxxService` |I |„Das ist ein Header Interface. Leite die Interfaces aus den Clients ab oder verzichte darauf, wenn es nur eine Implementierung gibt.“
+|`if (provider.IsReadOnly)` oder `if (x is IRefundable)` vor einem Aufruf |I, L |„Der Client prüft zur Laufzeit eine Fähigkeit. Verlange die passende Rolle im Typ, dann prüft der Compiler.“
+|===
+
+== Zusatzmaterial
+
+In der https://die-spengergasse.github.io/course-pos-csharp_basics/16%20SOLID/07_Interface_Segregation.html[07_Interface_Segregation.html] zerlegst du ein fettes Interface Schritt für Schritt in Rollen, baust die Collection-Hierarchie auf und übst in mehreren Runden, welches Interface als Parameter reicht und welche Klasse du übergeben kannst.

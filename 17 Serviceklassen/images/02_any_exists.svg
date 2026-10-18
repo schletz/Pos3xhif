@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="430" viewBox="0 0 1000 430" role="img" aria-label="Any auf einer Navigation entspricht EXISTS in SQL">
+<title>Any auf einer Navigation entspricht EXISTS in SQL</title>
+<defs><marker id="arrow-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9d9d9c"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0090d4"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f39000"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#71af2e"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#cc0935"/></marker><marker id="arrow-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6cc1b0"/></marker></defs>
+<rect x="1" y="1" width="998" height="428" rx="14" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="30.0" y="42.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Any entspricht EXISTS</text>
+<text x="30.0" y="82.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Events mit ihren Shows (Navigation e.Shows)</text>
+<rect x="30.0" y="95.0" width="400.0" height="58.0" rx="8" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="45.0" y="130.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Funk</text>
+<rect x="140.0" y="108.0" width="98.5" height="32.0" rx="6" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="148.0" y="129.2" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="82.5" lengthAdjust="spacingAndGlyphs">2023-06-16</text>
+<rect x="246.5" y="108.0" width="98.5" height="32.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="254.5" y="129.2" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="82.5" lengthAdjust="spacingAndGlyphs">2024-05-28</text>
+<text x="455.0" y="132.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="22" font-weight="bold" text-anchor="middle" fill="#4a7a1c" xml:space="preserve">✓</text>
+<rect x="30.0" y="167.0" width="400.0" height="58.0" rx="8" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="45.0" y="202.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Rap</text>
+<rect x="140.0" y="180.0" width="98.5" height="32.0" rx="6" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="148.0" y="201.2" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="82.5" lengthAdjust="spacingAndGlyphs">2023-07-28</text>
+<rect x="246.5" y="180.0" width="98.5" height="32.0" rx="6" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="254.5" y="201.2" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="82.5" lengthAdjust="spacingAndGlyphs">2023-10-21</text>
+<text x="455.0" y="204.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="22" font-weight="bold" text-anchor="middle" fill="#a8072c" xml:space="preserve">✗</text>
+<rect x="30.0" y="239.0" width="400.0" height="58.0" rx="8" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="45.0" y="274.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Country</text>
+<rect x="140.0" y="252.0" width="98.5" height="32.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="148.0" y="273.2" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="82.5" lengthAdjust="spacingAndGlyphs">2024-01-12</text>
+<text x="455.0" y="276.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="22" font-weight="bold" text-anchor="middle" fill="#4a7a1c" xml:space="preserve">✓</text>
+<rect x="30.0" y="320.0" width="420.0" height="82.0" rx="8" fill="#ffffff" stroke="#f39000" stroke-width="1.5"/>
+<text x="45.0" y="348.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">_db.Events.Where(e =&gt;</text>
+<text x="45.0" y="372.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">  e.Shows.Any(s =&gt; s.Date.Year == 2024))</text>
+<text x="45.0" y="394.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="start" fill="#a35f00" xml:space="preserve">„Gibt es mindestens eine Show im Jahr 2024?“</text>
+<rect x="510.0" y="95.0" width="460.0" height="200.0" rx="8" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="530.0" y="125.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">SELECT e.*</text>
+<text x="530.0" y="151.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">FROM Events AS e</text>
+<text x="530.0" y="177.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">WHERE EXISTS (</text>
+<text x="530.0" y="203.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">    SELECT 1 FROM Shows AS s</text>
+<text x="530.0" y="229.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">    WHERE s.EventId = e.Id</text>
+<text x="530.0" y="255.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="16" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">      AND strftime(&#x27;%Y&#x27;, s.Date) = &#x27;2024&#x27;)</text>
+<text x="510.0" y="335.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">e.Shows.Any(…)        →  EXISTS (…)</text>
+<text x="510.0" y="362.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">!e.Shows.Any(…)       →  NOT EXISTS (…)</text>
+<text x="510.0" y="389.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">e.Shows.All(s =&gt; …)   →  NOT EXISTS (… NOT …)</text>
+</svg>

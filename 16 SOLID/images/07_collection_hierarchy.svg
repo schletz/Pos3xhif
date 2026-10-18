@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="839" viewBox="0 0 1000 839">
+  <defs><marker id="dep" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,1 L11,6 L1,11" fill="none" stroke="#1d1d1b" stroke-width="1.5"/></marker><marker id="tri" viewBox="0 0 16 16" refX="15" refY="8" markerWidth="16" markerHeight="16" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,1 L15,8 L1,15 Z" fill="#ffffff" stroke="#1d1d1b" stroke-width="1.5"/></marker></defs>
+  <rect x="0.5" y="0.5" width="999" height="838" rx="8" fill="#ffffff" stroke="#9d9d9c"/>
+  <text x="500" y="36" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="21" font-weight="bold" fill="#1d1d1b" text-anchor="middle">Collection-Interfaces in .NET: zwei getrennte Hierarchien</text>
+  <rect x="330" y="58" width="340" height="82" rx="8" fill="#ffffff" stroke="#6cc1b0" stroke-width="1.8"/>
+  <path d="M338,58 H662 Q670,58 670,66 V106 H330 V66 Q330,58 338,58 Z" fill="#e5f4f1" stroke="none"/>
+  <rect x="330" y="58" width="340" height="82" rx="8" fill="none" stroke="#6cc1b0" stroke-width="1.8"/>
+  <polyline points="330,106 670,106" fill="none" stroke="#6cc1b0" stroke-width="1.2"/>
+  <text x="500.0" y="76" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#2f7d6e" text-anchor="middle">«interface»</text>
+  <text x="500.0" y="96" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1d1d1b" text-anchor="middle">IEnumerable&lt;T&gt;</text>
+  <text x="342" y="130" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">+ GetEnumerator()   → foreach, LINQ</text>
+  <text x="150" y="170" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#00628f" text-anchor="middle">Nur lesen</text>
+  <text x="830" y="170" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#a35f00" text-anchor="middle">Lesen und schreiben ✎</text>
+  <rect x="60" y="185" width="340" height="66" rx="8" fill="#ffffff" stroke="#0090d4" stroke-width="1.8"/>
+  <path d="M68,185 H392 Q400,185 400,193 V217 H60 V193 Q60,185 68,185 Z" fill="#d1ebf7" stroke="none"/>
+  <rect x="60" y="185" width="340" height="66" rx="8" fill="none" stroke="#0090d4" stroke-width="1.8"/>
+  <polyline points="60,217 400,217" fill="none" stroke="#0090d4" stroke-width="1.2"/>
+  <text x="230.0" y="206" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1d1d1b" text-anchor="middle">IReadOnlyCollection&lt;T&gt;</text>
+  <text x="72" y="241" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">+ Count</text>
+  <rect x="600" y="185" width="340" height="114" rx="8" fill="#ffffff" stroke="#f39000" stroke-width="1.8"/>
+  <path d="M608,185 H932 Q940,185 940,193 V217 H600 V193 Q600,185 608,185 Z" fill="#fdebd1" stroke="none"/>
+  <rect x="600" y="185" width="340" height="114" rx="8" fill="none" stroke="#f39000" stroke-width="1.8"/>
+  <polyline points="600,217 940,217" fill="none" stroke="#f39000" stroke-width="1.2"/>
+  <text x="770.0" y="206" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1d1d1b" text-anchor="middle">ICollection&lt;T&gt;</text>
+  <text x="612" y="241" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">+ Count, IsReadOnly</text>
+  <text x="612" y="265" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">+ Add(), Remove(), Clear()</text>
+  <text x="612" y="289" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">+ Contains(), CopyTo()</text>
+  <polyline points="340,185 340,160 440,160 440,140" fill="none" stroke="#1d1d1b" stroke-width="1.5" marker-end="url(#tri)"/>
+  <polyline points="660,185 660,160 560,160 560,140" fill="none" stroke="#1d1d1b" stroke-width="1.5" marker-end="url(#tri)"/>
+  <polyline points="400,215 600,215" fill="none" stroke="#cc0935" stroke-width="2" stroke-dasharray="7 5"/>
+  <text x="500" y="207" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" fill="#a8072c" text-anchor="middle">✗</text>
+  <text x="500" y="240" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#a8072c" text-anchor="middle">keine Vererbung</text>
+  <rect x="60" y="329" width="340" height="66" rx="8" fill="#ffffff" stroke="#0090d4" stroke-width="1.8"/>
+  <path d="M68,329 H392 Q400,329 400,337 V361 H60 V337 Q60,329 68,329 Z" fill="#d1ebf7" stroke="none"/>
+  <rect x="60" y="329" width="340" height="66" rx="8" fill="none" stroke="#0090d4" stroke-width="1.8"/>
+  <polyline points="60,361 400,361" fill="none" stroke="#0090d4" stroke-width="1.2"/>
+  <text x="230.0" y="350" font-family="Consolas, Menlo, monospace" font-size="15" font-weight="bold" fill="#1d1d1b" text-anchor="middle">IReadOnlyList&lt;T&gt;</text>
+  <text x="72" y="385" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">+ this[int]  (nur get)</text>
+  <rect x="600" y="329" width="340" height="90" rx="8" fill="#ffffff" stroke="#f39000" stroke-width="1.8"/>
+  <path d="M608,329 H932 Q940,329 940,337 V361 H600 V337 Q600,329 608,329 Z" fill="#fdebd1" stroke="none"/>
+  <rect x="600" y="329" width="340" height="90" rx="8" fill="none" stroke="#f39000" stroke-width="1.8"/>
+  <polyline points="600,361 940,361" fill="none" stroke="#f39000" stroke-width="1.2"/>
+  <text x="770.0" y="350" font-family="Consolas, Menlo, monospace" font-size="15" font-weight="bold" fill="#1d1d1b" text-anchor="middle">IList&lt;T&gt;</text>
+  <text x="612" y="385" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">+ this[int]  (get und set)</text>
+  <text x="612" y="409" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">+ Insert(), IndexOf(), RemoveAt()</text>
+  <text x="500" y="379.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1d1d1b" text-anchor="middle">Liste</text>
+  <rect x="60" y="441" width="340" height="66" rx="8" fill="#ffffff" stroke="#0090d4" stroke-width="1.8"/>
+  <path d="M68,441 H392 Q400,441 400,449 V473 H60 V449 Q60,441 68,441 Z" fill="#d1ebf7" stroke="none"/>
+  <rect x="60" y="441" width="340" height="66" rx="8" fill="none" stroke="#0090d4" stroke-width="1.8"/>
+  <polyline points="60,473 400,473" fill="none" stroke="#0090d4" stroke-width="1.2"/>
+  <text x="230.0" y="462" font-family="Consolas, Menlo, monospace" font-size="15" font-weight="bold" fill="#1d1d1b" text-anchor="middle">IReadOnlySet&lt;T&gt;</text>
+  <text x="72" y="497" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">+ Contains(), IsSubsetOf(), …</text>
+  <rect x="600" y="441" width="340" height="66" rx="8" fill="#ffffff" stroke="#f39000" stroke-width="1.8"/>
+  <path d="M608,441 H932 Q940,441 940,449 V473 H600 V449 Q600,441 608,441 Z" fill="#fdebd1" stroke="none"/>
+  <rect x="600" y="441" width="340" height="66" rx="8" fill="none" stroke="#f39000" stroke-width="1.8"/>
+  <polyline points="600,473 940,473" fill="none" stroke="#f39000" stroke-width="1.2"/>
+  <text x="770.0" y="462" font-family="Consolas, Menlo, monospace" font-size="15" font-weight="bold" fill="#1d1d1b" text-anchor="middle">ISet&lt;T&gt;</text>
+  <text x="612" y="497" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">+ Add(), UnionWith(), IsSubsetOf(), …</text>
+  <text x="500" y="479.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1d1d1b" text-anchor="middle">Menge (Set)</text>
+  <rect x="60" y="529" width="340" height="114" rx="8" fill="#ffffff" stroke="#0090d4" stroke-width="1.8"/>
+  <path d="M68,529 H392 Q400,529 400,537 V561 H60 V537 Q60,529 68,529 Z" fill="#d1ebf7" stroke="none"/>
+  <rect x="60" y="529" width="340" height="114" rx="8" fill="none" stroke="#0090d4" stroke-width="1.8"/>
+  <polyline points="60,561 400,561" fill="none" stroke="#0090d4" stroke-width="1.2"/>
+  <text x="230.0" y="550" font-family="Consolas, Menlo, monospace" font-size="15" font-weight="bold" fill="#1d1d1b" text-anchor="middle">IReadOnlyDictionary&lt;TKey,TValue&gt;</text>
+  <text x="72" y="585" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">+ this[key]  (nur get)</text>
+  <text x="72" y="609" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">+ ContainsKey(), TryGetValue()</text>
+  <text x="72" y="633" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">+ Keys, Values</text>
+  <rect x="600" y="529" width="340" height="114" rx="8" fill="#ffffff" stroke="#f39000" stroke-width="1.8"/>
+  <path d="M608,529 H932 Q940,529 940,537 V561 H600 V537 Q600,529 608,529 Z" fill="#fdebd1" stroke="none"/>
+  <rect x="600" y="529" width="340" height="114" rx="8" fill="none" stroke="#f39000" stroke-width="1.8"/>
+  <polyline points="600,561 940,561" fill="none" stroke="#f39000" stroke-width="1.2"/>
+  <text x="770.0" y="550" font-family="Consolas, Menlo, monospace" font-size="15" font-weight="bold" fill="#1d1d1b" text-anchor="middle">IDictionary&lt;TKey,TValue&gt;</text>
+  <text x="612" y="585" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">+ this[key]  (get und set)</text>
+  <text x="612" y="609" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">+ Add(), Remove()</text>
+  <text x="612" y="633" font-family="Consolas, Menlo, monospace" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="start">+ ContainsKey(), TryGetValue(), …</text>
+  <text x="500" y="591.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1d1d1b" text-anchor="middle">Dictionary</text>
+  <polyline points="60,347 35,347" fill="none" stroke="#1d1d1b" stroke-width="1.5"/>
+  <polyline points="60,459 35,459" fill="none" stroke="#1d1d1b" stroke-width="1.5"/>
+  <polyline points="60,547 35,547" fill="none" stroke="#1d1d1b" stroke-width="1.5"/>
+  <polyline points="35,547 35,205 60,205" fill="none" stroke="#1d1d1b" stroke-width="1.5" marker-end="url(#tri)"/>
+  <polyline points="940,347 965,347" fill="none" stroke="#1d1d1b" stroke-width="1.5"/>
+  <polyline points="940,459 965,459" fill="none" stroke="#1d1d1b" stroke-width="1.5"/>
+  <polyline points="940,547 965,547" fill="none" stroke="#1d1d1b" stroke-width="1.5"/>
+  <polyline points="965,547 965,205 940,205" fill="none" stroke="#1d1d1b" stroke-width="1.5" marker-end="url(#tri)"/>
+  <text x="64" y="667" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#5f5f5e" text-anchor="start">Dictionary: Elemente sind KeyValuePair&lt;TKey,TValue&gt;</text>
+  <text x="30" y="693" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1d1d1b" text-anchor="start">Klassen implementieren meist beide Seiten:</text>
+  <rect x="30" y="705" width="225" height="84" rx="6" fill="#ededed" stroke="#9d9d9c" stroke-width="1.5"/>
+  <text x="142" y="729" font-family="Consolas, Menlo, monospace" font-size="15" font-weight="bold" fill="#1d1d1b" text-anchor="middle">List&lt;T&gt;</text>
+  <text x="142" y="753" font-family="Consolas, Menlo, monospace" font-size="13" font-weight="normal" fill="#1d1d1b" text-anchor="middle">IList&lt;T&gt;</text>
+  <text x="142" y="775" font-family="Consolas, Menlo, monospace" font-size="13" font-weight="normal" fill="#1d1d1b" text-anchor="middle">+ IReadOnlyList&lt;T&gt;</text>
+  <rect x="270" y="705" width="225" height="84" rx="6" fill="#ededed" stroke="#9d9d9c" stroke-width="1.5"/>
+  <text x="382" y="729" font-family="Consolas, Menlo, monospace" font-size="15" font-weight="bold" fill="#1d1d1b" text-anchor="middle">T[]  (Array)</text>
+  <text x="382" y="753" font-family="Consolas, Menlo, monospace" font-size="13" font-weight="normal" fill="#1d1d1b" text-anchor="middle">IList&lt;T&gt;</text>
+  <text x="382" y="775" font-family="Consolas, Menlo, monospace" font-size="13" font-weight="normal" fill="#1d1d1b" text-anchor="middle">+ IReadOnlyList&lt;T&gt;</text>
+  <rect x="510" y="705" width="225" height="84" rx="6" fill="#ededed" stroke="#9d9d9c" stroke-width="1.5"/>
+  <text x="622" y="729" font-family="Consolas, Menlo, monospace" font-size="15" font-weight="bold" fill="#1d1d1b" text-anchor="middle">HashSet&lt;T&gt;</text>
+  <text x="622" y="753" font-family="Consolas, Menlo, monospace" font-size="13" font-weight="normal" fill="#1d1d1b" text-anchor="middle">ISet&lt;T&gt;</text>
+  <text x="622" y="775" font-family="Consolas, Menlo, monospace" font-size="13" font-weight="normal" fill="#1d1d1b" text-anchor="middle">+ IReadOnlySet&lt;T&gt;</text>
+  <rect x="750" y="705" width="225" height="84" rx="6" fill="#ededed" stroke="#9d9d9c" stroke-width="1.5"/>
+  <text x="862" y="729" font-family="Consolas, Menlo, monospace" font-size="15" font-weight="bold" fill="#1d1d1b" text-anchor="middle">Dictionary&lt;K,V&gt;</text>
+  <text x="862" y="753" font-family="Consolas, Menlo, monospace" font-size="13" font-weight="normal" fill="#1d1d1b" text-anchor="middle">IDictionary&lt;K,V&gt;</text>
+  <text x="862" y="775" font-family="Consolas, Menlo, monospace" font-size="13" font-weight="normal" fill="#1d1d1b" text-anchor="middle">+ IReadOnlyDictionary&lt;K,V&gt;</text>
+  <text x="500" y="821" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#1d1d1b" text-anchor="middle">Linie mit Dreieck: erbt von · rot gestrichelt mit ✗: keine Vererbung</text>
+</svg>

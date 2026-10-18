@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="260" viewBox="0 0 780 260">
+  <rect x="0.5" y="0.5" width="779" height="259" rx="8" fill="#ffffff" stroke="#9d9d9c"/>
+
+  <text x="390" y="32" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1d1d1b" text-anchor="middle">CalculateGrade(percent): 7 Äquivalenzklassen, 12 Grenzwerte</text>
+
+  <!-- Invalid classes (scale: x = 90 + percent * 6) -->
+  <g fill="#f6d3db" stroke="#cc0935" stroke-width="1.5">
+    <rect x="25" y="55" width="65" height="50"/>
+    <rect x="690" y="55" width="65" height="50"/>
+  </g>
+  <!-- Valid classes, alternating fill for readability -->
+  <rect x="90" y="55" width="300" height="50" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+  <rect x="390" y="55" width="75" height="50" fill="#e5f4f1" stroke="#6cc1b0" stroke-width="1.5"/>
+  <rect x="465" y="55" width="75" height="50" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+  <rect x="540" y="55" width="75" height="50" fill="#e5f4f1" stroke="#6cc1b0" stroke-width="1.5"/>
+  <rect x="615" y="55" width="75" height="50" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1d1d1b" text-anchor="middle">
+    <text x="57" y="78">✗ &lt; 0</text>
+    <text x="57" y="96" font-size="12">Exception</text>
+    <text x="722" y="78">✗ &gt; 100</text>
+    <text x="722" y="96" font-size="12">Exception</text>
+    <text x="240" y="86" font-weight="bold">Note 5</text>
+    <text x="427" y="86" font-weight="bold">Note 4</text>
+    <text x="502" y="86" font-weight="bold">Note 3</text>
+    <text x="577" y="86" font-weight="bold">Note 2</text>
+    <text x="652" y="86" font-weight="bold">Note 1</text>
+  </g>
+
+  <!-- Boundary ticks -->
+  <g stroke="#1d1d1b" stroke-width="2">
+    <line x1="90" y1="50" x2="90" y2="118"/>
+    <line x1="390" y1="50" x2="390" y2="118"/>
+    <line x1="465" y1="50" x2="465" y2="118"/>
+    <line x1="540" y1="50" x2="540" y2="118"/>
+    <line x1="615" y1="50" x2="615" y2="118"/>
+    <line x1="690" y1="50" x2="690" y2="118"/>
+  </g>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1d1d1b" text-anchor="middle">
+    <text x="90" y="136">0</text>
+    <text x="390" y="136">50</text>
+    <text x="465" y="136">62,5</text>
+    <text x="540" y="136">75</text>
+    <text x="615" y="136">87,5</text>
+    <text x="690" y="136">100</text>
+  </g>
+
+  <!-- Boundary test values: just below and exactly on each boundary -->
+  <g font-family="Consolas, Menlo, monospace" font-size="13" fill="#a35f00" text-anchor="middle">
+    <text x="90" y="162">-0.01</text>
+    <text x="90" y="180">0</text>
+    <text x="390" y="162">49.99</text>
+    <text x="390" y="180">50</text>
+    <text x="465" y="162">62.49</text>
+    <text x="465" y="180">62.5</text>
+    <text x="540" y="162">74.99</text>
+    <text x="540" y="180">75</text>
+    <text x="615" y="162">87.49</text>
+    <text x="615" y="180">87.5</text>
+    <text x="690" y="162">100</text>
+    <text x="690" y="180">100.01</text>
+  </g>
+
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1d1d1b" text-anchor="middle">
+    <text x="390" y="215">Bänder = Äquivalenzklassen: Alle Werte in einem Band liefern dasselbe Ergebnis.</text>
+    <text x="390" y="235">Orange Zahlen = Grenzwerte: An jeder Grenze testest du den Wert knapp daneben und genau darauf.</text>
+  </g>
+</svg>

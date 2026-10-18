@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="470" viewBox="0 0 900 470">
+  <rect x="0.5" y="0.5" width="899" height="469" rx="8" fill="#ffffff" stroke="#9d9d9c"/>
+
+  <defs>
+    <!-- Filled arrow head: "uses" -->
+    <marker id="uses" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1d1d1b"/>
+    </marker>
+    <!-- Hollow triangle: "implements" (UML realization) -->
+    <marker id="implements" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="14" markerHeight="14" orient="auto-start-reverse">
+      <path d="M1,1 L11,6 L1,11 z" fill="#ffffff" stroke="#1d1d1b" stroke-width="1.2"/>
+    </marker>
+  </defs>
+
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif">
+    <text x="450" y="38" font-size="21" font-weight="bold" fill="#1d1d1b" text-anchor="middle">Dependency Inversion: Der Pfeil zum Detail dreht sich um</text>
+
+    <!-- Panel titles -->
+    <text x="225" y="78" font-size="18" font-weight="bold" fill="#1d1d1b" text-anchor="middle">Vorher</text>
+    <text x="675" y="78" font-size="18" font-weight="bold" fill="#1d1d1b" text-anchor="middle">Nachher</text>
+    <line x1="450" y1="60" x2="450" y2="440" stroke="#9d9d9c" stroke-width="1" stroke-dasharray="4 4"/>
+
+    <!-- Layer bands -->
+    <g fill="#ededed" stroke="#9d9d9c" stroke-width="1">
+      <rect x="25" y="92" width="400" height="125" rx="8"/>
+      <rect x="25" y="264" width="400" height="110" rx="8"/>
+      <rect x="475" y="92" width="400" height="125" rx="8"/>
+      <rect x="475" y="264" width="400" height="110" rx="8"/>
+    </g>
+    <g font-size="13" fill="#5f5f5e">
+      <text x="37" y="112">High level: Geschäftslogik</text>
+      <text x="37" y="284">Low level: technisches Detail</text>
+      <text x="487" y="112">High level: Geschäftslogik</text>
+      <text x="487" y="284">Low level: technisches Detail</text>
+    </g>
+
+    <!-- BEFORE: CheckoutService -> ConsoleLogger -->
+    <rect x="125" y="132" width="200" height="54" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+    <text x="225" y="165" font-size="16" font-weight="bold" fill="#1d1d1b" text-anchor="middle">CheckoutService</text>
+    <rect x="125" y="302" width="200" height="54" rx="6" fill="#e5f4f1" stroke="#6cc1b0" stroke-width="1.5"/>
+    <text x="225" y="335" font-size="16" font-weight="bold" fill="#1d1d1b" text-anchor="middle">ConsoleLogger</text>
+    <line x1="225" y1="186" x2="225" y2="300" stroke="#cc0935" stroke-width="2.5" marker-end="url(#uses)"/>
+    <text x="237" y="236" font-size="13" fill="#1d1d1b">verwendet</text>
+    <text x="237" y="255" font-size="13" font-family="Consolas, Menlo, monospace" fill="#1d1d1b">new ConsoleLogger()</text>
+
+    <!-- AFTER: CheckoutService -> ILogger <|.. ConsoleLogger -->
+    <rect x="490" y="132" width="160" height="54" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+    <text x="570" y="165" font-size="16" font-weight="bold" fill="#1d1d1b" text-anchor="middle">CheckoutService</text>
+    <rect x="725" y="126" width="135" height="66" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="2"/>
+    <text x="792" y="150" font-size="13" fill="#1d1d1b" text-anchor="middle">«interface»</text>
+    <text x="792" y="174" font-size="16" font-weight="bold" fill="#1d1d1b" text-anchor="middle">ILogger</text>
+    <line x1="650" y1="159" x2="723" y2="159" stroke="#1d1d1b" stroke-width="1.5" marker-end="url(#uses)"/>
+    <text x="687" y="150" font-size="13" fill="#1d1d1b" text-anchor="middle">verwendet</text>
+    <text x="792" y="118" font-size="13" font-weight="bold" fill="#a35f00" text-anchor="middle">gehört zum Service</text>
+
+    <rect x="725" y="302" width="135" height="54" rx="6" fill="#e5f4f1" stroke="#6cc1b0" stroke-width="1.5"/>
+    <text x="792" y="335" font-size="16" font-weight="bold" fill="#1d1d1b" text-anchor="middle">ConsoleLogger</text>
+    <line x1="792" y1="302" x2="792" y2="194" stroke="#71af2e" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#implements)"/>
+    <text x="780" y="246" font-size="13" fill="#1d1d1b" text-anchor="end">implementiert</text>
+
+    <!-- Captions -->
+    <text x="225" y="402" font-size="15" font-weight="bold" fill="#a8072c" text-anchor="middle">✗ Pfeil zeigt nach unten zum Detail.</text>
+    <text x="225" y="426" font-size="14" fill="#1d1d1b" text-anchor="middle">Die Geschäftslogik hängt vom Detail ab.</text>
+    <text x="675" y="402" font-size="15" font-weight="bold" fill="#4a7a1c" text-anchor="middle">✓ Pfeil vom Detail zeigt nach oben.</text>
+    <text x="675" y="426" font-size="14" fill="#1d1d1b" text-anchor="middle">Das Detail hängt von der Abstraktion ab.</text>
+    <text x="675" y="450" font-size="14" fill="#1d1d1b" text-anchor="middle">Die Geschäftslogik kennt das Detail nicht.</text>
+  </g>
+</svg>

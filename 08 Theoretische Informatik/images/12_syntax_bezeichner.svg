@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="555" height="236" viewBox="0 0 555 236">
+<rect x="0.5" y="0.5" width="554" height="235" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1f2937"/></marker></defs>
+<text x="20" y="36" font-family="Consolas, Menlo, monospace" font-size="15" font-weight="bold" fill="#1f2937">identifier</text>
+<path d="M20,68.0 V86.0" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M20,77.0 H35" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M35,77.0 H55" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="55" y1="77.0" x2="77" y2="77.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="77" y="62.0" width="32" height="30" rx="15" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+<text x="93.0" y="82.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">@</text>
+<path d="M109,77.0 H119" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M119,77.0 H139" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M35,77.0 q10,0 10,-10 V62.0 q0,-10 10,-10 H119 q10,0 10,10 V67.0 q0,10 10,10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M83.5,48.0 L90.5,52.0 L83.5,56.0 Z" fill="#1f2937"/>
+<path d="M139,77.0 H159" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="159" y1="77.0" x2="181" y2="77.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="181" y="62.0" width="71" height="30" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="216.5" y="82.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">letter</text>
+<path d="M252,77.0 H262" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M262,77.0 H282" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M139,77.0 q10,0 10,10 V109.0 q0,10 10,10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="159" y1="119.0" x2="181" y2="119.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="181" y="104.0" width="32" height="30" rx="15" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+<text x="197.0" y="124.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">_</text>
+<path d="M213,119.0 H223" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M223,119.0 H262 q10,0 10,-10 V87.0 q0,-10 10,-10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M282,77.0 H322" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M322,77.0 H342" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="342" y1="77.0" x2="364" y2="77.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="364" y="62.0" width="71" height="30" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="399.5" y="82.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">letter</text>
+<path d="M435,77.0 H445" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M445,77.0 H465" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M322,77.0 q10,0 10,10 V109.0 q0,10 10,10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="342" y1="119.0" x2="364" y2="119.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="364" y="104.0" width="63" height="30" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="395.5" y="124.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">digit</text>
+<path d="M427,119.0 H437" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M437,119.0 H445 q10,0 10,-10 V87.0 q0,-10 10,-10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M322,77.0 q10,0 10,10 V151.0 q0,10 10,10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<line x1="342" y1="161.0" x2="364" y2="161.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="364" y="146.0" width="32" height="30" rx="15" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+<text x="380.0" y="166.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937">_</text>
+<path d="M396,161.0 H406" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M406,161.0 H445 q10,0 10,-10 V87.0 q0,-10 10,-10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M465,77.0 H505" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M282,77.0 q10,0 10,-10 V62.0 q0,-10 10,-10 H485 q10,0 10,10 V67.0 q0,10 10,10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M390.0,48.0 L397.0,52.0 L390.0,56.0 Z" fill="#1f2937"/>
+<path d="M465,77.0 q10,0 10,10 V176.0 q0,10 -10,10 H322 q-10,0 -10,-10 V87.0 q0,-10 10,-10" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<path d="M397.0,182.0 L390.0,186.0 L397.0,190.0 Z" fill="#1f2937"/>
+<line x1="505" y1="77.0" x2="525" y2="77.0" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr)"/>
+<path d="M525,68.0 V86.0" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+<text x="20" y="216.0" font-family="Consolas, Menlo, monospace" font-size="13" fill="#6b7280">identifier = [ "@" ] ( letter | "_" ) { letter | digit | "_" }</text>
+</svg>

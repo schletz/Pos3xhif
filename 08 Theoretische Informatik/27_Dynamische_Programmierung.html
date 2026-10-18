@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DP-Tabellen</title>
+<style>
+  :root {
+    --bg: #f8fafc; --card: #ffffff; --fg: #1f2937; --muted: #6b7280; --border: #d1d5db; --soft: #f3f4f6;
+    --line: #1f2937;
+    --n-stroke: #2563eb; --n-fill: #dbeafe;
+    --a-stroke: #ea580c; --a-fill: #ffedd5;
+    --ok-stroke: #16a34a; --ok-fill: #dcfce7;
+    --err-stroke: #dc2626; --err-fill: #fee2e2;
+    --gray-stroke: #6b7280; --gray-fill: #e5e7eb;
+    --btn: #2563eb; --btn-fg: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f172a; --card: #1e293b; --fg: #e5e7eb; --muted: #9ca3af; --border: #475569; --soft: #334155;
+      --line: #e5e7eb;
+      --n-stroke: #60a5fa; --n-fill: #1e3a8a;
+      --a-stroke: #fb923c; --a-fill: #7c2d12;
+      --ok-stroke: #4ade80; --ok-fill: #14532d;
+      --err-stroke: #f87171; --err-fill: #7f1d1d;
+      --gray-stroke: #9ca3af; --gray-fill: #374151;
+      --btn: #3b82f6; --btn-fg: #ffffff;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", Helvetica, Arial, sans-serif; background: var(--bg); color: var(--fg);
+         line-height: 1.5; }
+  code, .mono { font-family: Consolas, Menlo, monospace; }
+  code { background: var(--soft); padding: 0 4px; border-radius: 4px; }
+  header { position: sticky; top: 0; z-index: 5; background: var(--card); border-bottom: 1px solid var(--border);
+           padding: 8px 16px; display: flex; align-items: center; gap: 16px; }
+  header h1 { font-size: 18px; margin: 0; flex: 1; }
+  #progressText { font-variant-numeric: tabular-nums; color: var(--muted); }
+  #progressBar { position: absolute; left: 0; bottom: -1px; height: 3px; background: var(--btn); transition: width .3s; }
+  main { max-width: 1120px; margin: 0 auto; padding: 16px; }
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide h2 { margin: 4px 0 8px; font-size: 24px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin: 12px 0; }
+  .nav { display: flex; justify-content: space-between; max-width: 1120px; margin: 0 auto; padding: 0 16px 24px; }
+  button { font: inherit; border: 1px solid var(--border); background: var(--card); color: var(--fg); border-radius: 6px;
+           padding: 5px 12px; cursor: pointer; }
+  button:hover:not(:disabled) { border-color: var(--btn); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  button.primary { background: var(--btn); color: var(--btn-fg); border-color: var(--btn); }
+  input[type=text], input[type=number] { font: inherit; font-family: Consolas, Menlo, monospace; padding: 4px 8px;
+      border: 1px solid var(--border); border-radius: 6px; background: var(--card); color: var(--fg); }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0; }
+  .muted { color: var(--muted); }
+  .hint { font-size: 14px; color: var(--muted); }
+  .grid2 { display: grid; grid-template-columns: minmax(0, 3fr) minmax(260px, 2fr); gap: 16px; align-items: start; }
+  @media (max-width: 860px) { .grid2 { grid-template-columns: 1fr; } }
+  .controls label { display: inline-flex; align-items: center; gap: 6px; }
+  .gridwrap { position: relative; width: 100%; }
+  svg.dp { width: 100%; height: auto; display: block; user-select: none; -webkit-user-select: none; }
+  svg.dp .hd { fill: var(--soft); stroke: var(--border); }
+  svg.dp .hd.cur { fill: var(--a-fill); }
+  svg.dp .hd.taken { fill: var(--ok-fill); }
+  svg.dp .hd.skipped { fill: var(--gray-fill); }
+  svg.dp .hdt { font-family: Consolas, Menlo, monospace; font-size: 16px; font-weight: 700; fill: var(--fg); }
+  svg.dp .hdt.small { font-family: "Segoe UI", Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 600; }
+  svg.dp .cell { fill: var(--card); stroke: var(--border); stroke-width: 1; }
+  svg.dp .cell.base { fill: var(--soft); }
+  svg.dp .cell.src { fill: var(--n-fill); stroke: var(--n-stroke); stroke-width: 2; }
+  svg.dp .cell.path { fill: var(--ok-fill); stroke: var(--ok-stroke); stroke-width: 2.5; }
+  svg.dp .cell.revealed { fill: var(--err-fill); }
+  svg.dp .cell.cur { fill: var(--a-fill); stroke: var(--a-stroke); stroke-width: 3; }
+  svg.dp .cell.wrong { stroke: var(--err-stroke); stroke-width: 3; }
+  svg.dp .val { font-family: Consolas, Menlo, monospace; font-size: 16px; fill: var(--fg); text-anchor: middle;
+                paint-order: stroke; stroke: var(--card); stroke-width: 4px; stroke-linejoin: round; }
+  svg.dp .val.h-base { stroke: var(--soft); }
+  svg.dp .val.h-src { stroke: var(--n-fill); }
+  svg.dp .val.h-path { stroke: var(--ok-fill); font-weight: 700; }
+  svg.dp .val.h-revealed { stroke: var(--err-fill); }
+  svg.dp .val.h-cur { stroke: var(--a-fill); font-weight: 700; }
+  svg.dp .arr { fill: none; stroke-width: 2.5; }
+  svg.dp .arr.best { stroke: var(--a-stroke); }
+  svg.dp .arr.other { stroke: var(--gray-stroke); stroke-dasharray: 5 4; stroke-width: 2; }
+  svg.dp .arr.hint { stroke: var(--n-stroke); }
+  svg.dp .arr.path { stroke: var(--ok-stroke); }
+  svg.dp .mk-best { fill: var(--a-stroke); } svg.dp .mk-other { fill: var(--gray-stroke); }
+  svg.dp .mk-hint { fill: var(--n-stroke); } svg.dp .mk-path { fill: var(--ok-stroke); }
+  .cellinput { position: absolute; margin: 0; padding: 0; text-align: center; font-family: Consolas, Menlo, monospace;
+               font-size: 16px; font-weight: 700; border: 3px solid var(--a-stroke); border-radius: 4px;
+               background: var(--a-fill); color: var(--fg); outline: none; }
+  .cellinput.wrong { border-color: var(--err-stroke); background: var(--err-fill); }
+  .explain { min-height: 120px; }
+  .explain .step { color: var(--muted); font-size: 14px; }
+  .feedback { padding: 8px 12px; border-radius: 6px; margin-top: 8px; display: none; }
+  .feedback.ok { display: block; background: var(--ok-fill); border: 1px solid var(--ok-stroke); }
+  .feedback.bad { display: block; background: var(--err-fill); border: 1px solid var(--err-stroke); }
+  .feedback.info { display: block; background: var(--soft); border: 1px solid var(--border); }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 14px; }
+  .legend span::before { content: ""; display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-right: 6px;
+                         vertical-align: -2px; border: 2px solid var(--border); }
+  .legend .l-cur::before { background: var(--a-fill); border-color: var(--a-stroke); }
+  .legend .l-src::before { background: var(--n-fill); border-color: var(--n-stroke); }
+  .legend .l-path::before { background: var(--ok-fill); border-color: var(--ok-stroke); }
+  .legend .l-base::before { background: var(--soft); }
+  .legend .l-rev::before { background: var(--err-fill); }
+  .stats { font-variant-numeric: tabular-nums; }
+  ol.ops, ul.ops { margin: 4px 0; padding-left: 22px; }
+  kbd { font-family: Consolas, Menlo, monospace; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 4px;
+        padding: 0 4px; background: var(--soft); }
+  fieldset { border: 1px solid var(--border); border-radius: 8px; padding: 4px 12px 8px; margin: 8px 0; }
+  legend { color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>DP-Tabellen</h1>
+  <span id="progressText">1 / 6</span>
+  <div id="progressBar"></div>
+</header>
+
+<main>
+  <!-- Slide 1 -->
+  <section class="slide" data-slide="0">
+    <h2>Tabellen füllen statt neu rechnen</h2>
+    <div class="grid2">
+      <div>
+        <p>Bei der <b>dynamischen Programmierung</b> löst du jedes Teilproblem nur einmal und schreibst das Ergebnis
+          in eine Tabelle. So gehst du vor:</p>
+        <ol>
+          <li>Lege fest, was in einer <b>Zelle</b> steht, z. B. die Editierdistanz der ersten i und j Buchstaben.</li>
+          <li>Stelle die <b>Formel</b> auf, mit der eine Zelle aus ihren Nachbarzellen entsteht.</li>
+          <li>Trage die <b>Basisfälle</b> ein (grau). Sie brauchen keine Nachbarn.</li>
+          <li>Fülle die übrigen Zellen in einer festen <b>Reihenfolge</b>.</li>
+          <li>Lies das Ergebnis ab und gehe den Weg <b>rückwärts</b>, um zu sehen, wie es zustande kam.</li>
+        </ol>
+        <div class="card">
+          <b>Füllreihenfolge in allen Folien:</b> Zeile für Zeile von oben nach unten, in jeder Zeile von links nach
+          rechts (1, 2, 3, …). Eine Zelle braucht nur Zellen <b>darüber</b> oder <b>links davon</b>. Die sind dann immer
+          schon fertig. Die Pfeile zeigen das für Zelle 7.
+        </div>
+        <p class="muted">Blättern: Pfeiltasten <kbd>←</kbd> <kbd>→</kbd> oder die Buttons unten.</p>
+      </div>
+      <div>
+        <div class="gridwrap"><svg class="dp" id="orderSvg" aria-label="Füllreihenfolge einer DP-Tabelle"></svg></div>
+        <div class="legend card">
+          <span class="l-base">Basisfall</span>
+          <span class="l-cur">Zelle, die gerade berechnet wird</span>
+          <span class="l-src">verwendete Nachbarzellen</span>
+          <span class="l-path">Rückweg zur Lösung</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 2 -->
+  <section class="slide" data-slide="1">
+    <h2>Editierdistanz Zelle für Zelle</h2>
+    <p><code>d[i, j]</code> ist die kleinste Anzahl an Schritten (ersetzen, löschen, einfügen), mit denen aus den ersten
+      i Buchstaben des Ausgangsworts (Zeilen) die ersten j Buchstaben des Zielworts (Spalten) werden. Sind die Buchstaben gleich,
+      wird der Wert von <b>↖</b> übernommen. Sonst ist er 1 + Minimum aus <b>↖</b> ersetzen, <b>↑</b> löschen und
+      <b>←</b> einfügen.</p>
+    <div id="animEdit">
+      <div class="row controls">
+        <label>Ausgangswort <input type="text" data-role="src" value="TRAUM" maxlength="8" size="9" aria-label="Ausgangswort"></label>
+        <label>Zielwort <input type="text" data-role="dst" value="BAUM" maxlength="8" size="9" aria-label="Zielwort"></label>
+        <button data-role="apply">Übernehmen</button>
+        <span class="hint" data-role="msg"></span>
+      </div>
+      <div class="row controls">
+        <button data-role="reset">⏮ Anfang</button>
+        <button data-role="back">◀ Zurück</button>
+        <button data-role="step" class="primary">Schritt ▶</button>
+        <button data-role="play">▶ Play</button>
+        <label>Geschwindigkeit <input type="range" data-role="speed" min="1" max="5" value="3" aria-label="Geschwindigkeit"></label>
+        <span class="muted stats" data-role="count"></span>
+      </div>
+      <div class="grid2">
+        <div class="gridwrap"><svg class="dp" id="animEditSvg" aria-label="Tabelle der Editierdistanz"></svg></div>
+        <div class="card explain" data-role="text"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 3 -->
+  <section class="slide" data-slide="2">
+    <h2>Rucksack Zelle für Zelle</h2>
+    <p><code>best[i, c]</code> ist der größte Wert mit den ersten i Gegenständen bei einer Kapazität von c kg. Für jeden
+      Gegenstand gibt es zwei Möglichkeiten: <b>↑ nicht mitnehmen</b> (Wert aus der Zeile darüber) oder, wenn er passt,
+      <b>mitnehmen</b> (sein Wert plus der beste Wert für die restliche Kapazität aus der Zeile darüber). Bei
+      Gleichstand bleibt der Gegenstand zu Hause.</p>
+    <div id="animKnap">
+      <div class="row controls">
+        <button data-role="example">Beispiel aus dem Skript</button>
+        <button data-role="random">Zufallsbeispiel</button>
+        <span class="hint" data-role="msg"></span>
+      </div>
+      <div class="row controls">
+        <button data-role="reset">⏮ Anfang</button>
+        <button data-role="back">◀ Zurück</button>
+        <button data-role="step" class="primary">Schritt ▶</button>
+        <button data-role="play">▶ Play</button>
+        <label>Geschwindigkeit <input type="range" data-role="speed" min="1" max="5" value="3" aria-label="Geschwindigkeit"></label>
+        <span class="muted stats" data-role="count"></span>
+      </div>
+      <div class="grid2">
+        <div class="gridwrap"><svg class="dp" id="animKnapSvg" aria-label="Tabelle des Rucksackproblems"></svg></div>
+        <div class="card explain" data-role="text"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 4 -->
+  <section class="slide" data-slide="3">
+    <h2>Jetzt füllst du selbst</h2>
+    <p>Auf den nächsten zwei Folien füllst du die Tabellen selbst aus, zuerst für die Editierdistanz, dann für den
+      Rucksack. So funktioniert es:</p>
+    <div class="card">
+      <ul>
+        <li>Die <b>Basisfälle</b> (grau) sind schon eingetragen.</li>
+        <li>Die orange Zelle ist die nächste. Tippe den Wert ein und drücke <kbd>Enter</kbd> oder <b>Prüfen</b>.
+          Die Reihenfolge ist fest: Zeile für Zeile von oben nach unten, in jeder Zeile von links nach rechts.</li>
+        <li>Ist der Wert richtig, geht es mit der nächsten Zelle weiter.</li>
+        <li>Ist er falsch, zeigen blaue Pfeile die Nachbarzellen, die du für diese Zelle brauchst. Beim zweiten Fehler
+          siehst du den richtigen Wert mit Erklärung, die Zelle wird rot hinterlegt.</li>
+        <li>Am Ende wird der <b>Rückweg</b> grün markiert: bei der Editierdistanz die Folge der Operationen, beim
+          Rucksack die gewählten Gegenstände.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <p><b>Eingaben:</b> Mit <b>Neue Aufgabe</b> bekommst du eine Zufallsaufgabe. Bei der Editierdistanz ist das ein
+        Wort mit Tippfehlern und das richtige Wort. Du kannst auch eigene Wörter (bis 8 Buchstaben) bzw. eigene
+        Gegenstände im Format <code>Gewicht/Wert</code> eingeben.</p>
+      <p><b>Rückweg bei Gleichstand:</b> Passen mehrere Nachbarn, nimmt die Seite bei der Editierdistanz zuerst ↖, dann ↑,
+        dann ←. Beim Rucksack gilt: Steht darüber derselbe Wert, wurde der Gegenstand nicht mitgenommen.</p>
+      <p class="muted">Wie viele Tabellen du schon fertig hast, merkt sich dein Browser.</p>
+    </div>
+  </section>
+
+  <!-- Slide 5 -->
+  <section class="slide" data-slide="4">
+    <h2>Übung: Editierdistanz</h2>
+    <div id="exEdit">
+      <div class="row controls">
+        <button data-role="new" class="primary">Neue Aufgabe</button>
+        <label>Ausgangswort <input type="text" data-role="src" maxlength="8" size="9" aria-label="eigenes Ausgangswort"></label>
+        <label>Zielwort <input type="text" data-role="dst" maxlength="8" size="9" aria-label="eigenes Zielwort"></label>
+        <button data-role="own">Eigene Wörter</button>
+        <span class="muted stats" data-role="stats"></span>
+      </div>
+      <div class="grid2">
+        <div>
+          <div class="card" data-role="task"></div>
+          <div class="gridwrap" data-role="wrap"><svg class="dp" id="exEditSvg" aria-label="Tabelle zum Ausfüllen"></svg></div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="row"><button data-role="check" class="primary">Prüfen</button>
+              <button data-role="reveal">Wert zeigen</button></div>
+            <div class="stats" data-role="progress"></div>
+            <div class="feedback" data-role="feedback"></div>
+          </div>
+          <div class="legend card">
+            <span class="l-cur">nächste Zelle</span><span class="l-src">brauchst du dafür</span>
+            <span class="l-rev">aufgedeckt</span><span class="l-path">Rückweg</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 6 -->
+  <section class="slide" data-slide="5">
+    <h2>Übung: Rucksack</h2>
+    <div id="exKnap">
+      <div class="row controls">
+        <button data-role="new" class="primary">Neue Aufgabe</button>
+        <label>Gegenstände <input type="text" data-role="items" size="18" placeholder="1/1, 3/4, 4/5" aria-label="eigene Gegenstände als Gewicht/Wert"></label>
+        <label>Kapazität <input type="number" data-role="cap" min="1" max="12" value="7" style="width:4.5em" aria-label="Kapazität"></label>
+        <button data-role="own">Eigene Gegenstände</button>
+        <span class="muted stats" data-role="stats"></span>
+      </div>
+      <div class="grid2">
+        <div>
+          <div class="card" data-role="task"></div>
+          <div class="gridwrap" data-role="wrap"><svg class="dp" id="exKnapSvg" aria-label="Tabelle zum Ausfüllen"></svg></div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="row"><button data-role="check" class="primary">Prüfen</button>
+              <button data-role="reveal">Wert zeigen</button></div>
+            <div class="stats" data-role="progress"></div>
+            <div class="feedback" data-role="feedback"></div>
+          </div>
+          <div class="legend card">
+            <span class="l-cur">nächste Zelle</span><span class="l-src">brauchst du dafür</span>
+            <span class="l-rev">aufgedeckt</span><span class="l-path">Rückweg und gewählte Gegenstände</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="nav">
+  <button id="prevBtn">← Zurück</button>
+  <button id="nextBtn" class="primary">Weiter →</button>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  const SVGNS = 'http://www.w3.org/2000/svg';
+  const CW = 50, CH = 42, HEAD_H = 34;
+
+  // ---------- storage (works without localStorage) ----------
+  const store = {
+    get(key, fallback) {
+      try {
+        const raw = window.localStorage.getItem('ti-27-' + key);
+        return raw === null ? fallback : JSON.parse(raw);
+      } catch (e) { return fallback; }
+    },
+    set(key, value) {
+      try { window.localStorage.setItem('ti-27-' + key, JSON.stringify(value)); } catch (e) { /* ignore */ }
+    }
+  };
+
+  // ---------- helpers ----------
+  function svgEl(tag, attrs, parent) {
+    const e = document.createElementNS(SVGNS, tag);
+    for (const k in attrs) { e.setAttribute(k, attrs[k]); }
+    if (parent) { parent.appendChild(e); }
+    return e;
+  }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+  function key(r, c) { return r * 1000 + c; }
+  function randInt(min, max) { return min + Math.floor(Math.random() * (max - min + 1)); }
+  function pick(list) { return list[Math.floor(Math.random() * list.length)]; }
+
+  // ---------- grid renderer ----------
+  /** Geometry of a table: one header row, one header column, then rows x cols cells. */
+  function geometry(spec) {
+    const rows = spec.rowHeads.length, cols = spec.colHeads.length;
+    const g = {
+      rows, cols, headW: spec.headW,
+      W: spec.headW + cols * CW + 2, H: HEAD_H + rows * CH + 2,
+      x: c => 1 + spec.headW + c * CW, y: r => 1 + HEAD_H + r * CH
+    };
+    g.cx = c => g.x(c) + CW / 2;
+    g.cy = r => g.y(r) + CH / 2;
+    return g;
+  }
+
+  // Drawing order of cell classes: cells with thick borders are drawn last so their borders stay visible.
+  const PRIORITY = { '': 0, base: 0, revealed: 1, src: 2, path: 3, cur: 4 };
+
+  /**
+   * Draws a DP table into an svg.
+   * spec: { rowHeads, colHeads, headW, rowAlign, corner, values[r][c] (null = empty), cls(r, c) -> string,
+   *         rowCls[r], colCls[c], arrows: [{ from: [r, c], to: [r, c], kind }], wrong: [r, c] | null }
+   */
+  function renderGrid(svg, spec) {
+    const g = geometry(spec);
+    svg.setAttribute('viewBox', `0 0 ${g.W} ${g.H}`);
+    svg.parentNode.style.maxWidth = Math.round(g.W * 1.3) + 'px';
+    while (svg.firstChild) { svg.removeChild(svg.firstChild); }
+    const defs = svgEl('defs', {}, svg);
+    for (const kind of ['best', 'other', 'hint', 'path']) {
+      const m = svgEl('marker', { id: `${svg.id}-mk-${kind}`, viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 10,
+        markerHeight: 10, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }, defs);
+      svgEl('path', { d: 'M0,0 L10,5 L0,10 z', class: 'mk-' + kind }, m);
+    }
+    svgEl('rect', { x: 1, y: 1, width: g.headW, height: HEAD_H, class: 'hd' }, svg);
+    if (spec.corner) {
+      const t = svgEl('text', { x: 1 + g.headW / 2, y: 1 + HEAD_H / 2 + 5, class: 'hdt small', 'text-anchor': 'middle' }, svg);
+      t.textContent = spec.corner;
+    }
+    spec.colHeads.forEach((h, c) => {
+      svgEl('rect', { x: g.x(c), y: 1, width: CW, height: HEAD_H, class: 'hd ' + ((spec.colCls && spec.colCls[c]) || '') }, svg);
+      const t = svgEl('text', { x: g.cx(c), y: 1 + HEAD_H / 2 + 6, class: 'hdt', 'text-anchor': 'middle' }, svg);
+      t.textContent = h;
+    });
+    spec.rowHeads.forEach((h, r) => {
+      svgEl('rect', { x: 1, y: g.y(r), width: g.headW, height: CH, class: 'hd ' + ((spec.rowCls && spec.rowCls[r]) || '') }, svg);
+      const start = spec.rowAlign === 'start';
+      const t = svgEl('text', { x: start ? 10 : 1 + g.headW / 2, y: g.cy(r) + (start ? 5 : 6),
+        class: 'hdt' + (start ? ' small' : ''), 'text-anchor': start ? 'start' : 'middle' }, svg);
+      t.textContent = h;
+    });
+    const cells = [];
+    for (let r = 0; r < g.rows; r++) {
+      for (let c = 0; c < g.cols; c++) { cells.push({ r, c, cls: spec.cls(r, c) }); }
+    }
+    cells.sort((a, b) => (PRIORITY[a.cls] || 0) - (PRIORITY[b.cls] || 0));
+    for (const cell of cells) {
+      const wrong = spec.wrong && spec.wrong[0] === cell.r && spec.wrong[1] === cell.c ? ' wrong' : '';
+      svgEl('rect', { x: g.x(cell.c), y: g.y(cell.r), width: CW, height: CH, class: `cell ${cell.cls}${wrong}` }, svg);
+    }
+    for (const a of spec.arrows || []) {
+      const x1 = g.cx(a.from[1]), y1 = g.cy(a.from[0]), x2 = g.cx(a.to[1]), y2 = g.cy(a.to[0]);
+      const len = Math.hypot(x2 - x1, y2 - y1) || 1, ux = (x2 - x1) / len, uy = (y2 - y1) / len;
+      svgEl('line', { x1: x1 + ux * 9, y1: y1 + uy * 9, x2: x2 - ux * 12, y2: y2 - uy * 12, class: 'arr ' + a.kind,
+        'marker-end': `url(#${svg.id}-mk-${a.kind})` }, svg);
+    }
+    for (const cell of cells) {
+      const v = spec.values[cell.r][cell.c];
+      if (v === null || v === undefined) { continue; }
+      const t = svgEl('text', { x: g.cx(cell.c), y: g.cy(cell.r) + 6, class: 'val' + (cell.cls ? ' h-' + cell.cls : '') }, svg);
+      t.textContent = v;
+    }
+    return g;
+  }
+
+  // ---------- problems ----------
+  /** Edit distance from src (rows) to dst (columns). */
+  function makeEditProblem(src, dst) {
+    const n = src.length, m = dst.length;
+    const d = [];
+    for (let i = 0; i <= n; i++) {
+      d.push([]);
+      for (let j = 0; j <= m; j++) {
+        if (i === 0) { d[i].push(j); } else if (j === 0) { d[i].push(i); } else if (src[i - 1] === dst[j - 1]) {
+          d[i].push(d[i - 1][j - 1]);
+        } else {
+          d[i].push(1 + Math.min(d[i - 1][j - 1], d[i - 1][j], d[i][j - 1]));
+        }
+      }
+    }
+    const order = [];
+    for (let i = 1; i <= n; i++) { for (let j = 1; j <= m; j++) { order.push([i, j]); } }
+    const q = s => `„${esc(s)}“`;
+    return {
+      kind: 'edit', src, dst, truth: d, order,
+      rowHeads: ['ε', ...src], colHeads: ['ε', ...dst], headW: 44, rowAlign: 'middle', corner: '',
+      isBase: (r, c) => r === 0 || c === 0,
+      name: (r, c) => `d[${r}, ${c}]`,
+      baseText: `Die grauen Zellen sind die Basisfälle: <code>d[i, 0] = i</code> (i-mal löschen) und <code>d[0, j] = j</code> (j-mal einfügen).`,
+      info(i, j) {
+        const a = src[i - 1], b = dst[j - 1], val = d[i][j];
+        const nm = `d[${i}, ${j}]`;
+        if (a === b) {
+          return {
+            cands: [{ r: i - 1, c: j - 1, v: d[i - 1][j - 1] }], best: 0,
+            hint: `${q(a)} und ${q(b)} sind gleich. Der Wert kommt ohne Kosten von links oben (↖).`,
+            explain: `<b>${nm}</b>: ${q(a)} = ${q(b)}, also ohne Kosten von ↖ übernehmen: ` +
+              `d[${i - 1}, ${j - 1}] = <b>${val}</b>.`
+          };
+        }
+        const cands = [
+          { r: i - 1, c: j - 1, v: d[i - 1][j - 1], sym: '↖', op: `${q(a)} durch ${q(b)} ersetzen` },
+          { r: i - 1, c: j, v: d[i - 1][j], sym: '↑', op: `${q(a)} löschen` },
+          { r: i, c: j - 1, v: d[i][j - 1], sym: '←', op: `${q(b)} einfügen` }
+        ];
+        let best = 0;
+        cands.forEach((cd, k) => { if (cd.v < cands[best].v) { best = k; } });
+        return {
+          cands, best,
+          hint: `${q(a)} ≠ ${q(b)}: 1 + Minimum aus ↖ ersetzen, ↑ löschen und ← einfügen.`,
+          explain: `<b>${nm}</b>: ${q(a)} ≠ ${q(b)}, also 1 + min(↖ ${cands[0].v}, ↑ ${cands[1].v}, ← ${cands[2].v}) = <b>${val}</b>.` +
+            `<br><span class="step">Günstigster Schritt: ${cands[best].sym} ${cands[best].op}</span>`
+        };
+      },
+      backtrace() {
+        let i = n, j = m;
+        const path = [[i, j]], steps = [], ops = [];
+        while (i > 0 || j > 0) {
+          let op, sym;
+          if (i > 0 && j > 0 && src[i - 1] === dst[j - 1]) { op = `${q(src[i - 1])} behalten`; sym = '↖'; i--; j--; }
+          else if (i > 0 && j > 0 && d[i][j] === d[i - 1][j - 1] + 1) { op = `${q(src[i - 1])} durch ${q(dst[j - 1])} ersetzen`; sym = '↖'; i--; j--; }
+          else if (i > 0 && d[i][j] === d[i - 1][j] + 1) { op = `${q(src[i - 1])} löschen`; sym = '↑'; i--; }
+          else { op = `${q(dst[j - 1])} einfügen`; sym = '←'; j--; }
+          path.push([i, j]);
+          ops.unshift(op);
+          steps.push({ text: `${sym} ${op}` });
+        }
+        const list = ops.map(o => `<li>${o}</li>`).join('');
+        return {
+          path, steps, rowCls: [],
+          start: `Rückweg ab <b>d[${n}, ${m}] = ${d[n][m]}</b>: Gehe jeweils zu der Nachbarzelle, aus der der Wert entstanden ist.`,
+          summary: `Die Editierdistanz von ${q(src)} nach ${q(dst)} ist <b>${d[n][m]}</b>. Von vorne gelesen:<ol class="ops">${list}</ol>`
+        };
+      }
+    };
+  }
+
+  /** 0/1 knapsack; items = [{ name, w, v }]. */
+  function makeKnapProblem(items, cap) {
+    const n = items.length;
+    const best = [];
+    for (let i = 0; i <= n; i++) {
+      best.push([]);
+      for (let c = 0; c <= cap; c++) {
+        if (i === 0) { best[i].push(0); continue; }
+        const it = items[i - 1];
+        let v = best[i - 1][c];
+        if (it.w <= c) { v = Math.max(v, it.v + best[i - 1][c - it.w]); }
+        best[i].push(v);
+      }
+    }
+    const order = [];
+    for (let i = 1; i <= n; i++) { for (let c = 0; c <= cap; c++) { order.push([i, c]); } }
+    const colHeads = [];
+    for (let c = 0; c <= cap; c++) { colHeads.push(String(c)); }
+    return {
+      kind: 'knap', items, cap, truth: best, order,
+      rowHeads: ['0  (keiner)', ...items.map((it, k) => `${k + 1}  ${it.name}: ${it.w} kg, Wert ${it.v}`)],
+      colHeads, headW: 150, rowAlign: 'start', corner: 'i  \\  c',
+      isBase: r => r === 0,
+      name: (r, c) => `best[${r}, ${c}]`,
+      baseText: 'Die graue Zeile 0 ist der Basisfall: Ohne Gegenstände ist der Wert 0.',
+      info(i, c) {
+        const it = items[i - 1], val = best[i][c], nm = `best[${i}, ${c}]`;
+        const without = { r: i - 1, c, v: best[i - 1][c] };
+        if (it.w > c) {
+          return {
+            cands: [without], best: 0,
+            hint: `${esc(it.name)} wiegt ${it.w} kg und passt nicht in ${c} kg. Der Wert kommt aus der Zeile darüber (↑).`,
+            explain: `<b>${nm}</b>: ${esc(it.name)} (${it.w} kg) passt nicht in ${c} kg, also ↑ übernehmen: <b>${val}</b>.`
+          };
+        }
+        const withIt = { r: i - 1, c: c - it.w, v: it.v + best[i - 1][c - it.w] };
+        const take = withIt.v > without.v;
+        return {
+          cands: [without, withIt], best: take ? 1 : 0,
+          hint: `${esc(it.name)} (${it.w} kg) passt in ${c} kg: Maximum aus „nicht mitnehmen“ (Zelle darüber) und ` +
+            `„mitnehmen“ (${it.v} + bester Wert für ${c - it.w} kg aus der Zeile darüber).`,
+          explain: `<b>${nm}</b>: ohne ${esc(it.name)}: best[${i - 1}, ${c}] = ${without.v}. ` +
+            `Mit ${esc(it.name)}: ${it.v} + best[${i - 1}, ${c - it.w}] = ${withIt.v}. Maximum: <b>${val}</b>.` +
+            `<br><span class="step">${take ? `${esc(it.name)} mitnehmen lohnt sich.` :
+              (withIt.v === without.v ? 'Gleichstand: Der Gegenstand bleibt zu Hause.' : `${esc(it.name)} bleibt zu Hause.`)}</span>`
+        };
+      },
+      backtrace() {
+        let i = n, c = cap;
+        const path = [[i, c]], steps = [], rowCls = [];
+        const taken = [];
+        while (i > 0) {
+          const it = items[i - 1];
+          if (best[i][c] !== best[i - 1][c]) {
+            steps.push({ text: `best[${i}, ${c}] = ${best[i][c]} ≠ best[${i - 1}, ${c}] = ${best[i - 1][c]}: ` +
+              `<b>${esc(it.name)} mitgenommen</b>, weiter bei ${c} − ${it.w} = ${c - it.w} kg.`, row: i, taken: true });
+            taken.unshift(it);
+            c -= it.w;
+          } else {
+            steps.push({ text: `best[${i}, ${c}] = ${best[i][c]} = best[${i - 1}, ${c}]: ${esc(it.name)} nicht mitgenommen (↑).`,
+              row: i, taken: false });
+          }
+          i--;
+          path.push([i, c]);
+        }
+        items.forEach((it, k) => { rowCls[k + 1] = taken.includes(it) ? 'taken' : 'skipped'; });
+        const w = taken.reduce((s, it) => s + it.w, 0), v = taken.reduce((s, it) => s + it.v, 0);
+        const names = taken.length ? taken.map(it => esc(it.name)).join(', ') : 'nichts';
+        return {
+          path, steps, rowCls,
+          start: `Rückweg ab <b>best[${n}, ${cap}] = ${best[n][cap]}</b>: Gleicher Wert darüber heißt „nicht mitgenommen“, ` +
+            'sonst „mitgenommen“ und um das Gewicht nach links.',
+          summary: `Beste Auswahl: <b>${names}</b> mit ${w} kg und dem Wert <b>${v}</b>. Die grünen Zeilen sind die gewählten Gegenstände.`
+        };
+      }
+    };
+  }
+
+  // ---------- views ----------
+  /**
+   * Builds a render spec from a problem and a view state.
+   * st: { filled: Set, cur: [r, c] | null, hideCur, src: [[r, c]], arrows, path: [[r, c]], revealed: Set, wrong, rowCls }
+   */
+  function buildSpec(p, st) {
+    const rows = p.rowHeads.length, cols = p.colHeads.length;
+    const values = [];
+    for (let r = 0; r < rows; r++) {
+      values.push([]);
+      for (let c = 0; c < cols; c++) {
+        const shown = p.isBase(r, c) || st.filled.has(key(r, c));
+        const hidden = st.hideCur && st.cur && st.cur[0] === r && st.cur[1] === c;
+        values[r].push(shown && !hidden ? p.truth[r][c] : null);
+      }
+    }
+    const src = new Set((st.src || []).map(x => key(x[0], x[1])));
+    const path = new Set((st.path || []).map(x => key(x[0], x[1])));
+    const rowCls = (st.rowCls || []).slice(), colCls = [];
+    if (st.cur) { rowCls[st.cur[0]] = 'cur'; colCls[st.cur[1]] = 'cur'; }
+    return {
+      rowHeads: p.rowHeads, colHeads: p.colHeads, headW: p.headW, rowAlign: p.rowAlign, corner: p.corner,
+      values, rowCls, colCls, arrows: st.arrows || [], wrong: st.wrong || null,
+      cls(r, c) {
+        const k = key(r, c);
+        if (st.cur && st.cur[0] === r && st.cur[1] === c) { return 'cur'; }
+        if (path.has(k)) { return 'path'; }
+        if (src.has(k)) { return 'src'; }
+        if (st.revealed && st.revealed.has(k)) { return 'revealed'; }
+        return p.isBase(r, c) ? 'base' : '';
+      }
+    };
+  }
+
+  function arrowsFor(cell, info, mode) {
+    return info.cands.map((cd, k) => ({
+      from: cell, to: [cd.r, cd.c], kind: mode === 'hint' ? 'hint' : (k === info.best ? 'best' : 'other')
+    }));
+  }
+  function pathArrows(path, upto) {
+    const list = [];
+    for (let k = 0; k + 1 < upto; k++) { list.push({ from: path[k], to: path[k + 1], kind: 'path' }); }
+    return list;
+  }
+
+  /** All animation frames for a problem: base cases, every cell, then the way back. */
+  function buildFrames(p) {
+    const frames = [];
+    const filled = new Set();
+    frames.push({ st: { filled: new Set(filled) }, text: p.baseText + '<br><span class="step">Mit „Schritt“ wird die nächste Zelle berechnet.</span>' });
+    for (const cell of p.order) {
+      filled.add(key(cell[0], cell[1]));
+      const info = p.info(cell[0], cell[1]);
+      frames.push({
+        st: { filled: new Set(filled), cur: cell, src: info.cands.map(cd => [cd.r, cd.c]), arrows: arrowsFor(cell, info, 'best') },
+        text: info.explain
+      });
+    }
+    const bt = p.backtrace();
+    frames.push({ st: { filled, path: [bt.path[0]] }, text: bt.start });
+    const rowCls = [];
+    bt.steps.forEach((s, k) => {
+      if (s.row !== undefined) { rowCls[s.row] = s.taken ? 'taken' : 'skipped'; }
+      frames.push({
+        st: { filled, path: bt.path.slice(0, k + 2), arrows: pathArrows(bt.path, k + 2), rowCls: rowCls.slice() },
+        text: s.text
+      });
+    });
+    frames.push({ st: { filled, path: bt.path, arrows: pathArrows(bt.path, bt.path.length), rowCls: bt.rowCls }, text: bt.summary });
+    return frames;
+  }
+
+  // ---------- animation player ----------
+  const DELAYS = [1700, 1150, 750, 450, 250];
+
+  /** Step / play / pause / speed controls for one animation slide. */
+  function makePlayer(root, svg) {
+    const $ = role => root.querySelector(`[data-role=${role}]`);
+    const player = { frames: [], k: 0, timer: null };
+    function render() {
+      const f = player.frames[player.k];
+      renderGrid(svg, buildSpec(player.problem, f.st));
+      $('text').innerHTML = f.text;
+      $('count').textContent = `Schritt ${player.k} / ${player.frames.length - 1}`;
+      $('back').disabled = player.k === 0;
+      $('step').disabled = player.k === player.frames.length - 1;
+    }
+    function stop() {
+      if (player.timer) { clearInterval(player.timer); player.timer = null; }
+      $('play').textContent = '▶ Play';
+    }
+    function step(delta) {
+      player.k = Math.min(Math.max(player.k + delta, 0), player.frames.length - 1);
+      render();
+    }
+    function play() {
+      if (player.timer) { stop(); return; }
+      if (player.k === player.frames.length - 1) { player.k = 0; }
+      $('play').textContent = '⏸ Pause';
+      const tick = () => {
+        if (player.k >= player.frames.length - 1) { stop(); return; }
+        step(1);
+      };
+      player.timer = setInterval(tick, DELAYS[(+$('speed').value || 3) - 1]);
+    }
+    $('reset').addEventListener('click', () => { stop(); player.k = 0; render(); });
+    $('back').addEventListener('click', () => { stop(); step(-1); });
+    $('step').addEventListener('click', () => { stop(); step(1); });
+    $('play').addEventListener('click', play);
+    $('speed').addEventListener('input', () => { if (player.timer) { stop(); play(); } });
+    player.load = p => { stop(); player.problem = p; player.frames = buildFrames(p); player.k = 0; render(); };
+    player.stop = stop;
+    return player;
+  }
+
+  // ---------- input data ----------
+  const WORDS = ['HAUS', 'BAUM', 'TRAUM', 'SCHULE', 'KATZE', 'HUND', 'APFEL', 'BIRNE', 'WASSER', 'STRAND', 'SONNE',
+    'REGEN', 'BLUME', 'GARTEN', 'FENSTER', 'TISCH', 'STUHL', 'LAMPE', 'BUCH', 'HEFT', 'MAUS', 'KUCHEN', 'BROT',
+    'MILCH', 'ZUCKER', 'WAGEN', 'BRÜCKE', 'FLUSS', 'BERG', 'WOLKE', 'STERN', 'MOND', 'INSEL', 'KAFFEE', 'ZEITUNG',
+    'FREUND', 'SPIEL', 'MUSIK', 'KLASSE', 'SCHNEE', 'WINTER', 'SOMMER', 'BAHNHOF', 'TAFEL', 'KREIDE'];
+  const LETTERS = 'AEIOUBDGHKLMNRST';
+
+  /** Creates a typo of a word with 1 to 3 random edits. */
+  function typo(word) {
+    let w = word.split('');
+    const edits = randInt(1, 3);
+    for (let e = 0; e < edits; e++) {
+      const op = randInt(0, 3), pos = randInt(0, w.length - 1);
+      if (op === 0) { w[pos] = pick(LETTERS); }
+      else if (op === 1 && w.length > 3) { w.splice(pos, 1); }
+      else if (op === 2 && w.length < 8) { w.splice(randInt(0, w.length), 0, pick(LETTERS)); }
+      else if (pos + 1 < w.length) { const t = w[pos]; w[pos] = w[pos + 1]; w[pos + 1] = t; }
+    }
+    return w.join('');
+  }
+  function randomEditPair() {
+    for (;;) {
+      const right = pick(WORDS), wrong = typo(right);
+      if (wrong !== right) { return [wrong, right]; }
+    }
+  }
+  function normalizeWord(s) {
+    return s.trim().toUpperCase().replace(/\s+/g, '');
+  }
+  function checkWord(s) {
+    if (s.length === 0) { return 'Bitte beide Wörter eingeben.'; }
+    if (s.length > 8) { return 'Höchstens 8 Buchstaben, sonst wird die Tabelle zu groß.'; }
+    if (!/^[A-ZÄÖÜß]+$/.test(s)) { return 'Bitte nur Buchstaben verwenden.'; }
+    return '';
+  }
+
+  const NAMES = 'ABCDE';
+  const SCRIPT_ITEMS = [{ name: 'A', w: 1, v: 1 }, { name: 'B', w: 3, v: 4 }, { name: 'C', w: 4, v: 5 }, { name: 'D', w: 5, v: 7 }];
+  function randomKnap() {
+    const n = randInt(3, 4), items = [];
+    for (let k = 0; k < n; k++) { items.push({ name: NAMES[k], w: randInt(1, 5), v: randInt(1, 9) }); }
+    return { items, cap: randInt(5, 8) };
+  }
+  /** Parses "2/3, 3/4" into items; returns an error text or the items. */
+  function parseItems(text) {
+    const parts = text.split(/[,;]/).map(s => s.trim()).filter(s => s.length > 0);
+    if (parts.length === 0) { return 'Bitte Gegenstände im Format Gewicht/Wert eingeben, z. B. 1/1, 3/4, 4/5.'; }
+    if (parts.length > 5) { return 'Höchstens 5 Gegenstände.'; }
+    const items = [];
+    for (let k = 0; k < parts.length; k++) {
+      const m = /^(\d+)\s*\/\s*(\d+)$/.exec(parts[k]);
+      if (!m) { return `„${parts[k]}“ hat nicht das Format Gewicht/Wert.`; }
+      const w = +m[1], v = +m[2];
+      if (w < 1 || w > 12 || v > 99) { return 'Gewicht 1 bis 12, Wert 0 bis 99.'; }
+      items.push({ name: NAMES[k], w, v });
+    }
+    return items;
+  }
+
+  // ---------- slide 1: fill order ----------
+  (function drawOrder() {
+    const rows = 4, cols = 5;
+    const values = [], order = {};
+    let n = 0;
+    for (let r = 0; r < rows; r++) {
+      values.push([]);
+      for (let c = 0; c < cols; c++) {
+        if (r === 0 || c === 0) { values[r].push('B'); } else { n++; values[r].push(n); order[key(r, c)] = n; }
+      }
+    }
+    const cur = [2, 3];
+    const src = new Set([key(1, 2), key(1, 3), key(2, 2)]);
+    renderGrid(document.getElementById('orderSvg'), {
+      rowHeads: ['0', '1', '2', '3'], colHeads: ['0', '1', '2', '3', '4'], headW: 44, rowAlign: 'middle', corner: '',
+      values, rowCls: [], colCls: [],
+      arrows: [{ from: cur, to: [1, 2], kind: 'best' }, { from: cur, to: [1, 3], kind: 'best' }, { from: cur, to: [2, 2], kind: 'best' }],
+      cls(r, c) {
+        if (r === cur[0] && c === cur[1]) { return 'cur'; }
+        if (src.has(key(r, c))) { return 'src'; }
+        return r === 0 || c === 0 ? 'base' : '';
+      }
+    });
+  })();
+
+  // ---------- slide 2 and 3: animations ----------
+  const editRoot = document.getElementById('animEdit');
+  const animEdit = makePlayer(editRoot, document.getElementById('animEditSvg'));
+  function applyEditWords() {
+    const s = normalizeWord(editRoot.querySelector('[data-role=src]').value);
+    const t = normalizeWord(editRoot.querySelector('[data-role=dst]').value);
+    const err = checkWord(s) || checkWord(t);
+    editRoot.querySelector('[data-role=msg]').textContent = err;
+    if (err) { return; }
+    editRoot.querySelector('[data-role=src]').value = s;
+    editRoot.querySelector('[data-role=dst]').value = t;
+    animEdit.load(makeEditProblem(s, t));
+  }
+  editRoot.querySelector('[data-role=apply]').addEventListener('click', applyEditWords);
+  for (const role of ['src', 'dst']) {
+    editRoot.querySelector(`[data-role=${role}]`).addEventListener('keydown', e => { if (e.key === 'Enter') { applyEditWords(); } });
+  }
+  applyEditWords();
+
+  const knapRoot = document.getElementById('animKnap');
+  const animKnap = makePlayer(knapRoot, document.getElementById('animKnapSvg'));
+  knapRoot.querySelector('[data-role=example]').addEventListener('click', () => {
+    knapRoot.querySelector('[data-role=msg]').textContent = 'Kapazität 7 kg';
+    animKnap.load(makeKnapProblem(SCRIPT_ITEMS, 7));
+  });
+  knapRoot.querySelector('[data-role=random]').addEventListener('click', () => {
+    const r = randomKnap();
+    knapRoot.querySelector('[data-role=msg]').textContent = `Kapazität ${r.cap} kg`;
+    animKnap.load(makeKnapProblem(r.items, r.cap));
+  });
+  knapRoot.querySelector('[data-role=msg]').textContent = 'Kapazität 7 kg';
+  animKnap.load(makeKnapProblem(SCRIPT_ITEMS, 7));
+
+  // ---------- exercises ----------
+  const stats = store.get('stats', { edit: 0, knap: 0 });
+
+  /** Exercise controller: the student fills the cells of a problem in the fixed order. */
+  function makeExercise(root, svg, kind) {
+    const $ = role => root.querySelector(`[data-role=${role}]`);
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'cellinput';
+    input.setAttribute('inputmode', 'numeric');
+    input.setAttribute('autocomplete', 'off');
+    input.setAttribute('aria-label', 'Wert der orangen Zelle');
+    $('wrap').appendChild(input);
+    const ex = {};
+
+    function showStats() {
+      $('stats').textContent = `Fertige Tabellen: ${stats[kind] || 0}`;
+    }
+    function feedback(cls, html) {
+      const f = $('feedback');
+      f.className = 'feedback ' + cls;
+      f.innerHTML = html;
+    }
+    function cur() { return ex.idx < ex.p.order.length ? ex.p.order[ex.idx] : null; }
+
+    function render(focus) {
+      const c = cur();
+      const st = { filled: ex.filled, revealed: ex.revealed, cur: c, hideCur: true };
+      if (c && ex.attempts > 0) {
+        const info = ex.p.info(c[0], c[1]);
+        st.src = info.cands.map(cd => [cd.r, cd.c]);
+        st.arrows = arrowsFor(c, info, 'hint');
+        st.wrong = c;
+      }
+      if (!c) {
+        const bt = ex.p.backtrace();
+        st.path = bt.path;
+        st.arrows = pathArrows(bt.path, bt.path.length);
+        st.rowCls = bt.rowCls;
+      }
+      const g = renderGrid(svg, buildSpec(ex.p, st));
+      const total = ex.p.order.length;
+      $('progress').textContent = `Zelle ${Math.min(ex.idx + 1, total)} von ${total} · beim ersten Versuch richtig: ${ex.firstTry} · aufgedeckt: ${ex.revealed.size}`;
+      $('check').disabled = !c;
+      $('reveal').disabled = !c;
+      if (!c) { input.style.display = 'none'; return; }
+      input.style.display = 'block';
+      input.style.left = (g.x(c[1]) / g.W * 100) + '%';
+      input.style.top = (g.y(c[0]) / g.H * 100) + '%';
+      input.style.width = (CW / g.W * 100) + '%';
+      input.style.height = (CH / g.H * 100) + '%';
+      input.classList.toggle('wrong', ex.attempts > 0);
+      if (focus) { input.focus({ preventScroll: true }); }
+    }
+
+    function finish() {
+      stats[kind] = (stats[kind] || 0) + 1;
+      store.set('stats', stats);
+      showStats();
+      const bt = ex.p.backtrace();
+      const total = ex.p.order.length;
+      const praise = ex.firstTry === total ? 'Perfekt, alle Zellen beim ersten Versuch richtig!' : `${ex.firstTry} von ${total} Zellen beim ersten Versuch richtig.`;
+      feedback('ok', `✓ Tabelle fertig. ${praise}<br>${bt.summary}`);
+    }
+
+    function advance(focus) {
+      ex.idx++;
+      ex.attempts = 0;
+      if (!cur()) { render(false); finish(); return; }
+      render(focus);
+    }
+
+    function revealCurrent(reason) {
+      const c = cur();
+      const info = ex.p.info(c[0], c[1]);
+      ex.filled.add(key(c[0], c[1]));
+      ex.revealed.add(key(c[0], c[1]));
+      feedback('bad', `${reason}Richtig ist <b>${ex.p.truth[c[0]][c[1]]}</b>.<br>${info.explain}`);
+      advance(true);
+    }
+
+    function check() {
+      const c = cur();
+      if (!c) { return; }
+      const raw = input.value.trim();
+      if (!/^\d+$/.test(raw)) {
+        feedback('info', 'Bitte eine ganze Zahl eingeben.');
+        input.focus({ preventScroll: true });
+        return;
+      }
+      const expected = ex.p.truth[c[0]][c[1]];
+      const nm = ex.p.name(c[0], c[1]);
+      input.value = '';
+      if (+raw === expected) {
+        if (ex.attempts === 0) { ex.firstTry++; }
+        ex.filled.add(key(c[0], c[1]));
+        feedback('ok', `✓ ${nm} = ${expected} ist richtig.`);
+        advance(true);
+        return;
+      }
+      ex.attempts++;
+      if (ex.attempts >= 2) {
+        revealCurrent(`✗ ${esc(raw)} stimmt wieder nicht. `);
+        return;
+      }
+      const info = ex.p.info(c[0], c[1]);
+      feedback('bad', `✗ ${esc(raw)} ist nicht richtig. Die blauen Pfeile zeigen die Zellen, die du für ${nm} brauchst.<br>${info.hint}`);
+      render(true);
+    }
+
+    function load(p) {
+      ex.p = p;
+      ex.filled = new Set();
+      ex.revealed = new Set();
+      ex.idx = 0;
+      ex.attempts = 0;
+      ex.firstTry = 0;
+      input.value = '';
+      feedback('info', 'Trage den Wert der orangen Zelle ein und drücke Enter.');
+      render(false);
+    }
+
+    $('check').addEventListener('click', check);
+    $('reveal').addEventListener('click', () => { if (cur()) { revealCurrent(''); } });
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') { check(); e.preventDefault(); } });
+    showStats();
+    ex.load = load;
+    ex.focus = () => { if (cur()) { input.focus({ preventScroll: true }); } };
+    ex.answer = () => { const c = cur(); return c ? ex.p.truth[c[0]][c[1]] : null; };
+    ex.problem = () => ex.p;
+    return ex;
+  }
+
+  const exEditRoot = document.getElementById('exEdit');
+  const exEdit = makeExercise(exEditRoot, document.getElementById('exEditSvg'), 'edit');
+  function loadEdit(src, dst) {
+    exEditRoot.querySelector('[data-role=task]').innerHTML =
+      `Wie viele Schritte brauchst du von <code>${esc(src)}</code> (Zeilen) nach <code>${esc(dst)}</code> (Spalten)?`;
+    exEdit.load(makeEditProblem(src, dst));
+  }
+  exEditRoot.querySelector('[data-role=new]').addEventListener('click', () => { const pr = randomEditPair(); loadEdit(pr[0], pr[1]); exEdit.focus(); });
+  exEditRoot.querySelector('[data-role=own]').addEventListener('click', () => {
+    const s = normalizeWord(exEditRoot.querySelector('[data-role=src]').value);
+    const t = normalizeWord(exEditRoot.querySelector('[data-role=dst]').value);
+    const err = checkWord(s) || checkWord(t);
+    if (err) { exEditRoot.querySelector('[data-role=task]').textContent = err; return; }
+    loadEdit(s, t);
+    exEdit.focus();
+  });
+  loadEdit(...randomEditPair());
+
+  const exKnapRoot = document.getElementById('exKnap');
+  const exKnap = makeExercise(exKnapRoot, document.getElementById('exKnapSvg'), 'knap');
+  function loadKnap(items, cap) {
+    const list = items.map(it => `${esc(it.name)} (${it.w} kg, Wert ${it.v})`).join(', ');
+    exKnapRoot.querySelector('[data-role=task]').innerHTML =
+      `Kapazität <b>${cap} kg</b>, Gegenstände: ${list}. Welcher Wert ist höchstens möglich?`;
+    exKnap.load(makeKnapProblem(items, cap));
+  }
+  exKnapRoot.querySelector('[data-role=new]').addEventListener('click', () => { const r = randomKnap(); loadKnap(r.items, r.cap); exKnap.focus(); });
+  exKnapRoot.querySelector('[data-role=own]').addEventListener('click', () => {
+    const items = parseItems(exKnapRoot.querySelector('[data-role=items]').value);
+    const cap = +exKnapRoot.querySelector('[data-role=cap]').value;
+    if (typeof items === 'string') { exKnapRoot.querySelector('[data-role=task]').textContent = items; return; }
+    if (!Number.isInteger(cap) || cap < 1 || cap > 12) { exKnapRoot.querySelector('[data-role=task]').textContent = 'Kapazität 1 bis 12.'; return; }
+    loadKnap(items, cap);
+    exKnap.focus();
+  });
+  { const r = randomKnap(); loadKnap(r.items, r.cap); }
+
+  // ---------- slides ----------
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  let current = Math.min(Math.max(store.get('slide', 0) | 0, 0), slides.length - 1);
+  function showSlide(i) {
+    current = Math.min(Math.max(i, 0), slides.length - 1);
+    slides.forEach((s, k) => s.classList.toggle('active', k === current));
+    document.getElementById('progressText').textContent = `${current + 1} / ${slides.length}`;
+    document.getElementById('progressBar').style.width = `${(current + 1) / slides.length * 100}%`;
+    document.getElementById('prevBtn').disabled = current === 0;
+    document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    animEdit.stop(); animKnap.stop();
+    store.set('slide', current);
+    window.scrollTo(0, 0);
+  }
+  document.getElementById('prevBtn').addEventListener('click', () => showSlide(current - 1));
+  document.getElementById('nextBtn').addEventListener('click', () => showSlide(current + 1));
+  document.addEventListener('keydown', evt => {
+    const tag = evt.target && evt.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (evt.target && evt.target.isContentEditable)) { return; }
+    if (evt.ctrlKey || evt.altKey || evt.metaKey) { return; }
+    if (evt.key === 'ArrowRight' || evt.key === 'PageDown') { showSlide(current + 1); evt.preventDefault(); }
+    else if (evt.key === 'ArrowLeft' || evt.key === 'PageUp') { showSlide(current - 1); evt.preventDefault(); }
+  });
+  showSlide(current);
+
+  /** Read-only hooks for automated tests. */
+  window.dpDebug = {
+    answer: kind => (kind === 'edit' ? exEdit : exKnap).answer(),
+    loadEdit, loadKnap
+  };
+})();
+</script>
+</body>
+</html>

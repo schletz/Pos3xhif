@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="380" viewBox="0 0 760 380">
+  <rect x="0.5" y="0.5" width="759" height="379" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="380" y="30" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1f2937" text-anchor="middle">Schritte pro Add() bei List&lt;int&gt;: Startkapazität 4, dann Verdopplung</text>
+  <g stroke="#d1d5db" stroke-width="1">
+    <line x1="80" y1="250" x2="656" y2="250"/>
+    <line x1="80" y1="200" x2="656" y2="200"/>
+    <line x1="80" y1="150" x2="656" y2="150"/>
+  </g>
+  <g font-family="Consolas, Menlo, monospace" font-size="12" fill="#6b7280" text-anchor="end">
+    <text x="72" y="304">0</text>
+    <text x="72" y="254">5</text>
+    <text x="72" y="204">10</text>
+    <text x="72" y="154">15</text>
+  </g>
+  <text x="72" y="116" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#6b7280" text-anchor="end">Schritte</text>
+  <rect x="82" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="100" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="118" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="136" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="154" y="250" width="14" height="50" fill="#ffedd5" stroke="#ea580c"/>
+  <text x="161" y="242" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#ea580c" text-anchor="middle">4 kopiert</text>
+  <rect x="172" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="190" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="208" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="226" y="210" width="14" height="90" fill="#ffedd5" stroke="#ea580c"/>
+  <text x="233" y="202" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#ea580c" text-anchor="middle">8 kopiert</text>
+  <rect x="244" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="262" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="280" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="298" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="316" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="334" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="352" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="370" y="130" width="14" height="170" fill="#ffedd5" stroke="#ea580c"/>
+  <text x="377" y="122" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#ea580c" text-anchor="middle">16 kopiert</text>
+  <rect x="388" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="406" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="424" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="442" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="460" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="478" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="496" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="514" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="532" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="550" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="568" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="586" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="604" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="622" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="640" y="290" width="14" height="10" fill="#dbeafe" stroke="#2563eb"/>
+  <line x1="80" y1="300" x2="656" y2="300" stroke="#1f2937" stroke-width="1.2"/>
+  <line x1="80" y1="300" x2="80" y2="124" stroke="#1f2937" stroke-width="1.2"/>
+  <line x1="80" y1="270" x2="656" y2="270" stroke="#16a34a" stroke-width="1.2" stroke-dasharray="5 4"/>
+  <text x="662" y="274" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#16a34a">Schranke 3</text>
+  <polyline points="89,290.0 107,290.0 125,290.0 143,290.0 161,282.0 179,283.3 197,284.3 215,285.0 233,276.7 251,278.0 269,279.1 287,280.0 305,280.8 323,281.4 341,282.0 359,282.5 377,273.5 395,274.4 413,275.3 431,276.0 449,276.7 467,277.3 485,277.8 503,278.3 521,278.8 539,279.2 557,279.6 575,280.0 593,280.3 611,280.7 629,281.0 647,281.2" fill="none" stroke="#16a34a" stroke-width="2.2"/>
+  <g font-family="Consolas, Menlo, monospace" font-size="12" fill="#6b7280" text-anchor="middle">
+    <text x="89" y="318">1</text>
+    <text x="161" y="318">5</text>
+    <text x="233" y="318">9</text>
+    <text x="377" y="318">17</text>
+    <text x="647" y="318">32</text>
+  </g>
+  <text x="368" y="340" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#6b7280" text-anchor="middle">Nummer des Add()-Aufrufs</text>
+  <rect x="470" y="58" width="14" height="14" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="470" y="80" width="14" height="14" fill="#ffedd5" stroke="#ea580c"/>
+  <line x1="468" y1="109" x2="486" y2="109" stroke="#16a34a" stroke-width="2.2"/>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#1f2937">
+    <text x="494" y="69">Add() ohne Kopieren: 1 Schritt</text>
+    <text x="494" y="91">Add() mit Kopieren des Arrays</text>
+    <text x="494" y="113">Durchschnitt aller bisherigen Add()</text>
+  </g>
+  <text x="380" y="366" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">n Aufrufe brauchen zusammen weniger als 3n Schritte: Add() ist amortisiert O(1).</text>
+</svg>

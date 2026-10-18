@@ -1,0 +1,562 @@
+= S: Single Responsibility
+:source-highlighter: rouge
+:icons: font
+:lang: DE
+:hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Das Marketing will einen neuen Text in der Bestellbestätigung.
+Du änderst eine Zeile in _OrderService.cs_.
+Am selben Tag ändert eine Kollegin dort die Grenze für den Gratisversand.
+Beim Zusammenführen gibt es einen Konflikt, obwohl ihr an verschiedenen Dingen gearbeitet habt.
+Die Klasse macht zu viele Dinge.
+Hier lernst du, solche Klassen zu erkennen und aufzuteilen.
+
+== Projekt anlegen
+
+Du brauchst eine Solution mit Application und Testprojekt.
+Die Befehle und alle Anpassungen der Projektdateien sind im Kapitel link:{github_url}/15%20Unittests/02_xUnit.adoc#projekt-anlegen[Unit Tests mit xUnit] genau erklärt.
+Unter macOS ersetzt du _rd_, _md_ und _move_ durch _rm -rf_, _mkdir_ und _mv_.
+
+[source,text]
+----
+rd /S /Q WebshopDemo
+md WebshopDemo
+cd WebshopDemo
+md WebshopDemo.Application
+cd WebshopDemo.Application
+dotnet new classlib
+cd ..
+md WebshopDemo.Tests
+cd WebshopDemo.Tests
+dotnet new install xunit.v3.templates
+dotnet new xunit3 -f net10.0
+move global.json ..
+dotnet reference add ..\WebshopDemo.Application
+cd ..
+dotnet new sln -f sln
+dotnet sln add WebshopDemo.Application
+dotnet sln add WebshopDemo.Tests
+start WebshopDemo.sln
+----
+
+Lösche _Class1.cs_ und _UnitTest1.cs_.
+Entferne in beiden Projektdateien die Zeile _ImplicitUsings_ und füge `+<TreatWarningsAsErrors>true</TreatWarningsAsErrors>+` hinzu.
+Im Testprojekt entfernst du zusätzlich `+<Using Include="Xunit" />+`.
+
+== Ausgangslage: Ein OrderService für alles
+
+Eine Bestellung besteht aus Zeilen mit Produkt, Stückpreis und Menge.
+Lege dafür _OrderLine.cs_ und _Order.cs_ im Projekt _WebshopDemo.Application_ an:
+
+[source,csharp]
+----
+namespace WebshopDemo.Application;
+
+/// <summary>One line of an order: a product, its unit price and the quantity.</summary>
+public record OrderLine(string ProductName, decimal UnitPrice, int Quantity);
+----
+
+[source,csharp]
+----
+using System.Collections.Generic;
+
+namespace WebshopDemo.Application;
+
+/// <summary>A placed order with its lines and the total price including shipping.</summary>
+public record Order(int Id, string CustomerEmail, IReadOnlyList<OrderLine> Lines, decimal Total);
+----
+
+So einen Service schreibt ein Agent gerne, wenn du nur „Programmiere das Bestellen“ verlangst:
+
+*OrderService.cs*
+
+[source,csharp]
+----
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+
+namespace WebshopDemo.Application;
+
+/// <summary>Places orders in the webshop.</summary>
+public class OrderService
+{
+    private readonly List<Order> orders = new List<Order>();
+    private int nextId = 1;
+
+    public IReadOnlyList<Order> Orders => orders;
+
+    public string PlaceOrder(string customerEmail, IReadOnlyList<OrderLine> lines)
+    {
+        // Validate the order.
+        if (!customerEmail.Contains('@'))
+        {
+            throw new ArgumentException("Invalid email address.", nameof(customerEmail));
+        }
+        foreach (OrderLine line in lines)
+        {
+            if (line.Quantity <= 0)
+            {
+                throw new ArgumentException($"Invalid quantity for {line.ProductName}.", nameof(lines));
+            }
+        }
+
+        // Calculate the price.
+        decimal subtotal = 0m;
+        int itemCount = 0;
+        foreach (OrderLine line in lines)
+        {
+            subtotal += line.UnitPrice * line.Quantity;
+            itemCount += line.Quantity;
+        }
+        decimal shipping = subtotal >= 50m ? 0m : 4.90m;
+        decimal total = subtotal + shipping;
+
+        // Save the order.
+        Order order = new Order(nextId, customerEmail, lines, total);
+        nextId++;
+        orders.Add(order);
+
+        // Format the confirmation.
+        string totalText = total.ToString("0.00", CultureInfo.InvariantCulture);
+        return $"Thank you! Order {order.Id}: {itemCount} item(s), total {totalText} EUR.";
+    }
+}
+----
+
+Der Code funktioniert, und die Tests sind grün:
+
+*OrderServiceTests.cs* (im Projekt _WebshopDemo.Tests_)
+
+[source,csharp]
+----
+using System.Collections.Generic;
+using WebshopDemo.Application;
+using Xunit;
+
+namespace WebshopDemo.Tests;
+
+public class OrderServiceTests
+{
+    [Theory]
+    [InlineData(24.99, 54.88)]
+    [InlineData(25.00, 50.00)]
+    public void PlaceOrder_TwoMugs_SavesTotalWithShippingRule(decimal unitPrice, decimal expectedTotal)
+    {
+        OrderService service = new OrderService();
+        List<OrderLine> lines = new List<OrderLine> { new OrderLine("Mug", unitPrice, 2) };
+
+        service.PlaceOrder("anna@example.com", lines);
+
+        Assert.Equal(expectedTotal, service.Orders[0].Total);
+    }
+
+    [Fact]
+    public void PlaceOrder_ValidOrder_ReturnsConfirmation()
+    {
+        OrderService service = new OrderService();
+        List<OrderLine> lines = new List<OrderLine> { new OrderLine("Mug", 12.50m, 2) };
+
+        string confirmation = service.PlaceOrder("anna@example.com", lines);
+
+        Assert.Equal("Thank you! Order 1: 2 item(s), total 29.90 EUR.", confirmation);
+    }
+}
+----
+
+Nachrechnen: 2 × 24,99 € = 49,98 € ist unter 50 €, mit 4,90 € Versand also 54,88 €.
+Ab 50,00 € ist der Versand gratis.
+
+== Das Problem: Vier Aufgaben in einer Methode
+
+Die Kommentare in `PlaceOrder` zeigen es schon: Die Methode hat vier Abschnitte mit vier verschiedenen Aufgaben.
+Was passiert, wenn sich eine davon ändert?
+
+[%header]
+|===
+|Änderung |Was passiert in _OrderService.cs_?
+|Marketing will einen neuen Bestätigungstext. |Du änderst eine Klasse, in der auch die Preisberechnung steht.
+|Gleichzeitig wird die Grenze für Gratisversand auf 60 € erhöht. |Zwei Personen ändern dieselbe Datei. Beim Zusammenführen (_Merge_) gibt es einen Konflikt.
+|Jemand schreibt die Preisberechnung mit LINQ neu und löscht die Schleife. |`itemCount` wird nicht mehr berechnet. Die *Bestätigung* zeigt jetzt „0 item(s)“, obwohl niemand sie angefasst hat.
+|===
+
+Besonders tückisch ist `itemCount`: Der Abschnitt _Calculate the price_ berechnet die Variable, nur _Format the confirmation_ verwendet sie.
+Die Abschnitte sehen getrennt aus, hängen aber zusammen.
+
+=== Tests brauchen zu viel Setup
+
+Sieh dir den ersten Test noch einmal an.
+Er soll nur die Versandregel prüfen.
+Trotzdem braucht er:
+
+* ein `OrderService`-Objekt mit seiner Liste im Speicher,
+* eine gültige E-Mail-Adresse, obwohl die E-Mail für den Preis egal ist,
+* den Umweg über `+service.Orders[0]+`, weil `PlaceOrder` nur den Text zurückgibt.
+
+Wird die Prüfung der E-Mail strenger (zum Beispiel „muss mit _.at_ enden“), wird dieser Test rot, obwohl sich am Preis nichts geändert hat.
+Ein Test, der aus fremden Gründen rot wird, kostet Zeit.
+
+== Das Prinzip: Ein Grund für Änderungen
+
+Robert C. Martin formuliert das *Single Responsibility Principle (SRP)* so:
+
+____
+A class should have only one reason to change.
+____
+
+Eine Klasse soll also nur *einen Grund* haben, sich zu ändern.
+Doch was ist ein „Grund für eine Änderung“?
+Frag dich: *Wer verlangt die Änderung?*
+Später hat Martin das Prinzip genau so präzisiert: Eine Klasse ist nur _einer_ Gruppe von Personen (_Actor_) verantwortlich.
+
+[%header]
+|===
+|Abschnitt in `PlaceOrder` |Wer verlangt eine Änderung? |Beispiel
+|Validierung |Fachabteilung Verkauf |„Pro Zeile höchstens 10 Stück.“
+|Preis und Versand |Geschäftsführung, Controlling |„Gratisversand erst ab 60 €.“
+|Speichern |IT-Betrieb |„Bestellungen kommen in eine SQL-Server-Datenbank.“
+|Bestätigungstext |Marketing |„Die Bestätigung soll freundlicher klingen.“
+|===
+
+Vier Gruppen, also vier Gründe für Änderungen.
+`OrderService` verletzt das SRP.
+Eine Klasse mit nur einer Zuständigkeit nennt man *kohäsiv* (_cohesive_): Alles in ihr gehört zusammen.
+
+== Refactoring Schritt für Schritt
+
+Du teilst die Klasse in vier Klassen mit je einer Zuständigkeit.
+`OrderService` bleibt bestehen und *koordiniert* nur noch: Er ruft die anderen Klassen in der richtigen Reihenfolge auf.
+
+image::{root_dir}/images/03_srp_split.svg[OrderService vor und nach dem Aufteilen]
+
+Führe nach jedem Schritt `dotnet test` aus.
+*Schritt 1:* Die Validierung kommt unverändert nach _OrderValidator.cs_.
+
+[source,csharp]
+----
+using System;
+using System.Collections.Generic;
+
+namespace WebshopDemo.Application;
+
+/// <summary>Checks if an order may be placed.</summary>
+public class OrderValidator
+{
+    /// <summary>Throws an <see cref="ArgumentException"/> if the order is invalid.</summary>
+    public void Validate(string customerEmail, IReadOnlyList<OrderLine> lines)
+    {
+        if (!customerEmail.Contains('@'))
+        {
+            throw new ArgumentException("Invalid email address.", nameof(customerEmail));
+        }
+        foreach (OrderLine line in lines)
+        {
+            if (line.Quantity <= 0)
+            {
+                throw new ArgumentException($"Invalid quantity for {line.ProductName}.", nameof(lines));
+            }
+        }
+    }
+}
+----
+
+*Schritt 2:* Die Preisberechnung kommt nach _PriceCalculator.cs_.
+`itemCount` gehört nicht hierher, der Preis braucht ihn nicht.
+Jetzt kannst du die Schleife gefahrlos durch LINQ ersetzen.
+Die Zahlen bekommen bei der Gelegenheit einen Namen.
+
+[source,csharp]
+----
+using System.Collections.Generic;
+using System.Linq;
+
+namespace WebshopDemo.Application;
+
+/// <summary>Calculates the price of an order with the shipping rules of the shop.</summary>
+public class PriceCalculator
+{
+    public const decimal FreeShippingLimit = 50m;
+    public const decimal ShippingCost = 4.90m;
+
+    /// <summary>Returns the sum of all lines plus shipping.</summary>
+    public decimal CalculateTotal(IReadOnlyList<OrderLine> lines)
+    {
+        decimal subtotal = lines.Sum(line => line.UnitPrice * line.Quantity);
+        decimal shipping = subtotal >= FreeShippingLimit ? 0m : ShippingCost;
+        return subtotal + shipping;
+    }
+}
+----
+
+*Schritt 3:* Das Speichern kommt nach _OrderRepository.cs_.
+Ein *Repository* speichert Objekte und liefert sie wieder.
+Hier ist es eine Liste, später vielleicht eine Datenbank.
+
+[source,csharp]
+----
+using System.Collections.Generic;
+
+namespace WebshopDemo.Application;
+
+/// <summary>Stores orders in memory and assigns their ids.</summary>
+public class OrderRepository
+{
+    private readonly List<Order> orders = new List<Order>();
+    private int nextId = 1;
+
+    public IReadOnlyList<Order> Orders => orders;
+
+    /// <summary>Creates an order with the next free id and stores it.</summary>
+    public Order Add(string customerEmail, IReadOnlyList<OrderLine> lines, decimal total)
+    {
+        Order order = new Order(nextId, customerEmail, lines, total);
+        nextId++;
+        orders.Add(order);
+        return order;
+    }
+}
+----
+
+*Schritt 4:* Der Bestätigungstext kommt nach _ConfirmationFormatter.cs_.
+Die Stückzahl berechnet der Formatter selbst aus `order.Lines`, nicht mehr in der Preisberechnung.
+
+[source,csharp]
+----
+using System.Globalization;
+using System.Linq;
+
+namespace WebshopDemo.Application;
+
+/// <summary>Creates the confirmation text that the customer sees.</summary>
+public class ConfirmationFormatter
+{
+    /// <summary>Returns a confirmation with the order id, the number of items and the total.</summary>
+    public string Format(Order order)
+    {
+        int itemCount = order.Lines.Sum(line => line.Quantity);
+        string totalText = order.Total.ToString("0.00", CultureInfo.InvariantCulture);
+        return $"Thank you! Order {order.Id}: {itemCount} item(s), total {totalText} EUR.";
+    }
+}
+----
+
+*Schritt 5:* `OrderService` koordiniert nur noch.
+`PlaceOrder` liest sich jetzt wie eine Beschreibung des Ablaufs:
+
+[source,csharp]
+----
+using System.Collections.Generic;
+
+namespace WebshopDemo.Application;
+
+/// <summary>
+/// Places orders in the webshop. Coordinates validation, price calculation,
+/// storage and confirmation.
+/// </summary>
+public class OrderService
+{
+    private readonly OrderValidator validator = new OrderValidator();
+    private readonly PriceCalculator calculator = new PriceCalculator();
+    private readonly OrderRepository repository = new OrderRepository();
+    private readonly ConfirmationFormatter formatter = new ConfirmationFormatter();
+
+    public IReadOnlyList<Order> Orders => repository.Orders;
+
+    public string PlaceOrder(string customerEmail, IReadOnlyList<OrderLine> lines)
+    {
+        validator.Validate(customerEmail, lines);
+        decimal total = calculator.CalculateTotal(lines);
+        Order order = repository.Add(customerEmail, lines, total);
+        return formatter.Format(order);
+    }
+}
+----
+
+`OrderService` erzeugt seine Helfer hier noch selbst mit `new`.
+Wie er sie von außen bekommt, zeigt das Kapitel link:{github_url}/16%20SOLID/08_Dependency_Inversion.adoc[D: Dependency Inversion].
+
+== Die Tests: alte bleiben, neue werden kleiner
+
+Die öffentliche API von `OrderService` hat sich nicht geändert.
+Deshalb laufen alle Tests aus _OrderServiceTests.cs_ *unverändert* weiter.
+Sie sind dein *Regressionstest* (den Begriff kennst du aus link:{github_url}/16%20SOLID/02_DRY.adoc[DRY]): Sie zeigen, dass das Verhalten nach dem Umbau gleich ist.
+
+Neu ist: Jede Zuständigkeit kannst du jetzt *allein* testen.
+Für die Versandregel brauchst du keine E-Mail und keine Liste mehr:
+
+*PriceCalculatorTests.cs*
+
+[source,csharp]
+----
+using System.Collections.Generic;
+using WebshopDemo.Application;
+using Xunit;
+
+namespace WebshopDemo.Tests;
+
+public class PriceCalculatorTests
+{
+    [Theory]
+    [InlineData(49.99, 54.89)]
+    [InlineData(50.00, 50.00)]
+    public void CalculateTotal_AtFreeShippingLimit_AppliesShippingRule(decimal unitPrice, decimal expectedTotal)
+    {
+        PriceCalculator calculator = new PriceCalculator();
+        List<OrderLine> lines = new List<OrderLine> { new OrderLine("Lamp", unitPrice, 1) };
+
+        decimal total = calculator.CalculateTotal(lines);
+
+        Assert.Equal(expectedTotal, total);
+    }
+}
+----
+
+Für den Bestätigungstext erzeugst du eine `Order` direkt.
+Der Test hängt nicht mehr davon ab, wie der Preis berechnet wird:
+
+*ConfirmationFormatterTests.cs*
+
+[source,csharp]
+----
+using System.Collections.Generic;
+using WebshopDemo.Application;
+using Xunit;
+
+namespace WebshopDemo.Tests;
+
+public class ConfirmationFormatterTests
+{
+    [Fact]
+    public void Format_OrderWithThreeItems_ReturnsConfirmation()
+    {
+        List<OrderLine> lines = new List<OrderLine> { new OrderLine("Mug", 12.50m, 3) };
+        Order order = new Order(7, "anna@example.com", lines, 42.40m);
+        ConfirmationFormatter formatter = new ConfirmationFormatter();
+
+        string text = formatter.Format(order);
+
+        Assert.Equal("Thank you! Order 7: 3 item(s), total 42.40 EUR.", text);
+    }
+}
+----
+
+Was hat das Aufteilen gebracht?
+
+[%header]
+|===
+|Vorher |Nachher
+|Neuer Bestätigungstext ändert die Klasse mit dem Preis. |Nur _ConfirmationFormatter.cs_ ändert sich. Kein Merge-Konflikt.
+|Preis-Test braucht E-Mail, Service und Liste. |Preis-Test braucht nur Zeilen.
+|Ein roter Test sagt: „irgendwo in `PlaceOrder`“. |Ein roter Test zeigt auf genau eine Klasse.
+|===
+
+== Verstöße erkennen
+
+Ein Verstoß fällt nicht immer so deutlich auf wie die Abschnittskommentare in `PlaceOrder`.
+Diese Warnzeichen helfen dir:
+
+[%header]
+|===
+|Warnzeichen |Beispiel
+|*Vage Namen* mit _Manager_, _Helper_, _Utils_ oder _And_ |`OrderManager`, `StringHelper`, `ValidateAndSave()`. Der Name sagt nicht, _wofür_ die Klasse da ist. Also landet alles darin.
+|*Beschreibung braucht „und“* |„Die Klasse prüft die Bestellung *und* berechnet den Preis *und* speichert sie.“
+|*Methoden nutzen getrennte Felder* |Siehe unten.
+|*`using`s aus vielen Bereichen* |`System.IO` (Dateien), `System.Net.Http` (Netzwerk), `System.Text.Json` (Daten umwandeln) und `System.Globalization` (Formatierung) in einer Klasse.
+|*Viele Codezeilen* |Die Code Metrics (siehe link:{github_url}/16%20SOLID/02_DRY.adoc[DRY]) zeigen für eine Klasse 300 _Lines of Code_. Es gibt keine feste Grenze. Ab etwa 200 Zeilen lohnt sich aber ein genauer Blick.
+|===
+
+*Getrennte Felder:* Schreib für jede Methode auf, welche Felder sie verwendet.
+Eine Klasse `CustomerManager` könnte so aussehen:
+
+[cols=",^,^,^",options="header"]
+|===
+|Methode |`connectionString` |`smtpServer` |`exchangeRates`
+|`Save()`, `Load()` |✓ | |
+|`SendNewsletter()` | |✓ |
+|`ConvertToUsd()` | | |✓
+|===
+
+Die Tabelle zerfällt in drei Blöcke ohne gemeinsame Felder: drei Klassen in einer Datei.
+In einer kohäsiven Klasse verwenden die meisten Methoden die meisten Felder.
+
+== Wie weit aufteilen?
+
+SRP heißt *nicht* „eine Methode pro Klasse“.
+Sieh dir diese Aufteilung an:
+
+[source,text]
+----
+SubtotalCalculator.CalculateSubtotal(lines)
+ShippingCalculator.CalculateShipping(subtotal)
+TotalCalculator.CalculateTotal(subtotal, shipping)
+----
+
+Kommt ein Rabatt dazu, änderst du wahrscheinlich alle drei.
+Sie ändern sich aus *demselben* Grund: Die Geschäftsführung ändert die Preisregeln.
+Sie gehören in *eine* Klasse.
+Drei Klassen sind hier Over-Engineering: mehr Dateien und Namen, mehr Sprünge beim Lesen, aber kein Gewinn.
+
+Martin fasst beide Seiten in einem Satz zusammen:
+
+____
+Gather together the things that change for the same reasons.
+Separate those things that change for different reasons.
+____
+
+Zu wenig getrennt ist eine _God Class_: Jede Änderung trifft fremden Code.
+Zu viel getrennt heißt: Eine Änderung betrifft viele kleine Klassen.
+Auch `OrderService` hat nach dem Umbau genau eine Zuständigkeit.
+Er kennt den *Ablauf* einer Bestellung und ändert sich nur, wenn sich die Reihenfolge der Schritte ändert.
+
+== Im Code-Review erkennen
+
+[%header]
+|===
+|Warnzeichen im Code |Verletzt |Was du verlangst / wie du es formulierst
+|Eine Methode hat Abschnittskommentare wie `// Validate`, `// Save`, `// Format`. |SRP |„`PlaceOrder` hat vier Zuständigkeiten. Extrahiere die Formatierung in eine Klasse `ConfirmationFormatter`.“
+|Ein Test für die Preisberechnung braucht eine gültige E-Mail. |SRP |„Die Preisberechnung ist nicht allein testbar. Lagere sie in einen `PriceCalculator` aus.“
+|Eine Variable aus einem Abschnitt wird in einem anderen verwendet (`itemCount`). |SRP |„Der Bestätigungstext hängt an einer Hilfsvariable der Preisberechnung. Der Formatter soll seine Werte aus `Order` lesen.“
+|Klassenname mit _Manager_, _Helper_, _Utils_ oder _And_. |SRP |„Der Name `OrderManager` sagt nicht, wofür die Klasse zuständig ist. Benenne die Zuständigkeiten und teile die Klasse danach auf.“
+|Gruppen von Methoden verwenden getrennte Felder. |SRP |„`Save`/`Load` und `SendNewsletter` haben keine gemeinsamen Daten. Trenne das Speichern in ein `CustomerRepository`.“
+|Fachklasse mit `using System.IO` oder `System.Net.Http`. |SRP |„Die Klasse mischt Fachlogik mit Ein- und Ausgabe. Verschiebe den Dateizugriff in eine eigene Klasse.“
+|Mehrere Mini-Klassen, die sich immer gemeinsam ändern. |Over-Engineering |„`SubtotalCalculator`, `ShippingCalculator` und `TotalCalculator` ändern sich aus demselben Grund. Fasse sie zu `PriceCalculator` zusammen.“
+|===
+
+// tag::pdf_exclude[]
+== Übungen
+
+. *SmsGateway:* Seit 1. Oktober 2026 müssen SMS-Absender in Österreich registriert sein.
+Eine Klasse `SmsDispatcher` liest Nachrichten ein, prüft sie, sieht im Register der Absender nach, versendet sie und erstellt einen Report.
+Teile sie nach dem SRP auf, ohne die Tests zu ändern.
+Lade dazu link:{github_url}/16%20SOLID/Uebungen/SmsGateway.7z[SmsGateway.7z] herunter.
+Die Angabe steht im Archiv in der Datei _README.md_.
+. *Analyse ohne Code:* Eine Klasse `StudentManager` hat diese öffentlichen Methoden:
++
+[source,text]
+----
+List<Student> ImportFromCsv(string path)
+decimal CalculateAverageGrade(int studentId)
+bool IsPromoted(int studentId)
+void SaveToDatabase(Student student)
+string FormatCertificate(int studentId)
+void SendCertificateByEmail(int studentId, string emailAddress)
+----
+
+* Ordne jede Methode einer Zuständigkeit zu.
+Wer in der Schule verlangt eine Änderung daran (Lehrkräfte, Direktion, Sekretariat, IT)?
+* Schlage Klassen vor: je eine Zeile mit Name, Zuständigkeit und Methoden.
+Welche Methoden gehören zusammen, obwohl sie verschiedene Dinge tun?
+* Schreibe einen Kommentar für ein Code Review wie in der Tabelle _Im Code-Review erkennen_.
+
+// end::pdf_exclude[]

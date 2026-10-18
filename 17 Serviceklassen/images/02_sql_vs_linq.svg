@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="320" viewBox="0 0 900 320" role="img" aria-label="SQL und LINQ im Vergleich: Reihenfolge der Schritte">
+<title>SQL und LINQ im Vergleich: Reihenfolge der Schritte</title>
+<defs><marker id="arrow-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9d9d9c"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0090d4"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f39000"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#71af2e"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#cc0935"/></marker><marker id="arrow-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6cc1b0"/></marker></defs>
+<rect x="1" y="1" width="898" height="318" rx="14" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="30.0" y="42.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Gleiche Abfrage, andere Reihenfolge</text>
+<text x="30.0" y="80.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">SQL</text>
+<text x="470.0" y="80.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">LINQ (Method Syntax)</text>
+<rect x="30.0" y="95.0" width="380.0" height="38.0" rx="8" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+<text x="45.0" y="120.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="17" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">SELECT FirstName</text>
+<circle cx="390" cy="114" r="13" fill="#ffffff" stroke="#71af2e" stroke-width="1.5"/>
+<text x="390.0" y="120.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">3</text>
+<rect x="30.0" y="145.0" width="380.0" height="38.0" rx="8" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="45.0" y="170.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="17" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">FROM Persons</text>
+<circle cx="390" cy="164" r="13" fill="#ffffff" stroke="#0090d4" stroke-width="1.5"/>
+<text x="390.0" y="170.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">1</text>
+<rect x="30.0" y="195.0" width="380.0" height="38.0" rx="8" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="45.0" y="220.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="17" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">WHERE City = &#x27;Wien&#x27;</text>
+<circle cx="390" cy="214" r="13" fill="#ffffff" stroke="#f39000" stroke-width="1.5"/>
+<text x="390.0" y="220.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">2</text>
+<rect x="470.0" y="95.0" width="400.0" height="38.0" rx="8" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="485.0" y="120.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="17" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">persons</text>
+<circle cx="850" cy="114" r="13" fill="#ffffff" stroke="#0090d4" stroke-width="1.5"/>
+<text x="850.0" y="120.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">1</text>
+<rect x="470.0" y="145.0" width="400.0" height="38.0" rx="8" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="485.0" y="170.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="17" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">.Where(p =&gt; p.City == &quot;Wien&quot;)</text>
+<circle cx="850" cy="164" r="13" fill="#ffffff" stroke="#f39000" stroke-width="1.5"/>
+<text x="850.0" y="170.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">2</text>
+<rect x="470.0" y="195.0" width="400.0" height="38.0" rx="8" fill="#e5f1d9" stroke="#71af2e" stroke-width="1.5"/>
+<text x="485.0" y="220.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="17" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">.Select(p =&gt; p.FirstName)</text>
+<circle cx="850" cy="214" r="13" fill="#ffffff" stroke="#71af2e" stroke-width="1.5"/>
+<text x="850.0" y="220.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="middle" fill="#1d1d1b" xml:space="preserve">3</text>
+<text x="30.0" y="272.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Die Zahlen zeigen, in welcher Reihenfolge die Schritte ausgeführt werden.</text>
+<text x="30.0" y="296.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">LINQ schreibt sie in genau dieser Reihenfolge auf: zuerst die Quelle, dann der Filter, dann die Projektion.</text>
+</svg>

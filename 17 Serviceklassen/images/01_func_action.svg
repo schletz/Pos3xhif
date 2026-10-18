@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="380" viewBox="0 0 900 380" role="img" aria-label="Die Delegate-Typen Func und Action">
+<title>Die Delegate-Typen Func und Action</title>
+<defs><marker id="arrow-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9d9d9c"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0090d4"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f39000"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#71af2e"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#cc0935"/></marker><marker id="arrow-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6cc1b0"/></marker></defs>
+<rect x="1" y="1" width="898" height="378" rx="14" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="30.0" y="42.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Welchen Typ hat eine Lambda?</text>
+<rect x="30.0" y="100.0" width="68.2" height="30.0" rx="6" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="38.0" y="121.7" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="19" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="52.3" lengthAdjust="spacingAndGlyphs">Func&lt;</text>
+<rect x="102.2" y="100.0" width="78.7" height="30.0" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="110.2" y="121.7" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="19" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="62.7" lengthAdjust="spacingAndGlyphs">Person</text>
+<text x="184.9" y="122.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="19" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">,</text>
+<rect x="196.9" y="100.0" width="47.4" height="30.0" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="204.9" y="121.7" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="19" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="31.4" lengthAdjust="spacingAndGlyphs">int</text>
+<text x="248.3" y="122.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="19" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">,</text>
+<rect x="260.3" y="100.0" width="57.8" height="30.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="268.3" y="121.7" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="19" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="41.8" lengthAdjust="spacingAndGlyphs">bool</text>
+<rect x="322.1" y="100.0" width="26.5" height="30.0" rx="6" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="330.1" y="121.7" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="19" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="10.5" lengthAdjust="spacingAndGlyphs">&gt;</text>
+<text x="30.0" y="156.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="start" fill="#5f5f5e" xml:space="preserve">2 Parameter, Rückgabetyp bool (immer der letzte Typ)</text>
+<text x="450.0" y="121.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">(p, minAge) =&gt; p.Age &gt;= minAge</text>
+<rect x="30.0" y="200.0" width="68.2" height="30.0" rx="6" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="38.0" y="221.7" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="19" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="52.3" lengthAdjust="spacingAndGlyphs">Func&lt;</text>
+<rect x="102.2" y="200.0" width="57.8" height="30.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="110.2" y="221.7" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="19" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="41.8" lengthAdjust="spacingAndGlyphs">bool</text>
+<rect x="164.1" y="200.0" width="26.5" height="30.0" rx="6" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="172.1" y="221.7" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="19" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="10.5" lengthAdjust="spacingAndGlyphs">&gt;</text>
+<text x="30.0" y="256.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="start" fill="#5f5f5e" xml:space="preserve">kein Parameter, nur der Rückgabetyp</text>
+<text x="450.0" y="221.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">() =&gt; true</text>
+<rect x="30.0" y="300.0" width="89.2" height="30.0" rx="6" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="38.0" y="321.6" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="19" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="73.2" lengthAdjust="spacingAndGlyphs">Action&lt;</text>
+<rect x="123.2" y="300.0" width="78.7" height="30.0" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="131.2" y="321.6" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="19" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="62.7" lengthAdjust="spacingAndGlyphs">Person</text>
+<text x="205.9" y="322.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="19" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">,</text>
+<rect x="217.9" y="300.0" width="78.7" height="30.0" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="225.9" y="321.6" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="19" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="62.7" lengthAdjust="spacingAndGlyphs">string</text>
+<rect x="300.6" y="300.0" width="26.5" height="30.0" rx="6" fill="#ffffff" stroke="#9d9d9c" stroke-width="1.5"/>
+<text x="308.6" y="321.6" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="19" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve" textLength="10.5" lengthAdjust="spacingAndGlyphs">&gt;</text>
+<text x="30.0" y="356.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="start" fill="#5f5f5e" xml:space="preserve">2 Parameter, kein Rückgabewert (void)</text>
+<text x="450.0" y="321.0" font-family="Consolas, Menlo, 'Courier New', monospace" font-size="15" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">(p, msg) =&gt; Console.WriteLine(msg + p.Age)</text>
+<rect x="450.0" y="340.0" width="103.4" height="24.0" rx="6" fill="#d1ebf7" stroke="#0090d4" stroke-width="1.5"/>
+<text x="458.0" y="356.9" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Parametertyp</text>
+<rect x="580.0" y="340.0" width="96.1" height="24.0" rx="6" fill="#fdebd1" stroke="#f39000" stroke-width="1.5"/>
+<text x="588.0" y="356.9" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="start" fill="#1d1d1b" xml:space="preserve">Rückgabetyp</text>
+</svg>

@@ -1,0 +1,168 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="750" viewBox="0 0 1080 750">
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#333"/></marker><marker id="arrRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c92a2a"/></marker></defs>
+<rect width="1080" height="750" fill="#ffffff"/>
+<rect x="20" y="20" width="600" height="232" rx="8" fill="#f6f8fa" stroke="#d0d7de"/>
+<text x="40" y="52" font-family="Cascadia Mono, Consolas, monospace" font-size="13" fill="#222" xml:space="preserve"><tspan fill="#0b57d0">int</tspan> length = 6;</text>
+<text x="40" y="72" font-family="Cascadia Mono, Consolas, monospace" font-size="13" fill="#222" xml:space="preserve"><tspan fill="#0b57d0">int</tspan>[] numbers = <tspan fill="#e8590c" font-weight="bold">new</tspan> <tspan fill="#0b57d0">int</tspan>[length];</text>
+<circle cx="515" cy="68" r="9" fill="#e8590c"/><text x="515" y="72" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold" fill="#fff">1</text>
+<text x="40" y="92" font-family="Cascadia Mono, Consolas, monospace" font-size="13" fill="#222" xml:space="preserve"><tspan fill="#0b57d0">int</tspan>[] numbersDrawn = <tspan fill="#e8590c" font-weight="bold">new</tspan> <tspan fill="#0b57d0">int</tspan>[] { 1, 2, 3, 4, 5, 6 };</text>
+<circle cx="515" cy="88" r="9" fill="#e8590c"/><text x="515" y="92" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold" fill="#fff">2</text>
+<text x="40" y="112" font-family="Cascadia Mono, Consolas, monospace" font-size="13" fill="#222" xml:space="preserve"><tspan fill="#2b8a9e">List</tspan>&lt;<tspan fill="#2b8a9e">Person</tspan>&gt; persons = <tspan fill="#e8590c" font-weight="bold">new</tspan> <tspan fill="#2b8a9e">List</tspan>&lt;<tspan fill="#2b8a9e">Person</tspan>&gt;()</text>
+<circle cx="515" cy="108" r="9" fill="#e8590c"/><text x="515" y="112" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold" fill="#fff">3</text>
+<circle cx="539" cy="108" r="9" fill="#e8590c"/><text x="539" y="112" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold" fill="#fff">4</text>
+<text x="40" y="132" font-family="Cascadia Mono, Consolas, monospace" font-size="13" fill="#222" xml:space="preserve">{</text>
+<text x="40" y="152" font-family="Cascadia Mono, Consolas, monospace" font-size="13" fill="#222" xml:space="preserve">    <tspan fill="#e8590c" font-weight="bold">new</tspan> <tspan fill="#2b8a9e">Person</tspan>(id: 1, firstname: <tspan fill="#a31515">&quot;FN1&quot;</tspan>, lastname: <tspan fill="#a31515">&quot;LN1&quot;</tspan>),</text>
+<circle cx="515" cy="148" r="9" fill="#e8590c"/><text x="515" y="152" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold" fill="#fff">5</text>
+<text x="40" y="172" font-family="Cascadia Mono, Consolas, monospace" font-size="13" fill="#222" xml:space="preserve">    <tspan fill="#e8590c" font-weight="bold">new</tspan> <tspan fill="#2b8a9e">Person</tspan>(id: 2, firstname: <tspan fill="#a31515">&quot;FN2&quot;</tspan>, lastname: <tspan fill="#a31515">&quot;LN2&quot;</tspan>),</text>
+<circle cx="515" cy="168" r="9" fill="#e8590c"/><text x="515" y="172" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold" fill="#fff">6</text>
+<text x="40" y="192" font-family="Cascadia Mono, Consolas, monospace" font-size="13" fill="#222" xml:space="preserve">    <tspan fill="#e8590c" font-weight="bold">new</tspan> <tspan fill="#2b8a9e">Person</tspan>(id: 3, firstname: <tspan fill="#a31515">&quot;FN3&quot;</tspan>, lastname: <tspan fill="#a31515">&quot;LN3&quot;</tspan>)</text>
+<circle cx="515" cy="188" r="9" fill="#e8590c"/><text x="515" y="192" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold" fill="#fff">7</text>
+<text x="40" y="212" font-family="Cascadia Mono, Consolas, monospace" font-size="13" fill="#222" xml:space="preserve">};</text>
+<text x="40" y="232" font-family="Cascadia Mono, Consolas, monospace" font-size="13" fill="#222" xml:space="preserve"><tspan fill="#2b8a9e">Person</tspan> first = persons[0];  <tspan fill="#2f8a3a">// kein new!</tspan></text>
+<rect x="640" y="20" width="420" height="232" rx="8" fill="#fff" stroke="#d0d7de"/>
+<text x="658" y="46" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#222" text-anchor="start" font-weight="bold" >Legende</text>
+<text x="658" y="76" font-family="Cascadia Mono, Consolas, monospace" font-size="14" fill="#e8590c" text-anchor="start" font-weight="bold" >new</text>
+<circle cx="700" cy="71" r="9" fill="#e8590c"/><text x="700" y="75" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold" fill="#fff">n</text>
+<text x="716" y="76" font-family="Segoe UI, Arial, sans-serif" font-size="13" fill="#222" text-anchor="start" font-weight="normal" >reserviert neuen Speicher am Heap.</text>
+<text x="716" y="94" font-family="Segoe UI, Arial, sans-serif" font-size="13" fill="#555" text-anchor="start" font-weight="normal" >Ohne new entsteht kein neues Objekt.</text>
+<rect x="658" y="110" width="44" height="26" fill="#dbe7f7" stroke="#4a6fa5"/>
+<text x="680" y="128" font-family="Cascadia Mono, Consolas, monospace" font-size="13" fill="#222" text-anchor="middle" font-weight="bold" >6</text>
+<text x="716" y="128" font-family="Segoe UI, Arial, sans-serif" font-size="13" fill="#222" text-anchor="start" font-weight="normal" >Wertetyp: der Wert liegt direkt am Stack.</text>
+<circle cx="664" cy="160" r="4" fill="#333"/>
+<path d="M668,160 L700,160" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arr)"/>
+<text x="716" y="164" font-family="Segoe UI, Arial, sans-serif" font-size="13" fill="#222" text-anchor="start" font-weight="normal" >Referenz: speichert nur die Adresse (8 Byte)</text>
+<text x="716" y="182" font-family="Segoe UI, Arial, sans-serif" font-size="13" fill="#222" text-anchor="start" font-weight="normal" >des Objekts am Heap.</text>
+<path d="M658,214 L700,214" stroke="#333" stroke-width="2.5" marker-end="url(#arr)"/>
+<text x="716" y="210" font-family="Segoe UI, Arial, sans-serif" font-size="13" fill="#222" text-anchor="start" font-weight="normal" >Stackpointer (SP): zeigt auf das Ende des</text>
+<text x="716" y="228" font-family="Segoe UI, Arial, sans-serif" font-size="13" fill="#222" text-anchor="start" font-weight="normal" >belegten Stacks, dahinter ist noch frei.</text>
+<text x="110" y="288" font-family="Segoe UI, Arial, sans-serif" font-size="20" fill="#222" text-anchor="start" font-weight="bold" >Stack</text>
+<rect x="110" y="300" width="200" height="308" fill="#f3f7fd" stroke="#4a6fa5" stroke-width="1.5"/>
+<rect x="110" y="300" width="200" height="44" fill="#dbe7f7" stroke="#4a6fa5"/>
+<text x="120" y="319" font-family="Cascadia Mono, Consolas, monospace" font-size="14" fill="#222" text-anchor="start" font-weight="bold" >length</text>
+<text x="120" y="336" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start" font-weight="normal" >int · 4 Byte</text>
+<text x="296" y="328" font-family="Cascadia Mono, Consolas, monospace" font-size="18" fill="#222" text-anchor="end" font-weight="bold" >6</text>
+<rect x="110" y="344" width="200" height="44" fill="#dbe7f7" stroke="#4a6fa5"/>
+<text x="120" y="363" font-family="Cascadia Mono, Consolas, monospace" font-size="14" fill="#222" text-anchor="start" font-weight="bold" >numbers</text>
+<text x="120" y="380" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start" font-weight="normal" >int[] · 8 Byte</text>
+<text x="292" y="363" font-family="Cascadia Mono, Consolas, monospace" font-size="11" fill="#555" text-anchor="end" font-weight="normal" >0x1F00</text>
+<circle cx="300" cy="366.0" r="4" fill="#333"/>
+<rect x="110" y="388" width="200" height="44" fill="#dbe7f7" stroke="#4a6fa5"/>
+<text x="120" y="407" font-family="Cascadia Mono, Consolas, monospace" font-size="14" fill="#222" text-anchor="start" font-weight="bold" >numbersDrawn</text>
+<text x="120" y="424" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start" font-weight="normal" >int[] · 8 Byte</text>
+<text x="292" y="407" font-family="Cascadia Mono, Consolas, monospace" font-size="11" fill="#555" text-anchor="end" font-weight="normal" >0x1F38</text>
+<circle cx="300" cy="410.0" r="4" fill="#333"/>
+<rect x="110" y="432" width="200" height="44" fill="#dbe7f7" stroke="#4a6fa5"/>
+<text x="120" y="451" font-family="Cascadia Mono, Consolas, monospace" font-size="14" fill="#222" text-anchor="start" font-weight="bold" >persons</text>
+<text x="120" y="468" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start" font-weight="normal" >List&lt;Person&gt; · 8 Byte</text>
+<text x="292" y="451" font-family="Cascadia Mono, Consolas, monospace" font-size="11" fill="#555" text-anchor="end" font-weight="normal" >0x1F70</text>
+<circle cx="300" cy="454.0" r="4" fill="#333"/>
+<rect x="110" y="476" width="200" height="44" fill="#dbe7f7" stroke="#4a6fa5"/>
+<text x="120" y="495" font-family="Cascadia Mono, Consolas, monospace" font-size="14" fill="#222" text-anchor="start" font-weight="bold" >first</text>
+<text x="120" y="512" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start" font-weight="normal" >Person · 8 Byte</text>
+<text x="292" y="495" font-family="Cascadia Mono, Consolas, monospace" font-size="11" fill="#555" text-anchor="end" font-weight="normal" >0x1FD8</text>
+<circle cx="300" cy="498.0" r="4" fill="#c92a2a"/>
+<rect x="110" y="520" width="200" height="44" fill="none" stroke="#9fb3cf" stroke-dasharray="4 3"/>
+<text x="210.0" y="547" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#8a9bb5" text-anchor="middle" font-weight="normal" font-style="italic">frei</text>
+<rect x="110" y="564" width="200" height="44" fill="none" stroke="#9fb3cf" stroke-dasharray="4 3"/>
+<text x="210.0" y="591" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#8a9bb5" text-anchor="middle" font-weight="normal" font-style="italic">frei</text>
+<text x="210.0" y="628" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#555" text-anchor="middle" font-weight="normal" >Stackframe von Main()</text>
+<path d="M30,520 L106,520" stroke="#333" stroke-width="2.5" marker-end="url(#arr)"/>
+<text x="30" y="512" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#222" text-anchor="start" font-weight="bold" >SP</text>
+<path d="M66,320 L66,450" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arr)"/>
+<text x="56" y="385" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#555" text-anchor="middle" transform="rotate(-90 56 385)">wächst</text>
+<text x="380" y="288" font-family="Segoe UI, Arial, sans-serif" font-size="20" fill="#222" text-anchor="start" font-weight="bold" >Heap</text>
+<rect x="380" y="300" width="680" height="400" rx="12" fill="#f4f9ef" stroke="#5b8a3c" stroke-width="1.5"/>
+<text x="462" y="328" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#666" text-anchor="middle" font-weight="normal" >Length</text>
+<rect x="440" y="348.0" width="44" height="36" fill="#e9ecef" stroke="#555"/>
+<text x="462" y="371.0" font-family="Cascadia Mono, Consolas, monospace" font-size="13" fill="#666" text-anchor="middle" font-weight="normal" >6</text>
+<rect x="484" y="348.0" width="40" height="36" fill="#fff" stroke="#555"/>
+<text x="504" y="372.0" font-family="Cascadia Mono, Consolas, monospace" font-size="15" fill="#222" text-anchor="middle" font-weight="normal" >0</text>
+<rect x="524" y="348.0" width="40" height="36" fill="#fff" stroke="#555"/>
+<text x="544" y="372.0" font-family="Cascadia Mono, Consolas, monospace" font-size="15" fill="#222" text-anchor="middle" font-weight="normal" >0</text>
+<rect x="564" y="348.0" width="40" height="36" fill="#fff" stroke="#555"/>
+<text x="584" y="372.0" font-family="Cascadia Mono, Consolas, monospace" font-size="15" fill="#222" text-anchor="middle" font-weight="normal" >0</text>
+<rect x="604" y="348.0" width="40" height="36" fill="#fff" stroke="#555"/>
+<text x="624" y="372.0" font-family="Cascadia Mono, Consolas, monospace" font-size="15" fill="#222" text-anchor="middle" font-weight="normal" >0</text>
+<rect x="644" y="348.0" width="40" height="36" fill="#fff" stroke="#555"/>
+<text x="664" y="372.0" font-family="Cascadia Mono, Consolas, monospace" font-size="15" fill="#222" text-anchor="middle" font-weight="normal" >0</text>
+<rect x="684" y="348.0" width="40" height="36" fill="#fff" stroke="#555"/>
+<text x="704" y="372.0" font-family="Cascadia Mono, Consolas, monospace" font-size="15" fill="#222" text-anchor="middle" font-weight="normal" >0</text>
+<circle cx="744" cy="366.0" r="9" fill="#e8590c"/><text x="744" y="370.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold" fill="#fff">1</text>
+<text x="760" y="364.0" font-family="Cascadia Mono, Consolas, monospace" font-size="13" fill="#222" text-anchor="start" font-weight="bold" >int[]</text>
+<text x="760" y="380.0" font-family="Cascadia Mono, Consolas, monospace" font-size="11" fill="#555" text-anchor="start" font-weight="normal" >@ 0x1F00</text>
+<rect x="440" y="392.0" width="44" height="36" fill="#e9ecef" stroke="#555"/>
+<text x="462" y="415.0" font-family="Cascadia Mono, Consolas, monospace" font-size="13" fill="#666" text-anchor="middle" font-weight="normal" >6</text>
+<rect x="484" y="392.0" width="40" height="36" fill="#fff" stroke="#555"/>
+<text x="504" y="416.0" font-family="Cascadia Mono, Consolas, monospace" font-size="15" fill="#222" text-anchor="middle" font-weight="normal" >1</text>
+<rect x="524" y="392.0" width="40" height="36" fill="#fff" stroke="#555"/>
+<text x="544" y="416.0" font-family="Cascadia Mono, Consolas, monospace" font-size="15" fill="#222" text-anchor="middle" font-weight="normal" >2</text>
+<rect x="564" y="392.0" width="40" height="36" fill="#fff" stroke="#555"/>
+<text x="584" y="416.0" font-family="Cascadia Mono, Consolas, monospace" font-size="15" fill="#222" text-anchor="middle" font-weight="normal" >3</text>
+<rect x="604" y="392.0" width="40" height="36" fill="#fff" stroke="#555"/>
+<text x="624" y="416.0" font-family="Cascadia Mono, Consolas, monospace" font-size="15" fill="#222" text-anchor="middle" font-weight="normal" >4</text>
+<rect x="644" y="392.0" width="40" height="36" fill="#fff" stroke="#555"/>
+<text x="664" y="416.0" font-family="Cascadia Mono, Consolas, monospace" font-size="15" fill="#222" text-anchor="middle" font-weight="normal" >5</text>
+<rect x="684" y="392.0" width="40" height="36" fill="#fff" stroke="#555"/>
+<text x="704" y="416.0" font-family="Cascadia Mono, Consolas, monospace" font-size="15" fill="#222" text-anchor="middle" font-weight="normal" >6</text>
+<circle cx="744" cy="410.0" r="9" fill="#e8590c"/><text x="744" y="414.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold" fill="#fff">2</text>
+<text x="760" y="408.0" font-family="Cascadia Mono, Consolas, monospace" font-size="13" fill="#222" text-anchor="start" font-weight="bold" >int[]</text>
+<text x="760" y="424.0" font-family="Cascadia Mono, Consolas, monospace" font-size="11" fill="#555" text-anchor="start" font-weight="normal" >@ 0x1F38</text>
+<path d="M304,366.0 L438,366.0" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M304,410.0 L438,410.0" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="440" y="432" width="190" height="84" fill="#fff" stroke="#555"/>
+<rect x="440" y="432" width="190" height="26" fill="#e9ecef" stroke="#555"/>
+<text x="450" y="450" font-family="Cascadia Mono, Consolas, monospace" font-size="13" fill="#222" text-anchor="start" font-weight="bold" >List&lt;Person&gt;</text>
+<circle cx="614" cy="445" r="9" fill="#e8590c"/><text x="614" y="449" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold" fill="#fff">3</text>
+<line x1="440" y1="487" x2="630" y2="487" stroke="#bbb"/>
+<text x="450" y="478" font-family="Cascadia Mono, Consolas, monospace" font-size="13" fill="#222" text-anchor="start" font-weight="normal" >_items</text>
+<circle cx="616" cy="473" r="4" fill="#333"/>
+<text x="450" y="507" font-family="Cascadia Mono, Consolas, monospace" font-size="13" fill="#222" text-anchor="start" font-weight="normal" >_size (Count)</text>
+<text x="616" y="507" font-family="Cascadia Mono, Consolas, monospace" font-size="14" fill="#222" text-anchor="end" font-weight="bold" >3</text>
+<text x="440" y="532" font-family="Cascadia Mono, Consolas, monospace" font-size="11" fill="#555" text-anchor="start" font-weight="normal" >@ 0x1F70</text>
+<path d="M304,454.0 C360,454.0 390,445 438,445" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arr)"/>
+<text x="700" y="445" font-family="Cascadia Mono, Consolas, monospace" font-size="12" fill="#333" text-anchor="start" font-weight="normal" >Person[]  intern (Capacity 4)</text>
+<circle cx="948" cy="441" r="9" fill="#e8590c"/><text x="948" y="445" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold" fill="#fff">4</text>
+<rect x="700" y="455" width="44" height="36" fill="#e9ecef" stroke="#555"/>
+<text x="722" y="478" font-family="Cascadia Mono, Consolas, monospace" font-size="13" fill="#666" text-anchor="middle" font-weight="normal" >4</text>
+<rect x="744" y="455" width="48" height="36" fill="#fff" stroke="#555"/>
+<circle cx="768" cy="473" r="4" fill="#333"/>
+<rect x="792" y="455" width="48" height="36" fill="#fff" stroke="#555"/>
+<circle cx="816" cy="473" r="4" fill="#333"/>
+<rect x="840" y="455" width="48" height="36" fill="#fff" stroke="#555"/>
+<circle cx="864" cy="473" r="4" fill="#333"/>
+<rect x="888" y="455" width="48" height="36" fill="#fff" stroke="#555"/>
+<text x="912" y="477" font-family="Cascadia Mono, Consolas, monospace" font-size="12" fill="#999" text-anchor="middle" font-weight="normal" >null</text>
+<path d="M620,473 L698,473" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="500" y="590" width="130" height="80" fill="#fff" stroke="#555"/>
+<rect x="500" y="590" width="130" height="24" fill="#e9ecef" stroke="#555"/>
+<text x="510" y="607" font-family="Cascadia Mono, Consolas, monospace" font-size="13" fill="#222" text-anchor="start" font-weight="bold" >Person</text>
+<circle cx="614" cy="602" r="9" fill="#e8590c"/><text x="614" y="606" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold" fill="#fff">5</text>
+<text x="510" y="632" font-family="Cascadia Mono, Consolas, monospace" font-size="12" fill="#222" text-anchor="start" font-weight="normal" >Id  1</text>
+<text x="510" y="647" font-family="Cascadia Mono, Consolas, monospace" font-size="12" fill="#222" text-anchor="start" font-weight="normal" >FN1</text>
+<text x="510" y="662" font-family="Cascadia Mono, Consolas, monospace" font-size="12" fill="#222" text-anchor="start" font-weight="normal" >LN1</text>
+<text x="630" y="684" font-family="Cascadia Mono, Consolas, monospace" font-size="11" fill="#555" text-anchor="end" font-weight="normal" >@ 0x1FD8</text>
+<rect x="680" y="590" width="130" height="80" fill="#fff" stroke="#555"/>
+<rect x="680" y="590" width="130" height="24" fill="#e9ecef" stroke="#555"/>
+<text x="690" y="607" font-family="Cascadia Mono, Consolas, monospace" font-size="13" fill="#222" text-anchor="start" font-weight="bold" >Person</text>
+<circle cx="794" cy="602" r="9" fill="#e8590c"/><text x="794" y="606" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold" fill="#fff">6</text>
+<text x="690" y="632" font-family="Cascadia Mono, Consolas, monospace" font-size="12" fill="#222" text-anchor="start" font-weight="normal" >Id  2</text>
+<text x="690" y="647" font-family="Cascadia Mono, Consolas, monospace" font-size="12" fill="#222" text-anchor="start" font-weight="normal" >FN2</text>
+<text x="690" y="662" font-family="Cascadia Mono, Consolas, monospace" font-size="12" fill="#222" text-anchor="start" font-weight="normal" >LN2</text>
+<text x="810" y="684" font-family="Cascadia Mono, Consolas, monospace" font-size="11" fill="#555" text-anchor="end" font-weight="normal" >@ 0x2010</text>
+<rect x="860" y="590" width="130" height="80" fill="#fff" stroke="#555"/>
+<rect x="860" y="590" width="130" height="24" fill="#e9ecef" stroke="#555"/>
+<text x="870" y="607" font-family="Cascadia Mono, Consolas, monospace" font-size="13" fill="#222" text-anchor="start" font-weight="bold" >Person</text>
+<circle cx="974" cy="602" r="9" fill="#e8590c"/><text x="974" y="606" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold" fill="#fff">7</text>
+<text x="870" y="632" font-family="Cascadia Mono, Consolas, monospace" font-size="12" fill="#222" text-anchor="start" font-weight="normal" >Id  3</text>
+<text x="870" y="647" font-family="Cascadia Mono, Consolas, monospace" font-size="12" fill="#222" text-anchor="start" font-weight="normal" >FN3</text>
+<text x="870" y="662" font-family="Cascadia Mono, Consolas, monospace" font-size="12" fill="#222" text-anchor="start" font-weight="normal" >LN3</text>
+<text x="990" y="684" font-family="Cascadia Mono, Consolas, monospace" font-size="11" fill="#555" text-anchor="end" font-weight="normal" >@ 0x2048</text>
+<path d="M768,477 C768,533 565,540 565,588" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M816,477 C816,533 745,540 745,588" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M864,477 C864,533 925,540 925,588" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M304,498.0 C420,498.0 420,630 498,630" fill="none" stroke="#c92a2a" stroke-width="1.6" marker-end="url(#arrRed)"/>
+<text x="210.0" y="650" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#c92a2a" text-anchor="middle" font-weight="normal" font-style="italic">first enthält dieselbe Adresse</text>
+<text x="210.0" y="666" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#c92a2a" text-anchor="middle" font-weight="normal" font-style="italic">wie persons[0]: kein neues Objekt</text>
+<text x="380" y="724" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#666" text-anchor="start" font-weight="normal" >Vereinfacht: Die Strings &quot;FN1&quot;, &quot;LN1&quot;, … sind ebenfalls eigene Objekte am Heap. Adressen sind fiktiv.</text>
+<text x="380" y="742" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#666" text-anchor="start" font-weight="normal" >Ist das interne Array voll, legt Add() ein neues, doppelt so großes Array an und kopiert die Referenzen um.</text>
+</svg>

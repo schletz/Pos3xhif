@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interface Segregation</title>
+<style>
+  :root {
+    --bg: #f4f4f4; --card: #ffffff; --fg: #1d1d1b; --muted: #5f5f5e; --border: #9d9d9c; --soft: #ededed;
+    --n-stroke: #0090d4; --n-fill: #d1ebf7; --n-text: #00628f;
+    --a-stroke: #f39000; --a-fill: #fdebd1; --a-text: #a35f00;
+    --ok-stroke: #71af2e; --ok-fill: #e5f1d9; --ok-text: #4a7a1c;
+    --err-stroke: #cc0935; --err-fill: #f6d3db; --err-text: #a8072c;
+    --t-stroke: #6cc1b0; --t-fill: #e5f4f1; --t-text: #2f7d6e;
+    --btn: #00628f; --btn-fg: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161615; --card: #242423; --fg: #ededed; --muted: #b5b5b4; --border: #6f6f6e; --soft: #30302f;
+      --n-stroke: #0090d4; --n-fill: #0d3345; --n-text: #0090d4;
+      --a-stroke: #f39000; --a-fill: #4a2d00; --a-text: #f39000;
+      --ok-stroke: #71af2e; --ok-fill: #23380e; --ok-text: #71af2e;
+      --err-stroke: #f5b4c7; --err-fill: #4a1020; --err-text: #f5b4c7;
+      --t-stroke: #6cc1b0; --t-fill: #173b34; --t-text: #6cc1b0;
+      --btn: #0090d4; --btn-fg: #1d1d1b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", Helvetica, Arial, sans-serif; background: var(--bg); color: var(--fg);
+         line-height: 1.5; }
+  code, .mono, pre { font-family: Consolas, Menlo, monospace; }
+  code { background: var(--soft); padding: 0 4px; border-radius: 4px; }
+  header { position: sticky; top: 0; z-index: 5; background: var(--card); border-bottom: 1px solid var(--border);
+           padding: 8px 16px; display: flex; align-items: center; gap: 16px; }
+  header h1 { font-size: 18px; margin: 0; flex: 1; }
+  #progressText { font-variant-numeric: tabular-nums; color: var(--muted); }
+  #progressBar { position: absolute; left: 0; bottom: -1px; height: 3px; background: var(--btn); transition: width .3s; }
+  main { max-width: 1120px; margin: 0 auto; padding: 16px; }
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide h2 { margin: 4px 0 8px; font-size: 24px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin: 12px 0; }
+  .nav { display: flex; justify-content: space-between; max-width: 1120px; margin: 0 auto; padding: 0 16px 24px; }
+  button { font: inherit; border: 1px solid var(--border); background: var(--card); color: var(--fg); border-radius: 6px;
+           padding: 5px 12px; cursor: pointer; }
+  button:hover:not(:disabled) { border-color: var(--btn); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  button.primary { background: var(--btn); color: var(--btn-fg); border-color: var(--btn); }
+  .row { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin: 8px 0; }
+  .row label { display: inline-flex; align-items: center; gap: 6px; }
+  .muted { color: var(--muted); }
+  .hint { font-size: 14px; color: var(--muted); }
+  .grid2 { display: grid; grid-template-columns: minmax(0, 3fr) minmax(260px, 1.15fr); gap: 16px; align-items: start; }
+  @media (max-width: 860px) { .grid2 { grid-template-columns: 1fr; } }
+  .stepinfo { min-height: 96px; }
+  .stepinfo b.counter { color: var(--muted); font-weight: 600; margin-right: 6px; }
+
+  /* diagrams */
+  svg.dia { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--border);
+            border-radius: 8px; }
+  svg.dia text { font-family: "Segoe UI", Helvetica, Arial, sans-serif; fill: var(--fg); font-size: 15px; }
+  svg.dia text.mono { font-family: Consolas, Menlo, monospace; }
+  svg.dia text.b { font-weight: 700; }
+  svg.dia text.small { font-size: 13px; }
+  svg.dia text.mut { fill: var(--muted); }
+  svg.dia text.ntext { fill: var(--n-text); }
+  svg.dia text.atext { fill: var(--a-text); }
+  svg.dia text.oktext { fill: var(--ok-text); }
+  svg.dia text.errtext { fill: var(--err-text); }
+  svg.dia .box { fill: var(--card); stroke: var(--border); stroke-width: 1.6; }
+  svg.dia .box.client { stroke: var(--n-stroke); }
+  svg.dia .head.client { fill: var(--n-fill); }
+  svg.dia .box.iface { stroke: var(--a-stroke); }
+  svg.dia .head.iface { fill: var(--a-fill); }
+  svg.dia .box.root { stroke: var(--t-stroke); }
+  svg.dia .head.root { fill: var(--t-fill); }
+  svg.dia .box.read { stroke: var(--n-stroke); }
+  svg.dia .head.read { fill: var(--n-fill); }
+  svg.dia .box.write { stroke: var(--a-stroke); }
+  svg.dia .head.write { fill: var(--a-fill); }
+  svg.dia .head.cls { fill: var(--soft); }
+  svg.dia .box.sel { stroke-width: 4; }
+  svg.dia .hl { fill: var(--a-fill); stroke: var(--a-stroke); stroke-width: 1.5; }
+  svg.dia .okfill { fill: var(--ok-fill); stroke: var(--ok-stroke); stroke-width: 1.5; }
+  svg.dia .line { stroke: var(--fg); stroke-width: 1.5; fill: none; }
+  svg.dia .line.dash { stroke-dasharray: 6 4; }
+  svg.dia .line.active { stroke: var(--a-stroke); stroke-width: 3; }
+  svg.dia .line.no { stroke: var(--err-stroke); stroke-width: 2; stroke-dasharray: 7 5; }
+  svg.dia .dim { opacity: .3; }
+  svg.dia .clickable { cursor: pointer; }
+  svg.dia .fresh { animation: fadein .7s ease-out; }
+  @keyframes fadein { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { svg.dia .fresh { animation: none; } }
+
+  /* operations table */
+  table.ops { border-collapse: collapse; width: 100%; }
+  table.ops td, table.ops th { border-bottom: 1px solid var(--border); padding: 4px 6px; text-align: left; vertical-align: middle; }
+  table.ops th { color: var(--muted); font-weight: 600; font-size: 14px; }
+  table.ops td.op { font-family: Consolas, Menlo, monospace; font-size: 14px; }
+  .res { font-weight: 700; white-space: nowrap; }
+  .res.ok { color: var(--ok-text); }
+  .res.no { color: var(--muted); font-weight: 400; }
+  .res.warn { color: var(--err-text); }
+  .badge { display: inline-block; font-size: 12px; font-weight: 700; padding: 0 6px; border-radius: 8px; margin-left: 4px;
+           background: var(--a-fill); color: var(--a-text); border: 1px solid var(--a-stroke); }
+
+  /* exercise */
+  .rounds { align-items: flex-start; }
+  .rounds .group { display: flex; flex-direction: column; gap: 4px; }
+  .rounds .group > span { font-size: 13px; color: var(--muted); }
+  .rounds .group > div { display: flex; flex-wrap: wrap; gap: 6px; }
+  .rounds button { min-width: 40px; }
+  .rounds button.solved { background: var(--ok-fill); border-color: var(--ok-stroke); }
+  .rounds button.current { outline: 2px solid var(--btn); outline-offset: 1px; font-weight: 700; }
+  pre.code { background: var(--soft); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; margin: 8px 0;
+             overflow-x: auto; font-size: 15px; line-height: 1.45; }
+  pre.code .gap { background: var(--a-fill); outline: 2px dashed var(--a-stroke); border-radius: 3px; padding: 0 4px;
+                  font-weight: 700; color: var(--a-text); }
+  pre.code .gap.filled { outline-style: solid; background: var(--ok-fill); outline-color: var(--ok-stroke); color: var(--ok-text); }
+  .options { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+  .options button { font-family: Consolas, Menlo, monospace; }
+  .options button.right { background: var(--ok-fill); border-color: var(--ok-stroke); border-width: 2px; }
+  .options button.wrong { background: var(--err-fill); border-color: var(--err-stroke); border-width: 2px; }
+  .checks { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; }
+  .checks label { display: flex; gap: 10px; align-items: flex-start; padding: 6px 10px; border: 2px solid var(--border);
+                  border-radius: 8px; background: var(--card); cursor: pointer; }
+  .checks label .mono { font-size: 15px; }
+  .checks label.right { border-color: var(--ok-stroke); background: var(--ok-fill); }
+  .checks label.wrong { border-color: var(--err-stroke); background: var(--err-fill); }
+  .checks label .why { display: block; font-size: 14px; color: var(--fg); margin-top: 2px; }
+  .feedback { padding: 8px 12px; border-radius: 6px; margin-top: 8px; display: none; }
+  .feedback.ok { display: block; background: var(--ok-fill); border: 1px solid var(--ok-stroke); }
+  .feedback.bad { display: block; background: var(--err-fill); border: 1px solid var(--err-stroke); }
+  .feedback.info { display: block; background: var(--soft); border: 1px solid var(--border); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Interface Segregation</h1>
+  <span id="progressText">1 / 3</span>
+  <div id="progressBar"></div>
+</header>
+
+<main>
+  <!-- Slide 1 -->
+  <section class="slide" data-slide="0">
+    <h2>Ein fettes Interface nach Rollen zerlegen</h2>
+    <p>„Clients should not be forced to depend on methods they do not use.“ (Robert C. Martin) Ein <b>Client</b> ist
+      eine Klasse, die ein Interface benutzt. Gehe mit <b>Schritt</b> durch die Clients und sieh zu, wie aus dem
+      fetten Interface Rollen werden. <b>Play</b> läuft von selbst.</p>
+    <div class="row">
+      <button id="f-reset">⏮ Zurück</button>
+      <button id="f-step" class="primary">Schritt</button>
+      <button id="f-play">▶ Play</button>
+      <label>Geschwindigkeit <input type="range" id="f-speed" min="1" max="5" value="3" aria-label="Geschwindigkeit"></label>
+    </div>
+    <div class="card stepinfo" id="f-info" aria-live="polite"></div>
+    <svg class="dia" id="f-dia" viewBox="0 0 1000 560" role="img" aria-label="Diagramm: fettes Interface und Rollen"></svg>
+  </section>
+
+  <!-- Slide 2 -->
+  <section class="slide" data-slide="1">
+    <h2>Die Collection-Interfaces in .NET</h2>
+    <p>Jedes Interface schaltet ein paar Operationen frei. Baue die Hierarchie mit <b>Schritt</b> auf. Klicke danach auf
+      ein Interface oder eine Klasse: Rechts siehst du, was du mit einem Parameter dieses Typs tun darfst.</p>
+    <div class="row">
+      <button id="c-reset">⏮ Zurück</button>
+      <button id="c-step" class="primary">Schritt</button>
+      <button id="c-play">▶ Play</button>
+      <label>Geschwindigkeit <input type="range" id="c-speed" min="1" max="5" value="3" aria-label="Geschwindigkeit"></label>
+    </div>
+    <div class="card stepinfo" id="c-info" aria-live="polite"></div>
+    <div class="grid2">
+      <svg class="dia" id="c-dia" viewBox="0 0 760 560" role="img" aria-label="Diagramm: Collection-Interfaces"></svg>
+      <div class="card">
+        <div id="c-selname"></div>
+        <table class="ops" id="c-ops"></table>
+        <p class="hint">✓ kompiliert · ✗ Compilerfehler · ⚠ kompiliert, wirft aber zur Laufzeit. <span class="badge">neu</span>
+          = kommt mit diesem Interface dazu.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 3 -->
+  <section class="slide" data-slide="2">
+    <h2>Übung: Das kleinste passende Interface</h2>
+    <div class="row rounds" id="roundButtons"></div>
+    <div class="card" id="roundCard"></div>
+    <div class="row">
+      <button id="solutionBtn">Lösung zeigen</button>
+      <button id="resetRoundBtn">Runde neu starten</button>
+    </div>
+  </section>
+</main>
+
+<div class="nav">
+  <button id="prevBtn">← Zurück</button>
+  <button id="nextBtn" class="primary">Weiter →</button>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  const SVGNS = 'http://www.w3.org/2000/svg';
+  const SPEEDS = [3200, 2400, 1700, 1100, 700];
+
+  // ---------- storage (works without localStorage) ----------
+  const store = {
+    get(key, fallback) {
+      try {
+        const raw = window.localStorage.getItem('solid-07-' + key);
+        return raw === null ? fallback : JSON.parse(raw);
+      } catch (e) { return fallback; }
+    },
+    set(key, value) {
+      try { window.localStorage.setItem('solid-07-' + key, JSON.stringify(value)); } catch (e) { /* ignore */ }
+    }
+  };
+
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // ---------- svg helpers ----------
+  function el(tag, attrs, parent, text) {
+    const e = document.createElementNS(SVGNS, tag);
+    for (const k in attrs) { if (attrs[k] !== undefined && attrs[k] !== null) { e.setAttribute(k, attrs[k]); } }
+    if (text !== undefined) { e.textContent = text; }
+    if (parent) { parent.appendChild(e); }
+    return e;
+  }
+  function clear(svg) {
+    while (svg.firstChild) { svg.removeChild(svg.firstChild); }
+    const defs = el('defs', {}, svg);
+    const dep = el('marker', { id: svg.id + '-dep', viewBox: '0 0 12 12', refX: 11, refY: 6, markerWidth: 12, markerHeight: 12,
+      markerUnits: 'userSpaceOnUse', orient: 'auto' }, defs);
+    el('path', { d: 'M1,1 L11,6 L1,11', fill: 'none', style: 'stroke:var(--fg)', 'stroke-width': 1.5 }, dep);
+    const tri = el('marker', { id: svg.id + '-tri', viewBox: '0 0 16 16', refX: 15, refY: 8, markerWidth: 16, markerHeight: 16,
+      markerUnits: 'userSpaceOnUse', orient: 'auto' }, defs);
+    el('path', { d: 'M1,1 L15,8 L1,15 Z', style: 'fill:var(--card);stroke:var(--fg)', 'stroke-width': 1.5 }, tri);
+  }
+  /** Box with a coloured header. kind: client | iface | root | read | write | cls. Returns the group. */
+  function box(parent, x, y, w, h, kind, title, opts) {
+    const o = opts || {};
+    const g = el('g', { class: (o.cls || '') + (o.fresh ? ' fresh' : '') }, parent);
+    const hh = o.headH || 30;
+    el('rect', { x, y, width: w, height: h, rx: 8, class: 'box ' + kind + (o.sel ? ' sel' : '') }, g);
+    el('path', { d: `M${x + 8},${y} H${x + w - 8} Q${x + w},${y} ${x + w},${y + 8} V${y + hh} H${x} V${y + 8} Q${x},${y} ${x + 8},${y} Z`,
+      class: 'head ' + kind }, g);
+    el('rect', { x, y, width: w, height: h, rx: 8, class: 'box ' + kind + (o.sel ? ' sel' : ''), style: 'fill:none' }, g);
+    if (o.stereo) {
+      el('text', { x: x + w / 2, y: y + 14, 'text-anchor': 'middle', class: 'small mut' }, g, o.stereo);
+      el('text', { x: x + w / 2, y: y + hh - 6, 'text-anchor': 'middle', class: 'mono b' }, g, title);
+    } else {
+      el('text', { x: x + w / 2, y: y + 21, 'text-anchor': 'middle', class: 'mono b' }, g, title);
+    }
+    if (o.click) { g.classList.add('clickable'); g.addEventListener('click', o.click); }
+    return g;
+  }
+  function line(parent, pts, cls, marker, svgId) {
+    return el('polyline', { points: pts.map(p => p.join(',')).join(' '), class: 'line ' + (cls || ''),
+      'marker-end': marker ? `url(#${svgId}-${marker})` : null }, parent);
+  }
+
+  /** Connects step/play/reset buttons to a step function that returns false when finished. */
+  function animator(prefix, stepFn, resetFn) {
+    let timer = null;
+    const playBtn = document.getElementById(prefix + '-play');
+    const self = {
+      stop() {
+        if (timer) { clearTimeout(timer); timer = null; }
+        playBtn.textContent = '▶ Play';
+      },
+      play() {
+        if (timer) { self.stop(); return; }
+        playBtn.textContent = '⏸ Pause';
+        const tick = () => {
+          if (!stepFn()) { self.stop(); return; }
+          timer = setTimeout(tick, SPEEDS[document.getElementById(prefix + '-speed').value - 1]);
+        };
+        timer = setTimeout(tick, 0);
+      },
+      running: () => timer !== null
+    };
+    playBtn.addEventListener('click', self.play);
+    document.getElementById(prefix + '-step').addEventListener('click', () => { self.stop(); stepFn(); });
+    document.getElementById(prefix + '-reset').addEventListener('click', () => { self.stop(); resetFn(); });
+    return self;
+  }
+
+  // ---------- slide 1: fat interface -> roles ----------
+  const METHODS = [
+    { name: 'Pay(amount)', client: 0 },
+    { name: 'Refund(amount)', client: 1 },
+    { name: 'Authorize(amount)', client: 2 },
+    { name: 'Capture(authorizationId)', client: 2 },
+    { name: 'GetStatement(from, to)', client: 3 },
+    { name: 'ExportForAccounting(year, month)', client: 3 }
+  ];
+  const CLIENTS = [
+    { name: 'CheckoutService', uses: 'nutzt 1 von 6', role: 'IPaymentProvider', members: ['+ Pay()'] },
+    { name: 'ReturnService', uses: 'nutzt 1 von 6', role: 'IRefundable', members: ['+ Refund()'] },
+    { name: 'PreOrderService', uses: 'nutzt 2 von 6', role: 'IAuthorizable', members: ['+ Authorize()', '+ Capture()'] },
+    { name: 'AccountingJob', uses: 'nutzt 2 von 6', role: 'IStatementSource', members: ['+ GetStatement()'] }
+  ];
+  // which methods each implementation can really do (index into METHODS)
+  const IMPLS = [
+    { name: 'CreditCard', can: [1, 1, 1, 1, 1, 1], roles: [1, 1, 1, 1] },
+    { name: 'Invoice', can: [1, 1, 0, 0, 1, 1], roles: [1, 1, 0, 1] },
+    { name: 'GiftCard', can: [1, 0, 0, 0, 1, 0], roles: [1, 0, 0, 1] }
+  ];
+  const F_TEXT = [
+    '<b>Ein Interface für alles.</b> <code>IPaymentProvider</code> hat 6 Methoden. Jede Zahlungsart muss alle 6 implementieren. ' +
+      '<code>Invoice</code> und <code>GiftCard</code> können manche davon nicht und werfen eine <code>NotSupportedException</code> (✗).',
+    '<b>Client 1: CheckoutService.</b> Er ruft nur <code>Pay()</code> auf. Trotzdem hängt er von allen 6 Methoden ab. ' +
+      'Ein Fake für seinen Unit Test bräuchte 6 Methoden, 5 davon leer.',
+    '<b>Client 2: ReturnService.</b> Er braucht nur <code>Refund()</code>. Bekommt er eine <code>GiftCard</code>, stürzt er zur Laufzeit ab. ' +
+      'Das ist auch eine Verletzung von Liskov.',
+    '<b>Client 3: PreOrderService.</b> Er reserviert einen Betrag mit <code>Authorize()</code> und bucht ihn beim Versand mit ' +
+      '<code>Capture()</code> ab. Die beiden gehören zusammen: <b>Eine Rolle darf mehrere Methoden haben.</b>',
+    '<b>Client 4: AccountingJob.</b> Er braucht <code>GetStatement()</code> und <code>ExportForAccounting()</code>. ' +
+      'Aber Moment: Eine Datei für die Buchhaltung zu erzeugen ist keine Aufgabe eines Zahlungsmittels (Single Responsibility).',
+    '<b>Nach Rollen schneiden.</b> Pro Client entsteht ein Interface mit genau dem, was er braucht. ' +
+      '<code>ExportForAccounting()</code> wandert in die neue Klasse <code>AccountingExporter</code>. Sie holt die Daten über <code>IStatementSource</code>.',
+    '<b>Jede Klasse implementiert nur ihre Rollen.</b> <code>GiftCard</code> implementiert <code>IPaymentProvider</code> und ' +
+      '<code>IStatementSource</code>. Es gibt kein <code>NotSupportedException</code> mehr. Der Fake für <code>CheckoutService</code> hat nur noch 1 Methode.'
+  ];
+  const F_LAST = F_TEXT.length - 1;
+  let fStep = 0;
+  const CX = [20, 265, 510, 755], CW = 225;
+
+  function drawFat() {
+    const svg = document.getElementById('f-dia');
+    clear(svg);
+    const id = svg.id;
+    const split = fStep >= 5;
+    const active = fStep >= 1 && fStep <= 4 ? fStep - 1 : -1;
+    // clients
+    CLIENTS.forEach((c, i) => {
+      const dim = active >= 0 && active !== i;
+      const name = split && i === 3 ? 'AccountingExporter' : c.name;
+      const g = box(svg, CX[i], 15, CW, 70, 'client', name, { cls: dim ? 'dim' : '', fresh: split && i === 3 && fStep === 5 });
+      const txt = split ? (i === 3 ? '+ ExportForAccounting()' : 'sieht nur, was er braucht') : c.uses;
+      el('text', { x: CX[i] + 12, y: 70, class: split ? (i === 3 ? 'mono small' : 'small oktext') : 'small b atext' }, g,
+        (split && i !== 3 ? '✓ ' : '') + txt);
+    });
+    if (!split) {
+      // dependency arrows to the fat interface
+      const targets = [330, 450, 560, 670];
+      CLIENTS.forEach((c, i) => {
+        const l = line(svg, [[CX[i] + CW / 2, 85], [targets[i], 140]], 'dash' + (active === i ? ' active' : ''), 'dep', id);
+        if (active >= 0 && active !== i) { l.classList.add('dim'); }
+      });
+      // fat interface
+      const fx = 230, fy = 142, fw = 540, rh = 28;
+      const g = box(svg, fx, fy, fw, 46 + METHODS.length * rh + 10, 'iface', 'IPaymentProvider', { stereo: '«interface»', headH: 46 });
+      METHODS.forEach((m, k) => {
+        const y = fy + 50 + k * rh;
+        const assigned = fStep >= 1 && m.client < fStep;
+        if (m.client === active) { el('rect', { x: fx + 6, y: y, width: fw - 12, height: rh - 4, rx: 4, class: 'hl' }, g); }
+        el('text', { x: fx + 14, y: y + 18, class: 'mono' + (active >= 0 && m.client !== active ? ' mut' : '') + (m.client === active ? ' b' : '') }, g,
+          '+ ' + m.name);
+        if (assigned) {
+          el('text', { x: fx + fw - 12, y: y + 18, 'text-anchor': 'end', class: 'small b ' + (m.client === active ? 'atext' : 'ntext') }, g,
+            '→ ' + (k === 5 ? 'gehört nicht hierher' : CLIENTS[m.client].role));
+        }
+      });
+    } else {
+      // role interfaces under each client
+      CLIENTS.forEach((c, i) => {
+        line(svg, [[CX[i] + CW / 2, 85], [CX[i] + CW / 2, 140]], 'dash', 'dep', id);
+        const h = 46 + 10 + c.members.length * 26;
+        const g = box(svg, CX[i], 142, CW, h, 'iface', c.role, { stereo: '«interface»', headH: 46, fresh: fStep === 5 });
+        c.members.forEach((m, k) => el('text', { x: CX[i] + 12, y: 142 + 46 + 24 + k * 26, class: 'mono' }, g, m));
+      });
+    }
+    // implementations
+    const iy = split ? 330 : 400, iw = 300;
+    IMPLS.forEach((impl, j) => {
+      const x = 20 + j * 330;
+      if (split) {
+        const g = box(svg, x, iy, iw, 46 + 4 * 26, 'cls', impl.name, { fresh: fStep === 6 });
+        if (fStep >= 6) {
+          impl.roles.forEach((r, k) => {
+            const yy = iy + 30 + 24 + k * 26;
+            el('text', { x: x + 14, y: yy, class: r ? 'mono oktext b' : 'mono mut' }, g, (r ? '✓ ' : '– ') + CLIENTS[k].role);
+          });
+        } else {
+          el('text', { x: x + 14, y: iy + 60, class: 'small mut' }, g, 'Welche Rollen erfüllt diese Klasse?');
+        }
+      } else {
+        const g = box(svg, x, iy, iw, 122, 'cls', impl.name);
+        line(svg, [[x + iw / 2, iy], [x + iw / 2, 386], [500 + (j - 1) * 150, 386], [500 + (j - 1) * 150, 378]], 'dash', 'tri', id);
+        const cannot = METHODS.filter((m, k) => !impl.can[k]).map(m => m.name.split('(')[0] + '()');
+        const lines = cannot.length ? ['✗ wirft bei:'].concat(chunk(cannot, 2).map(a => '   ' + a.join(', '))) : ['✓ kann alle 6 Methoden'];
+        lines.forEach((t, k) => el('text', { x: x + 14, y: iy + 56 + k * 26, class: 'mono small ' + (cannot.length ? 'errtext b' : 'oktext b') }, g, t));
+      }
+    });
+    if (split) {
+      el('text', { x: 500, y: 520, 'text-anchor': 'middle', class: 'small' }, svg,
+        fStep >= 6 ? '✓ Keine Klasse implementiert eine Methode, die sie nicht kann.' : 'Die Rollen stehen. Im nächsten Schritt: Wer implementiert was?');
+    }
+    el('text', { x: 500, y: 548, 'text-anchor': 'middle', class: 'small mut' }, svg,
+      'gestrichelter Pfeil mit offener Spitze: hängt ab von · gestrichelt mit Dreieck: implementiert');
+    document.getElementById('f-info').innerHTML = `<b class="counter">Schritt ${fStep + 1} / ${F_TEXT.length}</b>` + F_TEXT[fStep];
+    document.getElementById('f-step').disabled = fStep === F_LAST;
+  }
+  function chunk(a, n) { const r = []; for (let i = 0; i < a.length; i += n) { r.push(a.slice(i, i + n)); } return r; }
+  const fAnim = animator('f', () => {
+    if (fStep >= F_LAST) { return false; }
+    fStep++;
+    drawFat();
+    return fStep < F_LAST;
+  }, () => { fStep = 0; drawFat(); });
+
+  // ---------- slide 2: collection hierarchy ----------
+  const OPS = [
+    { id: 'foreach', text: 'foreach (var x in items)' },
+    { id: 'linq', text: 'items.Where(…), items.Sum(…)' },
+    { id: 'count', text: 'items.Count' },
+    { id: 'get', text: 'items[0]  (lesen)' },
+    { id: 'set', text: 'items[0] = x' },
+    { id: 'add', text: 'items.Add(x), items.Remove(x)' },
+    { id: 'insert', text: 'items.Insert(0, x), RemoveAt(0)' },
+    { id: 'subset', text: 'items.IsSubsetOf(other)' }
+  ];
+  // node: position, parent, operations (ok | warn); warn = compiles but throws at runtime
+  const NODES = {
+    IEnumerable: { title: 'IEnumerable<T>', kind: 'root', x: 245, y: 15, w: 270, member: '+ GetEnumerator()', parent: null,
+      ops: { foreach: 'ok', linq: 'ok' } },
+    IReadOnlyCollection: { title: 'IReadOnlyCollection<T>', kind: 'read', x: 25, y: 135, w: 270, member: '+ Count', parent: 'IEnumerable',
+      ops: { foreach: 'ok', linq: 'ok', count: 'ok' } },
+    IReadOnlyList: { title: 'IReadOnlyList<T>', kind: 'read', x: 25, y: 250, w: 270, member: '+ this[int] (nur get)', parent: 'IReadOnlyCollection',
+      ops: { foreach: 'ok', linq: 'ok', count: 'ok', get: 'ok' } },
+    ICollection: { title: 'ICollection<T>', kind: 'write', x: 465, y: 135, w: 270, member: '+ Add(), Remove(), Clear() …', parent: 'IEnumerable',
+      ops: { foreach: 'ok', linq: 'ok', count: 'ok', add: 'ok' } },
+    IList: { title: 'IList<T>', kind: 'write', x: 465, y: 250, w: 270, member: '+ this[int] set, Insert() …', parent: 'ICollection',
+      ops: { foreach: 'ok', linq: 'ok', count: 'ok', get: 'ok', set: 'ok', add: 'ok', insert: 'ok' } },
+    IReadOnlySet: { title: 'IReadOnlySet<T>', kind: 'read', x: 25, y: 350, w: 270, member: '+ Contains(), IsSubsetOf() …', parent: 'IReadOnlyCollection',
+      ops: { foreach: 'ok', linq: 'ok', count: 'ok', subset: 'ok' } },
+    ISet: { title: 'ISet<T>', kind: 'write', x: 465, y: 350, w: 270, member: '+ Add(), UnionWith() …', parent: 'ICollection',
+      ops: { foreach: 'ok', linq: 'ok', count: 'ok', add: 'ok', subset: 'ok' } },
+    List: { title: 'List<T>', kind: 'cls', x: 25, y: 465, w: 230, member: 'IList<T> + IReadOnlyList<T>', parent: null,
+      ops: { foreach: 'ok', linq: 'ok', count: 'ok', get: 'ok', set: 'ok', add: 'ok', insert: 'ok' } },
+    Array: { title: 'T[]  (über IList<T>)', kind: 'cls', x: 265, y: 465, w: 230, member: 'IList<T> + IReadOnlyList<T>', parent: null,
+      ops: { foreach: 'ok', linq: 'ok', count: 'ok', get: 'ok', set: 'ok', add: 'warn', insert: 'warn' } },
+    HashSet: { title: 'HashSet<T>', kind: 'cls', x: 505, y: 465, w: 230, member: 'ISet<T> + IReadOnlySet<T>', parent: null,
+      ops: { foreach: 'ok', linq: 'ok', count: 'ok', add: 'ok', subset: 'ok' } }
+  };
+  const C_STEPS = [
+    { add: ['IEnumerable'], sel: 'IEnumerable',
+      text: '<b>IEnumerable&lt;T&gt;</b> ist die Wurzel. Es kann nur eines: die Elemente der Reihe nach liefern. Das reicht für <code>foreach</code> und für alle LINQ-Methoden.' },
+    { add: ['IReadOnlyCollection'], sel: 'IReadOnlyCollection',
+      text: '<b>IReadOnlyCollection&lt;T&gt;</b> fügt <code>Count</code> hinzu. Die Anzahl ist bekannt, ohne alle Elemente zu durchlaufen.' },
+    { add: ['IReadOnlyList'], sel: 'IReadOnlyList',
+      text: '<b>IReadOnlyList&lt;T&gt;</b> fügt den Index zum Lesen hinzu: <code>items[0]</code>. Schreiben ist nicht möglich.' },
+    { add: ['ICollection'], sel: 'ICollection',
+      text: '<b>ICollection&lt;T&gt;</b> ist die Schreibseite: <code>Add()</code>, <code>Remove()</code>, <code>Clear()</code>. ' +
+        'Achtung: Es erbt <b>nicht</b> von <code>IReadOnlyCollection&lt;T&gt;</code> (rot gestrichelt). Die IReadOnly-Interfaces kamen erst 2012 dazu.' },
+    { add: ['IList'], sel: 'IList',
+      text: '<b>IList&lt;T&gt;</b> fügt Index mit Schreiben, <code>Insert()</code> und <code>RemoveAt()</code> hinzu. ' +
+        'Eine Variable vom Typ <code>IList&lt;T&gt;</code> passt nicht in einen Parameter <code>IReadOnlyList&lt;T&gt;</code>.' },
+    { add: ['IReadOnlySet', 'ISet'], sel: 'IReadOnlySet',
+      text: '<b>Mengen:</b> <code>IReadOnlySet&lt;T&gt;</code> und <code>ISet&lt;T&gt;</code> kennen Mengenoperationen wie <code>IsSubsetOf()</code>, aber keinen Index. ' +
+        'Auch hier gibt es keine Vererbung zwischen den beiden Seiten.' },
+    { add: ['List', 'Array', 'HashSet'], sel: 'Array',
+      text: '<b>Die Klassen implementieren beide Seiten.</b> Deshalb passen <code>List&lt;T&gt;</code> und <code>T[]</code> in <code>IReadOnlyList&lt;T&gt;</code>. ' +
+        'Das Array ist ein historischer Bruch: Über <code>IList&lt;T&gt;</code> kompiliert <code>Add()</code>, wirft aber eine <code>NotSupportedException</code> (⚠). Klicke die Klassen an.' }
+  ];
+  let cStep = 0;
+  let cSel = 'IEnumerable';
+  function visibleNodes() {
+    const v = [];
+    for (let i = 0; i <= cStep; i++) { v.push(...C_STEPS[i].add); }
+    return v;
+  }
+  function drawColl() {
+    const svg = document.getElementById('c-dia');
+    clear(svg);
+    const id = svg.id;
+    const vis = visibleNodes();
+    const fresh = C_STEPS[cStep].add;
+    const cls = n => vis.includes(n);
+    // inheritance lines
+    const bus = (child, parent, side) => {
+      const c = NODES[child], p = NODES[parent];
+      if (side === 'root') {
+        const sx = c.x + (c.kind === 'read' ? c.w - 40 : 40);
+        const tx = p.x + (c.kind === 'read' ? 90 : p.w - 90);
+        line(svg, [[sx, c.y], [sx, c.y - 20], [tx, c.y - 20], [tx, p.y + 60]], '', 'tri', id);
+      } else {
+        const ox = c.kind === 'read' ? c.x - 14 : c.x + c.w + 14;
+        const ex = c.kind === 'read' ? c.x : c.x + c.w;
+        line(svg, [[ex, c.y + 30], [ox, c.y + 30], [ox, p.y + 30], [ex, p.y + 30]], '', 'tri', id);
+      }
+    };
+    if (cls('IReadOnlyCollection')) { bus('IReadOnlyCollection', 'IEnumerable', 'root'); }
+    if (cls('ICollection')) { bus('ICollection', 'IEnumerable', 'root'); }
+    if (cls('IReadOnlyList')) { bus('IReadOnlyList', 'IReadOnlyCollection'); }
+    if (cls('IList')) { bus('IList', 'ICollection'); }
+    if (cls('IReadOnlySet')) { bus('IReadOnlySet', 'IReadOnlyCollection'); }
+    if (cls('ISet')) { bus('ISet', 'ICollection'); }
+    if (cls('ICollection')) {
+      line(svg, [[295, 165], [465, 165]], 'no', null, id);
+      el('text', { x: 380, y: 158, 'text-anchor': 'middle', class: 'b errtext' }, svg, '✗');
+      el('text', { x: 380, y: 188, 'text-anchor': 'middle', class: 'small b errtext' }, svg, 'keine Vererbung');
+    }
+    if (cls('IReadOnlyList')) {
+      el('text', { x: 380, y: 288, 'text-anchor': 'middle', class: 'b' }, svg, 'Liste');
+    }
+    if (cls('IReadOnlySet')) {
+      el('text', { x: 380, y: 388, 'text-anchor': 'middle', class: 'b' }, svg, 'Menge');
+    }
+    if (cls('List')) {
+      el('text', { x: 25, y: 455, class: 'b' }, svg, 'Klassen (anklicken):');
+    }
+    for (const key of vis) {
+      const n = NODES[key];
+      const g = box(svg, n.x, n.y, n.w, 60, n.kind, n.title, { sel: key === cSel, fresh: fresh.includes(key),
+        click: () => { cSel = key; drawColl(); } });
+      el('text', { x: n.x + 12, y: n.y + 50, class: n.kind === 'cls' ? 'small' : 'mono small' }, g, n.member);
+      g.setAttribute('data-node', key);
+    }
+    el('text', { x: 735, y: 455, 'text-anchor': 'end', class: 'small mut' }, svg, 'Linie mit Dreieck: erbt von');
+    // operations panel
+    const n = NODES[cSel];
+    const parentOps = n.parent ? NODES[n.parent].ops : {};
+    document.getElementById('c-selname').innerHTML = `Parameter vom Typ <b class="mono">${esc(n.title.replace('  (über IList<T>)', ''))}</b>` +
+      (cSel === 'Array' ? ' <span class="hint">(als <code>IList&lt;T&gt;</code> verwendet)</span>' : '');
+    document.getElementById('c-ops').innerHTML = '<tr><th>Operation</th><th>geht?</th></tr>' + OPS.map(op => {
+      const st = n.ops[op.id];
+      const res = st === 'ok' ? '<span class="res ok">✓ ja</span>' : st === 'warn' ? '<span class="res warn">⚠ wirft</span>' : '<span class="res no">✗ nein</span>';
+      const isNew = st === 'ok' && n.parent && !parentOps[op.id];
+      return `<tr><td class="op">${esc(op.text)}${isNew ? '<span class="badge">neu</span>' : ''}</td><td>${res}</td></tr>`;
+    }).join('');
+    document.getElementById('c-info').innerHTML = `<b class="counter">Schritt ${cStep + 1} / ${C_STEPS.length}</b>` + C_STEPS[cStep].text;
+    document.getElementById('c-step').disabled = cStep === C_STEPS.length - 1;
+  }
+  const cAnim = animator('c', () => {
+    if (cStep >= C_STEPS.length - 1) { return false; }
+    cStep++;
+    cSel = C_STEPS[cStep].sel;
+    drawColl();
+    return cStep < C_STEPS.length - 1;
+  }, () => { cStep = 0; cSel = 'IEnumerable'; drawColl(); });
+
+  // ---------- slide 3: exercise ----------
+  const COLL = ['IEnumerable<OrderItem>', 'IReadOnlyCollection<OrderItem>', 'IReadOnlyList<OrderItem>', 'ICollection<OrderItem>', 'IList<OrderItem>'];
+  const WHY_SMALL = {
+    0: 'IEnumerable<T> kann nur durchlaufen werden (foreach, LINQ).',
+    1: 'IReadOnlyCollection<T> kennt zusätzlich Count, aber keinen Index.',
+    2: 'IReadOnlyList<T> hat Count und einen Index zum Lesen, kann aber nichts ändern.',
+    3: 'ICollection<T> kann Add, Remove, Contains und Count, hat aber keinen Index.',
+    4: 'IList<T> kann alles: Index lesen und schreiben, Insert, RemoveAt.'
+  };
+  /** Feedback for a collection parameter question: answer is the index of the smallest sufficient interface. */
+  function collFeedback(round, choice) {
+    if (choice === round.answer) { return null; }
+    const pick = COLL[choice];
+    if (round.fits && round.fits.includes(choice)) {
+      return `<code>${esc(pick)}</code> würde kompilieren, verlangt aber mehr als nötig. ${esc(WHY_SMALL[choice])} ` +
+        'Je größer der Parameter, desto weniger Aufrufer passen ohne Umwandlung. Suche das kleinste Interface, das reicht.';
+    }
+    return `<code>${esc(pick)}</code> reicht nicht: ${esc(round.missing[choice] || WHY_SMALL[choice])} Der Methodenrumpf kompiliert dann nicht.`;
+  }
+
+  const ROUNDS = [
+    // --- parameter rounds ---
+    { id: 'p-total', group: 'Parameter', type: 'coll', answer: 0, fits: [1, 2, 3, 4], missing: {},
+      task: 'Welcher Parametertyp reicht für <code>items</code>? Wähle das kleinste Interface.',
+      code: 'static decimal Total(??? items)\n{\n    decimal total = 0m;\n    foreach (OrderItem item in items) { total += item.Price * item.Quantity; }\n    return total;\n}',
+      explain: 'Die Methode macht nur <code>foreach</code>. Dafür reicht <code>IEnumerable&lt;OrderItem&gt;</code>. So passen Listen, Arrays, Sets und LINQ-Abfragen ohne <code>ToList()</code>.' },
+    { id: 'p-any', group: 'Parameter', type: 'coll', answer: 0, fits: [1, 2, 3, 4], missing: {},
+      task: 'Welcher Parametertyp reicht für <code>items</code>?',
+      code: 'static bool HasExpensiveItem(??? items)\n{\n    return items.Any(i => i.Price > 1000m);\n}',
+      explain: 'LINQ-Methoden wie <code>Any()</code>, <code>Where()</code> oder <code>Sum()</code> sind Extension Methods für <code>IEnumerable&lt;T&gt;</code>. Mehr braucht die Methode nicht.' },
+    { id: 'p-average', group: 'Parameter', type: 'coll', answer: 1, fits: [2, 3, 4],
+      missing: { 0: 'IEnumerable<T> hat kein Property Count.' },
+      task: 'Welcher Parametertyp reicht für <code>items</code>?',
+      code: 'static decimal AveragePrice(??? items)\n{\n    if (items.Count == 0) { return 0m; }\n    decimal sum = 0m;\n    foreach (OrderItem item in items) { sum += item.Price; }\n    return sum / items.Count;\n}',
+      explain: 'Die Methode braucht <code>Count</code> und <code>foreach</code>, aber keinen Index. Das ist genau <code>IReadOnlyCollection&lt;OrderItem&gt;</code>.' },
+    { id: 'p-firstlast', group: 'Parameter', type: 'coll', answer: 2, fits: [4],
+      missing: { 0: 'IEnumerable<T> hat weder Count noch einen Index.', 1: 'IReadOnlyCollection<T> hat keinen Index items[0].',
+        3: 'ICollection<T> hat keinen Index items[0].' },
+      task: 'Welcher Parametertyp reicht für <code>items</code>?',
+      code: 'static string FirstAndLast(??? items)\n{\n    if (items.Count == 0) { return "-"; }\n    return $"{items[0].Name} ... {items[items.Count - 1].Name}";\n}',
+      explain: 'Die Methode liest über den Index und braucht <code>Count</code>. Sie ändert nichts. Also reicht <code>IReadOnlyList&lt;OrderItem&gt;</code>.' },
+    { id: 'p-gift', group: 'Parameter', type: 'coll', answer: 3, fits: [4],
+      missing: { 0: 'IEnumerable<T> hat kein Add().', 1: 'IReadOnlyCollection<T> hat kein Add().', 2: 'IReadOnlyList<T> hat kein Add().' },
+      task: 'Welcher Parametertyp reicht für <code>items</code>?',
+      code: 'static void AddFreeGift(??? items, OrderItem gift)\n{\n    if (!items.Contains(gift)) { items.Add(gift); }\n}',
+      explain: 'Die Methode braucht <code>Contains()</code> und <code>Add()</code>, aber keinen Index. Das bietet <code>ICollection&lt;OrderItem&gt;</code>. Damit passt auch ein <code>HashSet&lt;OrderItem&gt;</code>.' },
+    { id: 'p-discount', group: 'Parameter', type: 'coll', answer: 4, fits: [],
+      missing: { 0: 'IEnumerable<T> hat weder Count noch einen Index.', 1: 'IReadOnlyCollection<T> hat keinen Index.',
+        2: 'IReadOnlyList<T> hat nur einen Index zum Lesen. items[i] = … kompiliert nicht.', 3: 'ICollection<T> hat keinen Index.' },
+      task: 'Knifflig: Welcher Parametertyp reicht für <code>items</code>?',
+      code: 'static void ApplyDiscount(??? items)\n{\n    for (int i = 0; i < items.Count; i++)\n    {\n        items[i] = items[i] with { Price = items[i].Price * 0.9m };\n    }\n}',
+      explain: 'Die Methode <b>schreibt</b> über den Index: <code>items[i] = …</code>. Das kann nur <code>IList&lt;OrderItem&gt;</code>. <code>IReadOnlyList&lt;T&gt;</code> hat nur einen Indexer mit <code>get</code>.' },
+    { id: 'p-move', group: 'Parameter', type: 'coll', answer: 4, fits: [],
+      missing: { 0: 'IEnumerable<T> hat keinen Index.', 1: 'IReadOnlyCollection<T> hat keinen Index.',
+        2: 'IReadOnlyList<T> hat kein RemoveAt() und kein Insert().', 3: 'ICollection<T> hat keinen Index und kein Insert().' },
+      task: 'Welcher Parametertyp reicht für <code>items</code>?',
+      code: 'static void MoveToTop(??? items, int index)\n{\n    OrderItem item = items[index];\n    items.RemoveAt(index);\n    items.Insert(0, item);\n}',
+      explain: '<code>RemoveAt()</code> und <code>Insert()</code> gibt es nur in <code>IList&lt;OrderItem&gt;</code>.' },
+    // --- role rounds ---
+    { id: 'r-return', group: 'Rollen', type: 'single', answer: 1,
+      options: ['IPaymentProvider (alle 6 Methoden)', 'IRefundable', 'IStatementSource', 'CreditCard'],
+      task: 'Der <code>ReturnService</code> erstattet bei einer Rücksendung den Betrag zurück. Welchen Typ verlangt er im Konstruktor?',
+      why: {
+        0: 'Das fette Interface zwingt den ReturnService, von 6 Methoden abzuhängen. Er braucht nur Refund().',
+        2: 'IStatementSource liefert nur Kontoauszüge. Zurückerstatten kann man damit nicht.',
+        3: 'Eine konkrete Klasse bindet den Service an Kreditkarten. Invoice könnte dann nicht erstatten. Verlange eine Abstraktion (D).'
+      },
+      explain: '<code>IRefundable</code> beschreibt genau die Rolle des Clients. Jede Zahlungsart, die erstatten kann, passt. <code>GiftCard</code> passt nicht, und das prüft schon der Compiler.' },
+    { id: 'r-preorder', group: 'Rollen', type: 'single', answer: 2,
+      options: ['IPaymentProvider', 'IRefundable', 'IAuthorizable', 'IAuthorizable und IRefundable'],
+      task: 'Der <code>PreOrderService</code> reserviert bei einer Vorbestellung den Betrag und bucht ihn beim Versand ab. Welche Rolle braucht er?',
+      why: {
+        0: 'Pay() bucht sofort ab. Für eine Reservierung braucht man Authorize() und später Capture().',
+        1: 'Refund() erstattet zurück. Das macht der PreOrderService nicht.',
+        3: 'Der Service erstattet nichts zurück. Verlange nur, was du nutzt.'
+      },
+      explain: '<code>IAuthorizable</code> enthält <code>Authorize()</code> und <code>Capture()</code>. Die beiden gehören zusammen. Eine Rolle darf also mehrere Methoden haben.' },
+    { id: 'r-sort', group: 'Rollen', type: 'single', answer: 0,
+      options: ['IComparable<Product>', 'IEquatable<Product>', 'IEnumerable<Product>', 'IDisposable'],
+      task: '<code>products.Sort()</code> soll eine <code>List&lt;Product&gt;</code> nach dem Preis sortieren. Welches Interface muss <code>Product</code> implementieren?',
+      why: {
+        1: 'IEquatable<T> beantwortet nur „gleich oder nicht?“. Zum Sortieren braucht man „kleiner, gleich oder größer?“.',
+        2: 'IEnumerable<T> braucht die Liste, nicht das einzelne Produkt.',
+        3: 'IDisposable ist für using und das Freigeben von Ressourcen.'
+      },
+      explain: '<code>Sort()</code> ruft <code>CompareTo()</code> aus <code>IComparable&lt;Product&gt;</code> auf. Fehlt das Interface, gibt es zur Laufzeit eine <code>InvalidOperationException</code>.' },
+    { id: 'r-using', group: 'Rollen', type: 'single', answer: 3,
+      options: ['IEnumerable<byte>', 'IComparable<PdfInvoiceWriter>', 'IHostedService', 'IDisposable'],
+      task: 'Die Klasse <code>PdfInvoiceWriter</code> hält eine offene Datei. Man soll sie mit <code>using PdfInvoiceWriter writer = new(…);</code> verwenden können. Welches Interface braucht sie?',
+      why: {
+        0: 'IEnumerable<T> ist für foreach, nicht für using.',
+        1: 'IComparable<T> ist zum Sortieren.',
+        2: 'IHostedService ist für Hintergrunddienste in ASP.NET Core.'
+      },
+      explain: '<code>using</code> verlangt <code>IDisposable</code> mit der einzigen Methode <code>Dispose()</code>. Am Ende des Blocks ruft der Compiler sie auf und die Datei wird geschlossen.' },
+    { id: 'r-options', group: 'Rollen', type: 'single', answer: 0,
+      options: ['IOptions<ShopSettings>', 'IOptionsMonitor<ShopSettings>', 'IServiceProvider', 'IHostedService'],
+      task: 'Der <code>ShippingCalculator</code> liest beim Erzeugen <b>einmal</b> die Grenze für Gratisversand aus der Konfiguration. Was verlangt er im Konstruktor?',
+      why: {
+        1: 'IOptionsMonitor<T> kann auch auf Änderungen reagieren. Das braucht der Calculator nicht. Es würde kompilieren, ist aber mehr als nötig.',
+        2: 'Mit IServiceProvider holt sich eine Klasse alles selbst. Dann sieht man nicht mehr, wovon sie abhängt (Service Locator).',
+        3: 'IHostedService ist für Hintergrunddienste.'
+      },
+      explain: '<code>IOptions&lt;T&gt;</code> hat nur das Property <code>Value</code>. Mehr braucht ein Client nicht, der Einstellungen einmal liest.' },
+    { id: 'r-hosted', group: 'Rollen', type: 'single', answer: 2,
+      options: ['IDisposable', 'ILogger<CacheWarmer>', 'IHostedService', 'IOptions<CacheSettings>'],
+      task: 'Ein <code>CacheWarmer</code> soll beim Start der Webanwendung den Produktkatalog in einen Cache laden und beim Beenden aufräumen. Welche Rolle implementiert er?',
+      why: {
+        0: 'IDisposable räumt auf, wird aber nicht beim Start der App aufgerufen.',
+        1: 'ILogger<T> verlangt man, um Meldungen zu schreiben. Man implementiert es nicht für einen Hintergrunddienst.',
+        3: 'IOptions<T> liefert Einstellungen.'
+      },
+      explain: '<code>IHostedService</code> hat genau zwei Methoden: <code>StartAsync()</code> und <code>StopAsync()</code>. ASP.NET Core ruft sie beim Start und beim Beenden auf.' },
+    // --- class rounds (multi select) ---
+    { id: 'k-readonlylist', group: 'Klassen', type: 'multi',
+      task: 'Die Methode hat den Parameter <code>IReadOnlyList&lt;OrderItem&gt; items</code>. Welche Argumente kompilieren? Wähle alle passenden.',
+      options: [
+        { text: 'List<OrderItem>', ok: true, why: 'List<T> implementiert IReadOnlyList<T>.' },
+        { text: 'OrderItem[]', ok: true, why: 'Arrays implementieren IReadOnlyList<T>.' },
+        { text: 'HashSet<OrderItem>', ok: false, why: 'Ein Set hat keine Reihenfolge und keinen Index.' },
+        { text: 'eine Variable vom Typ IList<OrderItem>', ok: false, why: 'IList<T> erbt nicht von IReadOnlyList<T>. CS1503.' },
+        { text: 'items.Where(i => i.Quantity > 1)', ok: false, why: 'LINQ liefert ein IEnumerable<T>. Erst ToList() macht daraus eine Liste.' },
+        { text: 'ReadOnlyCollection<OrderItem>', ok: true, why: 'ReadOnlyCollection<T> implementiert IReadOnlyList<T>.' }
+      ] },
+    { id: 'k-enumerable', group: 'Klassen', type: 'multi',
+      task: 'Die Methode hat den Parameter <code>IEnumerable&lt;OrderItem&gt; items</code>. Welche Argumente kompilieren?',
+      options: [
+        { text: 'List<OrderItem>', ok: true, why: 'Jede Collection ist ein IEnumerable<T>.' },
+        { text: 'OrderItem[]', ok: true, why: 'Auch Arrays implementieren IEnumerable<T>.' },
+        { text: 'HashSet<OrderItem>', ok: true, why: 'Auch Sets implementieren IEnumerable<T>.' },
+        { text: 'items.Where(i => i.Quantity > 1)', ok: true, why: 'Eine LINQ-Abfrage ist ein IEnumerable<T>.' },
+        { text: 'Dictionary<string, OrderItem>', ok: false, why: 'Die Elemente eines Dictionary sind KeyValuePair<string, OrderItem>, keine OrderItem.' },
+        { text: 'dictionary.Values', ok: true, why: 'Values liefert die Werte als Collection von OrderItem.' }
+      ] },
+    { id: 'k-collection', group: 'Klassen', type: 'multi',
+      task: 'Knifflig: Die Methode hat den Parameter <code>ICollection&lt;OrderItem&gt; items</code> und ruft <code>items.Add(…)</code> auf. Welche Argumente kompilieren <b>und</b> funktionieren zur Laufzeit?',
+      options: [
+        { text: 'List<OrderItem>', ok: true, why: 'List<T> kann wachsen.' },
+        { text: 'HashSet<OrderItem>', ok: true, why: 'HashSet<T> implementiert ICollection<T>. Add() fügt hinzu, wenn das Element noch fehlt.' },
+        { text: 'OrderItem[]', ok: false, why: 'Kompiliert, aber Add() wirft NotSupportedException: Ein Array hat eine feste Länge. Das ist der historische Bruch.' },
+        { text: 'ReadOnlyCollection<OrderItem>', ok: false, why: 'Kompiliert, aber Add() wirft NotSupportedException: Collection is read-only.' },
+        { text: 'eine Variable vom Typ IReadOnlyList<OrderItem>', ok: false, why: 'Kompiliert nicht: IReadOnlyList<T> ist keine ICollection<T>.' }
+      ] },
+    { id: 'k-set', group: 'Klassen', type: 'multi',
+      task: 'Die Methode prüft Gutscheincodes und hat den Parameter <code>IReadOnlySet&lt;string&gt; validCodes</code>. Welche Argumente kompilieren?',
+      options: [
+        { text: 'HashSet<string>', ok: true, why: 'HashSet<T> implementiert IReadOnlySet<T>.' },
+        { text: 'SortedSet<string>', ok: true, why: 'SortedSet<T> implementiert ebenfalls IReadOnlySet<T>.' },
+        { text: 'List<string>', ok: false, why: 'Eine Liste ist keine Menge. Sie darf Duplikate enthalten.' },
+        { text: 'string[]', ok: false, why: 'Ein Array ist keine Menge.' },
+        { text: 'eine Variable vom Typ ISet<string>', ok: false, why: 'ISet<T> erbt nicht von IReadOnlySet<T>. Wie bei den Listen sind die beiden Seiten getrennt.' }
+      ] }
+  ];
+  const GROUP_INFO = {
+    Parameter: 'Wähle für den Parameter das kleinste Interface, mit dem der Methodenrumpf kompiliert.',
+    Rollen: 'Wähle das Interface, das genau die Rolle des Clients beschreibt.',
+    Klassen: 'Wähle alle Argumente, die passen. Prüfe dann deine Auswahl.'
+  };
+  const solved = new Set((store.get('solved', []) || []).filter(id => ROUNDS.some(r => r.id === id)));
+  let roundIndex = Math.min(Math.max(store.get('round', 0) | 0, 0), ROUNDS.length - 1);
+  let roundDone = false;
+
+  function codeHtml(code, fill) {
+    return esc(code).replace('???', fill ? `<span class="gap filled">${esc(fill)}</span>` : '<span class="gap">???</span>');
+  }
+  function optionText(r, i) { return r.type === 'coll' ? COLL[i] : r.options[i]; }
+
+  function drawRounds() {
+    const box = document.getElementById('roundButtons');
+    box.innerHTML = '';
+    const groups = [];
+    ROUNDS.forEach((r, i) => {
+      let g = groups.find(x => x.name === r.group);
+      if (!g) {
+        const wrap = document.createElement('div');
+        wrap.className = 'group';
+        wrap.innerHTML = `<span>${esc(r.group)}</span><div></div>`;
+        box.appendChild(wrap);
+        g = { name: r.group, el: wrap.lastChild };
+        groups.push(g);
+      }
+      const b = document.createElement('button');
+      b.textContent = String(i + 1);
+      b.title = r.group + ' ' + (i + 1);
+      b.className = (solved.has(r.id) ? 'solved ' : '') + (i === roundIndex ? 'current' : '');
+      b.addEventListener('click', () => selectRound(i));
+      g.el.appendChild(b);
+    });
+  }
+
+  function renderRound() {
+    const r = ROUNDS[roundIndex];
+    roundDone = false;
+    const card = document.getElementById('roundCard');
+    let html = `<b>Runde ${roundIndex + 1} von ${ROUNDS.length} · ${esc(r.group)}</b>` +
+      (solved.has(r.id) ? ' <span class="muted">✓ gelöst</span>' : '') +
+      `<p class="hint">${GROUP_INFO[r.group]} Gelöst: ${solved.size} von ${ROUNDS.length} Runden.</p><p>${r.task}</p>`;
+    if (r.code) { html += `<pre class="code" id="codeBox">${codeHtml(r.code)}</pre>`; }
+    if (r.type === 'multi') {
+      html += '<div class="checks" id="checks">' + r.options.map((o, i) =>
+        `<label data-i="${i}"><input type="checkbox" value="${i}"><span><span class="mono">${esc(o.text)}</span><span class="why"></span></span></label>`).join('') +
+        '</div><button class="primary" id="checkBtn">Prüfen</button>';
+    } else {
+      const n = r.type === 'coll' ? COLL.length : r.options.length;
+      html += '<div class="options" id="options">';
+      for (let i = 0; i < n; i++) { html += `<button data-i="${i}">${esc(optionText(r, i))}</button>`; }
+      html += '</div>';
+    }
+    html += '<div class="feedback" id="feedback" aria-live="polite"></div>';
+    card.innerHTML = html;
+    if (r.type === 'multi') {
+      document.getElementById('checkBtn').addEventListener('click', checkMulti);
+      card.querySelectorAll('.checks input').forEach(inp => inp.addEventListener('change', () => {
+        if (roundDone) { return; }
+        card.querySelectorAll('.checks label').forEach(l => { l.classList.remove('right', 'wrong'); l.querySelector('.why').textContent = ''; });
+        document.getElementById('feedback').className = 'feedback';
+      }));
+    } else {
+      card.querySelectorAll('#options button').forEach(b => b.addEventListener('click', () => answerSingle(+b.dataset.i)));
+    }
+  }
+
+  function markSolved(r) {
+    if (!solved.has(r.id)) {
+      solved.add(r.id);
+      store.set('solved', Array.from(solved));
+    }
+    drawRounds();
+  }
+  function nextButton() {
+    const next = ROUNDS.findIndex((x, i) => i > roundIndex && !solved.has(x.id));
+    const any = next >= 0 ? next : ROUNDS.findIndex(x => !solved.has(x.id));
+    if (any >= 0) {
+      return { html: `<p><button id="nextRound" class="primary">Weiter zu Runde ${any + 1}</button></p>`, index: any };
+    }
+    return { html: '<p><b>Du hast alle Runden gelöst!</b></p>', index: -1 };
+  }
+  function bindNext(nb) {
+    const b = document.getElementById('nextRound');
+    if (b) { b.addEventListener('click', () => selectRound(nb.index)); }
+  }
+
+  /** Marks an answer button with colour and a symbol, so the result does not depend on colour alone. */
+  function markButton(btn, right) {
+    if (btn.classList.contains(right ? 'right' : 'wrong')) { return; }
+    btn.classList.add(right ? 'right' : 'wrong');
+    btn.textContent = (right ? '✓ ' : '✗ ') + btn.textContent;
+  }
+
+  function answerSingle(i) {
+    if (roundDone) { return; }
+    const r = ROUNDS[roundIndex];
+    const fb = document.getElementById('feedback');
+    const btn = document.querySelector(`#options button[data-i="${i}"]`);
+    if (i === r.answer) {
+      roundDone = true;
+      markButton(btn, true);
+      document.querySelectorAll('#options button').forEach(b => { b.disabled = b !== btn; });
+      if (r.code) { document.getElementById('codeBox').innerHTML = codeHtml(r.code, optionText(r, i)); }
+      markSolved(r);
+      const nb = nextButton();
+      fb.className = 'feedback ok';
+      fb.innerHTML = `✓ Richtig! ${r.explain}${nb.html}`;
+      bindNext(nb);
+    } else {
+      markButton(btn, false);
+      const why = r.type === 'coll' ? collFeedback(r, i) : esc(r.why[i]);
+      fb.className = 'feedback bad';
+      fb.innerHTML = `✗ Nicht ganz. ${why} <span class="hint">Versuche es noch einmal.</span>`;
+    }
+  }
+
+  function checkMulti() {
+    if (roundDone) { return; }
+    const r = ROUNDS[roundIndex];
+    let correct = 0;
+    document.querySelectorAll('#checks label').forEach(l => {
+      const o = r.options[+l.dataset.i];
+      const checked = l.querySelector('input').checked;
+      const ok = checked === o.ok;
+      l.classList.toggle('right', ok);
+      l.classList.toggle('wrong', !ok);
+      l.querySelector('.why').textContent = (ok ? '✓ Richtig entschieden. ' : '✗ Falsch entschieden. ') +
+        (o.ok ? 'Passt: ' : 'Passt nicht: ') + o.why;
+      if (ok) { correct++; }
+    });
+    const fb = document.getElementById('feedback');
+    if (correct === r.options.length) {
+      roundDone = true;
+      document.querySelectorAll('#checks input').forEach(inp => { inp.disabled = true; });
+      document.getElementById('checkBtn').disabled = true;
+      markSolved(r);
+      const nb = nextButton();
+      fb.className = 'feedback ok';
+      fb.innerHTML = `✓ Richtig! Alle ${r.options.length} Entscheidungen stimmen.${nb.html}`;
+      bindNext(nb);
+    } else {
+      fb.className = 'feedback bad';
+      fb.innerHTML = `✗ ${correct} von ${r.options.length} Entscheidungen stimmen. Die Zeilen mit ✗ (rot) hast du falsch entschieden, ` +
+        'die Begründung steht darunter. Ändere deine Auswahl und prüfe noch einmal.';
+    }
+  }
+
+  function showSolution() {
+    const r = ROUNDS[roundIndex];
+    renderRound();
+    roundDone = true;
+    const fb = document.getElementById('feedback');
+    if (r.type === 'multi') {
+      document.querySelectorAll('#checks label').forEach(l => {
+        const o = r.options[+l.dataset.i];
+        l.querySelector('input').checked = o.ok;
+        l.querySelector('input').disabled = true;
+        l.classList.add(o.ok ? 'right' : 'wrong');
+        l.querySelector('.why').textContent = (o.ok ? '✓ passt: ' : '✗ passt nicht: ') + o.why;
+      });
+      document.getElementById('checkBtn').disabled = true;
+      fb.className = 'feedback info';
+      fb.innerHTML = 'So sieht die richtige Auswahl aus. Starte die Runde neu und löse sie selbst, damit sie als gelöst zählt.';
+    } else {
+      const btn = document.querySelector(`#options button[data-i="${r.answer}"]`);
+      markButton(btn, true);
+      document.querySelectorAll('#options button').forEach(b => { b.disabled = true; });
+      if (r.code) { document.getElementById('codeBox').innerHTML = codeHtml(r.code, optionText(r, r.answer)); }
+      fb.className = 'feedback info';
+      fb.innerHTML = `Lösung: <code>${esc(optionText(r, r.answer))}</code>. ${r.explain} <span class="hint">Starte die Runde neu und löse sie selbst, damit sie als gelöst zählt.</span>`;
+    }
+  }
+
+  function selectRound(i) {
+    roundIndex = i;
+    store.set('round', i);
+    drawRounds();
+    renderRound();
+  }
+  document.getElementById('solutionBtn').addEventListener('click', showSolution);
+  document.getElementById('resetRoundBtn').addEventListener('click', renderRound);
+
+  // ---------- slides ----------
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  let current = Math.min(Math.max(store.get('slide', 0) | 0, 0), slides.length - 1);
+  function showSlide(i) {
+    current = Math.min(Math.max(i, 0), slides.length - 1);
+    slides.forEach((s, k) => s.classList.toggle('active', k === current));
+    document.getElementById('progressText').textContent = `${current + 1} / ${slides.length}`;
+    document.getElementById('progressBar').style.width = `${(current + 1) / slides.length * 100}%`;
+    document.getElementById('prevBtn').disabled = current === 0;
+    document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    fAnim.stop(); cAnim.stop();
+    store.set('slide', current);
+    window.scrollTo(0, 0);
+  }
+  document.getElementById('prevBtn').addEventListener('click', () => showSlide(current - 1));
+  document.getElementById('nextBtn').addEventListener('click', () => showSlide(current + 1));
+  document.addEventListener('keydown', evt => {
+    const tag = evt.target && evt.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (evt.target && evt.target.isContentEditable)) { return; }
+    if (evt.ctrlKey || evt.altKey || evt.metaKey) { return; }
+    if (evt.key === 'ArrowRight' || evt.key === 'PageDown') { showSlide(current + 1); evt.preventDefault(); }
+    if (evt.key === 'ArrowLeft' || evt.key === 'PageUp') { showSlide(current - 1); evt.preventDefault(); }
+  });
+
+  // ---------- start ----------
+  drawFat();
+  drawColl();
+  selectRound(roundIndex);
+  showSlide(current);
+
+  /** Read-only hooks for automated tests. */
+  window.ispDebug = {
+    fatStep: () => fStep,
+    collStep: () => cStep,
+    collSelected: () => cSel,
+    rounds: () => ROUNDS.map(r => ({ id: r.id, type: r.type, answer: r.answer, ok: r.type === 'multi' ? r.options.map(o => o.ok) : null })),
+    solved: () => Array.from(solved),
+    /** Checks that every single-choice round has feedback for every wrong option. */
+    selfTest: () => {
+      const problems = [];
+      ROUNDS.forEach(r => {
+        if (r.type === 'coll') {
+          COLL.forEach((c, i) => {
+            if (i === r.answer) { return; }
+            const t = collFeedback(r, i);
+            if (!t || /undefined/.test(t)) { problems.push(r.id + ' option ' + i); }
+          });
+        } else if (r.type === 'single') {
+          r.options.forEach((o, i) => { if (i !== r.answer && !r.why[i]) { problems.push(r.id + ' option ' + i); } });
+        } else if (!r.options.some(o => o.ok)) { problems.push(r.id + ' has no correct option'); }
+      });
+      return problems;
+    }
+  };
+})();
+</script>
+</body>
+</html>

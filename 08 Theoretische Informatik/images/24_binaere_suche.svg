@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440">
+  <rect x="0.5" y="0.5" width="719" height="439" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="20" y="44" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#6b7280" text-anchor="start">Index</text>
+  <text x="122" y="44" font-family="Consolas, Menlo, monospace" font-size="13" fill="#6b7280" text-anchor="middle">0</text>
+  <text x="166" y="44" font-family="Consolas, Menlo, monospace" font-size="13" fill="#6b7280" text-anchor="middle">1</text>
+  <text x="210" y="44" font-family="Consolas, Menlo, monospace" font-size="13" fill="#6b7280" text-anchor="middle">2</text>
+  <text x="254" y="44" font-family="Consolas, Menlo, monospace" font-size="13" fill="#6b7280" text-anchor="middle">3</text>
+  <text x="298" y="44" font-family="Consolas, Menlo, monospace" font-size="13" fill="#6b7280" text-anchor="middle">4</text>
+  <text x="342" y="44" font-family="Consolas, Menlo, monospace" font-size="13" fill="#6b7280" text-anchor="middle">5</text>
+  <text x="386" y="44" font-family="Consolas, Menlo, monospace" font-size="13" fill="#6b7280" text-anchor="middle">6</text>
+  <text x="430" y="44" font-family="Consolas, Menlo, monospace" font-size="13" fill="#6b7280" text-anchor="middle">7</text>
+  <text x="474" y="44" font-family="Consolas, Menlo, monospace" font-size="13" fill="#6b7280" text-anchor="middle">8</text>
+  <text x="518" y="44" font-family="Consolas, Menlo, monospace" font-size="13" fill="#6b7280" text-anchor="middle">9</text>
+  <text x="20" y="85" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="start">Schritt 1</text>
+  <rect x="102" y="62" width="40" height="36" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="122" y="85" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle">3</text>
+  <rect x="146" y="62" width="40" height="36" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="166" y="85" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle">8</text>
+  <rect x="190" y="62" width="40" height="36" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="210" y="85" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle">12</text>
+  <rect x="234" y="62" width="40" height="36" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="254" y="85" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle">17</text>
+  <rect x="278" y="62" width="40" height="36" rx="4" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+  <text x="298" y="85" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle" font-weight="bold">21</text>
+  <rect x="322" y="62" width="40" height="36" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="342" y="85" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle">25</text>
+  <rect x="366" y="62" width="40" height="36" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="386" y="85" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle">31</text>
+  <rect x="410" y="62" width="40" height="36" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="430" y="85" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle">40</text>
+  <rect x="454" y="62" width="40" height="36" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="474" y="85" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle">46</text>
+  <rect x="498" y="62" width="40" height="36" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="518" y="85" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle">52</text>
+  <text x="122" y="116" font-family="Consolas, Menlo, monospace" font-size="12" fill="#2563eb" text-anchor="middle">lo</text>
+  <text x="298" y="116" font-family="Consolas, Menlo, monospace" font-size="12" fill="#ea580c" text-anchor="middle">mid</text>
+  <text x="518" y="116" font-family="Consolas, Menlo, monospace" font-size="12" fill="#2563eb" text-anchor="middle">hi</text>
+  <text x="556" y="85" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="start">21 &lt; 31  →  lo = 5</text>
+  <text x="20" y="167" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="start">Schritt 2</text>
+  <rect x="102" y="144" width="40" height="36" rx="4" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="122" y="167" font-family="Consolas, Menlo, monospace" font-size="15" fill="#6b7280" text-anchor="middle">3</text>
+  <rect x="146" y="144" width="40" height="36" rx="4" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="166" y="167" font-family="Consolas, Menlo, monospace" font-size="15" fill="#6b7280" text-anchor="middle">8</text>
+  <rect x="190" y="144" width="40" height="36" rx="4" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="210" y="167" font-family="Consolas, Menlo, monospace" font-size="15" fill="#6b7280" text-anchor="middle">12</text>
+  <rect x="234" y="144" width="40" height="36" rx="4" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="254" y="167" font-family="Consolas, Menlo, monospace" font-size="15" fill="#6b7280" text-anchor="middle">17</text>
+  <rect x="278" y="144" width="40" height="36" rx="4" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="298" y="167" font-family="Consolas, Menlo, monospace" font-size="15" fill="#6b7280" text-anchor="middle">21</text>
+  <rect x="322" y="144" width="40" height="36" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="342" y="167" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle">25</text>
+  <rect x="366" y="144" width="40" height="36" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="386" y="167" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle">31</text>
+  <rect x="410" y="144" width="40" height="36" rx="4" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+  <text x="430" y="167" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle" font-weight="bold">40</text>
+  <rect x="454" y="144" width="40" height="36" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="474" y="167" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle">46</text>
+  <rect x="498" y="144" width="40" height="36" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="518" y="167" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle">52</text>
+  <text x="342" y="198" font-family="Consolas, Menlo, monospace" font-size="12" fill="#2563eb" text-anchor="middle">lo</text>
+  <text x="430" y="198" font-family="Consolas, Menlo, monospace" font-size="12" fill="#ea580c" text-anchor="middle">mid</text>
+  <text x="518" y="198" font-family="Consolas, Menlo, monospace" font-size="12" fill="#2563eb" text-anchor="middle">hi</text>
+  <text x="556" y="167" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="start">40 &gt; 31  →  hi = 6</text>
+  <text x="20" y="249" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="start">Schritt 3</text>
+  <rect x="102" y="226" width="40" height="36" rx="4" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="122" y="249" font-family="Consolas, Menlo, monospace" font-size="15" fill="#6b7280" text-anchor="middle">3</text>
+  <rect x="146" y="226" width="40" height="36" rx="4" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="166" y="249" font-family="Consolas, Menlo, monospace" font-size="15" fill="#6b7280" text-anchor="middle">8</text>
+  <rect x="190" y="226" width="40" height="36" rx="4" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="210" y="249" font-family="Consolas, Menlo, monospace" font-size="15" fill="#6b7280" text-anchor="middle">12</text>
+  <rect x="234" y="226" width="40" height="36" rx="4" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="254" y="249" font-family="Consolas, Menlo, monospace" font-size="15" fill="#6b7280" text-anchor="middle">17</text>
+  <rect x="278" y="226" width="40" height="36" rx="4" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="298" y="249" font-family="Consolas, Menlo, monospace" font-size="15" fill="#6b7280" text-anchor="middle">21</text>
+  <rect x="322" y="226" width="40" height="36" rx="4" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+  <text x="342" y="249" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle" font-weight="bold">25</text>
+  <rect x="366" y="226" width="40" height="36" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="386" y="249" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle">31</text>
+  <rect x="410" y="226" width="40" height="36" rx="4" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="430" y="249" font-family="Consolas, Menlo, monospace" font-size="15" fill="#6b7280" text-anchor="middle">40</text>
+  <rect x="454" y="226" width="40" height="36" rx="4" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="474" y="249" font-family="Consolas, Menlo, monospace" font-size="15" fill="#6b7280" text-anchor="middle">46</text>
+  <rect x="498" y="226" width="40" height="36" rx="4" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="518" y="249" font-family="Consolas, Menlo, monospace" font-size="15" fill="#6b7280" text-anchor="middle">52</text>
+  <text x="342" y="280" font-family="Consolas, Menlo, monospace" font-size="12" fill="#ea580c" text-anchor="middle">lo mid</text>
+  <text x="386" y="280" font-family="Consolas, Menlo, monospace" font-size="12" fill="#2563eb" text-anchor="middle">hi</text>
+  <text x="556" y="249" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="start">25 &lt; 31  →  lo = 6</text>
+  <text x="20" y="331" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="start">Schritt 4</text>
+  <rect x="102" y="308" width="40" height="36" rx="4" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="122" y="331" font-family="Consolas, Menlo, monospace" font-size="15" fill="#6b7280" text-anchor="middle">3</text>
+  <rect x="146" y="308" width="40" height="36" rx="4" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="166" y="331" font-family="Consolas, Menlo, monospace" font-size="15" fill="#6b7280" text-anchor="middle">8</text>
+  <rect x="190" y="308" width="40" height="36" rx="4" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="210" y="331" font-family="Consolas, Menlo, monospace" font-size="15" fill="#6b7280" text-anchor="middle">12</text>
+  <rect x="234" y="308" width="40" height="36" rx="4" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="254" y="331" font-family="Consolas, Menlo, monospace" font-size="15" fill="#6b7280" text-anchor="middle">17</text>
+  <rect x="278" y="308" width="40" height="36" rx="4" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="298" y="331" font-family="Consolas, Menlo, monospace" font-size="15" fill="#6b7280" text-anchor="middle">21</text>
+  <rect x="322" y="308" width="40" height="36" rx="4" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="342" y="331" font-family="Consolas, Menlo, monospace" font-size="15" fill="#6b7280" text-anchor="middle">25</text>
+  <rect x="366" y="308" width="40" height="36" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="386" y="331" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle" font-weight="bold">31</text>
+  <rect x="410" y="308" width="40" height="36" rx="4" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="430" y="331" font-family="Consolas, Menlo, monospace" font-size="15" fill="#6b7280" text-anchor="middle">40</text>
+  <rect x="454" y="308" width="40" height="36" rx="4" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="474" y="331" font-family="Consolas, Menlo, monospace" font-size="15" fill="#6b7280" text-anchor="middle">46</text>
+  <rect x="498" y="308" width="40" height="36" rx="4" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="518" y="331" font-family="Consolas, Menlo, monospace" font-size="15" fill="#6b7280" text-anchor="middle">52</text>
+  <text x="386" y="362" font-family="Consolas, Menlo, monospace" font-size="12" fill="#ea580c" text-anchor="middle">lo mid hi</text>
+  <text x="556" y="331" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#16a34a" text-anchor="start">31 = 31  →  gefunden</text>
+  <rect x="20" y="398" width="16" height="16" rx="3" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="44" y="411" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">Suchbereich [lo, hi]</text>
+  <rect x="200" y="398" width="16" height="16" rx="3" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="224" y="411" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">verworfen</text>
+  <rect x="320" y="398" width="16" height="16" rx="3" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+  <text x="344" y="411" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">mittleres Element</text>
+  <rect x="480" y="398" width="16" height="16" rx="3" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="504" y="411" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">gefunden</text>
+</svg>

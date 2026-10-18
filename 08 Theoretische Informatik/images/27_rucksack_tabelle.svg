@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="360" viewBox="0 0 900 360">
+  <rect x="0.5" y="0.5" width="899" height="359" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <defs>
+    <marker id="arrowA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#ea580c"/>
+    </marker>
+  </defs>
+  <text x="20" y="30" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600" fill="#1f2937">0/1-Rucksack mit Kapazität 7: best[i, c] = bester Wert mit den ersten i Gegenständen und Kapazität c</text>
+  <text x="392" y="64" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#6b7280" text-anchor="middle">Kapazität c</text>
+  <g stroke="#d1d5db" stroke-width="1">
+    <rect x="20" y="70" width="564" height="38" fill="#f3f4f6"/>
+    <rect x="20" y="108" width="180" height="38" fill="#f3f4f6"/>
+    <rect x="200" y="108" width="48" height="38" fill="#ffedd5"/>
+    <rect x="248" y="108" width="48" height="38" fill="#ffffff"/>
+    <rect x="296" y="108" width="48" height="38" fill="#ffffff"/>
+    <rect x="344" y="108" width="48" height="38" fill="#ffffff"/>
+    <rect x="392" y="108" width="48" height="38" fill="#ffffff"/>
+    <rect x="440" y="108" width="48" height="38" fill="#ffffff"/>
+    <rect x="488" y="108" width="48" height="38" fill="#ffffff"/>
+    <rect x="536" y="108" width="48" height="38" fill="#ffffff"/>
+    <rect x="20" y="146" width="180" height="38" fill="#ffffff"/>
+    <rect x="200" y="146" width="48" height="38" fill="#ffedd5"/>
+    <rect x="248" y="146" width="48" height="38" fill="#ffffff"/>
+    <rect x="296" y="146" width="48" height="38" fill="#ffffff"/>
+    <rect x="344" y="146" width="48" height="38" fill="#ffffff"/>
+    <rect x="392" y="146" width="48" height="38" fill="#ffffff"/>
+    <rect x="440" y="146" width="48" height="38" fill="#ffffff"/>
+    <rect x="488" y="146" width="48" height="38" fill="#ffffff"/>
+    <rect x="536" y="146" width="48" height="38" fill="#ffffff"/>
+    <rect x="20" y="184" width="180" height="38" fill="#dcfce7"/>
+    <rect x="200" y="184" width="48" height="38" fill="#ffffff"/>
+    <rect x="248" y="184" width="48" height="38" fill="#ffffff"/>
+    <rect x="296" y="184" width="48" height="38" fill="#ffffff"/>
+    <rect x="344" y="184" width="48" height="38" fill="#ffedd5"/>
+    <rect x="392" y="184" width="48" height="38" fill="#ffffff"/>
+    <rect x="440" y="184" width="48" height="38" fill="#ffffff"/>
+    <rect x="488" y="184" width="48" height="38" fill="#ffffff"/>
+    <rect x="536" y="184" width="48" height="38" fill="#ffffff"/>
+    <rect x="20" y="222" width="180" height="38" fill="#dcfce7"/>
+    <rect x="200" y="222" width="48" height="38" fill="#ffffff"/>
+    <rect x="248" y="222" width="48" height="38" fill="#ffffff"/>
+    <rect x="296" y="222" width="48" height="38" fill="#ffffff"/>
+    <rect x="344" y="222" width="48" height="38" fill="#ffffff"/>
+    <rect x="392" y="222" width="48" height="38" fill="#ffffff"/>
+    <rect x="440" y="222" width="48" height="38" fill="#ffffff"/>
+    <rect x="488" y="222" width="48" height="38" fill="#ffffff"/>
+    <rect x="536" y="222" width="48" height="38" fill="#ffedd5"/>
+    <rect x="20" y="260" width="180" height="38" fill="#ffffff"/>
+    <rect x="200" y="260" width="48" height="38" fill="#ffffff"/>
+    <rect x="248" y="260" width="48" height="38" fill="#ffffff"/>
+    <rect x="296" y="260" width="48" height="38" fill="#ffffff"/>
+    <rect x="344" y="260" width="48" height="38" fill="#ffffff"/>
+    <rect x="392" y="260" width="48" height="38" fill="#ffffff"/>
+    <rect x="440" y="260" width="48" height="38" fill="#ffffff"/>
+    <rect x="488" y="260" width="48" height="38" fill="#ffffff"/>
+    <rect x="536" y="260" width="48" height="38" fill="#ffedd5"/>
+  </g>
+  <g fill="none" stroke="#ea580c" stroke-width="2.5">
+    <rect x="538" y="262" width="44" height="34" rx="3"/>
+    <rect x="538" y="224" width="44" height="34" rx="3"/>
+    <rect x="346" y="186" width="44" height="34" rx="3"/>
+    <rect x="202" y="148" width="44" height="34" rx="3"/>
+    <rect x="202" y="110" width="44" height="34" rx="3"/>
+  </g>
+  <g stroke="#ea580c" stroke-width="2" fill="none" marker-end="url(#arrowA)">
+    <line x1="560" y1="267" x2="560" y2="253"/>
+    <line x1="550" y1="229" x2="378" y2="215"/>
+    <line x1="358" y1="191" x2="234" y2="177"/>
+    <line x1="224" y1="153" x2="224" y2="139"/>
+  </g>
+  <g font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937" text-anchor="middle" stroke="#ffffff" stroke-width="4" paint-order="stroke">
+    <text x="224" y="94" font-weight="600" stroke="none">0</text>
+    <text x="272" y="94" font-weight="600" stroke="none">1</text>
+    <text x="320" y="94" font-weight="600" stroke="none">2</text>
+    <text x="368" y="94" font-weight="600" stroke="none">3</text>
+    <text x="416" y="94" font-weight="600" stroke="none">4</text>
+    <text x="464" y="94" font-weight="600" stroke="none">5</text>
+    <text x="512" y="94" font-weight="600" stroke="none">6</text>
+    <text x="560" y="94" font-weight="600" stroke="none">7</text>
+    <text x="224" y="132" font-weight="700">0</text>
+    <text x="272" y="132">0</text>
+    <text x="320" y="132">0</text>
+    <text x="368" y="132">0</text>
+    <text x="416" y="132">0</text>
+    <text x="464" y="132">0</text>
+    <text x="512" y="132">0</text>
+    <text x="560" y="132">0</text>
+    <text x="224" y="170" font-weight="700">0</text>
+    <text x="272" y="170">1</text>
+    <text x="320" y="170">1</text>
+    <text x="368" y="170">1</text>
+    <text x="416" y="170">1</text>
+    <text x="464" y="170">1</text>
+    <text x="512" y="170">1</text>
+    <text x="560" y="170">1</text>
+    <text x="224" y="208">0</text>
+    <text x="272" y="208">1</text>
+    <text x="320" y="208">1</text>
+    <text x="368" y="208" font-weight="700">4</text>
+    <text x="416" y="208">5</text>
+    <text x="464" y="208">5</text>
+    <text x="512" y="208">5</text>
+    <text x="560" y="208">5</text>
+    <text x="224" y="246">0</text>
+    <text x="272" y="246">1</text>
+    <text x="320" y="246">1</text>
+    <text x="368" y="246">4</text>
+    <text x="416" y="246">5</text>
+    <text x="464" y="246">6</text>
+    <text x="512" y="246">6</text>
+    <text x="560" y="246" font-weight="700">9</text>
+    <text x="224" y="284">0</text>
+    <text x="272" y="284">1</text>
+    <text x="320" y="284">1</text>
+    <text x="368" y="284">4</text>
+    <text x="416" y="284">5</text>
+    <text x="464" y="284">7</text>
+    <text x="512" y="284">8</text>
+    <text x="560" y="284" font-weight="700">9</text>
+  </g>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937">
+    <text x="28" y="94" font-weight="600">i   Gegenstand</text>
+    <text x="28" y="132">0   (keiner)</text>
+    <text x="28" y="170">1   A: 1 kg, Wert 1</text>
+    <text x="28" y="208">2   B: 3 kg, Wert 4</text>
+    <text x="28" y="246">3   C: 4 kg, Wert 5</text>
+    <text x="28" y="284">4   D: 5 kg, Wert 7</text>
+  </g>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937">
+    <text x="608" y="92" font-weight="600">Rückweg ab best[4, 7]:</text>
+    <text x="608" y="118">best[4, 7] = 9 = best[3, 7]</text>
+    <text x="608" y="138" fill="#ea580c">↑ D nicht genommen</text>
+    <text x="608" y="164">best[3, 7] = 9 ≠ best[2, 7] = 5</text>
+    <text x="608" y="184" fill="#ea580c">↖ C genommen, c = 7 − 4 = 3</text>
+    <text x="608" y="210">best[2, 3] = 4 ≠ best[1, 3] = 1</text>
+    <text x="608" y="230" fill="#ea580c">↖ B genommen, c = 3 − 3 = 0</text>
+    <text x="608" y="256">best[1, 0] = 0 = best[0, 0]</text>
+    <text x="608" y="276" fill="#ea580c">↑ A nicht genommen</text>
+  </g>
+  <text x="20" y="338" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="600" fill="#16a34a">Auswahl: B und C (grün), Gewicht 3 + 4 = 7 kg, Wert 4 + 5 = 9</text>
+</svg>

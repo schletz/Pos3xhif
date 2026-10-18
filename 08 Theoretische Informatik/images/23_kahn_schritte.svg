@@ -1,0 +1,241 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1074" height="382" viewBox="0 0 1074 382">
+  <rect x="0.5" y="0.5" width="1073" height="381" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/>
+    </marker>
+    <marker id="arrowRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/>
+    </marker>
+  </defs>
+  <rect x="20" y="20" width="56" height="34" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="48.0" y="42" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle" font-weight="bold">Schritt</text>
+  <rect x="76" y="20" width="112" height="34" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="132.0" y="42" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle" font-weight="bold">entnommen</text>
+  <rect x="844" y="20" width="210" height="34" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="949.0" y="42" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle" font-weight="bold">Queue danach</text>
+  <rect x="188" y="20" width="82" height="34" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="229.0" y="42" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#1f2937" text-anchor="middle" font-weight="bold">Grundlagen</text>
+  <rect x="270" y="20" width="82" height="34" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="311.0" y="42" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#1f2937" text-anchor="middle" font-weight="bold">HTTP</text>
+  <rect x="352" y="20" width="82" height="34" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="393.0" y="42" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#1f2937" text-anchor="middle" font-weight="bold">OOP</text>
+  <rect x="434" y="20" width="82" height="34" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="475.0" y="42" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#1f2937" text-anchor="middle" font-weight="bold">SQL</text>
+  <rect x="516" y="20" width="82" height="34" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="557.0" y="42" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#1f2937" text-anchor="middle" font-weight="bold">Collections</text>
+  <rect x="598" y="20" width="82" height="34" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="639.0" y="42" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#1f2937" text-anchor="middle" font-weight="bold">LINQ</text>
+  <rect x="680" y="20" width="82" height="34" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="721.0" y="42" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#1f2937" text-anchor="middle" font-weight="bold">EF Core</text>
+  <rect x="762" y="20" width="82" height="34" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="803.0" y="42" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#1f2937" text-anchor="middle" font-weight="bold">Web-API</text>
+  <rect x="20" y="54" width="56" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="48.0" y="73" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Start</text>
+  <rect x="76" y="54" width="112" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="132.0" y="73" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">–</text>
+  <rect x="188" y="54" width="82" height="28" fill="#ffedd5" stroke="#ea580c"/>
+  <text x="229.0" y="73" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">0</text>
+  <rect x="270" y="54" width="82" height="28" fill="#ffedd5" stroke="#ea580c"/>
+  <text x="311.0" y="73" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">0</text>
+  <rect x="352" y="54" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="393.0" y="73" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">1</text>
+  <rect x="434" y="54" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="475.0" y="73" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">1</text>
+  <rect x="516" y="54" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="557.0" y="73" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">1</text>
+  <rect x="598" y="54" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="639.0" y="73" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">1</text>
+  <rect x="680" y="54" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="721.0" y="73" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">2</text>
+  <rect x="762" y="54" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="803.0" y="73" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">2</text>
+  <rect x="844" y="54" width="210" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="854" y="73" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">Grundlagen, HTTP</text>
+  <rect x="20" y="82" width="56" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="48.0" y="101" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">1</text>
+  <rect x="76" y="82" width="112" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="132.0" y="101" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Grundlagen</text>
+  <rect x="188" y="82" width="82" height="28" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="229.0" y="101" font-family="Consolas, Menlo, monospace" font-size="14" fill="#16a34a" text-anchor="middle" font-weight="bold">0</text>
+  <rect x="270" y="82" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="311.0" y="101" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">0</text>
+  <rect x="352" y="82" width="82" height="28" fill="#ffedd5" stroke="#ea580c"/>
+  <text x="393.0" y="101" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">0</text>
+  <rect x="434" y="82" width="82" height="28" fill="#ffedd5" stroke="#ea580c"/>
+  <text x="475.0" y="101" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">0</text>
+  <rect x="516" y="82" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="557.0" y="101" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">1</text>
+  <rect x="598" y="82" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="639.0" y="101" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">1</text>
+  <rect x="680" y="82" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="721.0" y="101" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">2</text>
+  <rect x="762" y="82" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="803.0" y="101" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">2</text>
+  <rect x="844" y="82" width="210" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="854" y="101" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">HTTP, OOP, SQL</text>
+  <rect x="20" y="110" width="56" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="48.0" y="129" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">2</text>
+  <rect x="76" y="110" width="112" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="132.0" y="129" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">HTTP</text>
+  <rect x="188" y="110" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="229.0" y="129" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="270" y="110" width="82" height="28" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="311.0" y="129" font-family="Consolas, Menlo, monospace" font-size="14" fill="#16a34a" text-anchor="middle" font-weight="bold">0</text>
+  <rect x="352" y="110" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="393.0" y="129" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">0</text>
+  <rect x="434" y="110" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="475.0" y="129" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">0</text>
+  <rect x="516" y="110" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="557.0" y="129" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">1</text>
+  <rect x="598" y="110" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="639.0" y="129" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">1</text>
+  <rect x="680" y="110" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="721.0" y="129" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">2</text>
+  <rect x="762" y="110" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="803.0" y="129" font-family="Consolas, Menlo, monospace" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="bold">1</text>
+  <rect x="844" y="110" width="210" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="854" y="129" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">OOP, SQL</text>
+  <rect x="20" y="138" width="56" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="48.0" y="157" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">3</text>
+  <rect x="76" y="138" width="112" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="132.0" y="157" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">OOP</text>
+  <rect x="188" y="138" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="229.0" y="157" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="270" y="138" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="311.0" y="157" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="352" y="138" width="82" height="28" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="393.0" y="157" font-family="Consolas, Menlo, monospace" font-size="14" fill="#16a34a" text-anchor="middle" font-weight="bold">0</text>
+  <rect x="434" y="138" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="475.0" y="157" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">0</text>
+  <rect x="516" y="138" width="82" height="28" fill="#ffedd5" stroke="#ea580c"/>
+  <text x="557.0" y="157" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">0</text>
+  <rect x="598" y="138" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="639.0" y="157" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">1</text>
+  <rect x="680" y="138" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="721.0" y="157" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">2</text>
+  <rect x="762" y="138" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="803.0" y="157" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">1</text>
+  <rect x="844" y="138" width="210" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="854" y="157" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">SQL, Collections</text>
+  <rect x="20" y="166" width="56" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="48.0" y="185" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">4</text>
+  <rect x="76" y="166" width="112" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="132.0" y="185" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">SQL</text>
+  <rect x="188" y="166" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="229.0" y="185" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="270" y="166" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="311.0" y="185" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="352" y="166" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="393.0" y="185" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="434" y="166" width="82" height="28" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="475.0" y="185" font-family="Consolas, Menlo, monospace" font-size="14" fill="#16a34a" text-anchor="middle" font-weight="bold">0</text>
+  <rect x="516" y="166" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="557.0" y="185" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">0</text>
+  <rect x="598" y="166" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="639.0" y="185" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">1</text>
+  <rect x="680" y="166" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="721.0" y="185" font-family="Consolas, Menlo, monospace" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="bold">1</text>
+  <rect x="762" y="166" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="803.0" y="185" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">1</text>
+  <rect x="844" y="166" width="210" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="854" y="185" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">Collections</text>
+  <rect x="20" y="194" width="56" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="48.0" y="213" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">5</text>
+  <rect x="76" y="194" width="112" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="132.0" y="213" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Collections</text>
+  <rect x="188" y="194" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="229.0" y="213" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="270" y="194" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="311.0" y="213" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="352" y="194" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="393.0" y="213" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="434" y="194" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="475.0" y="213" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="516" y="194" width="82" height="28" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="557.0" y="213" font-family="Consolas, Menlo, monospace" font-size="14" fill="#16a34a" text-anchor="middle" font-weight="bold">0</text>
+  <rect x="598" y="194" width="82" height="28" fill="#ffedd5" stroke="#ea580c"/>
+  <text x="639.0" y="213" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">0</text>
+  <rect x="680" y="194" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="721.0" y="213" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">1</text>
+  <rect x="762" y="194" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="803.0" y="213" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">1</text>
+  <rect x="844" y="194" width="210" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="854" y="213" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">LINQ</text>
+  <rect x="20" y="222" width="56" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="48.0" y="241" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">6</text>
+  <rect x="76" y="222" width="112" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="132.0" y="241" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">LINQ</text>
+  <rect x="188" y="222" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="229.0" y="241" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="270" y="222" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="311.0" y="241" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="352" y="222" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="393.0" y="241" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="434" y="222" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="475.0" y="241" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="516" y="222" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="557.0" y="241" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="598" y="222" width="82" height="28" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="639.0" y="241" font-family="Consolas, Menlo, monospace" font-size="14" fill="#16a34a" text-anchor="middle" font-weight="bold">0</text>
+  <rect x="680" y="222" width="82" height="28" fill="#ffedd5" stroke="#ea580c"/>
+  <text x="721.0" y="241" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">0</text>
+  <rect x="762" y="222" width="82" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="803.0" y="241" font-family="Consolas, Menlo, monospace" font-size="14" fill="#1f2937" text-anchor="middle">1</text>
+  <rect x="844" y="222" width="210" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="854" y="241" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">EF Core</text>
+  <rect x="20" y="250" width="56" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="48.0" y="269" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">7</text>
+  <rect x="76" y="250" width="112" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="132.0" y="269" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">EF Core</text>
+  <rect x="188" y="250" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="229.0" y="269" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="270" y="250" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="311.0" y="269" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="352" y="250" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="393.0" y="269" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="434" y="250" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="475.0" y="269" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="516" y="250" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="557.0" y="269" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="598" y="250" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="639.0" y="269" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="680" y="250" width="82" height="28" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="721.0" y="269" font-family="Consolas, Menlo, monospace" font-size="14" fill="#16a34a" text-anchor="middle" font-weight="bold">0</text>
+  <rect x="762" y="250" width="82" height="28" fill="#ffedd5" stroke="#ea580c"/>
+  <text x="803.0" y="269" font-family="Consolas, Menlo, monospace" font-size="14" fill="#ea580c" text-anchor="middle" font-weight="bold">0</text>
+  <rect x="844" y="250" width="210" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="854" y="269" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">Web-API</text>
+  <rect x="20" y="278" width="56" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="48.0" y="297" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">8</text>
+  <rect x="76" y="278" width="112" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="132.0" y="297" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="middle">Web-API</text>
+  <rect x="188" y="278" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="229.0" y="297" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="270" y="278" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="311.0" y="297" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="352" y="278" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="393.0" y="297" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="434" y="278" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="475.0" y="297" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="516" y="278" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="557.0" y="297" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="598" y="278" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="639.0" y="297" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="680" y="278" width="82" height="28" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="721.0" y="297" font-family="Consolas, Menlo, monospace" font-size="14" fill="#6b7280" text-anchor="middle">–</text>
+  <rect x="762" y="278" width="82" height="28" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="803.0" y="297" font-family="Consolas, Menlo, monospace" font-size="14" fill="#16a34a" text-anchor="middle" font-weight="bold">0</text>
+  <rect x="844" y="278" width="210" height="28" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="854" y="297" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#6b7280" text-anchor="start">(leer)</text>
+  <text x="20" y="332" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#1f2937" text-anchor="start" font-weight="bold">Ausgabe: Grundlagen, HTTP, OOP, SQL, Collections, LINQ, EF Core, Web-API</text>
+  <rect x="20" y="350" width="22" height="16" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="50" y="363" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">wird entnommen und ausgegeben</text>
+  <rect x="283" y="350" width="22" height="16" fill="#ffedd5" stroke="#ea580c"/>
+  <text x="313" y="363" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">Eingangsgrad wird 0, kommt in die Queue</text>
+  <rect x="616" y="350" width="22" height="16" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="627" y="363" font-family="Consolas, Menlo, monospace" font-size="12" fill="#2563eb" text-anchor="middle" font-weight="bold">1</text>
+  <text x="646" y="363" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">Eingangsgrad sinkt</text>
+  <rect x="802" y="350" width="22" height="16" fill="#e5e7eb" stroke="#d1d5db"/>
+  <text x="832" y="363" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1f2937" text-anchor="start">schon ausgegeben</text>
+</svg>

@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="350" viewBox="0 0 760 350">
+<rect x="0.5" y="0.5" width="759" height="349" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+<text x="30" y="32" text-anchor="start" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1f2937">Ableitungsbaum für ()() mit K → ( K ) K | ε</text>
+<line x1="177.0" y1="87.0" x2="60.0" y2="132.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="177.0" y1="87.0" x2="112.0" y2="128.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="112.0" y1="162.0" x2="112.0" y2="212.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="177.0" y1="87.0" x2="164.0" y2="132.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="177.0" y1="87.0" x2="294.0" y2="128.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="294.0" y1="162.0" x2="216.0" y2="207.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="294.0" y1="162.0" x2="268.0" y2="203.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="268.0" y1="237.0" x2="268.0" y2="287.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="294.0" y1="162.0" x2="320.0" y2="207.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="294.0" y1="162.0" x2="372.0" y2="203.0" stroke="#1f2937" stroke-width="1.2"/>
+<line x1="372.0" y1="237.0" x2="372.0" y2="287.0" stroke="#1f2937" stroke-width="1.2"/>
+<circle cx="177.0" cy="70.0" r="17" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="177.0" y="75.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1f2937">K</text>
+<circle cx="153.0" cy="54.0" r="9" fill="#ea580c"/>
+<text x="153.0" y="58.0" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" font-weight="bold" fill="#ffffff">1</text>
+<rect x="48.5" y="132.0" width="23" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+<text x="60.0" y="150.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937">(</text>
+<circle cx="112.0" cy="145.0" r="17" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="112.0" y="150.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1f2937">K</text>
+<circle cx="88.0" cy="129.0" r="9" fill="#ea580c"/>
+<text x="88.0" y="133.0" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" font-weight="bold" fill="#ffffff">2</text>
+<text x="112.0" y="225.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" fill="#6b7280">ε</text>
+<rect x="152.5" y="132.0" width="23" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+<text x="164.0" y="150.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937">)</text>
+<circle cx="294.0" cy="145.0" r="17" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="294.0" y="150.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1f2937">K</text>
+<circle cx="270.0" cy="129.0" r="9" fill="#ea580c"/>
+<text x="270.0" y="133.0" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" font-weight="bold" fill="#ffffff">3</text>
+<rect x="204.5" y="207.0" width="23" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+<text x="216.0" y="225.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937">(</text>
+<circle cx="268.0" cy="220.0" r="17" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="268.0" y="225.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1f2937">K</text>
+<circle cx="244.0" cy="204.0" r="9" fill="#ea580c"/>
+<text x="244.0" y="208.0" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" font-weight="bold" fill="#ffffff">4</text>
+<text x="268.0" y="300.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" fill="#6b7280">ε</text>
+<rect x="308.5" y="207.0" width="23" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+<text x="320.0" y="225.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" fill="#1f2937">)</text>
+<circle cx="372.0" cy="220.0" r="17" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="372.0" y="225.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" font-weight="bold" fill="#1f2937">K</text>
+<circle cx="348.0" cy="204.0" r="9" fill="#ea580c"/>
+<text x="348.0" y="208.0" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" font-weight="bold" fill="#ffffff">5</text>
+<text x="372.0" y="300.0" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="16" fill="#6b7280">ε</text>
+<text x="450" y="72" text-anchor="start" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1f2937">Linksableitung</text>
+<text x="480" y="102" text-anchor="start" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937">K</text>
+<circle cx="458" cy="127" r="9" fill="#ea580c"/>
+<text x="458" y="131" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" font-weight="bold" fill="#ffffff">1</text>
+<text x="480" y="132" text-anchor="start" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937">⇒ (K)K</text>
+<text x="590" y="132" text-anchor="start" font-family="Consolas, Menlo, monospace" font-size="13" fill="#6b7280">K → ( K ) K</text>
+<circle cx="458" cy="157" r="9" fill="#ea580c"/>
+<text x="458" y="161" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" font-weight="bold" fill="#ffffff">2</text>
+<text x="480" y="162" text-anchor="start" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937">⇒ ()K</text>
+<text x="590" y="162" text-anchor="start" font-family="Consolas, Menlo, monospace" font-size="13" fill="#6b7280">K → ε</text>
+<circle cx="458" cy="187" r="9" fill="#ea580c"/>
+<text x="458" y="191" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" font-weight="bold" fill="#ffffff">3</text>
+<text x="480" y="192" text-anchor="start" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937">⇒ ()(K)K</text>
+<text x="590" y="192" text-anchor="start" font-family="Consolas, Menlo, monospace" font-size="13" fill="#6b7280">K → ( K ) K</text>
+<circle cx="458" cy="217" r="9" fill="#ea580c"/>
+<text x="458" y="221" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" font-weight="bold" fill="#ffffff">4</text>
+<text x="480" y="222" text-anchor="start" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937">⇒ ()()K</text>
+<text x="590" y="222" text-anchor="start" font-family="Consolas, Menlo, monospace" font-size="13" fill="#6b7280">K → ε</text>
+<circle cx="458" cy="247" r="9" fill="#ea580c"/>
+<text x="458" y="251" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" font-weight="bold" fill="#ffffff">5</text>
+<text x="480" y="252" text-anchor="start" font-family="Consolas, Menlo, monospace" font-size="15" fill="#1f2937">⇒ ()()</text>
+<text x="590" y="252" text-anchor="start" font-family="Consolas, Menlo, monospace" font-size="13" fill="#6b7280">K → ε</text>
+<text x="30" y="330" text-anchor="start" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#6b7280">Blätter von links nach rechts gelesen (ε weggelassen): ( ) ( )  =  ()()</text>
+</svg>
