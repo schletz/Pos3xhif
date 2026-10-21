@@ -19,7 +19,7 @@
   - [Warum testen?](15%20Unittests/01_Warum_Testen.adoc)
   - [Unit Tests mit xUnit](15%20Unittests/02_xUnit.adoc)
   - [Testfälle finden](15%20Unittests/03_Testfaelle_finden.adoc)
-  - *[Übungsprojekt BugHunt](15%20Unittests/Uebungen/BugHunt/README.md)*
+  - *[Übungsprojekt BugHunt](15%20Unittests/Uebungen/README.md)*
 #### ○ SOLID und DRY: Schlechten und guten Code erkennen
   - [Programmieren im Zeitalter der Agents](16%20SOLID/01_Einfuehrung.adoc)
   - [DRY: Don't Repeat Yourself](16%20SOLID/02_DRY.adoc)
