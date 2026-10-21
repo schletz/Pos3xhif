@@ -1,0 +1,313 @@
+= Упражнение к PLF: прокат транспортных средств
+:source-highlighter: rouge
+:icons: font
+:pdf-page-header: true
+:lang: RU
+:figure-caption!:
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+
+____
+[.lead]
+Класс: 5AKIF +
+Подготовка к PLF (практической контрольной работе) в среду, 4 ноября 2026 года +
+Время работы на PLF: 3 UE (урока)
+____
+
+== Указания к этому упражнению
+
+Это упражнение показывает, как выглядят задание и тестовая программа на PLF.
+PLF имеет такую же структуру: модель классов, описание классов и тестовая программа, которая начисляет баллы.
+
+Скачайте файл _CarRentalService.7z_ из упражнений к главе _Types_.
+Распакуйте файл и откройте файл _CarRentalService.sln_.
+
+[NOTE]
+====
+На PLF вы найдёте solution на диске _Z_.
+Там сначала впишите своё имя в файл _README.md_.
+В этом упражнении, наоборот, файл _README.md_ содержит задание, и вписывать ничего не нужно.
+====
+
+== Задача: прокат транспортных средств
+
+Пункт проката сдаёт в аренду мотоциклы и автомобили.
+За мотоцикл вы платите цену за день.
+За автомобиль вы дополнительно платите за каждый пройденный километр.
+Для каждой аренды система сохраняет запись об аренде (_Rental_).
+Аренда остаётся открытой, пока транспортное средство не вернут.
+
+<<<
+
+=== Модель классов
+
+[plantuml,format=svg]
+----
+@startuml
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 15
+skinparam ArrowThickness 1.5
+skinparam class {
+  BackgroundColor #ffffff
+  HeaderBackgroundColor #ededed
+  BorderColor #1d1d1b
+  BorderThickness 1.5
+  FontStyle bold
+}
+skinparam stereotypeCBackgroundColor #d1ebf7
+skinparam stereotypeABackgroundColor #fdebd1
+skinparam stereotypeIBackgroundColor #e5f4f1
+skinparam stereotypeEBackgroundColor #e5f1d9
+hide empty fields
+hide empty methods
+skinparam nodesep 20
+skinparam ranksep 40
+
+abstract class Vehicle
+{
+    +LicencePlate : string
+    +PricePerDay : decimal
+    +Power : int
+    +{abstract} RequiredDrivingLicence : string
+    ---
+    #Vehicle(string licencePlate,
+<U+00A0><U+00A0><U+00A0><U+00A0>decimal pricePerDay, int power)
+    +{abstract} decimal CalculatePrice(int days, int kilometers)
+}
+
+class Motorcycle
+{
+    +RequiredDrivingLicence : string
+    ---
+    +Motorcycle(string licencePlate,
+<U+00A0><U+00A0><U+00A0><U+00A0>decimal pricePerDay, int power)
+    +decimal CalculatePrice(int days,
+<U+00A0><U+00A0><U+00A0><U+00A0>int kilometers)
+}
+Motorcycle -up-|> Vehicle
+
+class Car
+{
+    +PricePerKm : decimal
+    +Weight : int
+    +RequiredDrivingLicence : string
+    ---
+    +Car(string licencePlate,
+<U+00A0><U+00A0><U+00A0><U+00A0>decimal pricePerDay, int power,
+<U+00A0><U+00A0><U+00A0><U+00A0>decimal pricePerKm, int weight)
+    +decimal CalculatePrice(int days,
+<U+00A0><U+00A0><U+00A0><U+00A0>int kilometers)
+}
+Car -up-|> Vehicle
+
+class Customer
+{
+    +Firstname : string
+    +Lastname : string
+    ---
+    +Customer(string firstname,
+<U+00A0><U+00A0><U+00A0><U+00A0>string lastname)
+}
+
+class Rental
+{
+    +Start : DateTime
+    +End : DateTime?
+    +Customer : Customer
+    +Vehicle : Vehicle
+    +KilometersBegin : int
+    +KilometersEnd : int?
+    +RentedDays : int?
+    ---
+    +Rental(DateTime start,
+<U+00A0><U+00A0><U+00A0><U+00A0>Customer customer, Vehicle vehicle,
+<U+00A0><U+00A0><U+00A0><U+00A0>int kilometersBegin)
+    +decimal CalculatePrice()
+}
+Rental "*" --> "1" Customer
+Rental "*" --> "1" Vehicle
+@enduml
+----
+
+=== Описание классов
+
+Приватные поля, которые нужны для реализации, создайте сами.
+
+==== Класс Vehicle
+
+Абстрактный базовый класс для автомобилей и мотоциклов.
+Все properties доступны только для чтения (read-only).
+
+* *LicencePlate* — номерной знак транспортного средства.
+* *PricePerDay* — цена аренды за каждый начатый день.
+* *Power* — мощность транспортного средства в кВт.
+* Конструктор имеет модификатор _protected_.
+* *RequiredDrivingLicence* — абстрактное property.
+  Оно возвращает категорию водительского удостоверения, которая нужна для этого транспортного средства.
+* *CalculatePrice()* — абстрактный метод.
+  Он вычисляет цену по количеству дней аренды (_days_) и пройденным километрам (_kilometers_).
+
+==== Класс Motorcycle
+
+Все properties доступны только для чтения.
+
+* *RequiredDrivingLicence* всегда возвращает _"A"_.
+* *CalculatePrice()* вычисляет цену по формуле _days × PricePerDay_.
+  Километры не учитываются.
+
+==== Класс Car
+
+Все properties доступны только для чтения.
+
+* *PricePerKm* — цена за пройденный километр.
+* *Weight* — масса в кг.
+* *RequiredDrivingLicence* возвращает _"B"_, если автомобиль весит меньше 3500 кг.
+  Иначе оно возвращает _"C"_ (грузовик).
+* *CalculatePrice()* вычисляет цену по формуле _days × PricePerDay + kilometers × PricePerKm_.
+
+==== Класс Customer
+
+Класс хранит только имя и фамилию клиента.
+Конструктор задаёт все properties.
+Все properties доступны только для чтения.
+
+==== Класс Rental
+
+Класс хранит одну аренду.
+
+* *Start*, *Customer*, *Vehicle* и *KilometersBegin* задаются в конструкторе и доступны только для чтения.
+* *Start* — начало аренды.
+* *KilometersBegin* — показание счётчика километров (пробег) в начале аренды.
+* *End* — конец аренды.
+  Значение равно _null_, пока транспортное средство не вернули.
+  При возврате значение задают извне класса.
+* *KilometersEnd* — показание счётчика километров в конце аренды.
+  Значение равно _null_, пока транспортное средство не вернули.
+  При возврате значение задают извне класса.
+* *RentedDays* — количество начатых дней, доступно только для чтения.
+  Если _End_ равно _null_, то и _RentedDays_ равно _null_.
+  Аренда, которая заканчивается в тот же день, длится 1 день.
+* *CalculatePrice()* вычисляет цену аренды:
+** Если _End_ равно _null_, метод возвращает 0.
+** Если _KilometersEnd_ равно _null_, метод возвращает 0.
+** Иначе метод возвращает результат _CalculatePrice()_ арендованного транспортного средства.
+   Передайте при этом _RentedDays_ и пройденные километры (_KilometersEnd − KilometersBegin_).
+
+*Пример:* Автомобиль с _PricePerDay_ 10 евро и _PricePerKm_ 5 евро арендуют с 10.11.2021 по 15.11.2021.
+Пробег в начале аренды — 100 км, в конце — 200 км.
+
+* _RentedDays_ равно 6 (10, 11, 12, 13, 14 и 15 ноября).
+* _CalculatePrice()_ возвращает 6 × 10 + 100 × 5 = 560 евро.
+
+[TIP]
+====
+* Если вычесть одно значение _DateTime_ из другого, получится _TimeSpan_.
+  Количество начатых дней даёт такое выражение:
++
+[source,csharp]
+----
+(int)(end - start).TotalDays + 1
+----
+* Это работает только с _DateTime_, но не с _DateTime?_.
+  Поэтому сначала проверьте, равно ли _End_ значению _null_.
+  После этого значение можно получить через `End.Value`.
+  То же самое относится к _KilometersEnd_.
+* Литерал типа _decimal_ записывается с _M_ в конце, например `0.5M`.
+====
+
+=== Что нужно сделать
+
+Создайте каждый класс в отдельном файле.
+Файлы _Program.cs_ и _TestHelpers.cs_ изменять *нельзя*.
+
+_Program.cs_ — тестовая программа.
+Она компилируется только тогда, когда существуют все классы со всеми properties и методами из модели.
+Обратите внимание и на имена параметров конструкторов, потому что тестовая программа их использует (например, `pricePerDay: 10`).
+Поэтому сначала создайте все классы.
+Методы и properties, которые вы ещё не реализовали, выбрасывают _NotImplementedException_.
+Затем запустите программу в проекте _CarRentalService.Application_.
+Для каждой проверки она показывает _OK_ или _FAILED_.
+Если проверка выбрасывает исключение (exception), она считается не пройденной.
+Исключение вне проверки (например, при создании тестовых данных) завершает программу.
+
+Полное решение показывает _OK_ во всех 43 проверках.
+В конце программа показывает набранные баллы и оценку:
+
+[source,text]
+----
+Result of the program in C:\...\CarRentalService.Application:
+43 of 43 checks passed.
+48 of 48 points. Grade: Sehr gut.
+----
+
+=== Оценивание
+
+Чтобы получить положительную оценку, программа должна компилироваться.
+Программы, которые не компилируются или аварийно завершаются, получают оценку _Nicht genügend_ (неудовлетворительно).
+В таблице перечислены все проверки тестовой программы.
+Тексты в таблице совпадают с выводом на экран.
+Каждая проверка с результатом _OK_ приносит баллы из столбца _P_.
+
+[%header,cols="1,10,1"]
+|===
+|№ |Проверка (всего 48 баллов) |P
+3+e|Checking class implementation
+|1 |Rental does not have a default constructor. |1
+|2 |Rental.Start is read-only. |1
+|3 |Rental.Customer is read-only. |1
+|4 |Rental.Vehicle is read-only. |1
+|5 |Rental.KilometersBegin is read-only. |1
+|6 |Rental.RentedDays is read-only. |1
+|7 |Rental.End, KilometersEnd and RentedDays are nullable. |1
+|8 |Customer does not have a default constructor. |1
+|9 |Customer is immutable. |1
+|10 |Vehicle does not have a default constructor. |1
+|11 |Vehicle is abstract. |1
+|12 |Vehicle has a protected constructor. |1
+|13 |Vehicle is immutable. |1
+|14 |Vehicle.PricePerDay is decimal and Vehicle.Power is int. |1
+|15 |Vehicle.RequiredDrivingLicence is abstract. |1
+|16 |Vehicle.CalculatePrice() is abstract. |1
+|17 |Motorcycle does not have a default constructor. |1
+|18 |Motorcycle is immutable. |1
+|19 |Car does not have a default constructor. |1
+|20 |Car is immutable. |1
+|21 |Car.PricePerKm is decimal and Car.Weight is int. |1
+3+e|Checking constructors
+|22 |Constructor of Customer sets the values. |1
+|23 |Constructor of Motorcycle sets the values. |1
+|24 |Constructor of Car sets the values. |1
+|25 |Constructor of Rental sets the values. |1
+3+e|Checking Motorcycle
+|26 |The required driving licence for motorcycles is A. |1
+|27 |Motorcycle.CalculatePrice() returns days x PricePerDay. |2
+3+e|Checking Car
+|28 |The required driving licence for cars < 3500 kg is B. |1
+|29 |Car.CalculatePrice() returns days x PricePerDay + km x PricePerKm. |2
+|30 |The required driving licence for cars >= 3500 kg is C. |1
+3+e|Checking Rental
+|31 |The default value of Rental.KilometersEnd is null. |1
+|32 |The default value of Rental.End is null. |1
+|33 |Without an end date Rental.RentedDays is null. |1
+|34 |Without End and KilometersEnd Rental.CalculatePrice() returns 0. |1
+|35 |Rental.RentedDays returns the number of days started. |2
+|36 |Without KilometersEnd Rental.CalculatePrice() returns 0. |1
+|37 |Rental.CalculatePrice() uses the driven kilometers. |2
+|38 |Without End Rental.CalculatePrice() returns 0. |1
+|39 |Rental.RentedDays is 1 if the vehicle is returned on the same day. |1
+|40 |Rental.RentedDays works across the end of a month. |1
+|41 |Rental.RentedDays works across the end of a year. |1
+|42 |Rental.CalculatePrice() charges the days if no kilometers were driven. |1
+|43 |Rental.CalculatePrice() uses the price calculation of the rented vehicle. |2
+|===
+
+48 - 42 балла: Sehr gut (1, отлично), 41 - 36 баллов: Gut (2, хорошо), 35 - 30 баллов: Befriedigend (3, удовлетворительно), 29 - 24 балла: Genügend (4, достаточно), 23 - 0 баллов: Nicht genügend (5, неудовлетворительно).
+Программа выводит название оценки на немецком языке.
