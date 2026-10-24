@@ -9,7 +9,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AutoMapper" Version="11.*" />
+		<PackageReference Include="AutoMapper" Version="15.*" />
 		<PackageReference Include="Bogus" Version="34.*" />
 	</ItemGroup>
 	<ItemGroup>
