@@ -3,6 +3,9 @@
 :icons: font
 :lang: DE
 :hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
 ifndef::env-github[:icons: font]
 ifdef::env-github[]
 :caution-caption: :fire:
@@ -10,42 +13,137 @@ ifdef::env-github[]
 :note-caption: :paperclip:
 :tip-caption: :bulb:
 :warning-caption: :warning:
-:folder: :file_folder:
-:file-code-o: :page_facing_up:
 endif::[]
 
-image::extension_screenshot_2103.png[]
+image::{root_dir}/extension_screenshot_2103.png[Kontextmenü der Extension asciidoc-productivity]
 
-Diese VS Code-Erweiterung hilft dir, Dokumentationen, Entwürfe und Berichte in AsciiDoc deutlich schneller zu schreiben. Sie fügt automatisch Quellcode, Tabellen und Bilder ein. So konzentrierst du dich auf den Inhalt und musst nicht ständig die Syntax beachten.
+Mit dieser VS Code-Extension schreibst du Dokumentationen, Entwürfe und Berichte in AsciiDoc deutlich schneller.
+Sie fügt Quellcode, Tabellen und Bilder mit der richtigen Syntax ein.
+Sie erzeugt PDFs und schickt Text an ein Sprachmodell (LLM, _Large Language Model_).
+So konzentrierst du dich auf den Inhalt und musst nicht ständig an die Syntax denken.
 
 == Installation
 
-Suche im Erweiterungs-Manager nach dem Paket `asciidoc-productivity`. Alternativ kannst du die Erweiterung direkt im Marketplace öffnen: https://marketplace.visualstudio.com/items?itemName=schletz.asciidoc-productivity.
+Suche in VS Code in der Ansicht *Extensions* nach `asciidoc-productivity`.
+Du kannst die Extension auch direkt im link:https://marketplace.visualstudio.com/items?itemName=schletz.asciidoc-productivity[Marketplace] öffnen.
 
-== Features
+== Funktionen
 
-Die vollständige Funktionsliste findest du auf link:https://github.com/schletz/asciidoc-productivity[github.com/schletz/asciidoc-productivity].
+Alle Befehle findest du im Kontextmenü (rechte Maustaste).
+Du kannst sie auch über die Befehlspalette (_Ctrl+Shift+P_, am Mac _Cmd+Shift+P_) aufrufen.
 
-=== LLM-Server für AI-Features
+[%header,cols="2,1,3"]
+|===
+|Befehl |Wo? |Was passiert?
 
-Die KI-Funktionen „Translate“ und „Check spelling and grammar“ benötigen einen OpenAI-kompatiblen Endpunkt. Du kannst zum Beispiel Ollama oder vLLM verwenden.
+|Insert clipboard as source block
+|Editor
+|Fügt den Code aus der Zwischenablage als `[source]`-Block ein. Die Sprache (z. B. _csharp_) gibst du in einem Eingabefeld an.
 
-==== Betrieb mit LM Studio
+|Insert clipboard as table
+|Editor
+|Fügt eine Tabelle aus der Zwischenablage ein, zum Beispiel aus Excel.
+
+|Insert clipboard as markdown table
+|Editor (Markdown)
+|Wie oben, erzeugt aber eine Markdown-Tabelle.
+
+|Copy AsciiDoc Table as TSV to clipboard
+|Editor
+|Markiere eine Tabelle samt `\|===`. Die Extension kopiert sie so, dass du sie in Excel einfügen kannst.
+
+|Insert image from file
+|Editor
+|Fügt ein Bild von der Festplatte mit relativem Pfad ein.
+
+|Insert image from clipboard
+|Editor
+|Speichert ein Bild aus der Zwischenablage (z. B. einen Screenshot) als PNG und fügt es ein.
+
+|Insert image from URL
+|Editor
+|Lädt das Bild einer URL aus der Zwischenablage herunter, speichert es lokal und gibt die Quelle an.
+
+|Insert file as source block
+|Explorer
+|Fügt eine Datei als Codeblock samt Link in das offene Dokument ein.
+
+|Copy sources to clipboard
+|Explorer
+|Kopiert die gewählten Dateien und Ordner als Kontext für ein LLM in die Zwischenablage.
+
+|Export as PDF (requires docker)
+|Explorer
+|Erzeugt aus einer adoc-Datei ein PDF im selben Ordner.
+
+|Open AsciiDoc Preview
+|Symbol rechts oben
+|Zeigt eine Vorschau mit PlantUML-Diagrammen und Formeln.
+
+|LLM: Translate
+|Editor
+|Übersetzt den markierten Text.
+
+|LLM: Send to AI...
+|Editor
+|Schickt den markierten Text mit einem Auftrag an das LLM und ersetzt ihn durch die Antwort.
+
+|LLM: Send File(s) to AI...
+|Explorer
+|Schickt jede gewählte Datei mit einem Auftrag an das LLM und *überschreibt* sie mit der Antwort.
+|===
+
+[NOTE]
+Speichere dein Dokument, bevor du Bilder oder Dateien einfügst.
+Die Extension berechnet den relativen Pfad ausgehend vom Speicherort der adoc-Datei.
+
+Die vollständige Beschreibung findest du auf link:https://github.com/schletz/asciidoc-productivity[github.com/schletz/asciidoc-productivity].
+
+== KI-Funktionen
+
+Bei *LLM: Send to AI...* wählst du einen Auftrag aus einer Liste:
+
+- _Check spelling and grammar_: korrigiert Rechtschreibung, Grammatik und Satzzeichen.
+- _Simplify text_: formuliert deutschen Text einfacher, etwa für Leser mit Deutsch auf Niveau B2.
+- _Cleanup and Comment codefile_: räumt Code auf und kommentiert ihn auf Englisch.
+- Einen eigenen Prompt, den du direkt eingibst.
+
+[WARNING]
+*LLM: Send File(s) to AI...* überschreibt jede gewählte Datei ohne Rückfrage und ohne Sicherung.
+Committe deine Dateien daher vorher in Git.
+Dann kannst du jede Änderung im Diff prüfen und notfalls zurücknehmen.
+
+Die KI-Funktionen brauchen einen Server, der ein Sprachmodell anbietet.
+Die Extension spricht zwei Arten von Schnittstellen (_Endpunkte_):
+
+- *OpenAI-kompatibel*: Das bieten LM Studio, Ollama, vLLM und viele Cloud-Anbieter, zum Beispiel Google.
+- *Anthropic Messages API*: Die Extension erkennt sie an der Adresse _anthropic.com_.
+
+Die Einstellungen trägst du in die Benutzereinstellungen von VS Code ein.
+Öffne sie in der Befehlspalette mit _Preferences: Open User Settings (JSON)_.
+Füge die Zeilen aus den folgenden Beispielen innerhalb der geschweiften Klammern ein.
+
+=== Lokales Modell mit LM Studio
+
+Ein lokales Modell läuft auf deinem eigenen PC.
+Deine Texte verlassen den PC also nicht.
 
 Installiere zuerst link:https://lmstudio.ai/[LM Studio].
 Suche im Bereich _Model search_ nach dem Modell *lmstudio-community/gemma-4-E4B-it-GGUF*.
-Wähle die Quantisierung _Q8_.
-Lade das Modell herunter.
-Passe danach die _context length_ auf _8192 Tokens_ an.
-Ein Token entspricht ungefähr 3,5 Zeichen.
-Der gesamte Kontext (Text und Antwort) umfasst also etwa 28.500 Zeichen.
-Das bedeutet: Du kannst mit dieser Einstellung ca. 14.000 Zeichen übersetzen.
+Wähle die Quantisierung _Q8_ und lade das Modell herunter.
+Stelle danach die _Context Length_ auf 8192 Tokens.
 
-image::lm_studio_1620.png[]
+Ein *Token* ist ein Wortteil und entspricht ungefähr 3,5 Zeichen.
+Der *Kontext* ist alles, was das Modell auf einmal verarbeitet: System Prompt, dein Text und die Antwort.
+8192 Tokens sind also etwa 28.500 Zeichen.
+Text und Antwort teilen sich diesen Platz.
+Du kannst mit dieser Einstellung daher ca. 14.000 Zeichen auf einmal übersetzen.
 
-Aktiviere danach im Bereich _Developer_ den Server. Der Server stellt dir die benötigten OpenAI-kompatiblen Endpunkte bereit.
+image::{root_dir}/lm_studio_1620.png[Einstellungen für das Modell in LM Studio]
 
-Öffne nun die Benutzereinstellungen von VS Code über _Preferences: Open User Settings (JSON)_. Trage dort folgende Einstellungen für die KI-Funktionen ein:
+Starte danach im Bereich _Developer_ den Server.
+Er stellt einen OpenAI-kompatiblen Endpunkt bereit.
+Trage nun folgende Einstellungen ein:
 
 [source,json]
 ----
@@ -55,16 +153,20 @@ Aktiviere danach im Bereich _Developer_ den Server. Der Server stellt dir die be
 ----
 
 [IMPORTANT]
-Die Antwort endet nach 4.096 Tokens automatisch. Prüfe daher immer, ob der Text vollständig ist.
-Für längere Texte kannst du den Wert `maxOutputTokens` auf 8.192 erhöhen.
-Passe dann auch die _context length_ in LM Studio auf 16.384 Tokens an. Der Kontext besteht aus System Prompt, Eingabetext und Antwort.
+====
+Die Antwort endet nach 4096 Tokens.
+Prüfe daher immer, ob der Text vollständig ist.
+Für längere Texte kannst du `maxOutputTokens` auf 8192 erhöhen.
+Stelle dann auch die _Context Length_ in LM Studio auf 16384 Tokens.
+====
 
-===== Für PCs mit 32 GB VRAM 💰💰💰
+==== Für PCs mit 32 GB VRAM
 
-Verfügst du über 32 GB VRAM oder nutzt du einen Mac mit Unified Memory, kannst du auch größere Modelle verwenden.
-Teste zum Beispiel das Modell link:https://huggingface.co/lmstudio-community/Qwen3.6-35B-A3B-GGUF[lmstudio-community/Qwen3.6-35B-A3B-GGUF] in der Quantisierung Q4_K_M.
-Stelle die _Context Length_ auf 65536 ein. So steht genug Platz für das Reasoning zur Verfügung.
-Lade das Modell mit folgenden Einstellungen:
+Hat deine Grafikkarte 32 GB VRAM (Grafikspeicher) oder hast du einen Mac mit _Unified Memory_, kannst du größere Modelle verwenden.
+Teste zum Beispiel das Modell link:https://huggingface.co/lmstudio-community/Qwen3.6-35B-A3B-GGUF[lmstudio-community/Qwen3.6-35B-A3B-GGUF] in der Quantisierung _Q4_K_M_.
+Stelle die _Context Length_ auf 65536 Tokens.
+Das Modell denkt vor der Antwort nach (_Reasoning_) und braucht dafür viel Platz im Kontext.
+Trage folgende Einstellungen ein:
 
 [source,json]
 ----
@@ -73,23 +175,45 @@ Lade das Modell mit folgenden Einstellungen:
 "asciidoc-productivity.maxOutputTokens": 32768,
 ----
 
-=== Verwendung von Cloud-Services
+=== Cloud-Services
 
-Wenn du AI-Services in der Cloud nutzen möchtest, kannst du zum Beispiel auf https://aistudio.google.com einen API-Endpunkt erstellen.
-Google bietet ein großzügiges Free Tier an.
-Dieses begrenzt nicht die Anzahl der Tokens, sondern nur die Rate (Häufigkeit).
-Für unsere Zwecke ist dies völlig ausreichend.
-Wir müssen keine Dokumente jede Minute übersetzen.
-Beachte allerdings, dass deine Daten von Google im Free Tier für das Modelltraining verwendet werden.
-Das ist der "Preis" dafür.
-Erstelle zunächst einen API-Key und füge ihn dann in den Einstellungen ein:
+==== Google Gemini
+
+Auf https://aistudio.google.com erstellst du einen API-Key für die Modelle von Google.
+Google bietet ein großzügiges _Free Tier_ an, also eine kostenlose Nutzung.
+Es begrenzt die Anzahl der Anfragen pro Minute und pro Tag.
+Für unsere Zwecke reicht das völlig aus.
+
+[CAUTION]
+Im Free Tier verwendet Google deine Texte, um seine Modelle zu verbessern.
+Das ist der „Preis“ für die kostenlose Nutzung.
+Schicke daher keine vertraulichen Daten.
+
+Erstelle einen API-Key und trage ihn in den Einstellungen ein:
 
 [source,json]
 ----
-{
-  "asciidoc-productivity.completionsUrl": "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
-  "asciidoc-productivity.llm": "gemini-2.5-flash",
-  "asciidoc-productivity.apiKey": "DEIN-ECHTER-GEMINI-API-KEY-HIER",
-  "asciidoc-productivity.maxOutputTokens": 32768,
-}
+"asciidoc-productivity.completionsUrl": "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+"asciidoc-productivity.llm": "gemini-3.8-flash",
+"asciidoc-productivity.apiKey": "DEIN-GEMINI-API-KEY",
+"asciidoc-productivity.maxOutputTokens": 32768,
 ----
+
+Welche Modelle es gerade gibt und welche davon im Free Tier kostenlos sind, steht auf der link:https://ai.google.dev/gemini-api/docs/pricing[Preisseite von Google].
+
+==== Anthropic Claude
+
+Für die Modelle von Anthropic erstellst du einen API-Key auf https://platform.claude.com.
+Die Nutzung ist kostenpflichtig, es gibt kein Free Tier.
+
+[source,json]
+----
+"asciidoc-productivity.completionsUrl": "https://api.anthropic.com/v1/",
+"asciidoc-productivity.llm": "claude-sonnet-5-5",
+"asciidoc-productivity.apiKey": "DEIN-ANTHROPIC-API-KEY",
+"asciidoc-productivity.maxOutputTokens": 32768,
+----
+
+[NOTE]
+Bei Anthropic gibst du in `completionsUrl` nur die Basisadresse an, sie endet auf `/v1/`.
+Die Extension hängt `messages` selbst an.

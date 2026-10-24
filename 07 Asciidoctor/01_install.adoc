@@ -3,6 +3,9 @@
 :icons: font
 :lang: DE
 :hyphens:
+:figure-caption!:
+ifndef::root_dir[:root_dir: .]
+ifndef::github_url[:github_url: ..]
 ifndef::env-github[:icons: font]
 ifdef::env-github[]
 :caution-caption: :fire:
@@ -10,116 +13,99 @@ ifdef::env-github[]
 :note-caption: :paperclip:
 :tip-caption: :bulb:
 :warning-caption: :warning:
-:folder: :file_folder:
-:file-code-o: :page_facing_up:
 endif::[]
 
-*link:https://raw.githubusercontent.com/Die-Spengergasse/course-pos-csharp_basics/refs/heads/master/07%20Asciidoctor/asciidoc_quick_reference.svg[Zum cheat sheet]*
+*link:{github_url}/07%20Asciidoctor/asciidoc_quick_reference.svg[Zum Cheat Sheet]*
 
-Mit Asciidoctor kannst du technische Dokumentationen in einem einfachen Textformat schreiben.
-Die Struktur ähnelt Markdown. Asciidoctor bietet jedoch mehr Funktionen.
-Das Tool liefert keine eigenständige Windows-Datei aus.
-Ein *Docker-Image* ermöglicht jedoch eine einfache Installation auch unter Windows.
+Mit AsciiDoc schreibst du technische Dokumentationen in einem einfachen Textformat.
+Die Struktur ähnelt Markdown.
+AsciiDoc kann aber mehr, zum Beispiel Querverweise, nummerierte Erklärungen im Code und ein Literaturverzeichnis.
+*Asciidoctor* ist das Programm, das AsciiDoc-Dateien in HTML oder PDF umwandelt.
+Für Windows gibt es kein Installationsprogramm.
+Asciidoctor läuft daher in einem *Docker-Container*.
+Das ist eine abgeschlossene Umgebung, in der alle nötigen Programme schon installiert sind.
 
 [IMPORTANT]
-Für die nachfolgenden Schritte brauchst du eine lauffähige Installation von Docker.
+Für den PDF-Export und für PlantUML-Diagramme in der Vorschau brauchst du eine lauffähige Installation von Docker.
 
-== Installation der Extensions für VS Code
+== Extensions für VS Code installieren
 
 Diese Extensions erleichtern dir die Arbeit mit AsciiDoc-Dateien in Visual Studio Code.
-Installiere folgende Erweiterungen:
+Installiere folgende Extensions:
 
 - link:https://marketplace.visualstudio.com/items?itemName=asciidoctor.asciidoctor-vscode[Asciidoctor]
 - link:https://marketplace.visualstudio.com/items?itemName=schletz.asciidoc-productivity[asciidoc-productivity]
 
-Wir beschreiben die Extension _asciidoc-productivity_ link:04_adoc_productivity.adoc[→ in diesem Kapitel] ausführlich.
+Die Extension _asciidoc-productivity_ beschreibt das Kapitel link:{github_url}/07%20Asciidoctor/04_adoc_productivity.adoc[AsciiDoc Productivity Extension] ausführlich.
 
-== Browser-Extension für AsciiDoc
+== Vorschau
 
-Um deine Dokumente direkt im Browser anzuzeigen, installiere die Extension **Asciidoctor.js Live Preview**.
+Die Extension _asciidoc-productivity_ hat eine eigene Vorschau.
+Du öffnest sie mit dem Symbol rechts oben im Editor.
+Sie zeigt auch PlantUML-Diagramme und Formeln an und sieht dem fertigen PDF sehr ähnlich.
+
+Möchtest du dein Dokument im Browser ansehen, installiere die Browser-Extension *Asciidoctor.js Live Preview*.
 Du findest sie unter https://docs.asciidoctor.org/browser-extension/install/.
-Sie unterstützt mehr Funktionen und zeigt deine Inhalte daher genauer an als die integrierte Vorschau von VS Code.
 
 [NOTE]
-Um lokale Dateien anzuzeigen, musst du der Erweiterung in den Einstellungen das Recht *Zugriff auf Datei-URLs zulassen* erteilen.
+Um lokale Dateien anzuzeigen, musst du der Browser-Extension in den Einstellungen das Recht *Zugriff auf Datei-URLs zulassen* geben.
 
-== Command-Line-Tool für die Konvertierung (optional)
+== PDF erzeugen
 
-Ein Command-Line-Tool wandelt deine Dokumente ebenfalls in PDF um.
-Du kannst dieses Tool auch über das Kontextmenü der Extension *asciidoc-productivity* nutzen.
-Für automatisierte Prozesse eignet sich das CLI-Tool besser:
+Klicke im Explorer von VS Code mit der rechten Maustaste auf eine adoc-Datei.
+Wähle *Export as PDF (requires docker)*.
+Das PDF bekommt denselben Namen wie die adoc-Datei und liegt im selben Ordner.
+Beim ersten Export erstellt die Extension ein Docker-Image.
+Das dauert einige Minuten.
+Danach geht der Export schnell.
 
-=== Installation unter Windows
+Probiere es mit den Musterdateien aus.
+Lade dazu die folgenden Dateien in einen gemeinsamen Ordner herunter.
+Nutze in GitHub den Button *Download raw file*.
 
-1. Lade die Datei link:convert_adoc.cmd[convert_adoc.cmd] herunter.
-   Falls dein Browser eine Warnmeldung anzeigt, klicke auf *Trotzdem beibehalten*.
-2. Erstelle den Ordner *C:\asciidoc* und verschiebe die Datei dorthin.
-3. Starte die Datei durch einen Doppelklick.
-
-Das Skript lädt beim ersten Start das Docker-Image *asciidoctor-pandoc* herunter.
-Dieser Vorgang kann einige Minuten dauern.
-Du musst ihn nur einmal ausführen.
-
-=== Installation unter macOS
-
-Erstelle einen neuen Ordner für das Skript (z. B. */Users/username/Scripts*) oder nutze einen bestehenden Ordner.
-Öffne die Datei **link:convert_adoc.sh[convert_adoc.sh]** in VS Code und füge ihren Inhalt in einen neuen Editor-Tab ein.
-Speichere die Datei unter *convert_adoc.sh* ab.
-Wechsle im Terminal in diesen Ordner und führe folgende Befehle aus.
-Sie geben dem Skript Ausführungsrechte und starten es einmalig, um das Docker-Image zu erstellen.
-
-```bash
-chmod a+x convert_adoc.sh
-./convert_adoc.sh
-```
-
-=== Konvertieren von AsciiDoc-Dokumenten
-
-Lade die folgenden Dateien herunter.
-Sie enthalten ein Beispiel für ein AsciiDoc-Dokument.
-Nutze in GitHub den *Download raw file*-Button.
-GitHub zeigt das *adoc*-Dokument an, unterstützt jedoch nicht alle Funktionen.
-
-- link:adoc%20demo.adoc[adoc demo.adoc]
-- link:adoc%20demo.yml[adoc demo.yml]
-
-Wechsle im Terminal in diesen Ordner (z. B. *Downloads*).
-Führe den folgenden Befehl aus:
-
-**Windows**
-```
-C:\asciidoc\convert_adoc "adoc demo.adoc" "adoc demo.pdf"
-```
-
-**macOS**
-```
-/Users/username/Scripts/convert_adoc.sh "adoc demo.adoc" "adoc demo.pdf"
-```
-
-Der Befehl erstellt nun eine PDF-Datei.
-Das Tool erstellt jedoch nicht nur PDFs.
-Du kannst die Ausgabe auch als md (Markdown), HTML oder docx (Word) speichern.
-Je nach Endung wählt das Skript automatisch die richtigen Befehle.
-
-```
-C:\asciidoc\convert_adoc "adoc demo.adoc" "adoc demo.html"
-C:\asciidoc\convert_adoc "adoc demo.adoc" "adoc demo.md"
-C:\asciidoc\convert_adoc "adoc demo.adoc" "adoc demo.docx"
-```
-
-Markdown und Word unterstützen jedoch nicht alle Funktionen (z. B. automatische Zeilennummern oder Callouts).
-Nutze daher immer die PDF- oder HTML-Ausgabe, wenn möglich.
+- link:{github_url}/07%20Asciidoctor/adoc%20demo.adoc[adoc demo.adoc]: der Text mit den Formatierungsanweisungen.
+- link:{github_url}/07%20Asciidoctor/adoc%20demo.yml[adoc demo.yml]: das Layout für das PDF.
+- link:{github_url}/07%20Asciidoctor/Example.cs[Example.cs]: Quellcode, den das Dokument mit `include` einbindet.
 
 [NOTE]
-Du kannst `C:\asciidoc` in den Systemeinstellungen zur *PATH*-Variable hinzufügen. Dann musst du den Pfad nicht mehr manuell eingeben.
+GitHub zeigt adoc-Dateien direkt an.
+Es unterstützt aber nicht alle Funktionen.
+Für eine genaue Vorschau verwende daher VS Code oder das PDF.
 
-== Infos über die Musterdateien
+=== Das Layout als YAML-Datei
 
-Die Datei link:adoc%20demo.adoc[adoc demo.adoc] enthält den Text und die Formatierungsanweisungen.
-Für Kopf- und Fußzeilen kannst du eine separate YAML-Datei nutzen.
-Die Datei link:adoc%20demo.yml[adoc demo.yml] beschreibt beispielsweise den Stil der Fußzeile.
-Das Skript *convert_adoc* erkennt automatisch ein passendes Layout, wenn eine YML-Datei mit dem gleichen Namen wie die adoc-Datei existiert.
+Kopf- und Fußzeilen, Ränder und Schriftgrößen legst du in einer YAML-Datei fest.
+Die Datei _adoc demo.yml_ beschreibt zum Beispiel die Fußzeile.
+Liegt neben der adoc-Datei eine yml-Datei mit demselben Namen, fragt die Extension beim Export, ob sie dieses Layout verwenden soll.
+Alle möglichen Einstellungen siehst du im link:https://github.com/asciidoctor/asciidoctor-pdf/blob/main/data/themes/default-theme.yml[Standard-Layout von asciidoctor-pdf].
 
-== Cheat sheet
+== AsciiDoc mit einem KI-Agenten schreiben
 
-image::asciidoc_quick_reference.svg[]
+Ein KI-Agent wie Claude Code kann AsciiDoc-Dokumente schreiben und selbst in ein PDF umwandeln.
+Damit er die Regeln von AsciiDoc und den Weg zum PDF kennt, gibt es im Repo link:https://github.com/schletz/claude_settings[schletz/claude_settings] den Skill *asciidoc*.
+Ein *Skill* ist eine Anleitung mit Skripten, die der Agent lädt, sobald er sie für eine Aufgabe braucht.
+
+Der Skill enthält:
+
+- Regeln für den Text, zum Beispiel genau einen Satz pro Zeile.
+  So zeigt ein Diff in Git die Änderungen Satz für Satz.
+- Eine Vorlage mit Codeblock und Callouts, Zitat, PlantUML-Diagramm, LaTeX-Formel, Bild und Literaturverzeichnis.
+- Ein Python-Skript, das ein adoc-Dokument über Docker in ein PDF umwandelt.
+
+Für die Installation brauchst du Node.js.
+Der Befehl installiert den Skill global, also für alle deine Projekte:
+
+[source,text]
+----
+npx skills@latest add schletz/claude_settings --skill asciidoc -g -y --copy
+----
+
+Das Skript für den PDF-Export braucht Python und das Paket `docker`.
+Installiere es mit `pip install docker`.
+
+Danach kannst du dem Agenten zum Beispiel schreiben: _„Erstelle aus kapitel.adoc ein PDF.“_
+Er lädt den Skill selbst.
+
+== Cheat Sheet
+
+image::{root_dir}/asciidoc_quick_reference.svg[AsciiDoc Cheat Sheet]
