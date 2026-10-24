@@ -1,5 +1,12 @@
 # Übungen zum Kapitel Types
 
+<!--
+Hinweis für Agents: Diese Datei verweist nur auf die Übungen, die speziell als Prüfungsübungen
+(im Stil einer PLF) gestaltet wurden. Übungen, die zu einem einzelnen Kapitel gehören (z. B.
+SchoolClasses, LottoTipp, RpgParty, BusLambdas), liegen zwar auch in diesem Ordner, werden aber
+nur im jeweiligen Kapitel verlinkt und gehören NICHT in diese Liste.
+-->
+
 In diesen Übungen setzt du ein Klassenmodell in C# um. Das Ziel ist ein objektorientiertes Design,
 bei dem das Typsystem Fehler gar nicht erst zulässt: read-only Properties, abstrakte Klassen,
 Interfaces und Collections, die man von außen nicht verändern kann. Du brauchst dafür alle Kapitel
@@ -67,10 +74,3 @@ entleihen. Am Ende listest du alle überfälligen Reservierungen auf. Du übst a
 berechnete Properties und das Filtern von Listen.
 Lade [LibraryManager.7z](LibraryManager.7z) herunter. Die Angabe steht im Archiv in der Datei *README.md*.
 
-## BusLambdas
-
-Diese Übung gehört zum Kapitel *Lambda Expressions*. Du setzt kein Klassenmodell um, sondern
-wertest die Fahrten eines automatisierten Linienbusses aus. Du baust Filter- und Map-Methoden
-selbst, schreibst Regeln als Lambdas (*Func* und *Action*) und kombinierst beides. Du übst
-Higher-Order Functions, Closures und Records mit *with*.
-Lade [BusLambdas.7z](BusLambdas.7z) herunter. Die Angabe steht im Archiv in der Datei *README.md*.
