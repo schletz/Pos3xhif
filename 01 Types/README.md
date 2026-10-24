@@ -15,3 +15,5 @@ auch selbst erstellte Klassen.
 
 Zum Üben: [Übungen zum Kapitel Types](Uebungen/README.md)
 
+Danach: [Lambda Expressions](08_Lambdas.adoc)
+

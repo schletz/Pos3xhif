@@ -15,6 +15,7 @@
   - [Interfaces](01%20Types/06_Interfaces.adoc)
   - [Equality](01%20Types/07_Equality.adoc)
   - *[Übungsaufgaben](01%20Types/Uebungen/README.md)*
+  - [Lambda Expressions](01%20Types/08_Lambdas.adoc)
 #### Unittests mit xUnit
   - [Warum testen?](15%20Unittests/01_Warum_Testen.adoc)
   - [Unit Tests mit xUnit](15%20Unittests/02_xUnit.adoc)
@@ -40,7 +41,6 @@
   - [○ Database first](03%20EF%20Core/07_DatabaseFirst/README.adoc)
   - [○ Migrations](03%20EF%20Core/08_Migrations/README.adoc)
 #### Serviceklassen – Datenbankgetriebene Business Logik
-  - [Lambda Expressions](17%20Serviceklassen/01_Lambdas.adoc)
   - [LINQ: Where, Select und Any](17%20Serviceklassen/02_Linq_Where_Select_Any.adoc)
   - [Serviceklassen mit EF Core](17%20Serviceklassen/03_Serviceklassen.adoc)
   - [○ Erweiterte LINQ Techniken (Selbststudium)](17%20Serviceklassen/04_Linq_Erweitert.adoc)

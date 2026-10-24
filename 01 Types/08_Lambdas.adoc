@@ -29,16 +29,16 @@ Sie sind die Grundlage für LINQ, mit dem du später Datenbanken abfragst.
 ====
 *Zum Selbst-Erarbeiten: Lambdas lesen und schreiben*
 
-In der https://die-spengergasse.github.io/course-pos-csharp_basics/17%20Serviceklassen/01_Lambdas.html[interaktiven Präsentation zu Lambda Expressions] siehst du Schritt für Schritt, wie aus einer Methode eine Lambda wird.
+In der https://die-spengergasse.github.io/course-pos-csharp_basics/01%20Types/08_Lambdas.html[interaktiven Präsentation zu Lambda Expressions] siehst du Schritt für Schritt, wie aus einer Methode eine Lambda wird.
 Danach übst du mit sofortigem Feedback, welchen Typ (`Func` oder `Action`) eine Lambda hat und wie du sie kurz schreibst.
 Das trainiert genau das Lesen, das du für LINQ brauchst.
 ====
 
 == Projekt anlegen
 
-Du brauchst eine Solution mit einer Application und einem Testprojekt.
-Führe diese Befehle in der Konsole aus.
-Unter macOS ersetzt du _rd_, _md_ und _move_ durch _rm -rf_, _mkdir_ und _mv_.
+Für die Beispiele brauchst du eine .NET Konsolenapplikation.
+Führe dafür die folgenden Befehle in der Konsole aus.
+Unter macOS und Linux ersetzt du _rd /S /Q_ durch _rm -rf_ und _md_ durch _mkdir_.
 
 [source,text]
 ----
@@ -47,25 +47,15 @@ md LambdaDemo
 cd LambdaDemo
 md LambdaDemo.Application
 cd LambdaDemo.Application
-dotnet new classlib
-cd ..
-md LambdaDemo.Tests
-cd LambdaDemo.Tests
-dotnet new install xunit.v3.templates
-dotnet new xunit3 -f net10.0
-move global.json ..
-dotnet reference add ..\LambdaDemo.Application
+dotnet new console
 cd ..
 dotnet new sln -f sln
 dotnet sln add LambdaDemo.Application
-dotnet sln add LambdaDemo.Tests
 start LambdaDemo.sln
 ----
 
-Lösche _Class1.cs_ und _UnitTest1.cs_.
-Entferne in beiden Projektdateien die Zeile _ImplicitUsings_, im Testprojekt auch `+<Using Include="Xunit" />+`.
-Füge in beiden `+<TreatWarningsAsErrors>true</TreatWarningsAsErrors>+` hinzu.
-Was die einzelnen Befehle und Einstellungen bedeuten, steht im Kapitel link:{github_url}/15%20Unittests/02_xUnit.adoc#projekt-anlegen[Unit Tests mit xUnit].
+Öffne danach die Datei _LambdaDemo.Application.csproj_.
+Entferne die Zeile _ImplicitUsings_ und ergänze die Optionen _Nullable_ und _TreatWarningsAsErrors_, wie in den vorigen Kapiteln.
 
 Lege im Projekt _LambdaDemo.Application_ den Record `Person` an:
 
@@ -112,7 +102,8 @@ public static class PersonFilter
 }
 ----
 
-Das widerspricht dem Prinzip _DRY_ (siehe Kapitel link:{github_url}/16%20SOLID/02_DRY.adoc[DRY: Don't Repeat Yourself]).
+Das widerspricht dem Prinzip _DRY_ (_Don't Repeat Yourself_): Dieselbe Logik soll nur an einer Stelle im Code stehen.
+Mehr dazu lernst du später im Kapitel link:{github_url}/16%20SOLID/02_DRY.adoc[DRY: Don't Repeat Yourself].
 Mit einem `string`-Parameter kommen wir nicht weiter: Die Bedingungen sind ganz verschieden (`==` bei der Stadt, `+>=+` beim Alter).
 Was sich unterscheidet, ist nicht ein Wert, sondern *ein Stück Code*: die Bedingung im `if`.
 
@@ -146,7 +137,7 @@ List<Person> adults = PersonFilter.Filter(persons, p => p.Age >= 18);
 List<Person> startsWithB = PersonFilter.Filter(persons, p => p.LastName.StartsWith("B"));
 ----
 
-image::{root_dir}/images/01_callback.svg[Filter ruft die Lambda für jedes Element auf]
+image::{root_dir}/lambda_callback.svg[Filter ruft die Lambda für jedes Element auf]
 
 Die Methode `Filter` enthält die Schleife nur einmal.
 Die Bedingung kommt von außen.
@@ -158,7 +149,7 @@ Eine Funktion, die für ein Element `true` oder `false` liefert, heißt *Predica
 Eine Lambda ist eine *Methode ohne Namen*, die du direkt dort schreibst, wo du sie brauchst.
 Du kannst jede kurze Methode in eine Lambda umformen:
 
-image::{root_dir}/images/01_lambda_anatomy.svg[Von der Methode zur Lambda Expression]
+image::{root_dir}/lambda_anatomy.svg[Von der Methode zur Lambda Expression]
 
 [%header]
 |===
@@ -197,7 +188,7 @@ Auch eine Lambda hat daher einen Typ.
 Die Typen heißen *Delegates*.
 Für fast alle Fälle reichen zwei generische Delegates aus dem Namespace `System`:
 
-image::{root_dir}/images/01_func_action.svg[Die Delegate-Typen Func und Action]
+image::{root_dir}/lambda_func_action.svg[Die Delegate-Typen Func und Action]
 
 [%header]
 |===
@@ -262,57 +253,45 @@ Func<Person, bool> livesInGraz = PersonFilter.LivesIn("Graz");
 List<Person> fromGraz = PersonFilter.Filter(persons, livesInGraz);
 ----
 
-== Lambdas testen
+== Lambdas ausprobieren
 
-Weil die Application eine Klassenbibliothek ist, probierst du die Beispiele als Tests aus:
+Ergänze in `PersonFilter` die Methoden `Filter` und `LivesIn`.
+Danach probierst du die Beispiele in _Program.cs_ aus:
 
-*PersonFilterTests.cs* (im Projekt _LambdaDemo.Tests_)
+*Program.cs* (im Projekt _LambdaDemo.Application_)
 
 [source,csharp]
 ----
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using LambdaDemo.Application;
-using Xunit;
 
-namespace LambdaDemo.Tests;
-
-public class PersonFilterTests
+var persons = new List<Person>
 {
-    private readonly List<Person> _persons = new()
-    {
-        new Person("Anna", "Huber", "Wien", 17),
-        new Person("Ben", "Bauer", "Graz", 24),
-        new Person("Clara", "Berger", "Wien", 31),
-    };
+    new Person("Anna", "Huber", "Wien", 17),
+    new Person("Ben", "Bauer", "Graz", 24),
+    new Person("Clara", "Berger", "Wien", 31),
+};
 
-    [Fact]
-    public void FilterWithLambda()
-    {
-        List<Person> result = PersonFilter.Filter(_persons, p => p.City == "Wien");
+List<Person> fromVienna = PersonFilter.Filter(persons, p => p.City == "Wien");
+Console.WriteLine($"From Vienna: {fromVienna.Count}");          // From Vienna: 2
 
-        Assert.Equal(new[] { "Anna", "Clara" }, result.Select(p => p.FirstName));
-    }
+int minAge = 18;
+Func<Person, bool> isOldEnough = p => p.Age >= minAge;
+minAge = 30;
+List<Person> oldEnough = PersonFilter.Filter(persons, isOldEnough);
+Console.WriteLine($"At least {minAge}: {oldEnough.Count}");     // At least 30: 1
 
-    [Fact]
-    public void ClosureUsesCurrentValue()
-    {
-        int minAge = 18;
-        Func<Person, bool> isOldEnough = p => p.Age >= minAge;
-        minAge = 30;
-
-        List<Person> result = PersonFilter.Filter(_persons, isOldEnough);
-
-        Assert.Single(result);
-    }
+List<Person> fromGraz = PersonFilter.Filter(persons, PersonFilter.LivesIn("Graz"));
+foreach (Person p in fromGraz)
+{
+    Console.WriteLine(p);   // Person { FirstName = Ben, LastName = Bauer, City = Graz, Age = 24 }
 }
 ----
 
-`+result.Select(p => p.FirstName)+` ist schon LINQ.
-Das lernst du im nächsten Kapitel.
+Die Ausgabe der letzten Zeile erzeugt der Record automatisch (siehe Kapitel link:{github_url}/01%20Types/07_Equality.adoc[Equality]).
 
-== Wo du Lambdas schon verwendet hast
+== Wo dir Lambdas begegnen
 
 Lambdas begegnen dir in .NET überall.
 Einige kennst du bereits:
@@ -320,13 +299,21 @@ Einige kennst du bereits:
 [%header]
 |===
 |Wo |Beispiel |Typ der Lambda
-|xUnit |`+Assert.Throws<ArgumentException>(() => calc.Calculate(-1))+` |`Action`
-|xUnit |`+Assert.All(shows, s => Assert.True(s.Date.Year > 2000))+` |`+Action<Show>+`
-|EF Core |`+modelBuilder.Entity<Ticket>().Property(t => t.TicketState)+` |Ausdruck, der ein Property auswählt
-|Bogus |`+new Faker<Event>().CustomInstantiator(f => new Event(f.Music.Genre()))+` |`+Func<Faker, Event>+`
+|Testprogramm der Übungen |`+CheckAndWrite(() => order.InvoiceAmount == 3400, "InvoiceAmount is 3400")+` |`+Func<bool>+`
 |`+List<T>+` |`+persons.RemoveAll(p => p.Age < 18)+` |`+Predicate<Person>+`
 |`+List<T>+` |`+persons.Sort((a, b) => a.Age.CompareTo(b.Age))+` |`+Comparison<Person>+`
 |`+List<T>+` |`+persons.ForEach(p => Console.WriteLine(p))+` |`+Action<Person>+`
+|===
+
+In den nächsten Kapiteln kommen weitere dazu:
+
+[%header]
+|===
+|Wo |Beispiel |Typ der Lambda
+|xUnit |`+Assert.Throws<ArgumentException>(() => calc.Calculate(-1))+` |`Action`
+|xUnit |`+Assert.All(shows, s => Assert.True(s.Date.Year > 2000))+` |`+Action<Show>+`
+|EF Core |`+modelBuilder.Entity<Ticket>().Property(t => t.TicketState)+` |Ausdruck, der ein Property auswählt
+|LINQ |`+persons.Where(p => p.City == "Wien")+` |`+Func<Person, bool>+`
 |===
 
 Bei EF Core schreibst du eine Lambda, aber EF Core *führt sie nicht aus*.
@@ -352,7 +339,7 @@ Wie das funktioniert, siehst du im Kapitel link:{github_url}/17%20Serviceklassen
 
 . *BusLambdas:* Werte die Fahrten eines automatisierten Linienbusses aus.
 Du baust Filter- und Map-Methoden selbst, schreibst Regeln als Lambdas und kombinierst beides.
-Lade dazu link:{github_url}/17%20Serviceklassen/Uebungen/BusLambdas.7z[BusLambdas.7z] herunter.
+Lade dazu link:{github_url}/01%20Types/Uebungen/BusLambdas.7z[BusLambdas.7z] herunter.
 Die Angabe steht im Archiv in der Datei _README.md_.
 . *Methode oder Lambda?*
 Schreibe jede Methode als Lambda.
@@ -381,11 +368,11 @@ city = "Linz";
 ----
 . *Eigene Higher-Order Function:* Schreibe in `PersonFilter` die Methode `+List<string> Map(List<Person> persons, Func<Person, string> projection)+`.
 Sie liefert für jede Person den Wert von `projection`.
-Teste sie mit zwei verschiedenen Lambdas.
+Probiere sie in _Program.cs_ mit zwei verschiedenen Lambdas aus.
 
 // end::pdf_exclude[]
 
 == Zusatzmaterial
 
-In der https://die-spengergasse.github.io/course-pos-csharp_basics/17%20Serviceklassen/01_Lambdas.html[interaktiven Präsentation zu Lambda Expressions] siehst du die Umformung von der Methode zur Lambda Schritt für Schritt.
+In der https://die-spengergasse.github.io/course-pos-csharp_basics/01%20Types/08_Lambdas.html[interaktiven Präsentation zu Lambda Expressions] siehst du die Umformung von der Methode zur Lambda Schritt für Schritt.
 Danach bestimmst du in mehreren Runden den Typ von Lambdas und schreibst Methoden in Kurzform um.

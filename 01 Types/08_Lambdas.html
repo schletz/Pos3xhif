@@ -186,12 +186,12 @@
   const store = {
     get(key, fallback) {
       try {
-        const raw = window.localStorage.getItem('svc-01-' + key);
+        const raw = window.localStorage.getItem('types-08-' + key);
         return raw === null ? fallback : JSON.parse(raw);
       } catch (e) { return fallback; }
     },
     set(key, value) {
-      try { window.localStorage.setItem('svc-01-' + key, JSON.stringify(value)); } catch (e) { /* ignore */ }
+      try { window.localStorage.setItem('types-08-' + key, JSON.stringify(value)); } catch (e) { /* ignore */ }
     }
   };
 

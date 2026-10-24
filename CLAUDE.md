@@ -11,6 +11,17 @@
 | 16 SOLID/02_DRY.adoc         | Beispiel für ein Kapitel                                                                                                                     |
 | 16 SOLID/02_DRY.html         | Beispiel für interaktives HTML Zusatzmaterial                                                                                                |
 
+## Das Repo
+
+Das Repo hat zwei origins für push:
+
+origin  https://github.com/Die-Spengergasse/course-pos-csharp_basics (fetch)
+origin  https://github.com/Die-Spengergasse/course-pos-csharp_basics (push)
+origin  https://github.com/schletz/Pos3xhif (push)
+
+Ich bin der Einzige, der am Repo arbeitet.
+force push ist daher nicht problematisch.
+
 ## Zielgruppe
 
 Lehrunterlagen für den Programmierunterricht der HTL Spengergasse, Spengergasse 20, Wien (www.spengergasse.at).

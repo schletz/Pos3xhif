@@ -22,12 +22,13 @@ public record Trip(
 | `PassengerCount` | Die Anzahl der Fahrgäste. `null`, wenn niemand gezählt hat. |
 | `IsCancelled` | `true`, wenn die Fahrt storniert wurde. |
 
-Die Testdaten stehen in *BusLambdas.Tests/TripData.cs*. Sieh sie dir an, bevor du beginnst.
+Die Testdaten stehen in *BusLambdas.Application/TripData.cs*. Sieh sie dir an, bevor du beginnst.
 
 ## Aufbau der Solution
 
-Öffne die Solution *BusLambdas.sln*. Du programmierst nur in *BusLambdas.Application*. Ändere die
-Tests in *BusLambdas.Tests* und die öffentlichen Signaturen nicht.
+Öffne die Solution *BusLambdas.sln*. Du programmierst in den Dateien *TripListFunctions.cs*,
+*TripRules.cs* und *TripReport.cs*. Die Dateien *Program.cs*, *TestHelpers.cs* und *TripData.cs*
+darfst du nicht ändern, ebenso die öffentlichen Signaturen.
 
 ## Teil A: Methoden, die eine Lambda bekommen
 
@@ -36,7 +37,7 @@ Implementiere in *TripListFunctions.cs* die Methoden `Filter`, `Map`, `ForEach`,
 
 **Verwende in Teil A kein LINQ** (kein `Where`, `Select`, `Any` ...). Schreibe eine
 `foreach`-Schleife und rufe den übergebenen Parameter selbst auf. So siehst du, was in LINQ
-passiert. Die Tests rufen deine Methoden mit Lambdas auf, z. B.:
+passiert. Das Testprogramm ruft deine Methoden mit Lambdas auf, z. B.:
 
 ```c#
 var a2Trips = TripListFunctions.Filter(trips, t => t.LineNumber == "A2");
@@ -84,11 +85,43 @@ Regeln aus Teil B. Jede Methode passt in eine einzige `return`-Anweisung.
 
 ## Testen
 
-Führe im Ordner der Solution
+*Program.cs* ist ein Testprogramm. Starte es im Ordner *BusLambdas.Application* mit
 
 ```text
-dotnet test
+dotnet run
 ```
 
-aus oder verwende den Test Explorer. Am Anfang sind alle Tests rot. Die Tests sind nach den Teilen
-A, B und C in drei Klassen aufgeteilt. Arbeite sie der Reihe nach ab.
+oder mit *F5* in Visual Studio. Es zeigt dir bei jeder Prüfung *OK* oder *FAILED*. Wirft eine
+Prüfung eine Exception, gilt sie als nicht erfüllt. Am Anfang sind daher alle Prüfungen
+*FAILED*. Die Prüfungen sind nach den Teilen A, B und C gruppiert. Arbeite sie der Reihe nach ab.
+
+Eine vollständige Lösung liefert folgende Ausgabe:
+
+```text
+Checking part A: TripListFunctions
+   (1) OK: Filter returns a new list with the matching trips in the same order.
+   (2) OK: Map returns the projected value of every trip in the same order.
+   (3) OK: ForEach calls the action for every trip.
+   (4) OK: Exists returns true if at least one trip matches.
+   (5) OK: Count returns the number of matching trips.
+   (6) OK: FindFirst returns the first matching trip or null.
+   (7) OK: Sum adds up the selected values.
+Checking part B: TripRules
+   (8) OK: IsCancelled is true only for cancelled trips.
+   (9) OK: HasDeparted is true if ActualDeparture is set.
+   (10) OK: IsDelayed is true for a delay of more than 2 minutes.
+   (11) OK: PassengersOrZero returns 0 if nobody counted.
+   (12) OK: Label returns line number and planned departure (HH:mm).
+   (13) OK: Cancel returns a cancelled copy and does not change the original trip.
+   (14) OK: SameVehicle compares the license plates of two trips.
+   (15) OK: IsOnLine returns a rule for the given line.
+   (16) OK: LogTo returns an action that adds the label to the list.
+Checking part C: TripReport
+   (17) OK: GetLabelsOfDelayedTrips returns the labels of the delayed trips.
+   (18) OK: CountPassengersOnLine adds up the passengers of a line (not counted = 0).
+   (19) OK: GetLicensePlatesOfWaitingTrips returns the vehicles of trips that are neither cancelled nor departed.
+
+Result of the program in C:\...\BusLambdas.Application:
+19 of 19 checks passed.
+25 of 25 points. Grade: Sehr gut.
+```

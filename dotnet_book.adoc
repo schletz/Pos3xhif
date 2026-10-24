@@ -50,6 +50,8 @@ include::./{root_dir}/06_Interfaces.adoc[tag=!pdf_exclude]
 
 include::./{root_dir}/07_Equality.adoc[tag=!pdf_exclude]
 
+include::./{root_dir}/08_Lambdas.adoc[tag=!pdf_exclude]
+
 :leveloffset: 0
 = Unittests mit xUnit
 
@@ -106,8 +108,6 @@ include::./{root_dir}/README.adoc[tag=!pdf_exclude]
 
 :leveloffset: 1
 :root_dir: 17 Serviceklassen
-include::./{root_dir}/01_Lambdas.adoc[tag=!pdf_exclude]
-
 include::./{root_dir}/02_Linq_Where_Select_Any.adoc[tag=!pdf_exclude]
 
 include::./{root_dir}/03_Serviceklassen.adoc[tag=!pdf_exclude]

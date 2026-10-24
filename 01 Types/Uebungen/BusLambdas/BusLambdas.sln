@@ -5,8 +5,6 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusLambdas.Application", "BusLambdas.Application\BusLambdas.Application.csproj", "{7CFC0BCF-27CF-42A7-9226-E3705E473CB8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusLambdas.Tests", "BusLambdas.Tests\BusLambdas.Tests.csproj", "{728EFD14-B14D-4E7E-9605-5C759B298BF2}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,18 +27,6 @@ Global
 		{7CFC0BCF-27CF-42A7-9226-E3705E473CB8}.Release|x64.Build.0 = Release|Any CPU
 		{7CFC0BCF-27CF-42A7-9226-E3705E473CB8}.Release|x86.ActiveCfg = Release|Any CPU
 		{7CFC0BCF-27CF-42A7-9226-E3705E473CB8}.Release|x86.Build.0 = Release|Any CPU
-		{728EFD14-B14D-4E7E-9605-5C759B298BF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{728EFD14-B14D-4E7E-9605-5C759B298BF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{728EFD14-B14D-4E7E-9605-5C759B298BF2}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{728EFD14-B14D-4E7E-9605-5C759B298BF2}.Debug|x64.Build.0 = Debug|Any CPU
-		{728EFD14-B14D-4E7E-9605-5C759B298BF2}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{728EFD14-B14D-4E7E-9605-5C759B298BF2}.Debug|x86.Build.0 = Debug|Any CPU
-		{728EFD14-B14D-4E7E-9605-5C759B298BF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{728EFD14-B14D-4E7E-9605-5C759B298BF2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{728EFD14-B14D-4E7E-9605-5C759B298BF2}.Release|x64.ActiveCfg = Release|Any CPU
-		{728EFD14-B14D-4E7E-9605-5C759B298BF2}.Release|x64.Build.0 = Release|Any CPU
-		{728EFD14-B14D-4E7E-9605-5C759B298BF2}.Release|x86.ActiveCfg = Release|Any CPU
-		{728EFD14-B14D-4E7E-9605-5C759B298BF2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

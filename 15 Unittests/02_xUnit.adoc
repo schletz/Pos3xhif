@@ -265,7 +265,7 @@ public void CalculateGrade_WithNegativePercent_ThrowsArgumentOutOfRangeException
 
 * `+() => GradeCalculator.CalculateGrade(-0.01m)+` ist eine *Lambda Expression*: eine kurze Methode ohne Namen.
 `Assert.Throws` ruft sie auf.
-Lambdas lernst du im Kapitel link:{github_url}/17%20Serviceklassen/01_Lambdas.adoc[Lambda Expressions] genauer kennen.
+Lambdas kennst du aus dem Kapitel link:{github_url}/01%20Types/08_Lambdas.adoc[Lambda Expressions].
 * Wird keine Exception geworfen, ist der Test rot.
 * `Assert.Throws` liefert die gefangene Exception zurück.
 So prüfst du auch die *Message*.

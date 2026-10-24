@@ -79,7 +79,7 @@ image::{root_dir}/images/02_where_select.svg[Where filtert mit einem Predicate, 
 |`Select` |*Projection* `+Func<Person, string>+`: Was soll aus dem Element werden? |*gleich viele* Elemente, *anderer Typ* |Spalten nach `SELECT`
 |===
 
-`Where` und `Select` sind genau die Methoden `Filter` und `Map` aus dem Kapitel link:{github_url}/17%20Serviceklassen/01_Lambdas.adoc[Lambda Expressions].
+`Where` und `Select` sind genau die Methoden `Filter` und `Map` aus dem Kapitel link:{github_url}/01%20Types/08_Lambdas.adoc[Lambda Expressions].
 Sie funktionieren aber für jeden Typ, weil sie generisch sind.
 Für LINQ brauchst du `using System.Linq;`.
 
@@ -108,7 +108,7 @@ FROM "Shows" AS "s"
 WHERE "s"."Date" >= @start AND "s"."Date" < @AddMonths
 ----
 
-`start` ist eine Variable außerhalb der Lambda (eine Closure, siehe voriges Kapitel).
+`start` ist eine Variable außerhalb der Lambda (eine Closure, siehe Kapitel _Lambda Expressions_).
 EF Core schickt ihren Wert als *Parameter* `@start` an die Datenbank.
 Damit ist auch SQL Injection ausgeschlossen.
 So übersetzt du typische SQL-Bedingungen:

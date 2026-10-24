@@ -4,7 +4,7 @@ Verwende den Skill /asciidoc, um Informationen zum Erzeugen von AsciiDoc Dokumen
 
 ## Aufbau der Kapitel
 
-- Ein adoc-File = ein Kapitel ≈ 4 UE, **max. 500 Zeilen** inkl. Code aber ohne Übungsangaben. Längere Themen teilen.
+- Ein adoc-File = ein Kapitel ≈ 4 UE, **Soft-Limit: 500 Zeilen** inkl. Code aber ohne Übungsangaben. Längere Themen teilen.
 - Schüler lesen ungern lange Texte: Abschnitt mit konkretem Problem/Beispiel beginnen, Tabellen
   und Listen statt langer Absätze, ein SVG pro zentralem Konzept. Admonitions
   (NOTE, TIP, IMPORTANT, CAUTION, WARNING) sparsam verwenden.

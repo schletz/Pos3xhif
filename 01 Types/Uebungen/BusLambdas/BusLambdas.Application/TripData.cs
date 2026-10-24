@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
-using BusLambdas.Application;
 
-namespace BusLambdas.Tests;
+namespace BusLambdas.Application;
 
 /// <summary>
-/// Sample trips of Monday, 5 October 2026. The expected values in the tests are calculated by hand
+/// Sample trips of Monday, 5 October 2026. The expected values in Program.cs are calculated by hand
 /// from this list.
 /// </summary>
 public static class TripData

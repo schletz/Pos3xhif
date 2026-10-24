@@ -66,3 +66,11 @@ Rückgabedatum wird aus dem Werk berechnet, und ein Kunde darf nur ein Werk glei
 entleihen. Am Ende listest du alle überfälligen Reservierungen auf. Du übst abstrakte Properties,
 berechnete Properties und das Filtern von Listen.
 Lade [LibraryManager.7z](LibraryManager.7z) herunter. Die Angabe steht im Archiv in der Datei *README.md*.
+
+## BusLambdas
+
+Diese Übung gehört zum Kapitel *Lambda Expressions*. Du setzt kein Klassenmodell um, sondern
+wertest die Fahrten eines automatisierten Linienbusses aus. Du baust Filter- und Map-Methoden
+selbst, schreibst Regeln als Lambdas (*Func* und *Action*) und kombinierst beides. Du übst
+Higher-Order Functions, Closures und Records mit *with*.
+Lade [BusLambdas.7z](BusLambdas.7z) herunter. Die Angabe steht im Archiv in der Datei *README.md*.

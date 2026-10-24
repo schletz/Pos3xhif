@@ -219,7 +219,7 @@ ____
 
 In C# besteht die Möglichkeit, Operatoren zu überladen.
 Wenn dies nicht gemacht wird, liefern _CompareTo()_ und die Vergleichsoperatoren unterschiedliche Ergebnisse.
-Auf die Technik des Überladens wird hier nicht eingegangen, die nachfolgenden Methoden implementieren bereits die Lambda Schreibweise.
+Auf die Technik des Überladens wird hier nicht eingegangen, die nachfolgenden Methoden verwenden die Kurzschreibweise mit =++>++ (_expression-bodied member_).
 Hier wird vom Compiler automatisch ein _return_ vor dem Ausdruck rechts vom =++>++ ergänzt.
 
 [source,csharp]
