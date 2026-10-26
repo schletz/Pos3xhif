@@ -22,6 +22,12 @@ origin  https://github.com/schletz/Pos3xhif (push)
 Ich bin der Einzige, der am Repo arbeitet.
 force push ist daher nicht problematisch.
 
+### AGENTS.md
+
+`AGENTS.md` beschreibt den Kurs für die Lern-Agents der Studierenden: Aufbau, wo Übungen und
+Prüfungen liegen, Bauen und Testen. Kommt ein Kapitel, eine Übung oder eine PLF dazu, passe die
+Tabelle und den Abschnitt *Übungen für die Prüfung* dort an.
+
 ## Zielgruppe
 
 Lehrunterlagen für den Programmierunterricht der HTL Spengergasse, Spengergasse 20, Wien (www.spengergasse.at).

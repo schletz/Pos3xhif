@@ -4,6 +4,12 @@
 > Diesen Kurs gibt es auch als **PDF** zum offline Nachlesen und als Unterlage für die Prüfung:
 > [🖺 Download](https://github.com/Die-Spengergasse/course-pos-csharp_basics/raw/refs/heads/master/dotnet_book.pdf)
 
+> [!NOTE]
+> **Arbeit mit einem Agent:** Klone das Repo nach *C:\Github* (siehe
+> [Synchronisieren des Repositories](#synchronisieren-des-repositories-in-einen-ordner)) und starte
+> deinen Agent (z. B. Claude Code) in diesem Ordner. Sag ihm zuerst: „Lies [AGENTS.md](AGENTS.md).“
+> Dort steht, wie der Kurs aufgebaut ist und wo Kapitel, Übungen und alte Prüfungen liegen.
+
 ## Lehrinhalte
 
 #### Types in C#
