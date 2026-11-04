@@ -34,7 +34,7 @@ md UnittestDemo
 cd UnittestDemo
 md UnittestDemo.Application
 cd UnittestDemo.Application
-dotnet new classlib
+dotnet new classlib -f net10.0
 cd ..
 md UnittestDemo.Tests
 cd UnittestDemo.Tests
