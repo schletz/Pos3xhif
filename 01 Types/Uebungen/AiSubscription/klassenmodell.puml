@@ -1,0 +1,111 @@
+@startuml
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 15
+skinparam ArrowThickness 1.5
+skinparam ArrowColor #1d1d1b
+skinparam class {
+  BackgroundColor #ffffff
+  HeaderBackgroundColor #ededed
+  BorderColor #1d1d1b
+  BorderThickness 1.5
+  FontStyle bold
+}
+skinparam stereotypeCBackgroundColor #d1ebf7
+skinparam stereotypeABackgroundColor #fdebd1
+skinparam stereotypeIBackgroundColor #e5f4f1
+skinparam stereotypeEBackgroundColor #e5f1d9
+skinparam nodesep 12
+skinparam ranksep 40
+hide empty fields
+hide empty methods
+
+abstract class Plan
+{
+    +Name : string
+    +MonthlyFee : decimal
+    ---
+    #Plan(string name,
+<U+00A0><U+00A0><U+00A0><U+00A0>decimal monthlyFee)
+    +{abstract} decimal CalculateCost(
+<U+00A0><U+00A0><U+00A0><U+00A0>int credits)
+    +override string ToString()
+}
+
+class FlatPlan
+{
+    +FairUseCredits : int
+    ---
+    +FlatPlan(string name,
+<U+00A0><U+00A0><U+00A0><U+00A0>decimal monthlyFee,
+<U+00A0><U+00A0><U+00A0><U+00A0>int fairUseCredits)
+    +decimal CalculateCost(int credits)
+}
+
+class MeteredPlan
+{
+    +IncludedCredits : int
+    +PricePerCredit : decimal
+    ---
+    +MeteredPlan(string name,
+<U+00A0><U+00A0><U+00A0><U+00A0>decimal monthlyFee,
+<U+00A0><U+00A0><U+00A0><U+00A0>int includedCredits,
+<U+00A0><U+00A0><U+00A0><U+00A0>decimal pricePerCredit)
+    +decimal CalculateCost(int credits)
+    +override string ToString()
+}
+
+interface IDiscount
+{
+    +Code : string
+    ---
+    +decimal Apply(decimal amount)
+}
+
+class PercentDiscount
+{
+    +Percent : decimal
+    ---
+    +PercentDiscount(
+<U+00A0><U+00A0><U+00A0><U+00A0>decimal percent)
+}
+
+class FixedDiscount
+{
+    +Value : decimal
+    ---
+    +FixedDiscount(decimal value)
+}
+
+class StudentDiscount
+
+class Subscription
+{
+    +Customer : string
+    +Plan : Plan
+    +Discounts : IReadOnlyList<IDiscount>
+    +DiscountCodes : IReadOnlySet<string>
+    +CreditsPerMonth :
+<U+00A0><U+00A0><U+00A0><U+00A0>IReadOnlyDictionary<string, int>
+    +TotalAmount : decimal
+    +MostExpensiveMonth : string?
+    ---
+    +Subscription(string customer,
+<U+00A0><U+00A0><U+00A0><U+00A0>Plan plan)
+    +bool AddDiscount(IDiscount discount)
+    +void AddUsage(string month,
+<U+00A0><U+00A0><U+00A0><U+00A0>int credits)
+    +decimal CalculateInvoice(
+<U+00A0><U+00A0><U+00A0><U+00A0>string month)
+}
+
+Subscription "*" --> "1" Plan
+Subscription "*" --> "*" IDiscount
+FlatPlan -up-|> Plan
+MeteredPlan -up-|> Plan
+PercentDiscount .up.|> IDiscount
+FixedDiscount .up.|> IDiscount
+StudentDiscount .up.|> IDiscount
+FlatPlan -[hidden]down- PercentDiscount
+MeteredPlan -[hidden]down- FixedDiscount
+@enduml

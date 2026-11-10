@@ -74,3 +74,26 @@ entleihen. Am Ende listest du alle überfälligen Reservierungen auf. Du übst a
 berechnete Properties und das Filtern von Listen.
 Lade [LibraryManager.7z](LibraryManager.7z) herunter. Die Angabe steht im Archiv in der Datei *README.md*.
 
+## KI-Dienste
+
+Drei Übungen mit dem gleichen Aufbau: eine abstrakte Basisklasse mit 2 Unterklassen, ein
+Interface mit 3 austauschbaren Implementierungen und eine Klasse, die alles mit *IReadOnlyList*,
+*IReadOnlySet* und *IReadOnlyDictionary* verwaltet. Die Angabe enthält ein Cheat Sheet mit den
+Methoden von *List*, *HashSet* und *Dictionary*. Du übst abstrakte Members, Interfaces und das
+Summieren oder Zählen von Werten in einem Dictionary.
+
+- **AiBudget:** Jede Person in einer Firma hat ein Budgetkonto für KI-Dienste. Text- und
+  Bildanfragen berechnen ihre Kosten unterschiedlich. Bevor das Konto eine Anfrage speichert,
+  prüft es sie mit Regeln (z. B. ein Limit pro Monat).
+  Lade [AiBudget.7z](AiBudget.7z) herunter.
+- **AiSubscription:** Ein KI-Dienst rechnet seine Abos in Credits ab. Ein Flatrate-Tarif und ein
+  Tarif nach Verbrauch berechnen die Kosten unterschiedlich. Auf die Rechnung eines Monats werden
+  mehrere Rabatte nacheinander angewendet.
+  Lade [AiSubscription.7z](AiSubscription.7z) herunter.
+- **AiAgentFleet:** Eine Firma verwaltet ihre KI-Agenten. Recherche- und Programmieragenten
+  kosten pro Durchlauf unterschiedlich viel. Vor jedem Durchlauf prüfen Richtlinien, ob der Agent
+  noch laufen darf (z. B. eine maximale Anzahl an Durchläufen).
+  Lade [AiAgentFleet.7z](AiAgentFleet.7z) herunter.
+
+Die Angabe steht im jeweiligen Archiv in der Datei *README.md*.
+

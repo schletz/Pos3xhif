@@ -45,7 +45,8 @@ den Ordnern gepackt; lies den Ordner, nicht das Archiv.
 ## Übungen für die Prüfung
 
 - **Types:** Die Prüfungsübungen stehen in `01 Types/Uebungen/README.md` (Anmeldesystem, Blog,
-  CarRentalService, HealthChecker, Kalender, LibraryManager). Die anderen Ordner dort
+  CarRentalService, HealthChecker, Kalender, LibraryManager, AiBudget, AiSubscription,
+  AiAgentFleet). Die anderen Ordner dort
   (SchoolClasses, LottoTipp, RpgParty, BusLambdas) gehören zu einzelnen Kapiteln.
   Musterlösungen gibt es bewusst nicht, das Testprogramm zeigt, ob die Lösung stimmt.
 - **EF Core:** Echte PLFs aus 2025 in `03 EF Core/Uebungen/Plf<Klasse>_<Datum>/` mit
