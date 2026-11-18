@@ -40,7 +40,7 @@ md CodeFirstDemo
 cd CodeFirstDemo
 md CodeFirstDemo.Application
 cd CodeFirstDemo.Application
-dotnet new classlib
+dotnet new classlib  -f net10.0
 dotnet add package Microsoft.EntityFrameworkCore --version 10.*
 dotnet add package Microsoft.EntityFrameworkCore.Sqlite --version 10.*
 dotnet add package Microsoft.EntityFrameworkCore.Proxies --version 10.*
@@ -48,10 +48,10 @@ dotnet add package Bogus --version 35.6.5
 cd ..
 md CodeFirstDemo.Test
 cd CodeFirstDemo.Test
-dotnet new xunit
+dotnet new xunit  -f net10.0
 dotnet add reference ..\CodeFirstDemo.Application
 cd ..
-dotnet new sln
+dotnet new sln -f sln
 dotnet sln add CodeFirstDemo.Application
 dotnet sln add CodeFirstDemo.Test
 start CodeFirstDemo.sln
