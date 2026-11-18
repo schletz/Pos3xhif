@@ -19,6 +19,8 @@ ____
 Im Ordner link:{github_url}/03%20EF%20Core/CodeFirstDemo[CodeFirstDemo] ist ein lauffähiges Beispiel dieser Erklärungen.
 ____
 
+In der https://die-spengergasse.github.io/course-pos-csharp_basics/03%20EF%20Core/02_CodeFirstEfCore5/02_CodeFirst.html[interaktiven Präsentation zu Code First] siehst du Schritt für Schritt, wie EF Core aus einer Modelklasse eine Tabelle ableitet, wer bei einer Navigation die Fremdschlüsselspalte bekommt und wann ein Property _required_ braucht.
+
 == Anlegen des Musterprojektes (.NET 10)
 
 Um ein Klassenmodell umsetzen zu können, legen wir eine kleine Solution an.
@@ -526,6 +528,8 @@ Andere Datenbanken wie SQL Server verwenden dafür eigene Typen (_DECIMAL_, _DAT
 
 // tag::pdf_exclude[]
 == Übung
+
+In der https://die-spengergasse.github.io/course-pos-csharp_basics/03%20EF%20Core/02_CodeFirstEfCore5/02_CodeFirst.html[interaktiven Präsentation zu Code First] übst du vorher in 16 Runden den Weg vom _CREATE TABLE_ zur Modelklasse: Schlüssel, Navigationen, NULL und NOT NULL sowie _required_.
 
 Lade die Datei link:{github_url}/03%20EF%20Core/02_CodeFirstEfCore5/TeamsManager20251018.7z[TeamsManager20251018.7z] herunter und entpacke sie in dein Repo.
 Alternativ kannst du mit `+git clone https://github.com/Die-Spengergasse/course-pos-csharp_basics+` das Repo klonen und das Programm aus dem Verzeichnis _03 EF Core/02_CodeFirstEfCore5/TeamsManager_ kopieren.

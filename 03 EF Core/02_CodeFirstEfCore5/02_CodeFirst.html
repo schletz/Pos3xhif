@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code First mit EF Core</title>
+<style>
+  :root {
+    --bg: #f4f4f4; --card: #ffffff; --fg: #1d1d1b; --muted: #5f5f5e; --border: #9d9d9c; --soft: #ededed;
+    --n-stroke: #0090d4; --n-fill: #d1ebf7; --n-text: #00628f;
+    --a-stroke: #f39000; --a-fill: #fdebd1; --a-text: #a35f00;
+    --ok-stroke: #71af2e; --ok-fill: #e5f1d9; --ok-text: #4a7a1c;
+    --err-stroke: #cc0935; --err-fill: #f6d3db; --err-text: #a8072c;
+    --t-stroke: #6cc1b0; --t-fill: #e5f4f1; --t-text: #2f7d6e;
+    --btn: #00628f; --btn-fg: #ffffff;
+    --kw: #0000c8; --ty: #2b7d91; --cm: #3f7f3f; --str: #a31515;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161615; --card: #242423; --fg: #ededed; --muted: #b5b5b4; --border: #6f6f6e; --soft: #30302f;
+      --n-stroke: #0090d4; --n-fill: #0d3345; --n-text: #0090d4;
+      --a-stroke: #f39000; --a-fill: #4a2d00; --a-text: #f39000;
+      --ok-stroke: #71af2e; --ok-fill: #23380e; --ok-text: #71af2e;
+      --err-stroke: #f5b4c7; --err-fill: #4a1020; --err-text: #f5b4c7;
+      --t-stroke: #6cc1b0; --t-fill: #173b34; --t-text: #6cc1b0;
+      --btn: #0090d4; --btn-fg: #1d1d1b;
+      --kw: #569cd6; --ty: #4ec9b0; --cm: #6a9955; --str: #ce9178;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", Helvetica, Arial, sans-serif; background: var(--bg); color: var(--fg);
+         line-height: 1.5; }
+  code, .mono, pre { font-family: Consolas, Menlo, monospace; }
+  code { background: var(--soft); padding: 0 4px; border-radius: 4px; }
+  header { position: sticky; top: 0; z-index: 5; background: var(--card); border-bottom: 1px solid var(--border);
+           padding: 8px 16px; display: flex; align-items: center; gap: 16px; }
+  header h1 { font-size: 18px; margin: 0; flex: 1; }
+  #progressText { font-variant-numeric: tabular-nums; color: var(--muted); }
+  #progressBar { position: absolute; left: 0; bottom: -1px; height: 3px; background: var(--btn); transition: width .3s; }
+  main { max-width: 1120px; margin: 0 auto; padding: 16px; }
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide h2 { margin: 4px 0 8px; font-size: 24px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin: 12px 0; }
+  .nav { display: flex; justify-content: space-between; max-width: 1120px; margin: 0 auto; padding: 0 16px 24px; }
+  button { font: inherit; border: 1px solid var(--border); background: var(--card); color: var(--fg); border-radius: 6px;
+           padding: 5px 12px; cursor: pointer; }
+  button:hover:not(:disabled) { border-color: var(--btn); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  button.primary { background: var(--btn); color: var(--btn-fg); border-color: var(--btn); }
+  .row { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin: 8px 0; }
+  .row label { display: inline-flex; align-items: center; gap: 6px; }
+  .muted { color: var(--muted); }
+  .hint { font-size: 14px; color: var(--muted); }
+  .stepinfo { min-height: 104px; }
+  .stepinfo b.counter { color: var(--muted); font-weight: 600; margin-right: 6px; }
+  .badge { display: inline-block; font-size: 13px; font-weight: 700; padding: 0 8px; border-radius: 8px; margin: 0 6px 4px 0;
+           background: var(--a-fill); color: var(--a-text); border: 1px solid var(--a-stroke); }
+
+  /* code panes */
+  .panes { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 16px; align-items: start; }
+  @media (max-width: 900px) { .panes { grid-template-columns: 1fr; } }
+  .pane > .cap { font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+  pre.code { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 0; margin: 0;
+             overflow-x: auto; font-size: 14px; line-height: 1.6; }
+  pre.code .ln { display: block; padding: 0 12px; min-height: 1.6em; border-left: 4px solid transparent; white-space: pre; }
+  pre.code .ln.cur { background: var(--a-fill); border-left-color: var(--a-stroke); }
+  pre.code .ln.fresh { animation: fadein .7s ease-out; }
+  pre.code .ln.nocol .txt { text-decoration: line-through; opacity: .6; }
+  pre.code .tag { font-family: "Segoe UI", Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 700; margin-left: 10px;
+                  padding: 0 6px; border-radius: 8px; background: var(--soft); border: 1px solid var(--border); color: var(--muted); }
+  pre.code .tag.yes { background: var(--ok-fill); border-color: var(--ok-stroke); color: var(--ok-text); }
+  pre.code .kw { color: var(--kw); }
+  pre.code .ty { color: var(--ty); }
+  pre.code .cm { color: var(--cm); }
+  pre.code .str { color: var(--str); }
+  @keyframes fadein { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { pre.code .ln.fresh { animation: none; } }
+
+  /* exercise */
+  .rounds { align-items: flex-start; }
+  .rounds .group { display: flex; flex-direction: column; gap: 4px; }
+  .rounds .group > span { font-size: 13px; color: var(--muted); }
+  .rounds .group > div { display: flex; flex-wrap: wrap; gap: 6px; }
+  .rounds button { min-width: 40px; }
+  .rounds button.solved { background: var(--ok-fill); border-color: var(--ok-stroke); }
+  .rounds button.current { outline: 2px solid var(--btn); outline-offset: 1px; font-weight: 700; }
+  .exstack { display: flex; flex-direction: column; gap: 12px; margin: 10px 0; }
+  pre.code select { font-family: Consolas, Menlo, monospace; font-size: 14px; color: var(--fg); background: var(--a-fill);
+                    border: 2px dashed var(--a-stroke); border-radius: 4px; padding: 1px 4px; max-width: 100%; }
+  pre.code select.right { background: var(--ok-fill); border: 2px solid var(--ok-stroke); }
+  pre.code select.wrong { background: var(--err-fill); border: 2px solid var(--err-stroke); }
+  pre.code .gapno { font-family: "Segoe UI", Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 700; color: var(--a-text);
+                    margin-right: 4px; }
+  ul.gapfb { margin: 8px 0 0; padding-left: 4px; list-style: none; }
+  ul.gapfb li { margin: 4px 0; }
+  ul.gapfb li.ok { color: var(--ok-text); }
+  ul.gapfb li.bad { color: var(--err-text); }
+  ul.gapfb li span { color: var(--fg); }
+  .options { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+  .options button { font-family: Consolas, Menlo, monospace; text-align: left; }
+  .options button.right { background: var(--ok-fill); border-color: var(--ok-stroke); border-width: 2px; }
+  .options button.wrong { background: var(--err-fill); border-color: var(--err-stroke); border-width: 2px; }
+  .checks { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; }
+  .checks label { display: flex; gap: 10px; align-items: flex-start; padding: 6px 10px; border: 2px solid var(--border);
+                  border-radius: 8px; background: var(--card); cursor: pointer; }
+  .checks label .mono { font-size: 15px; }
+  .checks label.right { border-color: var(--ok-stroke); background: var(--ok-fill); }
+  .checks label.wrong { border-color: var(--err-stroke); background: var(--err-fill); }
+  .checks label .why { display: block; font-size: 14px; color: var(--fg); margin-top: 2px; }
+  .feedback { padding: 8px 12px; border-radius: 6px; margin-top: 8px; display: none; }
+  .feedback.ok { display: block; background: var(--ok-fill); border: 1px solid var(--ok-stroke); }
+  .feedback.bad { display: block; background: var(--err-fill); border: 1px solid var(--err-stroke); }
+  .feedback.info { display: block; background: var(--soft); border: 1px solid var(--border); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Code First mit EF Core</h1>
+  <span id="progressText">1 / 4</span>
+  <div id="progressBar"></div>
+</header>
+
+<main>
+  <!-- Slide 1 -->
+  <section class="slide" data-slide="0">
+    <h2>Conventions: So liest EF Core eine Klasse</h2>
+    <p>Links steht eine Modelklasse, rechts entsteht das <code>CREATE TABLE</code>, das EF Core daraus ableitet. Gehe mit
+      <b>Schritt</b> durch die Properties. <b>Play</b> läuft von selbst.</p>
+    <div class="row">
+      <button id="a-reset">⏮ Zurück</button>
+      <button id="a-step" class="primary">Schritt</button>
+      <button id="a-play">▶ Play</button>
+      <label>Geschwindigkeit <input type="range" id="a-speed" min="1" max="5" value="3" aria-label="Geschwindigkeit"></label>
+    </div>
+    <div class="card stepinfo" id="a-info" aria-live="polite"></div>
+    <div class="panes">
+      <div class="pane"><div class="cap">Modelklasse (C#, Konstruktoren weggelassen)</div><pre class="code" id="a-left"></pre></div>
+      <div class="pane"><div class="cap">CREATE TABLE (von EF Core erzeugt, vereinfacht)</div><pre class="code" id="a-right"></pre></div>
+    </div>
+    <p class="hint">Im Context gibt es <code>DbSet&lt;Offer&gt; Offers</code>. <code>Product</code> hat den Schlüssel
+      <code>Ean</code>, <code>Store</code> und <code>Employee</code> haben den Schlüssel <code>Id</code>. Das SQL ist
+      vereinfacht, aber gültiges SQLite.</p>
+  </section>
+
+  <!-- Slide 2 -->
+  <section class="slide" data-slide="1">
+    <h2>Navigationen: Wer bekommt die Spalte?</h2>
+    <p>Im Klassenmodell zeigt ein Objekt auf ein anderes Objekt. In der Datenbank zeigt eine Spalte auf den
+      Primärschlüssel einer anderen Tabelle. Gehe mit <b>Schritt</b> durch die Navigationen.</p>
+    <div class="row">
+      <button id="b-reset">⏮ Zurück</button>
+      <button id="b-step" class="primary">Schritt</button>
+      <button id="b-play">▶ Play</button>
+      <label>Geschwindigkeit <input type="range" id="b-speed" min="1" max="5" value="3" aria-label="Geschwindigkeit"></label>
+    </div>
+    <div class="card stepinfo" id="b-info" aria-live="polite"></div>
+    <div class="panes">
+      <div class="pane"><div class="cap">Modelklassen (C#)</div><pre class="code" id="b-left"></pre></div>
+      <div class="pane"><div class="cap">CREATE TABLE (vereinfacht)</div><pre class="code" id="b-right"></pre></div>
+    </div>
+  </section>
+
+  <!-- Slide 3 -->
+  <section class="slide" data-slide="2">
+    <h2>required: Wann brauche ich es?</h2>
+    <p>EF Core braucht einen Konstruktor ohne Parameter. Mit <code>required</code> sagst du dem Compiler, welche
+      Properties trotzdem nie <code>null</code> sein dürfen. Gehe mit <b>Schritt</b> durch die Properties.</p>
+    <div class="row">
+      <button id="c-reset">⏮ Zurück</button>
+      <button id="c-step" class="primary">Schritt</button>
+      <button id="c-play">▶ Play</button>
+      <label>Geschwindigkeit <input type="range" id="c-speed" min="1" max="5" value="3" aria-label="Geschwindigkeit"></label>
+    </div>
+    <div class="card stepinfo" id="c-info" aria-live="polite"></div>
+    <div class="panes">
+      <div class="pane"><div class="cap">Modelklasse (C#)</div><pre class="code" id="c-left"></pre></div>
+      <div class="pane"><div class="cap">Braucht das Property required?</div><pre class="code" id="c-right"></pre></div>
+    </div>
+  </section>
+
+  <!-- Slide 4 -->
+  <section class="slide" data-slide="3">
+    <h2>Übung: Vom CREATE TABLE zur Modelklasse</h2>
+    <div class="row rounds" id="roundButtons"></div>
+    <div class="card" id="roundCard"></div>
+    <div class="row">
+      <button id="solutionBtn">Lösung zeigen</button>
+      <button id="resetRoundBtn">Runde neu starten</button>
+    </div>
+  </section>
+</main>
+
+<div class="nav">
+  <button id="prevBtn">← Zurück</button>
+  <button id="nextBtn" class="primary">Weiter →</button>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  const SPEEDS = [3600, 2700, 1900, 1200, 750];
+
+  // ---------- storage (works without localStorage) ----------
+  const store = {
+    get(key, fallback) {
+      try {
+        const raw = window.localStorage.getItem('efcore-02-' + key);
+        return raw === null ? fallback : JSON.parse(raw);
+      } catch (e) { return fallback; }
+    },
+    set(key, value) {
+      try { window.localStorage.setItem('efcore-02-' + key, JSON.stringify(value)); } catch (e) { /* ignore */ }
+    }
+  };
+
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // ---------- syntax highlighting ----------
+  const CS_KW = new Set(['public', 'private', 'protected', 'class', 'required', 'get', 'set', 'new', 'var', 'return', 'null']);
+  const CS_TY = new Set(['int', 'string', 'decimal', 'double', 'bool', 'long', 'DateTime', 'DateOnly', 'Guid', 'List', 'void']);
+  const SQL_KW = new Set(['CREATE', 'TABLE', 'NOT', 'NULL', 'PRIMARY', 'KEY', 'AUTOINCREMENT', 'REFERENCES']);
+  const SQL_TY = new Set(['INTEGER', 'TEXT', 'DECIMAL', 'DATETIME']);
+
+  /** Returns HTML for one line of C# or SQL with keywords, types, comments and strings coloured. */
+  function highlight(src, lang) {
+    const tokens = String(src).match(/\/\/.*$|--.*$|"[^"]*"|\w+|\s+|./g) || [];
+    return tokens.map(t => {
+      if ((lang === 'cs' && t.startsWith('//')) || (lang === 'sql' && t.startsWith('--'))) { return `<span class="cm">${esc(t)}</span>`; }
+      if (t[0] === '"') { return `<span class="str">${esc(t)}</span>`; }
+      if (lang === 'cs' && CS_KW.has(t)) { return `<span class="kw">${t}</span>`; }
+      if (lang === 'cs' && CS_TY.has(t)) { return `<span class="ty">${t}</span>`; }
+      if (lang === 'sql' && SQL_KW.has(t)) { return `<span class="kw">${t}</span>`; }
+      if (lang === 'sql' && SQL_TY.has(t)) { return `<span class="ty">${t}</span>`; }
+      return esc(t);
+    }).join('');
+  }
+
+  /** Connects step/play/reset buttons to a step function that returns false when finished. */
+  function animator(prefix, stepFn, resetFn) {
+    let timer = null;
+    const playBtn = document.getElementById(prefix + '-play');
+    const self = {
+      stop() {
+        if (timer) { clearTimeout(timer); timer = null; }
+        playBtn.textContent = '▶ Play';
+      },
+      play() {
+        if (timer) { self.stop(); return; }
+        playBtn.textContent = '⏸ Pause';
+        const tick = () => {
+          if (!stepFn()) { self.stop(); return; }
+          timer = setTimeout(tick, SPEEDS[document.getElementById(prefix + '-speed').value - 1]);
+        };
+        timer = setTimeout(tick, 0);
+      }
+    };
+    playBtn.addEventListener('click', self.play);
+    document.getElementById(prefix + '-step').addEventListener('click', () => { self.stop(); stepFn(); });
+    document.getElementById(prefix + '-reset').addEventListener('click', () => { self.stop(); resetFn(); });
+    return self;
+  }
+
+  /**
+   * Step player for two code panes.
+   * def.left: lines (string or { t, from, tag, yes }) – a line with "from" gets the tag from that step on.
+   * def.right: { t, at } – the line becomes visible at step "at".
+   * def.steps: { text, rule, left: [line indices], right: [line indices] }.
+   */
+  function player(prefix, def) {
+    let step = 0;
+    const last = def.steps.length - 1;
+    function render() {
+      const s = def.steps[step];
+      const left = def.left.map((l, i) => {
+        const o = typeof l === 'string' ? { t: l } : l;
+        const tagged = o.from !== undefined && step >= o.from;
+        const cls = 'ln' + (s.left.includes(i) ? ' cur' : '') + (tagged && !o.yes ? ' nocol' : '');
+        const tag = tagged ? `<span class="tag${o.yes ? ' yes' : ''}">${esc(o.tag)}</span>` : '';
+        return `<span class="${cls}"><span class="txt">${highlight(o.t, 'cs')}</span>${tag}</span>`;
+      }).join('');
+      const right = def.right.map((l, i) => {
+        if (l.at > step) { return ''; }
+        const cls = 'ln' + (s.right.includes(i) ? ' cur' : '') + (l.at === step && step > 0 ? ' fresh' : '');
+        return `<span class="${cls}">${highlight(l.t, def.rightLang || 'sql')}</span>`;
+      }).join('');
+      document.getElementById(prefix + '-left').innerHTML = left;
+      document.getElementById(prefix + '-right').innerHTML = right;
+      document.getElementById(prefix + '-info').innerHTML =
+        `<b class="counter">Schritt ${step + 1} / ${last + 1}</b>` + (s.rule ? `<span class="badge">${esc(s.rule)}</span>` : '') +
+        `<br>${s.text}`;
+    }
+    const anim = animator(prefix,
+      () => { if (step >= last) { return false; } step++; render(); return step < last; },
+      () => { step = 0; render(); });
+    render();
+    return { anim, step: () => step };
+  }
+
+  // ---------- slide 1: conventions ----------
+  const A = player('a', {
+    left: [
+      'public class Offer',
+      '{',
+      '    public int Id { get; private set; }',
+      '    public required Product Product { get; set; }',
+      '    public required Store Store { get; set; }',
+      '    public Employee? ApprovedBy { get; set; }',
+      '    public decimal Price { get; set; }',
+      '    public string? Note { get; set; }',
+      '    public DateTime LastUpdate { get; set; }',
+      { t: '    public decimal PriceWithVat => Price * 1.2M;', from: 8, tag: 'keine Spalte' },
+      '}'
+    ],
+    right: [
+      { t: 'CREATE TABLE Offers (', at: 0 },
+      { t: '    Id           INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT,', at: 1 },
+      { t: '    ProductEan   INTEGER  NOT NULL REFERENCES Products(Ean),', at: 2 },
+      { t: '    StoreId      INTEGER  NOT NULL REFERENCES Stores(Id),', at: 3 },
+      { t: '    ApprovedById INTEGER  NULL     REFERENCES Employees(Id),', at: 4 },
+      { t: '    Price        DECIMAL  NOT NULL,', at: 5 },
+      { t: '    Note         TEXT     NULL,', at: 6 },
+      { t: '    LastUpdate   DATETIME NOT NULL', at: 7 },
+      { t: ');', at: 0 }
+    ],
+    steps: [
+      { left: [0], right: [0], rule: 'DbSet-Name → Tabellenname',
+        text: '<b>Der Tabellenname.</b> EF Core nimmt den Namen des DbSet im Context: <code>DbSet&lt;Offer&gt; Offers</code> ' +
+          'ergibt die Tabelle <code>Offers</code>. Danach geht EF Core die Properties von oben nach unten durch.' },
+      { left: [2], right: [1], rule: 'Id → PRIMARY KEY · int → AUTOINCREMENT',
+        text: '<b>Convention für den Schlüssel.</b> Ein Property mit dem Namen <code>Id</code> (oder Klassenname + Id, also ' +
+          '<code>OfferId</code>) wird zum Primärschlüssel. Ist es ein <code>int</code>, vergibt die Datenbank den Wert: AUTOINCREMENT. ' +
+          'Deshalb ist der Setter <code>private</code>.' },
+      { left: [3], right: [2], rule: 'Navigation → Fremdschlüssel: Navigation + PK-Name',
+        text: '<b>Navigation → Fremdschlüssel.</b> <code>Product</code> ist eine andere Entity-Klasse. Ein ganzes Objekt passt in ' +
+          'keine Zelle, deshalb legt EF Core einen Fremdschlüssel an. Sein Name: Name der Navigation + Name des Schlüssels von ' +
+          'Product, also <code>Product</code> + <code>Ean</code> = <code>ProductEan</code>. Die Navigation ist nicht nullable, daher NOT NULL.' },
+      { left: [4], right: [3], rule: 'Navigation + PK-Name',
+        text: '<b>Noch eine Navigation.</b> Store hat den Schlüssel <code>Id</code>, also heißt die Spalte <code>StoreId</code>. ' +
+          'Ein eigenes Property <code>StoreId</code> musst du nicht schreiben, EF Core legt die Spalte selbst an.' },
+      { left: [5], right: [4], rule: 'Typ mit ? → NULL',
+        text: '<b>Optionale Navigation.</b> <code>Employee?</code> ist nullable: Ein Angebot muss nicht freigegeben sein. ' +
+          'Die Spalte erlaubt daher NULL. Der Spaltenname kommt vom Namen der Navigation (<code>ApprovedBy</code>), ' +
+          'nicht vom Typ (<code>Employee</code>).' },
+      { left: [6], right: [5], rule: 'Wertetyp → NOT NULL',
+        text: '<b>Wertetypen.</b> <code>decimal</code>, <code>int</code>, <code>bool</code> und <code>DateTime</code> haben immer ' +
+          'einen Wert. Ihre Spalten werden NOT NULL.' },
+      { left: [7], right: [6], rule: 'string? → NULL',
+        text: '<b>Nullable Typ → NULL.</b> Das <code>?</code> bei <code>string?</code> entscheidet: Die Spalte erlaubt NULL. ' +
+          'Ohne <code>?</code> wäre sie NOT NULL.' },
+      { left: [8], right: [7], rule: 'Wertetyp → NOT NULL',
+        text: '<code>DateTime</code> ist ein Wertetyp, daher NOT NULL. Für einen optionalen Zeitpunkt schreibst du ' +
+          '<code>DateTime?</code>.' },
+      { left: [9], right: [], rule: 'Nur get mit => → keine Spalte',
+        text: '<b>Keine Spalte.</b> <code>PriceWithVat</code> hat keinen Setter, der Wert wird bei jedem Zugriff aus ' +
+          '<code>Price</code> berechnet. Was man berechnen kann, speichert man nicht.' }
+    ]
+  });
+
+  // ---------- slide 2: navigations ----------
+  const B = player('b', {
+    left: [
+      'public class Store',
+      '{',
+      '    public int Id { get; private set; }',
+      '    public required string Name { get; set; }',
+      '    public Employee? Manager { get; set; }',
+      { t: '    public List<Offer> Offers { get; } = new();', from: 2, tag: 'keine Spalte' },
+      '}',
+      '',
+      'public class Offer',
+      '{',
+      '    public int Id { get; private set; }',
+      '    public required Store Store { get; set; }',
+      '    public required Employee Creator { get; set; }',
+      '    public Employee? ApprovedBy { get; set; }',
+      '}'
+    ],
+    right: [
+      { t: 'CREATE TABLE Stores (', at: 0 },
+      { t: '    Id        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,', at: 0 },
+      { t: '    Name      TEXT    NOT NULL,', at: 0 },
+      { t: '    ManagerId INTEGER NULL REFERENCES Employees(Id)', at: 3 },
+      { t: ');', at: 0 },
+      { t: '', at: 0 },
+      { t: 'CREATE TABLE Offers (', at: 0 },
+      { t: '    Id           INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,', at: 0 },
+      { t: '    StoreId      INTEGER NOT NULL REFERENCES Stores(Id),', at: 1 },
+      { t: '    CreatorId    INTEGER NOT NULL REFERENCES Employees(Id),', at: 4 },
+      { t: '    ApprovedById INTEGER NULL     REFERENCES Employees(Id)', at: 4 },
+      { t: ');', at: 0 }
+    ],
+    steps: [
+      { left: [2, 3, 10], right: [1, 2, 7],
+        text: '<b>Ausgangslage.</b> Die einfachen Spalten <code>Id</code> und <code>Name</code> kennst du schon. ' +
+          'Jetzt geht es um die Properties, deren Typ eine andere Entity-Klasse ist: die <b>Navigationen</b>. ' +
+          '<code>Employee</code> hat den Schlüssel <code>Id</code>.' },
+      { left: [11], right: [8], rule: '1:n → Fremdschlüssel auf der n-Seite',
+        text: '<b>Offer → Store.</b> Ein Store hat viele Offers, ein Offer gehört zu genau einem Store (1:n). ' +
+          'Die Fremdschlüsselspalte liegt immer auf der <b>n-Seite</b>, also in <code>Offers</code>: <code>StoreId</code>.' },
+      { left: [5], right: [8], rule: 'Liste → keine Spalte',
+        text: '<b>Die Liste erzeugt keine Spalte.</b> Eine Zelle kann nicht viele Offers speichern. <code>Offers</code> ist die ' +
+          'Gegenrichtung derselben Beziehung: EF Core sucht alle Zeilen in <code>Offers</code> mit passender <code>StoreId</code>. ' +
+          'Die Liste wird mit <code>new()</code> erzeugt und braucht daher kein <code>required</code>.' },
+      { left: [4], right: [3], rule: 'Employee? → NULL',
+        text: '<b>Store → Manager.</b> Eine Navigation auf <b>ein</b> Objekt erzeugt eine Spalte in der eigenen Tabelle. ' +
+          '<code>Employee?</code> ist optional: Nicht jedes Geschäft hat einen Filialleiter. Die Spalte erlaubt NULL.' },
+      { left: [12, 13], right: [9, 10], rule: 'Spaltenname = Name der Navigation + PK-Name',
+        text: '<b>Zwei Navigationen zum selben Typ.</b> <code>Creator</code> und <code>ApprovedBy</code> zeigen beide auf ' +
+          '<code>Employee</code>. Käme der Spaltenname vom Typ, hießen beide <code>EmployeeId</code>. Deshalb nimmt EF Core den ' +
+          'Namen der Navigation: <code>CreatorId</code> und <code>ApprovedById</code>.' },
+      { left: [], right: [],
+        text: '<b>Typische Fehler:</b> <code>public int StoreId</code> statt der Navigation: Du kannst nicht mit ' +
+          '<code>offer.Store.Name</code> navigieren. <code>public Store StoreId</code>: Die Spalte heißt dann <code>StoreIdId</code>. ' +
+          '<code>List&lt;Store&gt;</code> in Offer: Die Liste gehört auf die 1-Seite, also in Store.' }
+    ]
+  });
+
+  // ---------- slide 3: required ----------
+  const C = player('c', {
+    left: [
+      'public class Employee',
+      '{',
+      '    [SetsRequiredMembers]',
+      '    public Employee(string name, Department department)',
+      '    {',
+      '        Name = name;',
+      '        Department = department;',
+      '    }',
+      '    private Employee() { }   // for EF Core',
+      '',
+      '    public int Id { get; private set; }',
+      { t: '    public required string Name { get; set; }', from: 3, tag: 'required', yes: true },
+      '    public string? Email { get; set; }',
+      '    public decimal Salary { get; set; }',
+      { t: '    public required Department Department { get; set; }', from: 5, tag: 'required', yes: true },
+      '    public Employee? Boss { get; set; }',
+      '    public List<Project> Projects { get; } = new();',
+      '}'
+    ],
+    rightLang: 'text',
+    right: [
+      { t: 'Property      Typ             required?', at: 1 },
+      { t: 'Id            int             nein: Wertetyp', at: 2 },
+      { t: 'Name          string          JA:   Referenztyp ohne ?', at: 3 },
+      { t: 'Email         string?         nein: darf null sein', at: 4 },
+      { t: 'Salary        decimal         nein: Wertetyp', at: 4 },
+      { t: 'Department    Department      JA:   Navigation ohne ?', at: 5 },
+      { t: 'Boss          Employee?       nein: darf null sein', at: 5 },
+      { t: 'Projects      List<Project>   nein: mit new() erzeugt', at: 6 }
+    ],
+    steps: [
+      { left: [8], right: [], rule: 'CS8618',
+        text: '<b>Das Problem.</b> EF Core braucht den Konstruktor ohne Parameter. Nach <code>private Employee() { }</code> ' +
+          'wären alle Properties leer. Bei <code>string Name</code> heißt leer: <code>null</code>, obwohl der Typ das verbietet. ' +
+          'Der Compiler meldet <b>CS8618</b>.' },
+      { left: [], right: [0], rule: 'Kann es null sein, obwohl der Typ es verbietet?',
+        text: '<b>Die Frage pro Property:</b> Wäre es nach dem private Konstruktor <code>null</code>, obwohl der Typ ' +
+          'kein <code>?</code> hat? Nur dann brauchst du <code>required</code>.' },
+      { left: [10], right: [1], rule: 'Wertetyp → kein required',
+        text: '<b>Id:</b> <code>int</code> ist ein Wertetyp und hat immer einen Wert (anfangs 0). Es kann nie null sein. ' +
+          'Den Wert vergibt außerdem die Datenbank.' },
+      { left: [11], right: [2], rule: 'Referenztyp ohne ? → required',
+        text: '<b>Name:</b> <code>string</code> ist ein Referenztyp ohne <code>?</code>. Nach dem private Konstruktor wäre ' +
+          '<code>Name</code> null. <code>required</code> löst das: Wer einen Employee mit einem Konstruktor ohne ' +
+          '<code>[SetsRequiredMembers]</code> anlegt, muss <code>Name</code> im Object Initializer setzen (sonst CS9035).' },
+      { left: [12, 13], right: [3, 4], rule: 'string? und Wertetypen → kein required',
+        text: '<b>Email und Salary:</b> <code>string?</code> darf null sein, <code>decimal</code> ist ein Wertetyp. ' +
+          'Beide brauchen kein <code>required</code>.' },
+      { left: [14, 15], right: [5, 6], rule: 'Navigation ohne ? → required',
+        text: '<b>Navigationen</b> sind Referenztypen. <code>Department</code> ist Pflicht, also <code>required</code>. ' +
+          '<code>Employee? Boss</code> ist optional und braucht kein <code>required</code>.' },
+      { left: [16], right: [7], rule: '= new() → kein required',
+        text: '<b>Projects:</b> Die Liste wird gleich bei der Deklaration mit <code>new()</code> erzeugt. Sie ist nie null. ' +
+          'Ohne Setter kann man sie nicht austauschen, nur befüllen.' },
+      { left: [2, 3, 4, 5, 6, 7], right: [2, 5], rule: '[SetsRequiredMembers]',
+        text: '<b>Der public Konstruktor.</b> <code>[SetsRequiredMembers]</code> sagt dem Compiler: Dieser Konstruktor setzt alle ' +
+          'required Properties. Dann funktioniert <code>new Employee("Max", sales)</code> ohne Object Initializer. ' +
+          'Vergisst du <code>Department = department;</code>, meldet der Compiler CS8618.' },
+      { left: [11, 14], right: [2, 5], rule: 'Kurzregel',
+        text: '<b>Kurzregel:</b> <code>required</code> braucht jedes Property mit einem Referenztyp ohne <code>?</code> ' +
+          '(<code>string</code>, Entity-Klasse), das nicht schon bei der Deklaration initialisiert wird. Wertetypen, nullable ' +
+          'Typen und Listen mit <code>= new()</code> brauchen es nie.' }
+    ]
+  });
+
+  // ---------- slide 4: exercise rounds ----------
+  const CTOR_NOTE = 'Die Konstruktoren sind weggelassen. Die Klasse hat wie im Kapitel einen public Konstruktor mit ' +
+    '<code>[SetsRequiredMembers]</code> und einen private Konstruktor für EF Core.';
+
+  // type 'table': lines are strings or { gap: index }. Each gap: column, options, answer, why (per wrong option), explain.
+  const ROUNDS = [
+    // --- CREATE TABLE -> class ---
+    { id: 't-teachers', group: 'Tabellen', type: 'table',
+      task: 'Die Schule speichert ihre Lehrer. Schreibe die Klasse <code>Teacher</code> (im Context: ' +
+        '<code>DbSet&lt;Teacher&gt; Teachers</code>). ' + CTOR_NOTE,
+      sql: ['CREATE TABLE Teachers (',
+        '    Id           INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT,',
+        '    Shortname    TEXT     NOT NULL,',
+        '    Email        TEXT     NULL,',
+        '    HoursPerWeek INTEGER  NOT NULL,',
+        '    HiredAt      DATETIME NULL',
+        ');'],
+      lines: ['public class Teacher', '{', { gap: 0 }, { gap: 1 }, { gap: 2 }, { gap: 3 }, { gap: 4 }, '}'],
+      gaps: [
+        { column: 'Id', answer: 1,
+          options: ['public int TeacherId { get; private set; }', 'public int Id { get; private set; }',
+            'public int? Id { get; private set; }', 'public required int Id { get; set; }'],
+          why: { 0: 'TeacherId wäre auch ein Primärschlüssel (Klassenname + Id). Die Spalte hieße dann aber TeacherId, nicht Id.',
+            2: 'Ein Primärschlüssel ist nie NULL. int? passt nicht.',
+            3: 'Den Wert vergibt die Datenbank (AUTOINCREMENT). Mit required müsstest du ihn beim Anlegen selbst setzen.' },
+          explain: 'Id → PK nach Convention, int → AUTOINCREMENT. private set, weil die Datenbank den Wert vergibt.' },
+        { column: 'Shortname', answer: 2,
+          options: ['public string? Shortname { get; set; }', 'public string Shortname { get; set; }',
+            'public required string Shortname { get; set; }', 'public required string? Shortname { get; set; }'],
+          why: { 0: 'string? erzeugt eine Spalte mit NULL.',
+            1: 'Die Spalte wäre NOT NULL, aber der private Konstruktor für EF Core liefert CS8618: Shortname wäre danach null.',
+            3: 'Das ? macht die Spalte NULL. required ändert daran nichts.' },
+          explain: 'string ohne ? → NOT NULL. required, weil es ein Referenztyp ist.' },
+        { column: 'Email', answer: 0,
+          options: ['public string? Email { get; set; }', 'public required string Email { get; set; }',
+            'public required string? Email { get; set; }', 'public string Email { get; set; } = "";'],
+          why: { 1: 'Ohne ? wird die Spalte NOT NULL.',
+            2: 'Die Spalte wäre zwar NULL. required zwingt dich aber, Email beim Anlegen anzugeben, obwohl sie optional ist.',
+            3: 'Die Spalte wäre NOT NULL. Ohne E-Mail stünde ein Leerstring statt NULL in der Tabelle.' },
+          explain: 'string? → NULL. Ein nullable Property braucht kein required.' },
+        { column: 'HoursPerWeek', answer: 2,
+          options: ['public int? HoursPerWeek { get; set; }', 'public double HoursPerWeek { get; set; }',
+            'public int HoursPerWeek { get; set; }', 'public string HoursPerWeek { get; set; } = "0";'],
+          why: { 0: 'int? erzeugt eine Spalte mit NULL.',
+            1: 'double ist für Kommazahlen. Die Spalte wäre REAL statt INTEGER.',
+            3: 'Die Spalte wäre TEXT. Mit einem String kannst du nicht rechnen.' },
+          explain: 'int ist ein Wertetyp → NOT NULL, kein required nötig.' },
+        { column: 'HiredAt', answer: 1,
+          options: ['public DateTime HiredAt { get; set; }', 'public DateTime? HiredAt { get; set; }',
+            'public required DateTime HiredAt { get; set; }', 'public string? HiredAt { get; set; }'],
+          why: { 0: 'DateTime ist ein Wertetyp und hat immer einen Wert. Die Spalte wäre NOT NULL.',
+            2: 'required macht aus einem Wertetyp keinen nullable Typ. Die Spalte wäre NOT NULL.',
+            3: 'Die Spalte wäre TEXT. Du müsstest das Datum selbst umwandeln.' },
+          explain: 'DateTime? → NULL.' }
+      ] },
+    { id: 't-products', group: 'Tabellen', type: 'table',
+      task: 'Produkte werden über ihre EAN (Strichcode) identifiziert. Die EAN kommt vom Hersteller. Die Klasse ' +
+        '<code>Category</code> hat den Schlüssel <code>Id</code> und keine Liste der Produkte. ' + CTOR_NOTE,
+      sql: ['CREATE TABLE Products (',
+        '    Ean        INTEGER      NOT NULL PRIMARY KEY,',
+        '    Name       TEXT         NOT NULL,',
+        '    Price      DECIMAL(9,2) NOT NULL,',
+        '    CategoryId INTEGER      NOT NULL REFERENCES Categories(Id)',
+        ');'],
+      lines: ['public class Product', '{', { gap: 0 }, '    public required string Name { get; set; }', { gap: 1 }, { gap: 2 }, '}'],
+      gaps: [
+        { column: 'Ean', answer: 2,
+          options: ['public int Ean { get; private set; }', '[Key] public int Ean { get; private set; }',
+            '[Key, DatabaseGenerated(DatabaseGeneratedOption.None)] public int Ean { get; private set; }',
+            'public int Id { get; private set; }'],
+          why: { 0: 'Ean ist kein Name nach Convention (Id oder ProductId). EF Core findet keinen Schlüssel und wirft: ' +
+              '„The entity type Product requires a primary key“.',
+            1: 'Ean wird zwar der Schlüssel. Ein int-Schlüssel bekommt aber automatisch AUTOINCREMENT, und die EAN kommt vom Hersteller.',
+            3: 'Das erzeugt eine Spalte Id mit AUTOINCREMENT. Die Tabelle hat aber Ean als Schlüssel.' },
+          explain: '[Key] macht Ean zum Schlüssel, DatabaseGenerated(None) verhindert das AUTOINCREMENT.' },
+        { column: 'Price', answer: 1,
+          options: ['public double Price { get; set; }', 'public decimal Price { get; set; }',
+            'public decimal? Price { get; set; }', 'public int Price { get; set; }'],
+          why: { 0: 'double rechnet binär und hat Rundungsfehler (0.1 + 0.2 ist nicht genau 0.3). Für Geldbeträge verwendest du decimal.',
+            2: 'decimal? erzeugt eine Spalte mit NULL.',
+            3: 'int speichert keine Nachkommastellen.' },
+          explain: 'decimal ist ein Wertetyp → NOT NULL. Die Genauigkeit (9,2) legst du im nächsten Kapitel fest.' },
+        { column: 'CategoryId', answer: 3,
+          options: ['public int CategoryId { get; set; }', 'public Category? Category { get; set; }',
+            'public required Category CategoryId { get; set; }', 'public required Category Category { get; set; }'],
+          why: { 0: 'Die Spalte CategoryId entsteht, aber als normale int-Spalte: ohne FOREIGN KEY und ohne Navigation. ' +
+              'product.Category.Name geht nicht.',
+            1: 'Das ? macht die Spalte NULL. Jedes Produkt braucht aber eine Kategorie.',
+            2: 'Der Spaltenname ist Navigation + PK-Name. Aus der Navigation CategoryId würde die Spalte CategoryIdId.' },
+          explain: 'Navigation Category + PK Id = CategoryId mit FOREIGN KEY. Nicht nullable, daher NOT NULL und required.' }
+      ] },
+    { id: 't-offers', group: 'Tabellen', type: 'table',
+      task: 'Ein Geschäft bietet Produkte an. <code>Store</code> und <code>Employee</code> haben den Schlüssel <code>Id</code>, ' +
+        '<code>Product</code> den Schlüssel <code>Ean</code> (siehe Runde 2). Ein Angebot kann von einem Mitarbeiter ' +
+        'freigegeben werden. ' + CTOR_NOTE,
+      sql: ['CREATE TABLE Offers (',
+        '    Id           INTEGER      NOT NULL PRIMARY KEY AUTOINCREMENT,',
+        '    StoreId      INTEGER      NOT NULL REFERENCES Stores(Id),',
+        '    ProductEan   INTEGER      NOT NULL REFERENCES Products(Ean),',
+        '    ApprovedById INTEGER      NULL     REFERENCES Employees(Id),',
+        '    Price        DECIMAL(9,2) NOT NULL',
+        ');'],
+      lines: ['public class Offer', '{', '    public int Id { get; private set; }', { gap: 0 }, { gap: 1 }, { gap: 2 },
+        '    public decimal Price { get; set; }', '}'],
+      gaps: [
+        { column: 'StoreId', answer: 0,
+          options: ['public required Store Store { get; set; }', 'public int StoreId { get; set; }',
+            'public required List<Store> Stores { get; set; }', 'public Store? Store { get; set; }'],
+          why: { 1: 'Das ist nur eine int-Spalte ohne Navigation. Du kannst nicht mit offer.Store.Name zum Store navigieren.',
+            2: 'Ein Offer gehört zu genau einem Store. Eine Liste erzeugt keine Spalte in Offers.',
+            3: 'Store? erzeugt StoreId mit NULL. Die Spalte ist aber NOT NULL.' },
+          explain: 'Navigation Store + PK Id = StoreId.' },
+        { column: 'ProductEan', answer: 2,
+          options: ['public required Product ProductEan { get; set; }', 'public required Product Ean { get; set; }',
+            'public required Product Product { get; set; }', 'public Product? Product { get; set; }'],
+          why: { 0: 'Die Spalte hieße ProductEanEan: Name der Navigation + Name des Schlüssels.',
+            1: 'Die Spalte hieße EanEan. Der Name der Navigation bestimmt den Anfang des Spaltennamens.',
+            3: 'Product? erzeugt eine Spalte mit NULL.' },
+          explain: 'Navigation Product + PK Ean = ProductEan. Nicht ProductId, denn der Schlüssel von Product heißt Ean.' },
+        { column: 'ApprovedById', answer: 3,
+          options: ['public Employee? Employee { get; set; }', 'public required Employee ApprovedBy { get; set; }',
+            'public int? ApprovedById { get; set; }', 'public Employee? ApprovedBy { get; set; }'],
+          why: { 0: 'Die Spalte hieße EmployeeId. Der Spaltenname kommt vom Namen der Navigation, nicht vom Typ.',
+            1: 'Die Spalte wäre NOT NULL. Ein Angebot muss aber nicht freigegeben sein.',
+            2: 'Das ist nur eine int?-Spalte ohne Navigation zum Mitarbeiter.' },
+          explain: 'Navigation ApprovedBy + PK Id = ApprovedById. Employee? ist optional, also NULL und kein required.' }
+      ] },
+    { id: 't-stores', group: 'Tabellen', type: 'table',
+      task: 'Die Tabelle <code>Offers</code> aus Runde 3 verweist mit <code>StoreId</code> auf <code>Stores</code>. Im Programm ' +
+        'soll man mit <code>store.Offers</code> alle Angebote eines Geschäfts abrufen können. Jedes Geschäft kann einen ' +
+        'Filialleiter (<code>Employee</code>) haben. ' + CTOR_NOTE,
+      sql: ['CREATE TABLE Stores (',
+        '    Id        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,',
+        '    Name      TEXT    NOT NULL,',
+        '    ManagerId INTEGER NULL REFERENCES Employees(Id)',
+        ');'],
+      lines: ['public class Store', '{', '    public int Id { get; private set; }', '    public required string Name { get; set; }',
+        { gap: 0 }, '    // all offers of this store', { gap: 1 }, '}'],
+      gaps: [
+        { column: 'ManagerId', answer: 0,
+          options: ['public Employee? Manager { get; set; }', 'public Employee? ManagerId { get; set; }',
+            'public required Employee Manager { get; set; }', 'public List<Employee> Managers { get; } = new();'],
+          why: { 1: 'Die Spalte hieße ManagerIdId.',
+            2: 'Die Spalte wäre NOT NULL. Ein Geschäft muss aber keinen Filialleiter haben.',
+            3: 'Eine Liste erzeugt keine Spalte in Stores, sondern eine Spalte StoreId in Employees. Ein Store hat aber höchstens einen Filialleiter.' },
+          explain: 'Navigation Manager + PK Id = ManagerId, optional → Employee?.' },
+        { column: '(keine Spalte)', answer: 3,
+          options: ['public List<Offer> Offers { get; set; }', 'public Offer Offers { get; set; }',
+            'public int OfferId { get; set; }', 'public List<Offer> Offers { get; } = new();'],
+          why: { 0: 'Ohne Initialisierung ist die Liste nach dem private Konstruktor null: CS8618.',
+            1: 'Das wäre eine Navigation zu genau einem Offer und erzeugt eine Spalte OffersId in Stores.',
+            2: 'Stores hat keine Spalte OfferId. Bei 1:n liegt der Fremdschlüssel auf der n-Seite (Offers.StoreId).' },
+          explain: 'Die Liste ist die Gegenrichtung von Offer.Store. Sie erzeugt keine Spalte, EF Core befüllt sie über ' +
+            'Offers.StoreId. Mit = new() ist sie nie null, daher kein required.' }
+      ] },
+    { id: 't-matches', group: 'Tabellen', type: 'table',
+      task: 'Bei einem Fußballspiel treffen zwei Teams aufeinander. <code>Team</code> hat den Schlüssel <code>Id</code>. ' +
+        'Die Tore stehen erst nach dem Spiel fest. ' + CTOR_NOTE,
+      sql: ['CREATE TABLE Matches (',
+        '    Id          INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT,',
+        '    HomeTeamId  INTEGER  NOT NULL REFERENCES Teams(Id),',
+        '    GuestTeamId INTEGER  NOT NULL REFERENCES Teams(Id),',
+        '    PlayedAt    DATETIME NOT NULL,',
+        '    HomeGoals   INTEGER  NULL,',
+        '    GuestGoals  INTEGER  NULL',
+        ');'],
+      lines: ['public class Match', '{', '    public int Id { get; private set; }', { gap: 0 }, { gap: 1 },
+        '    public DateTime PlayedAt { get; set; }', { gap: 2 }, '    public int? GuestGoals { get; set; }', '}'],
+      gaps: [
+        { column: 'HomeTeamId', answer: 1,
+          options: ['public required Team Team { get; set; }', 'public required Team HomeTeam { get; set; }',
+            'public required Team HomeTeamId { get; set; }', 'public int HomeTeamId { get; set; }'],
+          why: { 0: 'Die Spalte hieße TeamId. Für das zweite Team bräuchtest du ohnehin ein Property mit anderem Namen.',
+            2: 'Die Spalte hieße HomeTeamIdId.',
+            3: 'Das ist nur eine int-Spalte ohne Navigation zum Team.' },
+          explain: 'Navigation HomeTeam + PK Id = HomeTeamId.' },
+        { column: 'GuestTeamId', answer: 0,
+          options: ['public required Team GuestTeam { get; set; }', 'public required Team Team2 { get; set; }',
+            'public Team? GuestTeam { get; set; }', 'public required List<Team> Teams { get; set; }'],
+          why: { 1: 'Die Spalte hieße Team2Id.',
+            2: 'Team? erzeugt eine Spalte mit NULL. Jedes Spiel hat aber einen Gast.',
+            3: 'Ein Spiel hat genau zwei Teams mit verschiedenen Rollen. Eine Liste erzeugt keine Spalte in Matches.' },
+          explain: 'Zwei Navigationen zum selben Typ: Die Namen HomeTeam und GuestTeam unterscheiden die Spalten.' },
+        { column: 'HomeGoals', answer: 2,
+          options: ['public int HomeGoals { get; set; }', 'public required int? HomeGoals { get; set; }',
+            'public int? HomeGoals { get; set; }', 'public string? HomeGoals { get; set; }'],
+          why: { 0: 'int hat immer einen Wert. Vor dem Spiel stünde 0 statt NULL, und 0 Tore ist ein echtes Ergebnis.',
+            1: 'Die Spalte wäre NULL, aber required zwingt dich, die Tore schon beim Anlegen des Spiels anzugeben.',
+            3: 'Die Spalte wäre TEXT statt INTEGER.' },
+          explain: 'int? → NULL, solange das Spiel nicht gespielt ist.' }
+      ] },
+    // --- keys ---
+    { id: 'k-pk', group: 'Schlüssel', type: 'multi',
+      task: 'Welche Properties erkennt EF Core <b>ohne weitere Konfiguration</b> als Primärschlüssel? Wähle alle passenden.',
+      options: [
+        { text: 'class Pupil:   public int Id { get; private set; }', ok: true, why: 'Convention: Name Id.' },
+        { text: 'class Pupil:   public int PupilId { get; private set; }', ok: true, why: 'Convention: Klassenname + Id.' },
+        { text: 'class Room:    public string Number { get; set; }', ok: false,
+          why: 'Kein Name nach Convention. EF Core wirft „The entity type Room requires a primary key“. Du brauchst [Key].' },
+        { text: 'class Offer:   public int StoreId { get; set; }', ok: false,
+          why: 'StoreId ist Store + Id, nicht Offer + Id. Das ist eine normale Spalte.' },
+        { text: 'class Country: public string Id { get; set; }', ok: true,
+          why: 'Auch ein string kann Schlüssel sein. Entscheidend ist der Name Id.' },
+        { text: 'class Product: public int Ean { get; private set; }', ok: false, why: 'Ean braucht [Key].' }
+      ] },
+    { id: 'k-ai', group: 'Schlüssel', type: 'multi',
+      task: 'Welche Schlüssel werden in der Datenbank zu <code>AUTOINCREMENT</code>? Wähle alle passenden.',
+      options: [
+        { text: 'public int Id { get; private set; }', ok: true, why: 'int-Schlüssel nach Convention → AUTOINCREMENT.' },
+        { text: '[Key] public int Ean { get; private set; }', ok: true,
+          why: 'Die Falle: Auch mit [Key] bekommt ein int-Schlüssel AUTOINCREMENT.' },
+        { text: '[Key, DatabaseGenerated(DatabaseGeneratedOption.None)] public int Ean { get; private set; }', ok: false,
+          why: 'DatabaseGenerated(None) schaltet AUTOINCREMENT ab.' },
+        { text: 'public string Id { get; set; }   // class Country, e.g. "AT"', ok: false,
+          why: 'Text kann die Datenbank nicht hochzählen. Du setzt den Wert selbst.' },
+        { text: 'public Guid Id { get; private set; }', ok: false,
+          why: 'EF Core erzeugt die Guid schon im Programm beim Einfügen. In der Datenbank ist das eine normale Spalte ohne AUTOINCREMENT.' }
+      ] },
+    { id: 'k-privateset', group: 'Schlüssel', type: 'single', answer: 1,
+      task: 'Warum hat <code>public int Id { get; private set; }</code> einen <code>private set</code>?',
+      options: ['Damit EF Core den Wert nicht ändern kann.', 'Die Datenbank vergibt den Wert. Im Programm soll ihn niemand ändern.',
+        'Sonst erkennt EF Core das Property nicht als Primärschlüssel.', 'Weil int-Properties immer einen private set brauchen.'],
+      why: { 0: 'EF Core kann private Setter verwenden. Genau so setzt es nach dem INSERT den neuen Wert.',
+        2: 'Die Convention hängt nur am Namen. Auch mit public set wäre Id der Schlüssel.',
+        3: 'Andere int-Properties wie HoursPerWeek haben einen public set.' },
+      explain: 'EF Core setzt den Wert nach <code>SaveChanges()</code> selbst. Ein Schlüssel ändert sich nie.' },
+    // --- navigations ---
+    { id: 'n-name', group: 'Navigationen', type: 'single', answer: 1,
+      task: 'Die Klasse <code>Schoolclass</code> hat <code>public required Teacher Klassenvorstand { get; set; }</code>. ' +
+        '<code>Teacher</code> hat den Schlüssel <code>Id</code>. Welche Spalte erzeugt EF Core?',
+      options: ['TeacherId INTEGER NOT NULL', 'KlassenvorstandId INTEGER NOT NULL', 'KlassenvorstandId INTEGER NULL',
+        'Klassenvorstand TEXT NOT NULL'],
+      why: { 0: 'Der Name kommt von der Navigation (Klassenvorstand), nicht vom Typ (Teacher).',
+        2: 'Die Navigation hat kein ?, daher NOT NULL.',
+        3: 'Ein Objekt kann nicht als Text gespeichert werden. EF Core speichert den Schlüssel des Teachers.' },
+      explain: 'Name der Navigation + Name des Schlüssels: <code>Klassenvorstand</code> + <code>Id</code>.' },
+    { id: 'n-side', group: 'Navigationen', type: 'single', answer: 1,
+      task: '<code>Store</code> hat <code>public List&lt;Offer&gt; Offers { get; } = new();</code>, <code>Offer</code> hat ' +
+        '<code>public required Store Store { get; set; }</code>. Wo liegt der Fremdschlüssel?',
+      options: ['In Stores: Spalte OffersId', 'In Offers: Spalte StoreId', 'In beiden Tabellen', 'In einer eigenen Tabelle StoreOffers'],
+      why: { 0: 'Eine Zelle kann nicht viele Offers speichern. Die Liste erzeugt keine Spalte.',
+        2: 'Beide Properties beschreiben dieselbe 1:n-Beziehung von zwei Seiten. Es gibt nur einen Fremdschlüssel.',
+        3: 'Eine eigene Tabelle braucht man nur bei n:m. Ein Offer gehört zu genau einem Store.' },
+      explain: 'Bei 1:n liegt der Fremdschlüssel auf der n-Seite. Die Liste in Store ist die Gegenrichtung.' },
+    { id: 'n-idid', group: 'Navigationen', type: 'single', answer: 1,
+      task: 'Was erzeugt <code>public required Store StoreId { get; set; }</code> in der Klasse <code>Offer</code>?',
+      options: ['Die Spalte StoreId mit FOREIGN KEY', 'Die Spalte StoreIdId mit FOREIGN KEY', 'Einen Compilerfehler',
+        'Die Spalte StoreId ohne FOREIGN KEY'],
+      why: { 0: 'EF Core hängt den Schlüsselnamen an den Namen der Navigation an: StoreId + Id.',
+        2: 'Den Namen eines Properties darfst du frei wählen. Der Compiler meldet nichts.',
+        3: 'Store ist eine Entity-Klasse. Das Property ist also eine Navigation und bekommt einen FOREIGN KEY.' },
+      explain: 'Die Navigation heißt <code>StoreId</code>, daher <code>StoreId</code> + <code>Id</code> = <code>StoreIdId</code>. ' +
+        'Benenne Navigationen nach dem Objekt: <code>Store</code>.' },
+    { id: 'n-int', group: 'Navigationen', type: 'single', answer: 1,
+      task: 'Was ist der Nachteil von <code>public int StoreId { get; set; }</code> statt ' +
+        '<code>public required Store Store { get; set; }</code>? (Store hat keine Liste der Offers.)',
+      options: ['Keiner, beide erzeugen dasselbe.', 'Du kannst nicht mit offer.Store.Name navigieren, und EF Core legt keinen FOREIGN KEY an.',
+        'Die Spalte StoreId erlaubt dann NULL.', 'Der Compiler meldet CS8618.'],
+      why: { 0: 'Ohne Navigation weiß EF Core nicht, dass StoreId auf Stores zeigt. Es entsteht eine normale int-Spalte.',
+        2: 'int ist ein Wertetyp, die Spalte wird NOT NULL.',
+        3: 'int hat immer einen Wert. CS8618 betrifft nur Referenztypen.' },
+      explain: 'Die Navigation ist der Weg zum Objekt. Die Spalte <code>StoreId</code> legt EF Core dann selbst an.' },
+    // --- required ---
+    { id: 'r-which', group: 'required', type: 'multi',
+      task: 'Die Klasse <code>Pupil</code> hat einen public Konstruktor mit <code>[SetsRequiredMembers]</code> und einen ' +
+        'private Konstruktor für EF Core. Bei welchen Properties musst du <code>required</code> ergänzen?',
+      options: [
+        { text: 'public int Id { get; private set; }', ok: false, why: 'Wertetyp, kann nie null sein.' },
+        { text: 'public string Firstname { get; set; }', ok: true, why: 'Referenztyp ohne ?, sonst CS8618.' },
+        { text: 'public string? Email { get; set; }', ok: false, why: 'Darf null sein.' },
+        { text: 'public DateTime Birthdate { get; set; }', ok: false, why: 'Wertetyp.' },
+        { text: 'public Schoolclass Schoolclass { get; set; }', ok: true, why: 'Navigation ohne ?, also Pflicht.' },
+        { text: 'public Teacher? Mentor { get; set; }', ok: false, why: 'Optionale Navigation, darf null sein.' },
+        { text: 'public List<Exam> Exams { get; } = new();', ok: false, why: 'Wird bei der Deklaration erzeugt und ist nie null.' },
+        { text: 'public bool IsActive { get; set; }', ok: false, why: 'Wertetyp.' }
+      ] },
+    { id: 'r-cs9035', group: 'required', type: 'single', answer: 1,
+      task: 'Was meldet der Compiler bei <code>new Store("Spar")</code>?',
+      code: 'public class Store\n{\n    public Store(string name)\n    {\n        Name = name;\n    }\n    private Store() { }\n' +
+        '    public int Id { get; private set; }\n    public required string Name { get; set; }\n}\n\nvar store = new Store("Spar");',
+      options: ['Nichts, das kompiliert.', 'CS9035: Required member Name must be set', 'CS8618: Name ist nach dem Konstruktor null',
+        'CS0122: Store() ist nicht zugänglich'],
+      why: { 0: 'Ohne [SetsRequiredMembers] weiß der Compiler nicht, dass der Konstruktor Name setzt. Er verlangt Name im Object Initializer.',
+        2: 'CS8618 kommt, wenn required fehlt. Name ist aber required.',
+        3: 'Aufgerufen wird der public Konstruktor mit Parameter, nicht der private.' },
+      explain: 'Die Lösung ist <code>[SetsRequiredMembers]</code> über dem public Konstruktor.' },
+    { id: 'r-forgot', group: 'required', type: 'single', answer: 1,
+      task: 'Im Konstruktor fehlt eine Zeile. Was passiert?',
+      code: 'public class Offer\n{\n    [SetsRequiredMembers]\n    public Offer(Product product, Store store)\n    {\n' +
+        '        Product = product;\n    }\n    private Offer() { }\n    public int Id { get; private set; }\n' +
+        '    public required Product Product { get; set; }\n    public required Store Store { get; set; }\n}',
+      options: ['Nichts, [SetsRequiredMembers] schaltet die Prüfung ab.', 'CS8618: Store ist nach dem Konstruktor null.',
+        'CS9035 beim Aufruf new Offer(p, s).', 'Eine NullReferenceException beim Kompilieren.'],
+      why: { 0: 'Der Compiler prüft im Konstruktor mit [SetsRequiredMembers], ob alle Properties ohne ? gesetzt werden.',
+        2: '[SetsRequiredMembers] erspart dem Aufrufer den Object Initializer. CS9035 kommt daher nicht.',
+        3: 'Exceptions gibt es nur zur Laufzeit, nicht beim Kompilieren.' },
+      explain: 'Ergänze <code>Store = store;</code> im Konstruktor.' },
+    { id: 'r-pragma', group: 'required', type: 'single', answer: 0,
+      task: 'Ältere Beispiele schreiben <code>#pragma warning disable CS8618</code> um den private Konstruktor. Warum ist ' +
+        '<code>required</code> besser?',
+      options: ['Mit #pragma prüft der Compiler gar nichts mehr. Ein vergessenes Property fällt nicht auf.',
+        '#pragma ist in .NET 10 nicht mehr erlaubt.', 'EF Core versteht #pragma nicht.', 'Es gibt keinen Unterschied.'],
+      why: { 1: '#pragma gibt es weiterhin.',
+        2: '#pragma betrifft nur den Compiler. EF Core sieht es nie.',
+        3: 'required wird bei jedem Aufruf geprüft, #pragma schaltet die Prüfung ab.' },
+      explain: 'Mit <code>required</code> und <code>[SetsRequiredMembers]</code> bleibt die Prüfung des Compilers aktiv.' }
+  ];
+
+  const GROUP_INFO = {
+    table: 'Wähle für jede Lücke die Zeile, die genau diese Spalte erzeugt. Prüfe dann die ganze Klasse.',
+    single: 'Wähle die richtige Antwort.',
+    multi: 'Wähle alle passenden Antworten. Prüfe dann deine Auswahl.'
+  };
+  const solved = new Set((store.get('solved', []) || []).filter(id => ROUNDS.some(r => r.id === id)));
+  let roundIndex = Math.min(Math.max(store.get('round', 0) | 0, 0), ROUNDS.length - 1);
+  let roundDone = false;
+
+  function codeBlock(lines, lang) {
+    return lines.map(l => `<span class="ln">${highlight(l, lang)}</span>`).join('');
+  }
+
+  function drawRounds() {
+    const box = document.getElementById('roundButtons');
+    box.innerHTML = '';
+    const groups = [];
+    ROUNDS.forEach((r, i) => {
+      let g = groups.find(x => x.name === r.group);
+      if (!g) {
+        const wrap = document.createElement('div');
+        wrap.className = 'group';
+        wrap.innerHTML = `<span>${esc(r.group)}</span><div></div>`;
+        box.appendChild(wrap);
+        g = { name: r.group, el: wrap.lastChild };
+        groups.push(g);
+      }
+      const b = document.createElement('button');
+      b.textContent = String(i + 1);
+      b.title = r.group + ' ' + (i + 1);
+      b.className = (solved.has(r.id) ? 'solved ' : '') + (i === roundIndex ? 'current' : '');
+      b.addEventListener('click', () => selectRound(i));
+      g.el.appendChild(b);
+    });
+  }
+
+  /** Renders the class skeleton of a table round with one select per gap. */
+  function tableClassHtml(r) {
+    return r.lines.map(l => {
+      if (typeof l === 'string') { return `<span class="ln">${highlight(l, 'cs')}</span>`; }
+      const g = r.gaps[l.gap];
+      const opts = g.options.map((o, i) => `<option value="${i}">${esc(o)}</option>`).join('');
+      return `<span class="ln">    <span class="gapno">${l.gap + 1}</span><select data-g="${l.gap}" ` +
+        `aria-label="Lücke ${l.gap + 1}: Spalte ${esc(g.column)}"><option value="">– Zeile für ${esc(g.column)} wählen –</option>${opts}</select></span>`;
+    }).join('');
+  }
+
+  function renderRound() {
+    const r = ROUNDS[roundIndex];
+    roundDone = false;
+    const card = document.getElementById('roundCard');
+    let html = `<b>Runde ${roundIndex + 1} von ${ROUNDS.length} · ${esc(r.group)}</b>` +
+      (solved.has(r.id) ? ' <span class="muted">✓ gelöst</span>' : '') +
+      `<p class="hint">${GROUP_INFO[r.type]} Gelöst: ${solved.size} von ${ROUNDS.length} Runden.</p><p>${r.task}</p>`;
+    if (r.type === 'table') {
+      html += '<div class="exstack">' +
+        `<div class="pane"><div class="cap">Gegeben: CREATE TABLE</div><pre class="code">${codeBlock(r.sql, 'sql')}</pre></div>` +
+        `<div class="pane"><div class="cap">Gesucht: Modelklasse</div><pre class="code" id="classBox">${tableClassHtml(r)}</pre></div>` +
+        '</div><button class="primary" id="checkBtn">Prüfen</button>';
+    } else {
+      if (r.code) { html += `<pre class="code">${codeBlock(r.code.split('\n'), 'cs')}</pre>`; }
+      if (r.type === 'multi') {
+        html += '<div class="checks" id="checks">' + r.options.map((o, i) =>
+          `<label data-i="${i}"><input type="checkbox" value="${i}"><span><span class="mono">${esc(o.text)}</span><span class="why"></span></span></label>`).join('') +
+          '</div><button class="primary" id="checkBtn">Prüfen</button>';
+      } else {
+        html += '<div class="options" id="options">' +
+          r.options.map((o, i) => `<button data-i="${i}">${esc(o)}</button>`).join('') + '</div>';
+      }
+    }
+    html += '<div class="feedback" id="feedback" aria-live="polite"></div>';
+    card.innerHTML = html;
+    if (r.type === 'table') {
+      document.getElementById('checkBtn').addEventListener('click', checkTable);
+      card.querySelectorAll('#classBox select').forEach(s => s.addEventListener('change', () => {
+        if (roundDone) { return; }
+        s.classList.remove('right', 'wrong');
+      }));
+    } else if (r.type === 'multi') {
+      document.getElementById('checkBtn').addEventListener('click', checkMulti);
+      card.querySelectorAll('.checks input').forEach(inp => inp.addEventListener('change', () => {
+        if (roundDone) { return; }
+        card.querySelectorAll('.checks label').forEach(l => { l.classList.remove('right', 'wrong'); l.querySelector('.why').textContent = ''; });
+        document.getElementById('feedback').className = 'feedback';
+      }));
+    } else {
+      card.querySelectorAll('#options button').forEach(b => b.addEventListener('click', () => answerSingle(+b.dataset.i)));
+    }
+  }
+
+  function markSolved(r) {
+    if (!solved.has(r.id)) {
+      solved.add(r.id);
+      store.set('solved', Array.from(solved));
+    }
+    drawRounds();
+  }
+  function nextButton() {
+    const next = ROUNDS.findIndex((x, i) => i > roundIndex && !solved.has(x.id));
+    const any = next >= 0 ? next : ROUNDS.findIndex(x => !solved.has(x.id));
+    if (any >= 0) {
+      return { html: `<p><button id="nextRound" class="primary">Weiter zu Runde ${any + 1}</button></p>`, index: any };
+    }
+    return { html: '<p><b>Du hast alle Runden gelöst!</b></p>', index: -1 };
+  }
+  function bindNext(nb) {
+    const b = document.getElementById('nextRound');
+    if (b) { b.addEventListener('click', () => selectRound(nb.index)); }
+  }
+
+  /** Marks an answer button with colour and a symbol, so the result does not depend on colour alone. */
+  function markButton(btn, right) {
+    if (btn.classList.contains(right ? 'right' : 'wrong')) { return; }
+    btn.classList.add(right ? 'right' : 'wrong');
+    btn.textContent = (right ? '✓ ' : '✗ ') + btn.textContent;
+  }
+
+  /** Checks every gap of a table round and lists a reason per gap. */
+  function checkTable() {
+    if (roundDone) { return; }
+    const r = ROUNDS[roundIndex];
+    const items = [];
+    let correct = 0;
+    document.querySelectorAll('#classBox select').forEach(s => {
+      const g = r.gaps[+s.dataset.g];
+      const label = `Lücke ${+s.dataset.g + 1} (${esc(g.column)})`;
+      if (s.value === '') {
+        s.classList.remove('right', 'wrong');
+        items.push(`<li class="bad">${label}: <span>Noch keine Zeile gewählt.</span></li>`);
+        return;
+      }
+      const i = +s.value;
+      const ok = i === g.answer;
+      s.classList.toggle('right', ok);
+      s.classList.toggle('wrong', !ok);
+      if (ok) { correct++; }
+      items.push(`<li class="${ok ? 'ok' : 'bad'}">${ok ? '✓' : '✗'} ${label}: <span>${esc(ok ? g.explain : g.why[i])}</span></li>`);
+    });
+    const fb = document.getElementById('feedback');
+    const list = `<ul class="gapfb">${items.join('')}</ul>`;
+    if (correct === r.gaps.length) {
+      roundDone = true;
+      document.querySelectorAll('#classBox select').forEach(s => { s.disabled = true; });
+      document.getElementById('checkBtn').disabled = true;
+      markSolved(r);
+      const nb = nextButton();
+      fb.className = 'feedback ok';
+      fb.innerHTML = `✓ Richtig! Die Klasse erzeugt genau diese Tabelle.${list}${nb.html}`;
+      bindNext(nb);
+    } else {
+      fb.className = 'feedback bad';
+      fb.innerHTML = `✗ ${correct} von ${r.gaps.length} Lücken stimmen. Ändere die rot markierten Zeilen und prüfe noch einmal.${list}`;
+    }
+  }
+
+  function answerSingle(i) {
+    if (roundDone) { return; }
+    const r = ROUNDS[roundIndex];
+    const fb = document.getElementById('feedback');
+    const btn = document.querySelector(`#options button[data-i="${i}"]`);
+    if (i === r.answer) {
+      roundDone = true;
+      markButton(btn, true);
+      document.querySelectorAll('#options button').forEach(b => { b.disabled = b !== btn; });
+      markSolved(r);
+      const nb = nextButton();
+      fb.className = 'feedback ok';
+      fb.innerHTML = `✓ Richtig! ${r.explain}${nb.html}`;
+      bindNext(nb);
+    } else {
+      markButton(btn, false);
+      fb.className = 'feedback bad';
+      fb.innerHTML = `✗ Nicht ganz. ${esc(r.why[i])} <span class="hint">Versuche es noch einmal.</span>`;
+    }
+  }
+
+  function checkMulti() {
+    if (roundDone) { return; }
+    const r = ROUNDS[roundIndex];
+    let correct = 0;
+    document.querySelectorAll('#checks label').forEach(l => {
+      const o = r.options[+l.dataset.i];
+      const checked = l.querySelector('input').checked;
+      const ok = checked === o.ok;
+      l.classList.toggle('right', ok);
+      l.classList.toggle('wrong', !ok);
+      l.querySelector('.why').textContent = (ok ? '✓ Richtig entschieden. ' : '✗ Falsch entschieden. ') +
+        (o.ok ? 'Gehört dazu: ' : 'Gehört nicht dazu: ') + o.why;
+      if (ok) { correct++; }
+    });
+    const fb = document.getElementById('feedback');
+    if (correct === r.options.length) {
+      roundDone = true;
+      document.querySelectorAll('#checks input').forEach(inp => { inp.disabled = true; });
+      document.getElementById('checkBtn').disabled = true;
+      markSolved(r);
+      const nb = nextButton();
+      fb.className = 'feedback ok';
+      fb.innerHTML = `✓ Richtig! Alle ${r.options.length} Entscheidungen stimmen.${nb.html}`;
+      bindNext(nb);
+    } else {
+      fb.className = 'feedback bad';
+      fb.innerHTML = `✗ ${correct} von ${r.options.length} Entscheidungen stimmen. Die Zeilen mit ✗ (rot) hast du falsch entschieden, ` +
+        'die Begründung steht darunter. Ändere deine Auswahl und prüfe noch einmal.';
+    }
+  }
+
+  function showSolution() {
+    const r = ROUNDS[roundIndex];
+    renderRound();
+    roundDone = true;
+    const fb = document.getElementById('feedback');
+    const again = '<span class="hint">Starte die Runde neu und löse sie selbst, damit sie als gelöst zählt.</span>';
+    if (r.type === 'table') {
+      const items = [];
+      document.querySelectorAll('#classBox select').forEach(s => {
+        const g = r.gaps[+s.dataset.g];
+        s.value = String(g.answer);
+        s.classList.add('right');
+        s.disabled = true;
+        items.push(`<li class="ok">Lücke ${+s.dataset.g + 1} (${esc(g.column)}): <span>${esc(g.explain)}</span></li>`);
+      });
+      document.getElementById('checkBtn').disabled = true;
+      fb.className = 'feedback info';
+      fb.innerHTML = `So sieht die richtige Klasse aus.<ul class="gapfb">${items.join('')}</ul>${again}`;
+    } else if (r.type === 'multi') {
+      document.querySelectorAll('#checks label').forEach(l => {
+        const o = r.options[+l.dataset.i];
+        l.querySelector('input').checked = o.ok;
+        l.querySelector('input').disabled = true;
+        l.classList.add(o.ok ? 'right' : 'wrong');
+        l.querySelector('.why').textContent = (o.ok ? '✓ gehört dazu: ' : '✗ gehört nicht dazu: ') + o.why;
+      });
+      document.getElementById('checkBtn').disabled = true;
+      fb.className = 'feedback info';
+      fb.innerHTML = `So sieht die richtige Auswahl aus. ${again}`;
+    } else {
+      const btn = document.querySelector(`#options button[data-i="${r.answer}"]`);
+      markButton(btn, true);
+      document.querySelectorAll('#options button').forEach(b => { b.disabled = true; });
+      fb.className = 'feedback info';
+      fb.innerHTML = `Lösung: <code>${esc(r.options[r.answer])}</code>. ${r.explain} ${again}`;
+    }
+  }
+
+  function selectRound(i) {
+    roundIndex = i;
+    store.set('round', i);
+    drawRounds();
+    renderRound();
+  }
+  document.getElementById('solutionBtn').addEventListener('click', showSolution);
+  document.getElementById('resetRoundBtn').addEventListener('click', renderRound);
+
+  // ---------- slides ----------
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  let current = Math.min(Math.max(store.get('slide', 0) | 0, 0), slides.length - 1);
+  function showSlide(i) {
+    current = Math.min(Math.max(i, 0), slides.length - 1);
+    slides.forEach((s, k) => s.classList.toggle('active', k === current));
+    document.getElementById('progressText').textContent = `${current + 1} / ${slides.length}`;
+    document.getElementById('progressBar').style.width = `${(current + 1) / slides.length * 100}%`;
+    document.getElementById('prevBtn').disabled = current === 0;
+    document.getElementById('nextBtn').disabled = current === slides.length - 1;
+    A.anim.stop(); B.anim.stop(); C.anim.stop();
+    store.set('slide', current);
+    window.scrollTo(0, 0);
+  }
+  document.getElementById('prevBtn').addEventListener('click', () => showSlide(current - 1));
+  document.getElementById('nextBtn').addEventListener('click', () => showSlide(current + 1));
+  document.addEventListener('keydown', evt => {
+    const tag = evt.target && evt.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (evt.target && evt.target.isContentEditable)) { return; }
+    if (evt.ctrlKey || evt.altKey || evt.metaKey) { return; }
+    if (evt.key === 'ArrowRight' || evt.key === 'PageDown') { showSlide(current + 1); evt.preventDefault(); }
+    if (evt.key === 'ArrowLeft' || evt.key === 'PageUp') { showSlide(current - 1); evt.preventDefault(); }
+  });
+
+  // ---------- start ----------
+  selectRound(roundIndex);
+  showSlide(current);
+
+  /** Read-only hooks for automated tests. */
+  window.efDebug = {
+    steps: () => ({ conventions: A.step(), navigations: B.step(), required: C.step() }),
+    rounds: () => ROUNDS.map(r => ({ id: r.id, type: r.type,
+      answer: r.type === 'table' ? r.gaps.map(g => g.answer) : r.type === 'multi' ? r.options.map(o => o.ok) : r.answer })),
+    solved: () => Array.from(solved),
+    /** Checks that every wrong option has a reason and every answer index exists. */
+    selfTest: () => {
+      const problems = [];
+      ROUNDS.forEach(r => {
+        if (r.type === 'table') {
+          r.gaps.forEach((g, k) => {
+            if (!(g.answer >= 0 && g.answer < g.options.length)) { problems.push(`${r.id} gap ${k} answer`); }
+            if (!g.explain) { problems.push(`${r.id} gap ${k} explain`); }
+            g.options.forEach((o, i) => { if (i !== g.answer && !g.why[i]) { problems.push(`${r.id} gap ${k} option ${i}`); } });
+          });
+          const used = r.lines.filter(l => typeof l !== 'string').map(l => l.gap).sort();
+          if (used.join() !== r.gaps.map((g, k) => k).join()) { problems.push(r.id + ' gap lines'); }
+        } else if (r.type === 'single') {
+          if (!(r.answer >= 0 && r.answer < r.options.length)) { problems.push(r.id + ' answer'); }
+          r.options.forEach((o, i) => { if (i !== r.answer && !r.why[i]) { problems.push(r.id + ' option ' + i); } });
+        } else if (!r.options.some(o => o.ok) || r.options.some(o => !o.why)) { problems.push(r.id + ' multi'); }
+      });
+      return problems;
+    }
+  };
+})();
+</script>
+</body>
+</html>
