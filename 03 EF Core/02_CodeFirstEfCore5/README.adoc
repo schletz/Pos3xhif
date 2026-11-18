@@ -502,6 +502,28 @@ ____
 Sonst kann der Test die Datenbank nicht löschen und bricht mit einem Zugriffsfehler ab.
 ____
 
+=== Gegenüberstellung von Klassenmodell und ER Modell
+
+Die folgende Grafik stellt die Modelklassen den Tabellen gegenüber, die EF Core daraus erzeugt.
+Jeder Pfeil in der Mitte zeigt, welches Property in welche Spalte geschrieben wird.
+Die Beschriftung nennt die Regel (Convention oder Annotation), die EF Core dabei anwendet.
+
+image::{root_dir}/class_vs_er_model.svg[]
+
+Folgende Punkte sind beim Lesen der Grafik wichtig:
+
+* Der Tabellenname kommt nicht vom Klassennamen, sondern vom Namen des DbSet im Context (_Stores_ statt _Store_).
+* Ein Property _Id_ vom Typ _int_ wird by convention zum Primärschlüssel mit AUTOINCREMENT.
+Bei _Ean_ legen wir den Schlüssel mit _[Key]_ fest, und _[DatabaseGenerated(DatabaseGeneratedOption.None)]_ verhindert das AUTOINCREMENT.
+* Ob eine Spalte NULL erlaubt, entscheidet der Datentyp: _string_ wird zu NOT NULL, _string?_ zu NULL.
+* Eine Navigation wie _Offer.Product_ hat in der Datenbank keine eigene Spalte vom Typ _Product_.
+EF Core legt stattdessen die Fremdschlüsselspalte _ProductEan_ an: Name der Navigation {plus} Name des Primärschlüssels der referenzierten Tabelle.
+* Im Klassenmodell verweist ein Objekt direkt auf ein anderes Objekt (linke Seite).
+In der Datenbank verweist der Wert einer Fremdschlüsselspalte auf den Primärschlüssel einer anderen Tabelle (rechte Seite).
+* SQLite kennt nur wenige Datentypen.
+_decimal_ und _DateTime_ werden daher als TEXT gespeichert.
+Andere Datenbanken wie SQL Server verwenden dafür eigene Typen (_DECIMAL_, _DATETIME2_).
+
 // tag::pdf_exclude[]
 == Übung
 
