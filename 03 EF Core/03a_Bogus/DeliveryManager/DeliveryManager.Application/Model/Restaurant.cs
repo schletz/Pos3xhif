@@ -1,20 +1,22 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DeliveryManager.Model;
 public class Restaurant
 {
-    #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-    protected Restaurant() { }
-    #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+    [SetsRequiredMembers]
     public Restaurant(string name, Address address)
     {
         Name = name;
         Address = address;
     }
 
+    // Used by EF Core to materialize entities. The required members prevent uninitialized instances.
+    private Restaurant() { }
+
     public int Id { get; set; }
-    public string Name { get; set; }
-    public Address Address { get; set; }
+    public required string Name { get; set; }
+    public required Address Address { get; set; }
     public List<Product> Products { get; } = new();
     public List<Order> Orders { get; } = new();
 }

@@ -43,15 +43,17 @@ Max;Mustermann;Spengergasse 20;1050;Wien
 
 Wir definieren zuerst die Modelklassen für _Customer_ und _Address_.
 Die Klasse _Customer_ ist eine Modelklasse.
-Sie hat daher einen protected default Konstruktor.
+Sie hat daher einen private default Konstruktor für EF Core, die Pflichtfelder sind mit _required_ gekennzeichnet.
 Die Klasse _Address_ ist ein _value object_.
 Sie hat *keinen primary key und auch keinen default Konstruktor*.
+EF Core kann ihren Konstruktor direkt verwenden, da alle Parameter einfachen Properties entsprechen.
 
 [source,csharp]
 ----
 public class Customer
 {
-    protected Customer() { }
+    private Customer() { }   // For EF Core
+    [SetsRequiredMembers]
     public Customer(string firstname, string lastname, Address address)
     {
         Firstname = firstname;
@@ -59,9 +61,9 @@ public class Customer
         Address = address;
     }
     public int Id { get; set; }
-    public string Firstname { get; set; }
-    public string Lastname { get; set; }
-    public Address Address { get; set; }
+    public required string Firstname { get; set; }
+    public required string Lastname { get; set; }
+    public required Address Address { get; set; }
 }
 
 public class Address
@@ -104,15 +106,16 @@ Das Entity _Customer_ besitzt keine Liste von Adressen im Konstruktor, da wir di
 ----
 public class Customer
 {
-    protected Customer() { }
+    private Customer() { }   // For EF Core
+    [SetsRequiredMembers]
     public Customer(string firstname, string lastname)
     {
         Firstname = firstname;
         Lastname = lastname;
     }
     public int Id { get; set; }
-    public string Firstname { get; set; }
-    public string Lastname { get; set; }
+    public required string Firstname { get; set; }
+    public required string Lastname { get; set; }
     public List<Address> Addresses { get; } = new();
 }
 
@@ -235,7 +238,8 @@ Diese prüft automatisch, ob die E-Mail Adresse korrekt ist.
 ----
 public class Customer
 {
-    protected Customer() { }
+    private Customer() { }   // For EF Core
+    [SetsRequiredMembers]
     public Customer(string firstname, string lastname, Email email)
     {
         Firstname = firstname;
@@ -244,9 +248,9 @@ public class Customer
     }
 
     public int Id { get; set; }
-    public string Firstname { get; set; }
-    public string Lastname { get; set; }
-    public Email Email { get; set; }
+    public required string Firstname { get; set; }
+    public required string Lastname { get; set; }
+    public required Email Email { get; set; }
 }
 
 public class Email
@@ -291,6 +295,7 @@ Die Klasse _Order_ wird syntaktisch wie gewohnt umgesetzt, hat aber einige Beson
 public abstract class Order  // <1>
 {
     protected Order() { }  // <2>
+    [SetsRequiredMembers]
     protected Order(Customer customer, DateTime createdAt, decimal totalAmount)
     {
         Customer = customer;
@@ -300,7 +305,7 @@ public abstract class Order  // <1>
 
     public int Id { get; private set; }
     public DateTime CreatedAt { get; set; }
-    public Customer Customer { get; set; }
+    public required Customer Customer { get; set; }
     public OrderState? OrderState { get; set; }  // <3>
     public decimal TotalAmount { get; set; }
     public string OrderType { get; private set; } = default!;  // <4>
@@ -311,6 +316,8 @@ public abstract class Order  // <1>
     Schließlich macht es keinen Sinn, eine allgemeine Order zu erstellen.
     Daher verwenden wir das Schlüsselwort _abstract_.
 <2> Der gewohnte default Konstruktor für EF Core wird ebenfalls angelegt.
+    In einer Basisklasse ist er allerdings _protected_ statt _private_.
+    Die Konstruktoren der Unterklassen müssen ihn aufrufen können.
 <3> Die 1:1 Beziehung von _Order_ zu _OrderState_ können wir nur als 1:0 oder 1 definieren.
     Order ist die _principal entity_, und hat daher eine nullable Navigation zu _OrderState_.
     Ein Order hat daher _0 oder 1 States_.
@@ -330,6 +337,7 @@ Die Klassen _OnlineOrder_ und _StorePickupOrder_ werden nun angelegt:
 ----
 public class OnlineOrder : Order
 {
+    [SetsRequiredMembers]
     public OnlineOrder(
         Customer customer, DateTime createdAt, decimal totalAmount,
         Email email, Address shippingAddress)
@@ -339,14 +347,15 @@ public class OnlineOrder : Order
         ShippingAddress = shippingAddress;
     }
 
-    protected OnlineOrder() { }
+    private OnlineOrder() { }   // For EF Core
 
-    public Email Email { get; set; }
-    public Address ShippingAddress { get; set; }
+    public required Email Email { get; set; }
+    public required Address ShippingAddress { get; set; }
 }
 
 public class StorePickupOrder : Order
 {
+    [SetsRequiredMembers]
     public StorePickupOrder(
         Customer customer, DateTime createdAt, decimal totalAmount,
         string pickupStoreCode, DateTime pickupFrom)
@@ -356,10 +365,10 @@ public class StorePickupOrder : Order
         PickupFrom = pickupFrom;
     }
 
-    protected StorePickupOrder() { }
+    private StorePickupOrder() { }   // For EF Core
 
     public DateTime PickupFrom { get; set; }
-    public string PickupStoreCode { get; set; }
+    public required string PickupStoreCode { get; set; }
 }
 
 public class Email
@@ -388,12 +397,16 @@ public class Address
 ----
 
 
-Beachte den Konstruktor. Er leitet die Felder der Basisklasse an den _public_ Konstruktor der Basisklasse weiter.
+Beachte den Konstruktor. Er leitet die Felder der Basisklasse an den Konstruktor mit Parametern der Basisklasse weiter.
+Da dieser Konstruktor _[SetsRequiredMembers]_ besitzt, muss auch der Konstruktor der Unterklasse dieses Attribut haben.
+Sonst meldet der Compiler den Fehler _CS9039_.
 Die Klassen _Email_ als rich type und _Address_ als value object werden wie vorher erklärt angelegt.
 
 [IMPORTANT]
-Verwende immer die Konstruktorweiterleitung zum public Konstruktor der Basisklasse.
+Verwende immer die Konstruktorweiterleitung zum Konstruktor mit Parametern der Basisklasse.
 Sonst wird der protected default Konstruktor aufgerufen und die Felder in _Order_ haben den Wert _null_!
+Bei required Properties wie _Customer_ meldet der Compiler das mit dem Fehler _CS8618_.
+Wertetypen wie _CreatedAt_ bleiben allerdings unbemerkt auf ihrem default Wert.
 
 Die Unterklassen haben *kein Property Id*, da es von _Order_ vererbt wird!
 
@@ -406,6 +419,7 @@ Da _OrderState_ das _dependent entity_ der 1:1 Beziehung zu _Order_ ist, besitzt
 public abstract class OrderState
 {
     protected OrderState() { }
+    [SetsRequiredMembers]
     protected OrderState(Order order, DateTime changedAt, string reason)
     {
         Order = order;
@@ -415,22 +429,24 @@ public abstract class OrderState
     public int Id { get; private set; }
     public DateTime ChangedAt { get; set; }
     [ForeignKey("OrderId")]
-    public Order Order { get; set; }
-    public string Reason { get; set; }
+    public required Order Order { get; set; }
+    public required string Reason { get; set; }
     // Discriminator, managed by EF Core.
     public string CurrentState { get; private set; } = default!;
 }
 
 public class PendingState : OrderState
 {
-    protected PendingState() { }
+    private PendingState() { }   // For EF Core
+    [SetsRequiredMembers]
     public PendingState(Order order, DateTime changedAt, string reason)
         : base(order, changedAt, reason) { }
 
 }
 public class PaidState : OrderState
 {
-    protected PaidState() { }
+    private PaidState() { }   // For EF Core
+    [SetsRequiredMembers]
     public PaidState(Order order, DateTime changedAt, string reason, DateTime paidAt)
         : base(order, changedAt, reason)
     {
@@ -440,7 +456,8 @@ public class PaidState : OrderState
 }
 public class ShippedState : OrderState
 {
-    protected ShippedState() { }
+    private ShippedState() { }   // For EF Core
+    [SetsRequiredMembers]
     public ShippedState(Order order, DateTime changedAt, string reason, DateTime shippedAt,
         string trackingNumber) : base(order, changedAt, reason)
     {
@@ -448,11 +465,12 @@ public class ShippedState : OrderState
         TrackingNumber = trackingNumber;
     }
     public DateTime ShippedAt { get; set; }
-    public string TrackingNumber { get; set; }
+    public required string TrackingNumber { get; set; }
 }
 public class CancelledState : OrderState
 {
-    protected CancelledState() { }
+    private CancelledState() { }   // For EF Core
+    [SetsRequiredMembers]
     public CancelledState(Order order, DateTime changedAt, string reason, DateTime cancelledAt)
         : base(order, changedAt, reason)
     {

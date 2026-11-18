@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>    
@@ -9,8 +9,8 @@
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="35.6.5" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.*" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.*" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.*" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.*" />
   </ItemGroup>
 
 </Project>

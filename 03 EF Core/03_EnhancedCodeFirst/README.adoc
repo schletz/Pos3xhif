@@ -34,9 +34,8 @@ Hier ein Beispiel, wie in _ProductCategory_ die Liste der Produkte leichter abge
 ----
 public class Product
 {
-    #pragma warning disable CS8618
-    protected Product() { }
-    #pragma warning restore CS8618
+    private Product() { }   // For EF Core
+    [SetsRequiredMembers]
     public Product(int ean, string name, ProductCategory productCategory)
     {
         Ean = ean;
@@ -47,8 +46,8 @@ public class Product
     [Key]                                               // bestimmt den Key
     [DatabaseGenerated(DatabaseGeneratedOption.None)]   // verhindert AUTO_INCREMENT
     public int Ean { get; private set; }                 // PK
-    public string Name { get; set; }
-    public ProductCategory ProductCategory { get; set; }
+    public required string Name { get; set; }
+    public required ProductCategory ProductCategory { get; set; }
 }
 
 
@@ -150,7 +149,7 @@ public class Store
 public class Offer
 {
      /* ... */
-    [Column(TypeName = "DECIMAL(9,4")]
+    [Column(TypeName = "DECIMAL(9,4)")]
     public decimal Price { get; set; }
 }
 ----
@@ -164,8 +163,8 @@ Bei numerischen Werten gibt es mit _DECIMAL_ und _NUMBER_ (Oracle) ebenfalls meh
 Um die maximale Länge eines String Properties zu steuern, kann die Annotation _MaxLength_ verwendet werden.
 Der EF Core Provider kann dadurch weiterhin den geeigneten Typ auswählen (_VARCHAR_, _VARCHAR2_, ...) und eine Längendefinition - wenn unterstützt- angeben.
 
-Für die Angabe der Precision gibt es (in EF Core 6) keine Annotation.
-Daher muss dieser Wert in der Methode _OnModelCreating()_ der Klasse _StoreContext_ definiert werden.
+Für die Angabe der Precision gibt es die Annotation _Precision_ aus dem Namespace _Microsoft.EntityFrameworkCore_.
+Das erste Argument gibt die Gesamtanzahl der Stellen an, das zweite Argument die Anzahl der Nachkommastellen.
 
 [source,csharp]
 ----
@@ -179,9 +178,16 @@ public class Store
 public class Offer
 {
      /* ... */
-    public decimal Price { get; set; }   // No annotation for precision :( --> OnModelCreating
+    [Precision(9, 4)]
+    public decimal Price { get; set; }
 }
+----
 
+Alternativ kann die Precision auch in der Methode _OnModelCreating()_ der Klasse _StoreContext_ definiert werden.
+Das ist z. B. nötig, wenn die Precision in einer Schleife für alle decimal Properties gleich gesetzt werden soll.
+
+[source,csharp]
+----
 public class StoreContext : DbContext
 {
     /* ... */
@@ -261,9 +267,8 @@ Die Modelklassen haben folgenden Aufbau:
 
 public class Customer
 {
-    #pragma warning disable CS8618
-    protected Customer() { }
-    #pragma warning restore CS8618
+    private Customer() { }   // For EF Core
+    [SetsRequiredMembers]
     public Customer(string firstname, string lastname)
     {
         Firstname = firstname;
@@ -271,16 +276,15 @@ public class Customer
     }
 
     public int Id { get; set; }
-    public string Firstname { get; set; }
-    public string Lastname { get; set; }
+    public required string Firstname { get; set; }
+    public required string Lastname { get; set; }
     public CustomerCard? CustomerCard { get; set; }
 }
 
 public class CustomerCard
 {
-    #pragma warning disable CS8618
-    protected CustomerCard() { }
-    #pragma warning restore CS8618
+    private CustomerCard() { }   // For EF Core
+    [SetsRequiredMembers]
     public CustomerCard(int cardNr, DateOnly expirationDate, Customer customer)
     {
         CardNr = cardNr;
@@ -292,7 +296,7 @@ public class CustomerCard
     public int CardNr { get; set; }
     public DateOnly ExpirationDate { get; set; }
     [ForeignKey("CustomerId")]
-    public Customer Customer { get; set; }
+    public required Customer Customer { get; set; }
 }
 ----
 
@@ -359,6 +363,7 @@ Da wir sie nicht zuweisen wollen, hat sie eine _private set_ Methode.
 ----
 public class Store
 {
+    [SetsRequiredMembers]
     public Store(string name, User? manager = null)
     {
         Name = name;
@@ -366,13 +371,11 @@ public class Store
         ManagerId = manager?.Id;
         Guid = Guid.NewGuid();
     }
-    #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    protected Store() { }
-    #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    public int Id { get; private set; } 
+    private Store() { }   // For EF Core
+    public int Id { get; private set; }
     public Guid Guid { get; private set; }
     [MaxLength(255)]      // Produces NVARCHAR(255) in SQL Server
-    public string Name { get; set; }
+    public required string Name { get; set; }
     public int? ManagerId { get; set; }
     public User? Manager { get; set; }
 }
@@ -456,8 +459,9 @@ Verwende die Konfiguration `+HasConversion<string>()+` für das Property _Openin
 * Erstelle alle Tabellen mit den im Modell angegeben Namen (also Offer statt Offers, etc.).
 * Stringfelder sollen mit 255 Zeichen begrenzt werden.
 * _Offer.Price_ soll mit 9 Stellen, davon 4 Nachkommastellen gespeichert werden.
-* Alle Klassen sollen Konstruktoren mit den notwendigen Feldern sowie protected default Konstruktoren für EF Core besitzen.
+* Alle Klassen sollen Konstruktoren mit den notwendigen Feldern sowie private default Konstruktoren für EF Core besitzen.
 Es soll keine Klasse einen public default Konstruktor besitzen!
+Verwende _required_ und _[SetsRequiredMembers]_ statt _++#++pragma warning disable CS8618_.
 
 Im Musterprojekt sind in der Klasse _StoreContextTests.cs_ folgende Unittests zu implementieren.
 Die Beschreibung befindet sich im Musterprojekt:

@@ -19,7 +19,7 @@ ____
 Im Ordner link:{github_url}/03%20EF%20Core/CodeFirstDemo[CodeFirstDemo] ist ein lauffähiges Beispiel dieser Erklärungen.
 ____
 
-== Anlegen des Musterprojektes (.NET 8)
+== Anlegen des Musterprojektes (.NET 10)
 
 Um ein Klassenmodell umsetzen zu können, legen wir eine kleine Solution an.
 Wir nutzen nun _2 Projekte_ und keine Konsolenapplikation:
@@ -39,10 +39,10 @@ cd CodeFirstDemo
 md CodeFirstDemo.Application
 cd CodeFirstDemo.Application
 dotnet new classlib
-dotnet add package Microsoft.EntityFrameworkCore --version 8.*
-dotnet add package Microsoft.EntityFrameworkCore.Sqlite --version 8.*
-dotnet add package Microsoft.EntityFrameworkCore.Proxies --version 8.*
-dotnet add package Bogus --version 35.6.1
+dotnet add package Microsoft.EntityFrameworkCore --version 10.*
+dotnet add package Microsoft.EntityFrameworkCore.Sqlite --version 10.*
+dotnet add package Microsoft.EntityFrameworkCore.Proxies --version 10.*
+dotnet add package Bogus --version 35.6.5
 cd ..
 md CodeFirstDemo.Test
 cd CodeFirstDemo.Test
@@ -60,7 +60,7 @@ Nun stellen wir durch Doppelklick auf die Projektdatei (_CodeFirstDemo.Applicati
 [source,xml]
 ----
 <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 </PropertyGroup>
@@ -251,40 +251,72 @@ public class Offer
 }
 ----
 
-=== Anlegen von protected Konstruktoren
+=== Private Konstruktoren für EF Core: required und SetsRequiredMembers
 
 Zum Abschluss müssen wir noch eine Besonderheit von EF Core berücksichtigen.
 EF Core versucht beim Lesen eines Datensatzes eine Instanz der entsprechenden Klasse zu erzeugen.
-Dafür braucht es aber einen Default Konstruktor.
-Diese Default Konstruktoren wollen wir allerdings vermeiden.
-Ein guter Weg ist das Anlegen dieses Konstruktors als private oder protected Konstruktor.
-Damit kann niemand mit _new Store()_ ein uninitialisiertes Store Objekt anlegen.
-Wir verwenden protected, da wir im nächsten Kapitel auch Vererbung verwenden wollen.
+Unseren Konstruktor kann EF Core nur verwenden, wenn jeder Parameter einem "einfachen" Property (string, int, DateTime, ...) entspricht.
+Bei Navigationen wie in _Offer(Product product, Store store, ...)_ funktioniert das nicht.
+EF Core braucht dann einen Konstruktor ohne Parameter.
+Einen solchen public Default Konstruktor wollen wir allerdings vermeiden.
+Ein guter Weg ist das Anlegen dieses Konstruktors als *private* Konstruktor.
+Damit kann niemand mit _new Store()_ ein uninitialisiertes Store Objekt anlegen, EF Core kann ihn aber trotzdem aufrufen.
 
-Legen wir nun einen Default Konstruktor an, ergeben sich aufgrund des aktivierten nullable Features Warnungen bzw. Fehlermeldungen.
-Wir können aber in diesem Fall mit einer etwas seltsamen Anweisung Warnungen unterdrücken.
-In Visual Studio können die _++#++pragma_ Anweisungen mit _STRG {plus} ._ und _Suppress or Configure issues_ - _Suppress CS8618 in Source Code_ deaktiviert werden.
+Legen wir nun einen Default Konstruktor an, meldet der Compiler aufgrund des aktivierten nullable Features den Fehler _CS8618_: Das Property _Name_ hat nach dem Konstruktor den Wert _null_.
+Wir lösen das mit 2 Sprachfeatures von C# 11:
 
-____
-*Hinweis:* Das Unterdrücken von Warnungen ist nur gerechtfertigt, wenn wir mit Sicherheit ausschließen können, dass dadurch ein Laufzeitfehler entsteht.
-EF Core garantiert das Initialisieren der Felder, daher kann diese Technik hier verwendet werden.
-____
+* Das Schlüsselwort *required* kennzeichnet ein Property als Pflichtfeld.
+Wer einen Konstruktor ohne _[SetsRequiredMembers]_ aufruft, muss das Property im Object Initializer setzen (`+new Store() { Name = "Spar" }+`), sonst liefert der Compiler den Fehler _CS9035_.
+Da der Compiler das sicherstellt, meldet er im Default Konstruktor kein _CS8618_ mehr.
+* Das Attribut *[SetsRequiredMembers]* aus dem Namespace _System.Diagnostics.CodeAnalysis_ kennzeichnet einen Konstruktor, der alle required Properties selbst setzt.
+Damit kann der Konstruktor wie gewohnt mit `+new Store("Spar")+` ohne Object Initializer aufgerufen werden.
+Vergessen wir in diesem Konstruktor ein Property zu setzen, meldet der Compiler wieder _CS8618_.
 
 [source,csharp]
 ----
 public class Store
 {
+    [SetsRequiredMembers]
     public Store(string name)
     {
         Name = name;
     }
-    #pragma warning disable CS8618
-    protected Store() { }
-    #pragma warning restore CS8618
+    private Store() { }   // For EF Core
     public int Id { get; private set; }
-    public string Name { get; set; }
+    public required string Name { get; set; }
 }
 ----
+
+Auch _Offer_ bekommt auf diese Weise einen private Konstruktor.
+_required_ brauchen nur Properties mit einem nicht nullable Referenztyp (wie _string_, _Product_ oder _Store_), da nur sie den Fehler CS8618 auslösen.
+Wertetypen wie _decimal_ oder _DateTime_ haben immer einen Wert.
+
+[source,csharp]
+----
+public class Offer
+{
+    [SetsRequiredMembers]
+    public Offer(Product product, Store store, decimal price, DateTime lastUpdate)
+    {
+        Product = product;
+        Store = store;
+        Price = price;
+        LastUpdate = lastUpdate;
+    }
+    private Offer() { }   // For EF Core
+    public int Id { get; private set; }
+    public required Product Product { get; set; }
+    public required Store Store { get; set; }
+    public decimal Price { get; set; }
+    public DateTime LastUpdate { get; set; }
+}
+----
+
+____
+*Hinweis:* In älteren Beispielen findest du statt _required_ noch die Anweisung _++#++pragma warning disable CS8618_ rund um den Default Konstruktor.
+Sie unterdrückt die Warnung nur, der Compiler prüft dann nichts mehr.
+Mit _required_ und _[SetsRequiredMembers]_ bleibt die Prüfung aktiv.
+____
 
 == Anlegen der Datenbank: Der Datenbankkontext
 
@@ -438,7 +470,7 @@ public class DatabaseTest : IDisposable
 
 == Ansehen der Datenbank in DBeaver
 
-Nachdem der Unittest ausgeführt wurde, findet sich im Ordner _CodeFirstDemo.Test++\++bin++\++Debug++\++net8.0_ die Datei _Stores.db_.
+Nachdem der Unittest ausgeführt wurde, findet sich im Ordner _CodeFirstDemo.Test++\++bin++\++Debug++\++net10.0_ die Datei _Stores.db_.
 Zum Betrachten der Datenbank kann z. B. DBeaver (https://dbeaver.io/) verwendet werden.
 Öffnen wir mit DBeaver die Datenbank und klicken doppelt auf _Tables_, kann das ER Diagramm der erstellen Datenbank angezeigt werden:
 
@@ -494,7 +526,8 @@ Das Klassenmodell zeigt keine EF Core spezifischen Properties wie Fremdschlüsse
 Definiere deshalb - wenn nötig - ein Property mit dem Namen _Id_ als primary key (auto increment).
 
 Definiere die public Konstruktoren so, dass die benötigten Informationen bei der Initialisierung übergeben werden müssen.
-Für EF Core sind dann protected Konstruktoren ohne Parameter anzulegen.
+Für EF Core sind dann private Konstruktoren ohne Parameter anzulegen.
+Unterdrücke die Warnung CS8618 nicht mit _++#++pragma_, sondern verwende _required_ und _[SetsRequiredMembers]_.
 
 Der Kontext soll den Namen _TeamsContext_ haben.
 Verwende danach die Testklasse im Unittest Projekt mit dem Namen _TeamsContextTests_.
